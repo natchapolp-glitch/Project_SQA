@@ -49,7 +49,7 @@ require_lang1_checkout() {
 
 git_dirty_state() {
   local repository="$1"
-  if [[ -n "$(git -C "$repository" status --porcelain --untracked-files=no)" ]]; then
+  if ! git -C "$repository" diff --quiet --ignore-cr-at-eol -- || ! git -C "$repository" diff --cached --quiet --ignore-cr-at-eol --; then
     printf true
   else
     printf false
@@ -61,11 +61,12 @@ git_diff_sha256() {
   local repository="$1"
   {
     printf 'unstaged\n'
-    git -C "$repository" diff --binary
+    git -C "$repository" diff --binary --ignore-cr-at-eol
     printf 'staged\n'
-    git -C "$repository" diff --cached --binary
+    git -C "$repository" diff --cached --binary --ignore-cr-at-eol
   } | sha256sum | cut -d ' ' -f 1
 }
+
 oracle_source="$PROJECT_ROOT/experiments/targets/lang1_numberutils/NumberUtilsOracle.java"
 
 if [[ -e "$result_directory" ]] && [[ -n "$(find "$result_directory" -mindepth 1 -maxdepth 1 -print -quit)" ]]; then
