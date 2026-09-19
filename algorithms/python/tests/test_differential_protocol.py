@@ -29,4 +29,16 @@ class DifferentialProtocolTests(unittest.TestCase):
                 {"status": "execution_error"},
                 {"status": "value", "type": "java.lang.Integer", "value": "1"},
             )
-            )
+        )
+
+    def test_harness_errors_make_the_run_unacceptable(self):
+        rows = [{
+            "input": "0x1",
+            "comparable": False,
+            "different": False,
+        }]
+        summary = differential_lang1.summarize(rows)
+        self.assertEqual(summary["harness_errors"], 1)
+        self.assertEqual(summary["unique_differences"], 0)
+        with self.assertRaisesRegex(SystemExit, "1 harness errors"):
+            differential_lang1.ensure_no_harness_errors(summary)

@@ -3,6 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/common.sh"
+export TZ=America/Los_Angeles
 
 if [[ $# -ne 4 ]]; then
   echo "Usage: $0 <comparison.json> <buggy-worktree> <fixed-worktree> <result-directory>" >&2

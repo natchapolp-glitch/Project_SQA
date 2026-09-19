@@ -17,6 +17,25 @@ def is_comparable(buggy: dict[str, object], fixed: dict[str, object]) -> bool:
     return buggy.get("status") in COMPARABLE_STATUSES and fixed.get("status") in COMPARABLE_STATUSES
 
 
+def summarize(rows: list[dict[str, object]]) -> dict[str, int]:
+    unique_inputs = {str(row["input"]) for row in rows}
+    different_inputs = {str(row["input"]) for row in rows if row["different"]}
+    comparable_cases = sum(bool(row["comparable"]) for row in rows)
+    return {
+        "cases": len(rows),
+        "unique_inputs": len(unique_inputs),
+        "comparable_cases": comparable_cases,
+        "harness_errors": len(rows) - comparable_cases,
+        "difference_rows": sum(bool(row["different"]) for row in rows),
+        "unique_differences": len(different_inputs),
+    }
+
+
+def ensure_no_harness_errors(summary: dict[str, int]) -> None:
+    if summary["harness_errors"]:
+        raise SystemExit(f"Refusing to accept a run with {summary['harness_errors']} harness errors")
+
+
 def execute(classpath: str, harness: Path, value: str) -> dict[str, object]:
     result = subprocess.run(
         ["java", "-cp", f"{classpath}:{harness}", "NumberUtilsOracle", value],
@@ -61,15 +80,13 @@ def main() -> None:
     (args.output / "comparison.json").write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8")
     with (args.output / "comparison.csv").open("w", newline="", encoding="utf-8") as stream:
         writer = csv.writer(stream)
-        writer.writerow(("case_id", "input", "leading_zeros", "suffix_digits", "buggy_outcome", "fixed_outcome", "different"))
+        writer.writerow(("case_id", "input", "leading_zeros", "suffix_digits", "buggy_outcome", "fixed_outcome", "comparable", "different"))
         for row in rows:
-            writer.writerow((row["case_id"], row["input"], row["leading_zeros"], row["suffix_digits"], json.dumps(row["buggy"], sort_keys=True), json.dumps(row["fixed"], sort_keys=True), row["different"]))
-    unique_inputs = {str(row["input"]) for row in rows}
-    different_inputs = {str(row["input"]) for row in rows if row["different"]}
-    comparable_rows = [row for row in rows if row["comparable"]]
-    summary = {"cases": len(rows), "unique_inputs": len(unique_inputs), "comparable_cases": len(comparable_rows), "harness_errors": len(rows) - len(comparable_rows), "difference_rows": sum(bool(row["different"]) for row in rows), "unique_differences": len(different_inputs)}
+            writer.writerow((row["case_id"], row["input"], row["leading_zeros"], row["suffix_digits"], json.dumps(row["buggy"], sort_keys=True), json.dumps(row["fixed"], sort_keys=True), row["comparable"], row["different"]))
+    summary = summarize(rows)
     (args.output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary))
+    ensure_no_harness_errors(summary)
 
 
 if __name__ == "__main__":

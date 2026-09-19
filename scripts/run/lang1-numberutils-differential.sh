@@ -3,6 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/common.sh"
+export TZ=America/Los_Angeles
 
 if [[ $# -lt 5 ]]; then
   echo "Usage: $0 <fscs-art|cmaes> <buggy-worktree> <fixed-worktree> <result-directory> <budget> [--seed N] [--candidate-set-size N] [--sigma N]" >&2
@@ -46,6 +47,25 @@ require_lang1_checkout() {
   [[ -f "$worktree/.defects4j.config" ]] && grep -Fxq 'pid=Lang' "$worktree/.defects4j.config" && grep -Fxq "vid=$revision" "$worktree/.defects4j.config" || { echo "Expected Lang-$revision checkout: $worktree" >&2; exit 65; }
 }
 
+git_dirty_state() {
+  local repository="$1"
+  if [[ -n "$(git -C "$repository" status --porcelain --untracked-files=no)" ]]; then
+    printf true
+  else
+    printf false
+  fi
+}
+
+
+git_diff_sha256() {
+  local repository="$1"
+  {
+    printf 'unstaged\n'
+    git -C "$repository" diff --binary
+    printf 'staged\n'
+    git -C "$repository" diff --cached --binary
+  } | sha256sum | cut -d ' ' -f 1
+}
 oracle_source="$PROJECT_ROOT/experiments/targets/lang1_numberutils/NumberUtilsOracle.java"
 
 if [[ -e "$result_directory" ]] && [[ -n "$(find "$result_directory" -mindepth 1 -maxdepth 1 -print -quit)" ]]; then
@@ -68,7 +88,15 @@ command_line="$(printf '%q ' "$0" "${original_args[@]}")"
 repository_revision="$(git -C "$PROJECT_ROOT" rev-parse HEAD 2>/dev/null || printf unknown)"
 d4j_version="$(git -C "$D4J_HOME" rev-parse HEAD 2>/dev/null || printf unknown)"
 java_version="$(java -version 2>&1 | head -n 1)"
-printf 'project=Lang\nbug_id=1\nbuggy_revision=1b\nfixed_revision=1f\nrepository_revision=%s\nbuggy_git_head=%s\nfixed_git_head=%s\ndefects4j_revision=%s\njava_version=%s\nalgorithm=%s\nseed=%s\nbudget=%s\ncandidate_set_size=%s\nsigma=%s\nstarted_at=%s\ncommand=%s\n' "$repository_revision" "$(git -C "$buggy_worktree" rev-parse HEAD)" "$(git -C "$fixed_worktree" rev-parse HEAD)" "$d4j_version" "$java_version" "$algorithm" "$seed" "$budget" "$candidate_set_size" "$sigma" "$(date --iso-8601=seconds)" "$command_line" > "$result_directory/run.env"
+repository_dirty="$(git_dirty_state "$PROJECT_ROOT")"
+defects4j_dirty="$(git_dirty_state "$D4J_HOME")"
+buggy_dirty="$(git_dirty_state "$buggy_worktree")"
+fixed_dirty="$(git_dirty_state "$fixed_worktree")"
+repository_diff_sha256="$(git_diff_sha256 "$PROJECT_ROOT")"
+defects4j_diff_sha256="$(git_diff_sha256 "$D4J_HOME")"
+buggy_diff_sha256="$(git_diff_sha256 "$buggy_worktree")"
+fixed_diff_sha256="$(git_diff_sha256 "$fixed_worktree")"
+printf 'project=Lang\nbug_id=1\nbuggy_revision=1b\nfixed_revision=1f\ntimezone=%s\nrepository_revision=%s\nrepository_dirty=%s\nrepository_diff_sha256=%s\nbuggy_git_head=%s\nbuggy_dirty=%s\nbuggy_diff_sha256=%s\nfixed_git_head=%s\nfixed_dirty=%s\nfixed_diff_sha256=%s\ndefects4j_revision=%s\ndefects4j_dirty=%s\ndefects4j_diff_sha256=%s\njava_version=%s\nalgorithm=%s\nseed=%s\nbudget=%s\ncandidate_set_size=%s\nsigma=%s\nstarted_at=%s\ncommand=%s\n' "$TZ" "$repository_revision" "$repository_dirty" "$repository_diff_sha256" "$(git -C "$buggy_worktree" rev-parse HEAD)" "$buggy_dirty" "$buggy_diff_sha256" "$(git -C "$fixed_worktree" rev-parse HEAD)" "$fixed_dirty" "$fixed_diff_sha256" "$d4j_version" "$defects4j_dirty" "$defects4j_diff_sha256" "$java_version" "$algorithm" "$seed" "$budget" "$candidate_set_size" "$sigma" "$(date --iso-8601=seconds)" "$command_line" > "$result_directory/run.env"
 python3 "$python_root/generate_lang1_inputs.py" --algorithm "$algorithm" --budget "$budget" \
   --seed "$seed" --candidate-set-size "$candidate_set_size" --sigma "$sigma" \
   --output "$result_directory/inputs.json"

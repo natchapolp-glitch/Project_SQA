@@ -12,11 +12,11 @@ The round-1 report and the original Defects4J README are retained under `docs/`.
 
 ## Current status
 
-The reproducible `Lang-1` smoke pilot is complete: metadata and baseline logs
-exist for both revisions. Its immutable current run is
-`results/raw/Lang/1/differential-v3/20260920T000500Z/`: FSCS-ART produced 21
-unique differences and CMA-ES produced 15; every generated JUnit assertion
-fails on `1b` and passes on `1f`.
+The `Lang-1` smoke runner now rejects harness errors, enforces the required
+`America/Los_Angeles` timezone, records source dirty state, and validates every
+generated JUnit test case on both revisions. The earlier `differential-v3` run
+is superseded because it predated those controls; refreshed immutable evidence
+is produced only from a committed runner revision.
 
 This is not yet the final all-project study. AI-tool outputs and aggregate
 multi-project results must be produced with authorised tool access; their status
