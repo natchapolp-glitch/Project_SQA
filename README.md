@@ -14,7 +14,7 @@ The round-1 report and the original Defects4J README are retained under `docs/`.
 
 The reproducible `Lang-1` smoke pilot is complete: metadata and baseline logs
 exist for both revisions. Its immutable current run is
-`results/raw/Lang/1/differential-v3/20260920T000400Z/`: FSCS-ART produced 21
+`results/raw/Lang/1/differential-v3/20260920T000500Z/`: FSCS-ART produced 21
 unique differences and CMA-ES produced 15; every generated JUnit assertion
 fails on `1b` and passes on `1f`.
 
