@@ -22,3 +22,11 @@ class DifferentialProtocolTests(unittest.TestCase):
         with patch("differential_lang1.subprocess.run", return_value=completed):
             outcome = differential_lang1.execute("unused", Path("unused"), "bad")
         self.assertEqual(outcome, {"status": "exception", "type": "java.lang.NumberFormatException", "message": "bad input"})
+
+    def test_infrastructure_outcomes_are_not_comparable(self):
+        self.assertFalse(
+            differential_lang1.is_comparable(
+                {"status": "execution_error"},
+                {"status": "value", "type": "java.lang.Integer", "value": "1"},
+            )
+            )

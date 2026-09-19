@@ -13,9 +13,10 @@ The round-1 report and the original Defects4J README are retained under `docs/`.
 ## Current status
 
 The reproducible `Lang-1` smoke pilot is complete: metadata and baseline logs
-exist for both revisions; FSCS-ART and CMA-ES each generated inputs and produced
-a JUnit regression test validated on both revisions. See
-`results/raw/Lang/1/differential-v2/pilot-summary.md`.
+exist for both revisions. Its immutable current run is
+`results/raw/Lang/1/differential-v3/20260920T000400Z/`: FSCS-ART produced 21
+unique differences and CMA-ES produced 15; every generated JUnit assertion
+fails on `1b` and passes on `1f`.
 
 This is not yet the final all-project study. AI-tool outputs and aggregate
 multi-project results must be produced with authorised tool access; their status
@@ -58,8 +59,9 @@ is required.
 3. Check out buggy and fixed revisions with `scripts/checkout/checkout-bug.sh`.
 4. Export Defects4J metadata with `scripts/checkout/export-metadata.sh`.
 5. Run the baseline with `scripts/run/baseline.sh`.
-6. Run `scripts/run/lang1-numberutils-differential.sh` for the concrete Lang-1
-   smoke pilot configured in `experiments/configs/lang1-smoke.yaml`.
+6. Run the configured, immutable Lang-1 smoke pilot (which also validates the
+   generated JUnit suites on both revisions):
+   `python3 scripts/run/run-lang1-smoke.py --config experiments/configs/lang1-smoke.yaml --buggy-worktree worktrees/Lang/1/b --fixed-worktree worktrees/Lang/1/f --results-root results/raw/Lang/1/differential-v3`.
 7. Use `experiments/configs/pilot.yaml` only for the later repeated pilot plan.
 
 ## Reproducibility rules
