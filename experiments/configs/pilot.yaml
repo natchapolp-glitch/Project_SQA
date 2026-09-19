@@ -1,0 +1,21 @@
+experiment: lang-pilot-v1
+project: Lang
+timezone: America/Los_Angeles
+repetitions: 10
+search:
+  evaluation_budgets: [100, 500, 1000]
+  seeds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110]
+art:
+  candidate_set_sizes: [10, 50, 100]
+cmaes:
+  initial_step_size: 0.3
+ai:
+  max_prompt_iterations: 3
+  required_context: [focal_class, method_signature, dependencies, build_configuration]
+metrics:
+  - line_coverage
+  - branch_coverage
+  - fault_detected
+  - compile_status
+  - execution_time_ms
+  - evaluation_count
