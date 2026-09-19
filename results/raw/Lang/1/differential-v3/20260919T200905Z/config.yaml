@@ -1,0 +1,16 @@
+experiment: lang1-numberutils-smoke-v1
+project: Lang
+bug_id: 1
+revisions: [1b, 1f]
+oracle: experiments/targets/lang1_numberutils/NumberUtilsOracle.java
+input_mapping: "[leading_zero_count, suffix_digit_count] -> 0x + zeros + 1 + suffix zeros"
+algorithms:
+  fscs-art:
+    seed: 2026
+    candidate_set_size: 10
+    budget: 30
+  cmaes:
+    seed: 2026
+    initial_step_size: 0.3
+    budget: 30
+acceptance: "Record raw b/f outcomes; report an observed difference only when the outcomes differ."
