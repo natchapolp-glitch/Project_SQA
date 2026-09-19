@@ -22,15 +22,17 @@ def main() -> None:
     parser.add_argument("--algorithm", choices=("fscs-art", "cmaes"), required=True)
     parser.add_argument("--budget", type=int, default=30)
     parser.add_argument("--seed", type=int, default=2026)
+    parser.add_argument("--candidate-set-size", type=int, default=10)
+    parser.add_argument("--sigma", type=float, default=0.30)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if args.budget < 1:
         parser.error("--budget must be positive")
     if args.algorithm == "fscs-art":
-        generator = FSCSART(FSCSARTConfig((0.0, 0.0), (32.0, 20.0), candidate_set_size=10, seed=args.seed))
+        generator = FSCSART(FSCSARTConfig((0.0, 0.0), (32.0, 20.0), candidate_set_size=args.candidate_set_size, seed=args.seed))
         vectors = generator.generate(args.budget)
     else:
-        strategy = CMAES(CMAESConfig((0.0, 0.0), (32.0, 20.0), seed=args.seed))
+        strategy = CMAES(CMAESConfig((0.0, 0.0), (32.0, 20.0), sigma=args.sigma, seed=args.seed))
         candidates: list[list[float]] = []
         while len(candidates) < args.budget:
             population = strategy.ask()
@@ -44,7 +46,13 @@ def main() -> None:
                 candidates.append(point)
             strategy.tell(scored)
         vectors = [tuple(point) for point in candidates[: args.budget]]
-    payload = {"algorithm": args.algorithm, "seed": args.seed, "budget": args.budget, "cases": [to_case(vector) for vector in vectors]}
+    cases = [to_case(vector) for vector in vectors]
+    payload = {
+        "algorithm": args.algorithm, "seed": args.seed, "budget": args.budget,
+        "candidate_set_size": args.candidate_set_size, "sigma": args.sigma,
+        "unique_inputs": len({str(case["input"]) for case in cases}),
+        "cases": cases,
+    }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 

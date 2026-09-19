@@ -7,7 +7,7 @@
 - [x] Scripts use the repository-local Defects4J executable and absolute output paths.
 - [x] `Lang-1` buggy/fixed metadata and baseline logs retained.
 - [x] Deterministic FSCS-ART and full-covariance CMA-ES implementations with unit tests.
-- [x] Differential oracle and raw, reproducible 30-input pilot for each generator.
+- [x] Differential oracle, config-driven 30-execution pilot, and generated JUnit b/f validation for each generator.
 - [x] AI prompt template requires a buggy/fixed differential oracle and evidence retention.
 
 ## Required before representing this as the assignment's final all-project study

@@ -5,6 +5,9 @@ Project/bug: Defects4J `Lang-1` / LANG-747
 Target: `NumberUtils.createNumber(String)`  
 Configuration: `experiments/configs/lang1-smoke.yaml`
 
+> Superseded for reported metrics by `differential-v2/pilot-summary.md`, which
+> uses the structured exception oracle, config-driven parameters, unique-input
+
 ## Baseline
 
 | Revision | Result |

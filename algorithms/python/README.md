@@ -18,6 +18,8 @@ PYTHONPATH=algorithms/python python3 -m unittest discover -s algorithms/python/t
 The `Lang-1` pilot maps a two-dimensional numeric vector to a hexadecimal
 string for `NumberUtils.createNumber`.  `scripts/run/lang1-numberutils-differential.sh`
 compiles a tiny oracle for both Defects4J revisions, runs the selected generator,
-and stores inputs plus b/f comparisons.  A difference is an observed behavioural
-difference; it is not by itself a claim that every generated input is a valid
-JUnit regression test.
+and stores inputs plus b/f comparisons. `scripts/run/run-lang1-smoke.py` consumes
+the smoke YAML configuration and passes its seeds and algorithm parameters to the
+runner. `scripts/run/validate-lang1-regression-test.sh` then turns one observed
+fixed-value difference into a standalone JUnit test and requires it to fail on
+the buggy revision and pass on the fixed revision.

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import csv
 import json
 import subprocess
@@ -18,10 +19,19 @@ def execute(classpath: str, harness: Path, value: str) -> dict[str, object]:
         stderr=subprocess.PIPE,
         check=False,
     )
-    if result.returncode == 0:
-        return {"status": "value", "value": result.stdout.strip()}
-    last_line = next((line for line in reversed(result.stderr.splitlines()) if line.strip()), "")
-    return {"status": "exception", "value": last_line, "return_code": result.returncode}
+    if result.returncode != 0:
+        return {"status": "execution_error", "return_code": result.returncode, "stderr": result.stderr.strip()}
+    try:
+        payload = json.loads(result.stdout)
+        status = payload["status"]
+        outcome_type = payload["type"]
+        if status == "value":
+            return {"status": status, "type": outcome_type, "value": base64.b64decode(payload["value_base64"]).decode("utf-8")}
+        if status == "exception":
+            return {"status": status, "type": outcome_type, "message": base64.b64decode(payload["message_base64"]).decode("utf-8")}
+    except (KeyError, TypeError, ValueError, UnicodeDecodeError) as error:
+        return {"status": "protocol_error", "detail": str(error), "stdout": result.stdout.strip()}
+    return {"status": "protocol_error", "detail": "unknown oracle status", "stdout": result.stdout.strip()}
 
 
 def main() -> None:
@@ -43,10 +53,12 @@ def main() -> None:
     (args.output / "comparison.json").write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8")
     with (args.output / "comparison.csv").open("w", newline="", encoding="utf-8") as stream:
         writer = csv.writer(stream)
-        writer.writerow(("case_id", "input", "leading_zeros", "suffix_digits", "buggy_status", "buggy_value", "fixed_status", "fixed_value", "different"))
+        writer.writerow(("case_id", "input", "leading_zeros", "suffix_digits", "buggy_outcome", "fixed_outcome", "different"))
         for row in rows:
-            writer.writerow((row["case_id"], row["input"], row["leading_zeros"], row["suffix_digits"], row["buggy"]["status"], row["buggy"]["value"], row["fixed"]["status"], row["fixed"]["value"], row["different"]))
-    summary = {"cases": len(rows), "differences": sum(bool(row["different"]) for row in rows)}
+            writer.writerow((row["case_id"], row["input"], row["leading_zeros"], row["suffix_digits"], json.dumps(row["buggy"], sort_keys=True), json.dumps(row["fixed"], sort_keys=True), row["different"]))
+    unique_inputs = {str(row["input"]) for row in rows}
+    different_inputs = {str(row["input"]) for row in rows if row["different"]}
+    summary = {"cases": len(rows), "unique_inputs": len(unique_inputs), "difference_rows": sum(bool(row["different"]) for row in rows), "unique_differences": len(different_inputs)}
     (args.output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(summary))
 

@@ -23,6 +23,8 @@ class CMAESConfig:
             raise ValueError("each lower bound must be strictly below its upper bound")
         if self.sigma <= 0:
             raise ValueError("sigma must be positive")
+        if self.population_size is not None and self.population_size < 2:
+            raise ValueError("population_size must be at least 2")
 
 
 class CMAES:

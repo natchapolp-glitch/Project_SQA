@@ -16,3 +16,7 @@ class GeneratorTests(unittest.TestCase):
         self.assertLess(score, 0.05)
         self.assertLess(abs(point[0] - 1.0), 0.3)
         self.assertLess(abs(point[1] + 2.0), 0.3)
+
+    def test_cmaes_rejects_invalid_population_size(self):
+        with self.assertRaises(ValueError):
+            CMAESConfig((0.0,), (1.0,), population_size=1)

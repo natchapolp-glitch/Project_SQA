@@ -13,8 +13,9 @@ The round-1 report and the original Defects4J README are retained under `docs/`.
 ## Current status
 
 The reproducible `Lang-1` smoke pilot is complete: metadata and baseline logs
-exist for both revisions; FSCS-ART and CMA-ES each generated 30 inputs and were
-compared with a b/f oracle. See `results/raw/Lang/1/pilot-summary.md`.
+exist for both revisions; FSCS-ART and CMA-ES each generated inputs and produced
+a JUnit regression test validated on both revisions. See
+`results/raw/Lang/1/differential-v2/pilot-summary.md`.
 
 This is not yet the final all-project study. AI-tool outputs and aggregate
 multi-project results must be produced with authorised tool access; their status
