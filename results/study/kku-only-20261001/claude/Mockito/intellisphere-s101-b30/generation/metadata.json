@@ -10,23 +10,50 @@
   "run_id": "generation",
   "archive_run_seed": 101,
   "prompt_iteration": 1,
-  "generated_at": "2026-10-01T16:09:36.131Z",
-  "ingested_at": "2026-10-01T16:10:10.155059+00:00",
+  "generated_at": "2026-10-01T22:32:39.750Z",
+  "ingested_at": "2026-10-01T22:48:04.864642+00:00",
   "parameters": {
     "model_seed": null,
     "temperature": null
   },
   "session_url": "https://gen.ai.kku.ac.th/chat",
   "parent_run": null,
-  "manual_edits": [],
+  "manual_edits": [
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "9070b5e9bb626c1976838c1cccf8b3069de29be7d5c0474e4f81260dbf7e413c",
+      "after_sha256": "fa15663e5d95b62d888c2ffbc7b2224bb64ec3ff6915f2e807cc1dd7dcd1f0a2",
+      "fixed_api_compatibility": "Excluded five whole test methods using Invocation.isVarArgs(), absent from fixed Invocation API. Retained assertions unchanged. v69 guard failed before evaluation because it incorrectly assumed only one occurrence.",
+      "selection": "Fixed-1 compile diagnostics only; v67 failures preserved; no buggy outcomes observed before this repair."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "fa15663e5d95b62d888c2ffbc7b2224bb64ec3ff6915f2e807cc1dd7dcd1f0a2",
+      "after_sha256": "0d9825c42cd85783690978a3a196df69641c060cbe0e45759516ad348e274580",
+      "fixed_api_compatibility": "Exclude whole testIsVarargMatcherWithDecorator: fixed compiler rejects MatcherDecorator as Matcher. Retained assertions unchanged. v70 fixed compile evidence preserved."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "0d9825c42cd85783690978a3a196df69641c060cbe0e45759516ad348e274580",
+      "after_sha256": "0d7746bc5385e70b4653258a604ae1b90ce5930c53d60760f10917c6c5de5180",
+      "fixed_failed_methods_removed": [
+        "org.mockito.internal.invocation.InvocationMatcherTest::testToString",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testCreateFromMultipleInvocations",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testHasSameMethodWithNullMethodName"
+      ],
+      "selection": "Only assertion failures on fixed revision; no buggy outcomes used."
+    }
+  ],
   "notes": [
-    "Exact original prepared prompt only; no evaluation feedback sent. Native export unchanged. UI preparation delay included in observed time upper bound. Haiku selected at submission and completion.",
-    "Local processing v54 (inherited compatibility chain v39): hash-identified JacksonXml XML reader START_ELEMENT fixture positioning via nextTag; assertions unchanged; prior v38 fully pruned failure retained.  fixed-compiler diagnosed local variable reference correction in hash-identified Haiku Codec/102; assertion expectations unchanged.  hash-identified Claude Cli complete-prefix recovery plus hash-identified Claude Jsoup complete-prefix recovery plus fixed-diagnosed Time String-null overload disambiguation plus exact-tail, hash-identified Gemini Lang complete-prefix recovery before evaluation; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Exact original prompt only. No evaluation feedback sent.",
+    "response.md serializes rendered DOM blocks, exact Java text preserved alongside rendered-response.html/text.",
+    "Observed UI upper-bound duration; displayed model label recorded exactly, resolved version unknown.",
+    "Local processing v71: closed Java fences only, source-order cap of 30 methods, mechanical renderer suffix cleanup, and up to two fixed-only pruning passes. Adds exact-hash Lang/101 complete-prefix recovery before evaluation; all retained assertions unchanged. Adds fixed-compiler-only Mockito API recovery: excludes five unsupported isVarArgs tests on index 101 and supplies Hamcrest any(Object.class) on index 102; assertions in retained methods unchanged. Also excludes the whole incompatible MatcherDecorator method using only v70 fixed compiler diagnostics. Raw provider output remains unchanged.",
     "Raw provider response unchanged. No evaluation results were sent to either provider.",
     "The evaluated cohort is AI-assisted with local processing, not unedited model output."
   ],
   "prompt_sha256": "dc4243b3178e22d7b8c2ec5d1308a674adf7b837b2ab657c82188655b67124e1",
-  "response_sha256": "a03715b520fc4c13be5ac80a1253587f34f8337e298f820d7a8c7840478086b3",
+  "response_sha256": "f535e37290581bd5ff7614669de60aa00682993a1d50942ecb12f17f2b74e228",
   "context_manifest_sha256": "54d1d47c8bf65ec4eb2558d08ea28adf889b360bd1513cb8a7de3cafa3366cde",
   "source_files": [
     {
@@ -63,10 +90,16 @@
       "bytes": 360
     }
   ],
-  "java_files": [],
-  "external_suite": null,
-  "external_suite_sha256": null,
-  "generation_status": "no_java_sources",
+  "java_files": [
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "sha256": "0d7746bc5385e70b4653258a604ae1b90ce5930c53d60760f10917c6c5de5180",
+      "bytes": 9123
+    }
+  ],
+  "external_suite": "Mockito-1f-intellisphere.101.tar.bz2",
+  "external_suite_sha256": "5438ece28a34e2312ca2ee7b47023184e970cf3dc3360410536688c7b17b6267",
+  "generation_status": "sources_received",
   "provenance_status": "recorded",
   "compile_status": "not_run",
   "fixed_test_status": "not_run",
@@ -75,6 +108,6 @@
   "branch_coverage": null,
   "fault_detected": null,
   "warnings": [
-    "No Java sources were extracted; retain this provider response as a generation failure"
+    "Manual source edits are declared; disclose them when comparing raw provider output"
   ]
 }

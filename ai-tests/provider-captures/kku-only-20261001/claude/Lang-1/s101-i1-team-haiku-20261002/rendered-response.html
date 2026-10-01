@@ -1,0 +1,867 @@
+<h1>Analysis</h1>
+<p>I'll generate comprehensive deterministic regression tests for the <code>NumberUtils</code> class from the Commons Lang project. Based on the build configuration, this project uses <strong>JUnit 4.11</strong> and targets <strong>Java 6+</strong> (source/target 1.6).</p>
+<p>The test class will exercise:</p>
+<ul>
+<li>String parsing methods with normal, boundary, and invalid inputs</li>
+<li>Min/max operations for multiple numeric types</li>
+<li>Array min/max operations with validation</li>
+<li>Number creation methods with various formats</li>
+<li>Validation utilities</li>
+<li>Edge cases like null, empty strings, and exceptional conditions</li>
+</ul>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">org/apache/commons/lang3/math/NumberUtilsTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.lang3.math;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+
+<span class="hljs-keyword">import</span> java.math.BigDecimal;
+<span class="hljs-keyword">import</span> java.math.BigInteger;
+
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-comment">/**
+ * Regression tests for NumberUtils class.
+ * Tests cover string parsing, min/max operations, number creation, and validation.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NumberUtilsTest</span> {
+
+    <span class="hljs-comment">// ========== toInt Tests ==========</span>
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToIntNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, NumberUtils.toInt(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToIntEmpty</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, NumberUtils.toInt(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToIntValid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1</span>, NumberUtils.toInt(<span class="hljs-string">"1"</span>));
+        assertEquals(<span class="hljs-number">42</span>, NumberUtils.toInt(<span class="hljs-string">"42"</span>));
+        assertEquals(-<span class="hljs-number">100</span>, NumberUtils.toInt(<span class="hljs-string">"-100"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToIntInvalid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, NumberUtils.toInt(<span class="hljs-string">"abc"</span>));
+        assertEquals(<span class="hljs-number">0</span>, NumberUtils.toInt(<span class="hljs-string">"12.5"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToIntWithDefault</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">99</span>, NumberUtils.toInt(<span class="hljs-literal">null</span>, <span class="hljs-number">99</span>));
+        assertEquals(<span class="hljs-number">99</span>, NumberUtils.toInt(<span class="hljs-string">""</span>, <span class="hljs-number">99</span>));
+        assertEquals(<span class="hljs-number">42</span>, NumberUtils.toInt(<span class="hljs-string">"42"</span>, <span class="hljs-number">99</span>));
+        assertEquals(<span class="hljs-number">99</span>, NumberUtils.toInt(<span class="hljs-string">"invalid"</span>, <span class="hljs-number">99</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToIntBoundary</span><span class="hljs-params">()</span> {
+        assertEquals(Integer.MAX_VALUE, NumberUtils.toInt(<span class="hljs-string">"2147483647"</span>));
+        assertEquals(Integer.MIN_VALUE, NumberUtils.toInt(<span class="hljs-string">"-2147483648"</span>));
+    }
+
+    <span class="hljs-comment">// ========== toLong Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToLongNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0L</span>, NumberUtils.toLong(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToLongEmpty</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0L</span>, NumberUtils.toLong(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToLongValid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1L</span>, NumberUtils.toLong(<span class="hljs-string">"1"</span>));
+        assertEquals(<span class="hljs-number">123456789L</span>, NumberUtils.toLong(<span class="hljs-string">"123456789"</span>));
+        assertEquals(-<span class="hljs-number">500L</span>, NumberUtils.toLong(<span class="hljs-string">"-500"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToLongInvalid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0L</span>, NumberUtils.toLong(<span class="hljs-string">"xyz"</span>));
+        assertEquals(<span class="hljs-number">0L</span>, NumberUtils.toLong(<span class="hljs-string">"45.6"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToLongWithDefault</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">88L</span>, NumberUtils.toLong(<span class="hljs-literal">null</span>, <span class="hljs-number">88L</span>));
+        assertEquals(<span class="hljs-number">88L</span>, NumberUtils.toLong(<span class="hljs-string">""</span>, <span class="hljs-number">88L</span>));
+        assertEquals(<span class="hljs-number">999L</span>, NumberUtils.toLong(<span class="hljs-string">"999"</span>, <span class="hljs-number">88L</span>));
+        assertEquals(<span class="hljs-number">88L</span>, NumberUtils.toLong(<span class="hljs-string">"notanumber"</span>, <span class="hljs-number">88L</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToLongBoundary</span><span class="hljs-params">()</span> {
+        assertEquals(Long.MAX_VALUE, NumberUtils.toLong(<span class="hljs-string">"9223372036854775807"</span>));
+        assertEquals(Long.MIN_VALUE, NumberUtils.toLong(<span class="hljs-string">"-9223372036854775808"</span>));
+    }
+
+    <span class="hljs-comment">// ========== toByte Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToByteNull</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">0</span>, NumberUtils.toByte(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToByteEmpty</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">0</span>, NumberUtils.toByte(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToByteValid</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, NumberUtils.toByte(<span class="hljs-string">"1"</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">127</span>, NumberUtils.toByte(<span class="hljs-string">"127"</span>));
+        assertEquals((<span class="hljs-type">byte</span>) -<span class="hljs-number">128</span>, NumberUtils.toByte(<span class="hljs-string">"-128"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToByteInvalid</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">0</span>, NumberUtils.toByte(<span class="hljs-string">"abc"</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">0</span>, NumberUtils.toByte(<span class="hljs-string">"256"</span>)); <span class="hljs-comment">// overflow</span>
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToByteWithDefault</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">55</span>, NumberUtils.toByte(<span class="hljs-literal">null</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">55</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">55</span>, NumberUtils.toByte(<span class="hljs-string">""</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">55</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">42</span>, NumberUtils.toByte(<span class="hljs-string">"42"</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">55</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">55</span>, NumberUtils.toByte(<span class="hljs-string">"invalid"</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">55</span>));
+    }
+
+    <span class="hljs-comment">// ========== toShort Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToShortNull</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">0</span>, NumberUtils.toShort(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToShortEmpty</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">0</span>, NumberUtils.toShort(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToShortValid</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">1</span>, NumberUtils.toShort(<span class="hljs-string">"1"</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">32767</span>, NumberUtils.toShort(<span class="hljs-string">"32767"</span>));
+        assertEquals((<span class="hljs-type">short</span>) -<span class="hljs-number">32768</span>, NumberUtils.toShort(<span class="hljs-string">"-32768"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToShortInvalid</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">0</span>, NumberUtils.toShort(<span class="hljs-string">"xyz"</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">0</span>, NumberUtils.toShort(<span class="hljs-string">"40000"</span>)); <span class="hljs-comment">// overflow</span>
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToShortWithDefault</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">77</span>, NumberUtils.toShort(<span class="hljs-literal">null</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">77</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">77</span>, NumberUtils.toShort(<span class="hljs-string">""</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">77</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">100</span>, NumberUtils.toShort(<span class="hljs-string">"100"</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">77</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">77</span>, NumberUtils.toShort(<span class="hljs-string">"bad"</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">77</span>));
+    }
+
+    <span class="hljs-comment">// ========== toFloat Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToFloatNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0f</span>, NumberUtils.toFloat(<span class="hljs-literal">null</span>), <span class="hljs-number">0.0f</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToFloatEmpty</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0f</span>, NumberUtils.toFloat(<span class="hljs-string">""</span>), <span class="hljs-number">0.0f</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToFloatValid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1.5f</span>, NumberUtils.toFloat(<span class="hljs-string">"1.5"</span>), <span class="hljs-number">0.0f</span>);
+        assertEquals(<span class="hljs-number">0.1f</span>, NumberUtils.toFloat(<span class="hljs-string">"0.1"</span>), <span class="hljs-number">0.01f</span>);
+        assertEquals(-<span class="hljs-number">99.9f</span>, NumberUtils.toFloat(<span class="hljs-string">"-99.9"</span>), <span class="hljs-number">0.01f</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToFloatInvalid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0f</span>, NumberUtils.toFloat(<span class="hljs-string">"notafloat"</span>), <span class="hljs-number">0.0f</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToFloatWithDefault</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5.5f</span>, NumberUtils.toFloat(<span class="hljs-literal">null</span>, <span class="hljs-number">5.5f</span>), <span class="hljs-number">0.0f</span>);
+        assertEquals(<span class="hljs-number">5.5f</span>, NumberUtils.toFloat(<span class="hljs-string">""</span>, <span class="hljs-number">5.5f</span>), <span class="hljs-number">0.0f</span>);
+        assertEquals(<span class="hljs-number">2.2f</span>, NumberUtils.toFloat(<span class="hljs-string">"2.2"</span>, <span class="hljs-number">5.5f</span>), <span class="hljs-number">0.01f</span>);
+        assertEquals(<span class="hljs-number">5.5f</span>, NumberUtils.toFloat(<span class="hljs-string">"invalid"</span>, <span class="hljs-number">5.5f</span>), <span class="hljs-number">0.0f</span>);
+    }
+
+    <span class="hljs-comment">// ========== toDouble Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToDoubleNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0d</span>, NumberUtils.toDouble(<span class="hljs-literal">null</span>), <span class="hljs-number">0.0d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToDoubleEmpty</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0d</span>, NumberUtils.toDouble(<span class="hljs-string">""</span>), <span class="hljs-number">0.0d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToDoubleValid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1.5d</span>, NumberUtils.toDouble(<span class="hljs-string">"1.5"</span>), <span class="hljs-number">0.0d</span>);
+        assertEquals(<span class="hljs-number">0.001d</span>, NumberUtils.toDouble(<span class="hljs-string">"0.001"</span>), <span class="hljs-number">0.0001d</span>);
+        assertEquals(-<span class="hljs-number">123.456d</span>, NumberUtils.toDouble(<span class="hljs-string">"-123.456"</span>), <span class="hljs-number">0.001d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToDoubleInvalid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0d</span>, NumberUtils.toDouble(<span class="hljs-string">"notadouble"</span>), <span class="hljs-number">0.0d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToDoubleWithDefault</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">9.9d</span>, NumberUtils.toDouble(<span class="hljs-literal">null</span>, <span class="hljs-number">9.9d</span>), <span class="hljs-number">0.0d</span>);
+        assertEquals(<span class="hljs-number">9.9d</span>, NumberUtils.toDouble(<span class="hljs-string">""</span>, <span class="hljs-number">9.9d</span>), <span class="hljs-number">0.0d</span>);
+        assertEquals(<span class="hljs-number">3.3d</span>, NumberUtils.toDouble(<span class="hljs-string">"3.3"</span>, <span class="hljs-number">9.9d</span>), <span class="hljs-number">0.01d</span>);
+        assertEquals(<span class="hljs-number">9.9d</span>, NumberUtils.toDouble(<span class="hljs-string">"bad"</span>, <span class="hljs-number">9.9d</span>), <span class="hljs-number">0.0d</span>);
+    }
+
+    <span class="hljs-comment">// ========== isDigits Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsDigitsNull</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isDigits(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsDigitsEmpty</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isDigits(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsDigitsValid</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isDigits(<span class="hljs-string">"123"</span>));
+        assertTrue(NumberUtils.isDigits(<span class="hljs-string">"0"</span>));
+        assertTrue(NumberUtils.isDigits(<span class="hljs-string">"9876543210"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsDigitsInvalid</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isDigits(<span class="hljs-string">"-123"</span>));
+        assertFalse(NumberUtils.isDigits(<span class="hljs-string">"12.5"</span>));
+        assertFalse(NumberUtils.isDigits(<span class="hljs-string">"12a"</span>));
+        assertFalse(NumberUtils.isDigits(<span class="hljs-string">"abc"</span>));
+    }
+
+    <span class="hljs-comment">// ========== isNumber Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberNull</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isNumber(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberEmpty</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isNumber(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberValidIntegers</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"123"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"-456"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"+789"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"0"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberValidDecimals</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"12.5"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"-3.14"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">".5"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"5."</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberValidScientific</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"1.5E+10"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"1E-5"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"2e3"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"-1.2E+5"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberValidWithTypeQualifiers</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"123L"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"45.6f"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"7.89d"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"123l"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"45.6F"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"7.89D"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberValidHex</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"0x123"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"-0x456"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"0xABC"</span>));
+        assertTrue(NumberUtils.isNumber(<span class="hljs-string">"0xfFf"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsNumberInvalid</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isNumber(<span class="hljs-string">"abc"</span>));
+        assertFalse(NumberUtils.isNumber(<span class="hljs-string">"12.5.6"</span>));
+        assertFalse(NumberUtils.isNumber(<span class="hljs-string">"1E"</span>));
+        assertFalse(NumberUtils.isNumber(<span class="hljs-string">"E5"</span>));
+        assertFalse(NumberUtils.isNumber(<span class="hljs-string">"0x"</span>));
+    }
+
+    <span class="hljs-comment">// ========== isAllZeros Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsAllZerosNull</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isAllZeros(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsAllZerosValidAllZeros</span><span class="hljs-params">()</span> {
+        assertTrue(NumberUtils.isAllZeros(<span class="hljs-string">"0"</span>));
+        assertTrue(NumberUtils.isAllZeros(<span class="hljs-string">"000"</span>));
+        assertTrue(NumberUtils.isAllZeros(<span class="hljs-string">"0000000"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsAllZerosValidNotAllZeros</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isAllZeros(<span class="hljs-string">"1"</span>));
+        assertFalse(NumberUtils.isAllZeros(<span class="hljs-string">"100"</span>));
+        assertFalse(NumberUtils.isAllZeros(<span class="hljs-string">"001"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsAllZerosEmpty</span><span class="hljs-params">()</span> {
+        assertFalse(NumberUtils.isAllZeros(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-comment">// ========== createInteger Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateIntegerNull</span><span class="hljs-params">()</span> {
+        assertNull(NumberUtils.createInteger(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateIntegerValid</span><span class="hljs-params">()</span> {
+        assertEquals(Integer.valueOf(<span class="hljs-number">123</span>), NumberUtils.createInteger(<span class="hljs-string">"123"</span>));
+        assertEquals(Integer.valueOf(-<span class="hljs-number">456</span>), NumberUtils.createInteger(<span class="hljs-string">"-456"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateIntegerHex</span><span class="hljs-params">()</span> {
+        assertEquals(Integer.valueOf(<span class="hljs-number">0xABC</span>), NumberUtils.createInteger(<span class="hljs-string">"0xABC"</span>));
+        assertEquals(Integer.valueOf(<span class="hljs-number">0x123</span>), NumberUtils.createInteger(<span class="hljs-string">"0x123"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateIntegerOctal</span><span class="hljs-params">()</span> {
+        assertEquals(Integer.valueOf(<span class="hljs-number">010</span>), NumberUtils.createInteger(<span class="hljs-string">"010"</span>));
+        assertEquals(Integer.valueOf(<span class="hljs-number">077</span>), NumberUtils.createInteger(<span class="hljs-string">"077"</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateIntegerInvalid</span><span class="hljs-params">()</span> {
+        NumberUtils.createInteger(<span class="hljs-string">"notanumber"</span>);
+    }
+
+    <span class="hljs-comment">// ========== createLong Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateLongNull</span><span class="hljs-params">()</span> {
+        assertNull(NumberUtils.createLong(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateLongValid</span><span class="hljs-params">()</span> {
+        assertEquals(Long.valueOf(<span class="hljs-number">999L</span>), NumberUtils.createLong(<span class="hljs-string">"999"</span>));
+        assertEquals(Long.valueOf(-<span class="hljs-number">777L</span>), NumberUtils.createLong(<span class="hljs-string">"-777"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateLongHex</span><span class="hljs-params">()</span> {
+        assertEquals(Long.valueOf(<span class="hljs-number">0x123L</span>), NumberUtils.createLong(<span class="hljs-string">"0x123"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateLongOctal</span><span class="hljs-params">()</span> {
+        assertEquals(Long.valueOf(<span class="hljs-number">0755L</span>), NumberUtils.createLong(<span class="hljs-string">"0755"</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateLongInvalid</span><span class="hljs-params">()</span> {
+        NumberUtils.createLong(<span class="hljs-string">"badnumber"</span>);
+    }
+
+    <span class="hljs-comment">// ========== createFloat Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateFloatNull</span><span class="hljs-params">()</span> {
+        assertNull(NumberUtils.createFloat(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateFloatValid</span><span class="hljs-params">()</span> {
+        assertEquals(Float.valueOf(<span class="hljs-number">1.5f</span>), NumberUtils.createFloat(<span class="hljs-string">"1.5"</span>));
+        assertEquals(Float.valueOf(-<span class="hljs-number">2.5f</span>), NumberUtils.createFloat(<span class="hljs-string">"-2.5"</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateFloatInvalid</span><span class="hljs-params">()</span> {
+        NumberUtils.createFloat(<span class="hljs-string">"notfloat"</span>);
+    }
+
+    <span class="hljs-comment">// ========== createDouble Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateDoubleNull</span><span class="hljs-params">()</span> {
+        assertNull(NumberUtils.createDouble(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateDoubleValid</span><span class="hljs-params">()</span> {
+        assertEquals(Double.valueOf(<span class="hljs-number">3.14d</span>), NumberUtils.createDouble(<span class="hljs-string">"3.14"</span>));
+        assertEquals(Double.valueOf(-<span class="hljs-number">99.99d</span>), NumberUtils.createDouble(<span class="hljs-string">"-99.99"</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateDoubleInvalid</span><span class="hljs-params">()</span> {
+        NumberUtils.createDouble(<span class="hljs-string">"notdouble"</span>);
+    }
+
+    <span class="hljs-comment">// ========== createBigInteger Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigIntegerNull</span><span class="hljs-params">()</span> {
+        assertNull(NumberUtils.createBigInteger(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigIntegerValid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigInteger</span>(<span class="hljs-string">"123456789"</span>), NumberUtils.createBigInteger(<span class="hljs-string">"123456789"</span>));
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigInteger</span>(<span class="hljs-string">"-987654321"</span>), NumberUtils.createBigInteger(<span class="hljs-string">"-987654321"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigIntegerHex</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigInteger</span>(<span class="hljs-string">"ABC"</span>, <span class="hljs-number">16</span>), NumberUtils.createBigInteger(<span class="hljs-string">"0xABC"</span>));
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigInteger</span>(<span class="hljs-string">"123"</span>, <span class="hljs-number">16</span>), NumberUtils.createBigInteger(<span class="hljs-string">"#123"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigIntegerOctal</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigInteger</span>(<span class="hljs-string">"123"</span>, <span class="hljs-number">8</span>), NumberUtils.createBigInteger(<span class="hljs-string">"0123"</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigIntegerInvalid</span><span class="hljs-params">()</span> {
+        NumberUtils.createBigInteger(<span class="hljs-string">"notabigint"</span>);
+    }
+
+    <span class="hljs-comment">// ========== createBigDecimal Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigDecimalNull</span><span class="hljs-params">()</span> {
+        assertNull(NumberUtils.createBigDecimal(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigDecimalValid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-string">"123.456"</span>), NumberUtils.createBigDecimal(<span class="hljs-string">"123.456"</span>));
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-string">"-99.99"</span>), NumberUtils.createBigDecimal(<span class="hljs-string">"-99.99"</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigDecimalBlank</span><span class="hljs-params">()</span> {
+        NumberUtils.createBigDecimal(<span class="hljs-string">"   "</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigDecimalDoubleMinus</span><span class="hljs-params">()</span> {
+        NumberUtils.createBigDecimal(<span class="hljs-string">"--123"</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateBigDecimalInvalid</span><span class="hljs-params">()</span> {
+        NumberUtils.createBigDecimal(<span class="hljs-string">"notbigdec"</span>);
+    }
+
+    <span class="hljs-comment">// ========== createNumber Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberNull</span><span class="hljs-params">()</span> {
+        assertNull(NumberUtils.createNumber(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberBlank</span><span class="hljs-params">()</span> {
+        NumberUtils.createNumber(<span class="hljs-string">"   "</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberInteger</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Number</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> NumberUtils.createNumber(<span class="hljs-string">"42"</span>);
+        assertEquals(Integer.valueOf(<span class="hljs-number">42</span>), n);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberLong</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Number</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> NumberUtils.createNumber(<span class="hljs-string">"123456789012L"</span>);
+        assertTrue(n <span class="hljs-keyword">instanceof</span> Long);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberFloat</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Number</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> NumberUtils.createNumber(<span class="hljs-string">"1.5f"</span>);
+        assertTrue(n <span class="hljs-keyword">instanceof</span> Float);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberDouble</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Number</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> NumberUtils.createNumber(<span class="hljs-string">"1.5d"</span>);
+        assertTrue(n <span class="hljs-keyword">instanceof</span> Double);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberHexInteger</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Number</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> NumberUtils.createNumber(<span class="hljs-string">"0xFF"</span>);
+        assertEquals(Integer.valueOf(<span class="hljs-number">0xFF</span>), n);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberHexLong</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Number</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> NumberUtils.createNumber(<span class="hljs-string">"0xFFFFFFFF"</span>);
+        assertTrue(n <span class="hljs-keyword">instanceof</span> Long);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberOctal</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Number</span> <span class="hljs-variable">n</span> <span class="hljs-operator">=</span> NumberUtils.createNumber(<span class="hljs-string">"077"</span>);
+        assertEquals(Integer.valueOf(<span class="hljs-number">63</span>), n);
+    }
+
+    <span class="hljs-meta">@Test(expected = NumberFormatException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateNumberInvalid</span><span class="hljs-params">()</span> {
+        NumberUtils.createNumber(<span class="hljs-string">"invalid"</span>);
+    }
+
+    <span class="hljs-comment">// ========== min(long, long, long) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinLongThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1L</span>, NumberUtils.min(<span class="hljs-number">5L</span>, <span class="hljs-number">1L</span>, <span class="hljs-number">3L</span>));
+        assertEquals(-<span class="hljs-number">100L</span>, NumberUtils.min(<span class="hljs-number">0L</span>, <span class="hljs-number">50L</span>, -<span class="hljs-number">100L</span>));
+        assertEquals(Long.MIN_VALUE, NumberUtils.min(<span class="hljs-number">0L</span>, Long.MIN_VALUE, Long.MAX_VALUE));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinLongAllSame</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">42L</span>, NumberUtils.min(<span class="hljs-number">42L</span>, <span class="hljs-number">42L</span>, <span class="hljs-number">42L</span>));
+    }
+
+    <span class="hljs-comment">// ========== min(int, int, int) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinIntThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1</span>, NumberUtils.min(<span class="hljs-number">5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>));
+        assertEquals(-<span class="hljs-number">50</span>, NumberUtils.min(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>, -<span class="hljs-number">50</span>));
+        assertEquals(Integer.MIN_VALUE, NumberUtils.min(<span class="hljs-number">0</span>, Integer.MIN_VALUE, Integer.MAX_VALUE));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinIntAllSame</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">7</span>, NumberUtils.min(<span class="hljs-number">7</span>, <span class="hljs-number">7</span>, <span class="hljs-number">7</span>));
+    }
+
+    <span class="hljs-comment">// ========== min(short, short, short) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinShortThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">2</span>, NumberUtils.min((<span class="hljs-type">short</span>) <span class="hljs-number">5</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">2</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">8</span>));
+        assertEquals(Short.MIN_VALUE, NumberUtils.min((<span class="hljs-type">short</span>) <span class="hljs-number">0</span>, Short.MIN_VALUE, Short.MAX_VALUE));
+    }
+
+    <span class="hljs-comment">// ========== min(byte, byte, byte) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinByteThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, NumberUtils.min((<span class="hljs-type">byte</span>) <span class="hljs-number">10</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">7</span>));
+        assertEquals(Byte.MIN_VALUE, NumberUtils.min((<span class="hljs-type">byte</span>) <span class="hljs-number">0</span>, Byte.MIN_VALUE, Byte.MAX_VALUE));
+    }
+
+    <span class="hljs-comment">// ========== min(double, double, double) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinDoubleThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1.5d</span>, NumberUtils.min(<span class="hljs-number">5.0d</span>, <span class="hljs-number">1.5d</span>, <span class="hljs-number">3.0d</span>), <span class="hljs-number">0.0d</span>);
+        assertEquals(-<span class="hljs-number">99.9d</span>, NumberUtils.min(<span class="hljs-number">0.0d</span>, <span class="hljs-number">50.5d</span>, -<span class="hljs-number">99.9d</span>), <span class="hljs-number">0.01d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinDoubleWithNaN</span><span class="hljs-params">()</span> {
+        assertTrue(Double.isNaN(NumberUtils.min(<span class="hljs-number">5.0d</span>, Double.NaN, <span class="hljs-number">3.0d</span>)));
+    }
+
+    <span class="hljs-comment">// ========== min(float, float, float) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinFloatThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.5f</span>, NumberUtils.min(<span class="hljs-number">1.0f</span>, <span class="hljs-number">0.5f</span>, <span class="hljs-number">2.0f</span>), <span class="hljs-number">0.0f</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinFloatWithNaN</span><span class="hljs-params">()</span> {
+        assertTrue(Float.isNaN(NumberUtils.min(<span class="hljs-number">1.0f</span>, Float.NaN, <span class="hljs-number">2.0f</span>)));
+    }
+
+    <span class="hljs-comment">// ========== max(long, long, long) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxLongThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5L</span>, NumberUtils.max(<span class="hljs-number">5L</span>, <span class="hljs-number">1L</span>, <span class="hljs-number">3L</span>));
+        assertEquals(<span class="hljs-number">100L</span>, NumberUtils.max(<span class="hljs-number">0L</span>, <span class="hljs-number">50L</span>, <span class="hljs-number">100L</span>));
+        assertEquals(Long.MAX_VALUE, NumberUtils.max(<span class="hljs-number">0L</span>, Long.MIN_VALUE, Long.MAX_VALUE));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxLongAllSame</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">99L</span>, NumberUtils.max(<span class="hljs-number">99L</span>, <span class="hljs-number">99L</span>, <span class="hljs-number">99L</span>));
+    }
+
+    <span class="hljs-comment">// ========== max(int, int, int) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxIntThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5</span>, NumberUtils.max(<span class="hljs-number">5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>));
+        assertEquals(<span class="hljs-number">100</span>, NumberUtils.max(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>, -<span class="hljs-number">50</span>));
+        assertEquals(Integer.MAX_VALUE, NumberUtils.max(<span class="hljs-number">0</span>, Integer.MIN_VALUE, Integer.MAX_VALUE));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxIntAllSame</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">15</span>, NumberUtils.max(<span class="hljs-number">15</span>, <span class="hljs-number">15</span>, <span class="hljs-number">15</span>));
+    }
+
+    <span class="hljs-comment">// ========== max(short, short, short) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxShortThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">8</span>, NumberUtils.max((<span class="hljs-type">short</span>) <span class="hljs-number">5</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">2</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">8</span>));
+        assertEquals(Short.MAX_VALUE, NumberUtils.max((<span class="hljs-type">short</span>) <span class="hljs-number">0</span>, Short.MIN_VALUE, Short.MAX_VALUE));
+    }
+
+    <span class="hljs-comment">// ========== max(byte, byte, byte) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxByteThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">10</span>, NumberUtils.max((<span class="hljs-type">byte</span>) <span class="hljs-number">10</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">7</span>));
+        assertEquals(Byte.MAX_VALUE, NumberUtils.max((<span class="hljs-type">byte</span>) <span class="hljs-number">0</span>, Byte.MIN_VALUE, Byte.MAX_VALUE));
+    }
+
+    <span class="hljs-comment">// ========== max(double, double, double) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxDoubleThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5.0d</span>, NumberUtils.max(<span class="hljs-number">5.0d</span>, <span class="hljs-number">1.5d</span>, <span class="hljs-number">3.0d</span>), <span class="hljs-number">0.0d</span>);
+        assertEquals(<span class="hljs-number">50.5d</span>, NumberUtils.max(<span class="hljs-number">0.0d</span>, <span class="hljs-number">50.5d</span>, -<span class="hljs-number">99.9d</span>), <span class="hljs-number">0.01d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxDoubleWithNaN</span><span class="hljs-params">()</span> {
+        assertTrue(Double.isNaN(NumberUtils.max(<span class="hljs-number">5.0d</span>, Double.NaN, <span class="hljs-number">3.0d</span>)));
+    }
+
+    <span class="hljs-comment">// ========== max(float, float, float) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxFloatThreeValues</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">2.0f</span>, NumberUtils.max(<span class="hljs-number">1.0f</span>, <span class="hljs-number">0.5f</span>, <span class="hljs-number">2.0f</span>), <span class="hljs-number">0.0f</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxFloatWithNaN</span><span class="hljs-params">()</span> {
+        assertTrue(Float.isNaN(NumberUtils.max(<span class="hljs-number">1.0f</span>, Float.NaN, <span class="hljs-number">2.0f</span>)));
+    }
+
+    <span class="hljs-comment">// ========== min(long[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinLongArray</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1L</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] { <span class="hljs-number">5L</span>, <span class="hljs-number">1L</span>, <span class="hljs-number">3L</span> }));
+        assertEquals(-<span class="hljs-number">100L</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] { <span class="hljs-number">0L</span>, <span class="hljs-number">50L</span>, -<span class="hljs-number">100L</span> }));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinLongArraySingleElement</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">42L</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] { <span class="hljs-number">42L</span> }));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinLongArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.min((<span class="hljs-type">long</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinLongArrayEmpty</span><span class="hljs-params">()</span> {
+        NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] {});
+    }
+
+    <span class="hljs-comment">// ========== min(int[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinIntArray</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] { <span class="hljs-number">5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span> }));
+        assertEquals(-<span class="hljs-number">50</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] { <span class="hljs-number">0</span>, <span class="hljs-number">100</span>, -<span class="hljs-number">50</span> }));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinIntArraySingleElement</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">7</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] { <span class="hljs-number">7</span> }));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinIntArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.min((<span class="hljs-type">int</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinIntArrayEmpty</span><span class="hljs-params">()</span> {
+        NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {});
+    }
+
+    <span class="hljs-comment">// ========== min(short[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinShortArray</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">2</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">short</span>[] { <span class="hljs-number">5</span>, <span class="hljs-number">2</span>, <span class="hljs-number">8</span> }));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinShortArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.min((<span class="hljs-type">short</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinShortArrayEmpty</span><span class="hljs-params">()</span> {
+        NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">short</span>[] {});
+    }
+
+    <span class="hljs-comment">// ========== min(byte[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinByteArray</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[] { <span class="hljs-number">10</span>, <span class="hljs-number">3</span>, <span class="hljs-number">7</span> }));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinByteArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.min((<span class="hljs-type">byte</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinByteArrayEmpty</span><span class="hljs-params">()</span> {
+        NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[] {});
+    }
+
+    <span class="hljs-comment">// ========== min(double[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinDoubleArray</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">1.5d</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">double</span>[] { <span class="hljs-number">5.0d</span>, <span class="hljs-number">1.5d</span>, <span class="hljs-number">3.0d</span> }), <span class="hljs-number">0.0d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinDoubleArrayWithNaN</span><span class="hljs-params">()</span> {
+        assertTrue(Double.isNaN(NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">double</span>[] { <span class="hljs-number">5.0d</span>, Double.NaN, <span class="hljs-number">3.0d</span> })));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinDoubleArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.min((<span class="hljs-type">double</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinDoubleArrayEmpty</span><span class="hljs-params">()</span> {
+        NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">double</span>[] {});
+    }
+
+    <span class="hljs-comment">// ========== min(float[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinFloatArray</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.5f</span>, NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">float</span>[] { <span class="hljs-number">1.0f</span>, <span class="hljs-number">0.5f</span>, <span class="hljs-number">2.0f</span> }), <span class="hljs-number">0.0f</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinFloatArrayWithNaN</span><span class="hljs-params">()</span> {
+        assertTrue(Float.isNaN(NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">float</span>[] { <span class="hljs-number">1.0f</span>, Float.NaN, <span class="hljs-number">2.0f</span> })));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinFloatArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.min((<span class="hljs-type">float</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinFloatArrayEmpty</span><span class="hljs-params">()</span> {
+        NumberUtils.min(<span class="hljs-keyword">new</span> <span class="hljs-title class_">float</span>[] {});
+    }
+
+    <span class="hljs-comment">// ========== max(long[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxLongArray</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5L</span>, NumberUtils.max(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] { <span class="hljs-number">5L</span>, <span class="hljs-number">1L</span>, <span class="hljs-number">3L</span> }));
+        assertEquals(<span class="hljs-number">100L</span>, NumberUtils.max(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] { <span class="hljs-number">0L</span>, <span class="hljs-number">50L</span>, <span class="hljs-number">100L</span> }));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxLongArraySingleElement</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">99L</span>, NumberUtils.max(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] { <span class="hljs-number">99L</span> }));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxLongArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.max((<span class="hljs-type">long</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxLongArrayEmpty</span><span class="hljs-params">()</span> {
+        NumberUtils.max(<span class="hljs-keyword">new</span> <span class="hljs-title class_">long</span>[] {});
+    }
+
+    <span class="hljs-comment">// ========== max(int[]) Tests ==========</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxIntArray</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5</span>, NumberUtils.max(<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] { <span class="hljs-number">5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span> }));
+        assertEquals(<span class="hljs-number">100</span>, NumberUtils.max(<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] { <span class="hljs-number">0</span>, <span class="hljs-number">100</span>, -<span class="hljs-number">50</span> }));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxIntArraySingleElement</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">15</span>, NumberUtils.max(<span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] { <span class="hljs-number">15</span> }));
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxIntArrayNull</span><span class="hljs-params">()</span> {
+        NumberUtils.max((<span class="hljs-type">int</span>[]) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMaxIntArrayEmpty</span><span class="hljs-params">()</span></code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

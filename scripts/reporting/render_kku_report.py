@@ -108,8 +108,6 @@ def build(source, output, font, bold):
         flush_table()
         if line.startswith('#'):
             flush_paragraph()
-            if line.startswith(('## ภาคผนวก', '## การซ่อมและต้นทุน', '## อุปสรรคและบทเรียน', '## แหล่งข้อมูลและการทำซ้ำ')):
-                story.append(PageBreak())
             next_paragraph_keeps_table = line.startswith('## เปรียบเทียบสี่วิธี')
             level = len(line) - len(line.lstrip('#'))
             story.append(Paragraph(clean(line.lstrip('# ')), title if level == 1 else heading))

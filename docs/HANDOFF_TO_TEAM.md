@@ -1,3 +1,5 @@
+> Current checkpoint: อ่าน docs/SUBMISSION_READY_20261002.md และ delivery-status.json ก่อน เอกสารด้านล่างเป็น handoff/checkpoint เก่า เก็บไว้เป็นประวัติ
+
 # Handoff งาน SQA รอบที่ 2 — กลุ่ม 14
 
 สถานะอ้างอิงผลวันที่ 1 ตุลาคม 2026 เวลาไทย งานข้อ 2.2 (10 คะแนน)

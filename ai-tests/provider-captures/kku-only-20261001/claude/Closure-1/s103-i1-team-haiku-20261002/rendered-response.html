@@ -1,0 +1,39 @@
+<h1>Missing API Specification</h1>
+<p>I cannot generate the requested JUnit tests for <code>com.google.javascript.jscomp.RemoveUnusedVars</code> because critical APIs and dependencies are not available in the provided context:</p>
+<h2>Missing Required Dependencies</h2>
+<ol>
+<li><strong><code>com.google.javascript.jscomp.AbstractCompiler</code></strong> - Constructor and methods referenced but not supplied</li>
+<li><strong><code>com.google.javascript.jscomp.Scope</code></strong> and <strong><code>Scope.Var</code></strong> - Core types for variable tracking; no definition provided</li>
+<li><strong><code>com.google.javascript.rhino.Node</code></strong> - AST node representation; no definition provided</li>
+<li><strong><code>com.google.javascript.jscomp.SimpleDefinitionFinder</code></strong> - Used in process methods; not supplied</li>
+<li><strong><code>com.google.javascript.jscomp.SyntacticScopeCreator</code></strong> - Instantiated in production code; not supplied</li>
+<li><strong><code>com.google.javascript.jscomp.CodingConvention</code></strong> - Referenced extensively; not supplied</li>
+</ol>
+<h2>Missing Test Infrastructure</h2>
+<p>The build configuration indicates <strong>JUnit 3.x or 4.x</strong> (based on <code>test.class</code> pattern and Ant structure), but:</p>
+<ul>
+<li>No explicit JUnit version specified in <code>build.xml</code> or dependency files</li>
+<li>Test framework initialization patterns unclear</li>
+<li>Mock/stub requirements for <code>AbstractCompiler</code> and related interfaces not documented</li>
+</ul>
+<h2>Build System Constraints</h2>
+<ul>
+<li>Target Java version: <strong>1.6</strong> (per <code>ant.build.javac.target</code>)</li>
+<li>Test invocation uses Ant's <code>&lt;junit&gt;</code> task with forking enabled</li>
+<li>No Maven POM provided for dependency resolution</li>
+</ul>
+<h2>Required Information to Proceed</h2>
+<p>To generate valid, compiling regression tests, please provide:</p>
+<ol>
+<li><strong>Source files</strong> for <code>AbstractCompiler</code>, <code>Scope</code>, <code>Scope.Var</code>, <code>Node</code>, <code>SimpleDefinitionFinder</code>, <code>SyntacticScopeCreator</code>, <code>CodingConvention</code></li>
+<li><strong>Explicit JUnit version</strong> (3.x vs 4.x) and test base classes</li>
+<li><strong>Mock/test fixture patterns</strong> used in existing tests in the <code>test/</code> directory</li>
+<li><strong>Sample test class</strong> showing how to instantiate <code>RemoveUnusedVars</code> with its dependencies in this project</li>
+</ol>
+<p>Alternatively, if test sources already exist in <code>test/</code>, please supply an existing test for this class to establish the expected patterns and available test utilities.</p>
+<hr>
+<p><strong>References:</strong></p>
+<ul>
+<li>Build configuration: <code>build.xml</code> (lines 1–6 source level, test target definition)</li>
+<li>Production source: Lines 1–75 of <code>RemoveUnusedVars.java</code> (constructor signatures, dependency declarations)</li>
+</ul>

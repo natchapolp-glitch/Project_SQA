@@ -1,5 +1,7 @@
 # SQA round 2: KKU-only continuation, 1 October 2026
 
+Current checkpoint: `docs/SUBMISSION_READY_20261002.md`. Collection stopped at owner request after Claude quota reached 100%; prepare from the captured results. Current deliverables use suffix `_20261002`. Historical checkpoints remain separate.
+
 The owner changed the AI constraint: use Claude and Gemini only through
 https://gen.ai.kku.ac.th/chat. The original handoff remains as historical context.
 New AI requests explicitly select the Claude or Gemini agent. Never select Auto
@@ -92,9 +94,9 @@ After full family audits, refresh status and build descriptive deliverables:
 
 ```bash
 python3 scripts/study/kku_only.py status
-python3 scripts/reporting/audit_kku_provenance.py
-python3 scripts/reporting/build_kku_analysis.py
-python3 scripts/reporting/render_kku_report.py
+python3 scripts/reporting/audit_kku_provenance_v2.py
+python3 scripts/reporting/build_kku_analysis_v3.py
+python3 scripts/reporting/render_kku_report.py --source output/kku-only-20261001/report-20261002.md --output output/kku-only-20261001/SQA_Round2_KKU_Only_20261002.pdf
 ```
 
 The PDF/slide builders use bundled Windows artifact runtimes. See their sources
@@ -108,12 +110,10 @@ tests and buggy has one. It does not create another primary experiment.
 Use `presentation/demo-guide-kku-only.md` for the walkthrough.
 
 Public Git omits full provider screenshots because their sidebar can show
-unrelated chat history. Complete originals remain in the private local evidence
-ZIP; rechecking all capture files requires that complete package. `.gitattributes`
+unrelated chat history. Available originals remain in the private local evidence
+ZIP. Teammate screenshots omitted from Git were not received; the current provenance receipt discloses those missing images. Rechecking all capture files requires the missing teammate originals as well. `.gitattributes`
 disables Git EOL conversion so frozen hashes retain their exact bytes.
 
 The owner requested notice before important actions. Announce tool installation,
 study/protocol changes, batches of AI submissions and publication before acting.
-Final deliverables and submission remain pending until evaluation, audit,
-rendering and packaging are complete. The exact Classroom deadline and destination
-still need verification; 2 October comes from the handoff, not the assignment PDF.
+Final delivery status is in `delivery-status.json`; local artifacts do not prove Classroom submission. The owner confirmed submission before midnight on 2 October 2026 Bangkok time and will submit Classroom themselves. No Classroom destination is needed by this agent. This deadline comes from the owner, not a new claim about the assignment PDF.

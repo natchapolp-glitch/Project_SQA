@@ -1,6 +1,8 @@
-## Latest test update: 174/204 — Claude Haiku daily limit reached
+## Latest submission checkpoint: 178/204 — 2 October 2026
 
-KKU Claude is 21/51; Gemini and both algorithms are 51/51 each. The natchapol continuation adds five completed runs and 127 retained methods. Cli/102 detects the selected bug. Claude reached 100% daily usage. See `docs/CLAUDE_HAIKU_NATCHAPOL_CHECKPOINT_20261002.md`. 30 Claude identities remain incomplete. Report/slides are earlier checkpoints; Latest experiment and handoff are published on branch `test`; private screenshots remain local.
+CMA-ES, FSCS-ART and KKU Gemini: 51/51 each; KKU Claude: 25/51. Experiment incomplete: 26 identities remain. Final current PDF/deck use suffix `_20261002`; local private evidence ZIP uses `_20261002_Evidence`. See `docs/SUBMISSION_READY_20261002.md` and `output/kku-only-20261001/delivery-status.json`.
+
+Completed execution evidence is audited. Provenance still has 54 missing teammate capture screenshots; only originals available on this machine are packaged. No missing evidence recreated. Owner will submit Classroom themselves before midnight Bangkok time. Historical checkpoint filenames and documents below do not describe the latest state.
 
 # SQA Project 2.2 — CP353201
 
@@ -19,7 +21,7 @@ local processing versions, commands and runtime paths. The new report/deck
 do not replace or reinterpret the historical report/deck as KKU-only results.
 
 Run `python3 scripts/study/kku_only.py status` and
-`python3 scripts/reporting/audit_kku_provenance.py` to refresh/check the linked
+`python3 scripts/reporting/audit_kku_provenance_v2.py` to refresh/check the linked
 manifest. Completed fresh suites also require `audit_kku_only_v4.py --results
 results/study/kku-only-20261001/<family> --output
 output/kku-only-20261001/<family>-evidence-audit.json`. Reused original records

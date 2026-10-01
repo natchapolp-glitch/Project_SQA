@@ -1,0 +1,37 @@
+Missing API Specification
+
+I cannot generate the requested JUnit tests for com.google.javascript.jscomp.RemoveUnusedVars because critical APIs and dependencies are not available in the provided context:
+
+Missing Required Dependencies
+com.google.javascript.jscomp.AbstractCompiler - Constructor and methods referenced but not supplied
+com.google.javascript.jscomp.Scope and Scope.Var - Core types for variable tracking; no definition provided
+com.google.javascript.rhino.Node - AST node representation; no definition provided
+com.google.javascript.jscomp.SimpleDefinitionFinder - Used in process methods; not supplied
+com.google.javascript.jscomp.SyntacticScopeCreator - Instantiated in production code; not supplied
+com.google.javascript.jscomp.CodingConvention - Referenced extensively; not supplied
+Missing Test Infrastructure
+
+The build configuration indicates JUnit 3.x or 4.x (based on test.class pattern and Ant structure), but:
+
+No explicit JUnit version specified in build.xml or dependency files
+Test framework initialization patterns unclear
+Mock/stub requirements for AbstractCompiler and related interfaces not documented
+Build System Constraints
+Target Java version: 1.6 (per ant.build.javac.target)
+Test invocation uses Ant's <junit> task with forking enabled
+No Maven POM provided for dependency resolution
+Required Information to Proceed
+
+To generate valid, compiling regression tests, please provide:
+
+Source files for AbstractCompiler, Scope, Scope.Var, Node, SimpleDefinitionFinder, SyntacticScopeCreator, CodingConvention
+Explicit JUnit version (3.x vs 4.x) and test base classes
+Mock/test fixture patterns used in existing tests in the test/ directory
+Sample test class showing how to instantiate RemoveUnusedVars with its dependencies in this project
+
+Alternatively, if test sources already exist in test/, please supply an existing test for this class to establish the expected patterns and available test utilities.
+
+References:
+
+Build configuration: build.xml (lines 1–6 source level, test target definition)
+Production source: Lines 1–75 of RemoveUnusedVars.java (constructor signatures, dependency declarations)

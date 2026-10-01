@@ -1,0 +1,623 @@
+<p>I'll analyze the <code>InvocationMatcher</code> class and create comprehensive deterministic regression tests. Based on the build configuration, this project uses JUnit 4.10 and Hamcrest 1.1.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">org/mockito/internal/invocation/InvocationMatcherTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.mockito.internal.invocation;
+
+<span class="hljs-keyword">import</span> java.lang.reflect.Method;
+<span class="hljs-keyword">import</span> java.util.ArrayList;
+<span class="hljs-keyword">import</span> java.util.Collections;
+<span class="hljs-keyword">import</span> java.util.LinkedList;
+<span class="hljs-keyword">import</span> java.util.List;
+
+<span class="hljs-keyword">import</span> org.hamcrest.Matcher;
+<span class="hljs-keyword">import</span> org.hamcrest.Matchers;
+<span class="hljs-keyword">import</span> org.junit.Before;
+<span class="hljs-keyword">import</span> org.junit.Test;
+<span class="hljs-keyword">import</span> org.mockito.internal.matchers.CapturesArguments;
+<span class="hljs-keyword">import</span> org.mockito.internal.matchers.MatcherDecorator;
+<span class="hljs-keyword">import</span> org.mockito.internal.matchers.VarargMatcher;
+<span class="hljs-keyword">import</span> org.mockito.invocation.Invocation;
+<span class="hljs-keyword">import</span> org.mockito.invocation.Location;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.mockito.Mockito.*;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">InvocationMatcherTest</span> {
+
+    <span class="hljs-keyword">private</span> Invocation invocation;
+    <span class="hljs-keyword">private</span> Invocation anotherInvocation;
+    <span class="hljs-keyword">private</span> InvocationMatcher invocationMatcher;
+
+    <span class="hljs-meta">@Before</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-comment">// Create mock invocations for testing</span>
+        invocation = mock(Invocation.class);
+        anotherInvocation = mock(Invocation.class);
+    }
+
+    <span class="hljs-comment">// ============ Constructor Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorWithInvocationOnly</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>, <span class="hljs-string">"test"</span>});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertNotNull(matcher);
+        assertEquals(invocation, matcher.getInvocation());
+        assertNotNull(matcher.getMatchers());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorWithInvocationAndEmptyMatchers</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        List&lt;Matcher&gt; matchers = Collections.emptyList();
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+
+        assertNotNull(matcher);
+        assertEquals(invocation, matcher.getInvocation());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorWithInvocationAndMatchers</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        List&lt;Matcher&gt; matchers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        matchers.add(Matchers.any());
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+
+        assertNotNull(matcher);
+        assertEquals(invocation, matcher.getInvocation());
+        assertEquals(matchers, matcher.getMatchers());
+    }
+
+    <span class="hljs-comment">// ============ Getter Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetMethod</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">expectedMethod</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(expectedMethod);
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertEquals(expectedMethod, matcher.getMethod());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetInvocation</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertSame(invocation, matcher.getInvocation());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetMatchers</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        List&lt;Matcher&gt; matchers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        matchers.add(Matchers.equalTo(<span class="hljs-number">1</span>));
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+
+        assertEquals(matchers, matcher.getMatchers());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetLocation</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Location</span> <span class="hljs-variable">location</span> <span class="hljs-operator">=</span> mock(Location.class);
+        <span class="hljs-keyword">when</span>(invocation.getLocation()).thenReturn(location);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertEquals(location, matcher.getLocation());
+    }
+
+    <span class="hljs-comment">// ============ toString Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToString</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>());
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+        <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> matcher.toString();
+
+        assertNotNull(result);
+        assertTrue(result.length() &gt; <span class="hljs-number">0</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToStringWithArguments</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"arg1"</span>, <span class="hljs-number">42</span>});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>());
+
+        List&lt;Matcher&gt; matchers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        matchers.add(Matchers.any());
+        matchers.add(Matchers.any());
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+
+        <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> matcher.toString();
+        assertNotNull(result);
+    }
+
+    <span class="hljs-comment">// ============ hasSameMethod Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSameMethodTrue</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertTrue(matcher.hasSameMethod(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSameMethodFalseByName</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method1</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method2</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"hashCode"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method1);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method2);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.hasSameMethod(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSameMethodFalseByParameterCount</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method1</span> <span class="hljs-operator">=</span> String.class.getMethod(<span class="hljs-string">"substring"</span>, <span class="hljs-type">int</span>.class);
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method2</span> <span class="hljs-operator">=</span> String.class.getMethod(<span class="hljs-string">"substring"</span>, <span class="hljs-type">int</span>.class, <span class="hljs-type">int</span>.class);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method1);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method2);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.hasSameMethod(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSameMethodFalseByParameterType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-comment">// Use String.compareTo(String) vs a mock method with different parameter types</span>
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method1</span> <span class="hljs-operator">=</span> String.class.getMethod(<span class="hljs-string">"compareTo"</span>, String.class);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method1);
+        
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method2</span> <span class="hljs-operator">=</span> mock(Method.class);
+        <span class="hljs-keyword">when</span>(method2.getName()).thenReturn(<span class="hljs-string">"compareTo"</span>);
+        <span class="hljs-keyword">when</span>(method2.getParameterTypes()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>[]{Object.class});
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method2);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"test"</span>});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.hasSameMethod(anotherInvocation));
+    }
+
+    <span class="hljs-comment">// ============ hasSimilarMethod Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSimilarMethodTrue</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(<span class="hljs-string">"mock"</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMock()).thenReturn(<span class="hljs-string">"mock"</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.isVerified()).thenReturn(<span class="hljs-literal">false</span>);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertTrue(matcher.hasSimilarMethod(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSimilarMethodFalseWhenVerified</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(<span class="hljs-string">"mock"</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMock()).thenReturn(<span class="hljs-string">"mock"</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.isVerified()).thenReturn(<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.hasSimilarMethod(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSimilarMethodFalseWhenDifferentMock</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method);
+        <span class="hljs-type">Object</span> <span class="hljs-variable">mock1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>();
+        <span class="hljs-type">Object</span> <span class="hljs-variable">mock2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>();
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(mock1);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMock()).thenReturn(mock2);
+        <span class="hljs-keyword">when</span>(anotherInvocation.isVerified()).thenReturn(<span class="hljs-literal">false</span>);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.hasSimilarMethod(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSimilarMethodFalseWhenDifferentMethodName</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method1</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method2</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"hashCode"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method1);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method2);
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(<span class="hljs-string">"mock"</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMock()).thenReturn(<span class="hljs-string">"mock"</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.isVerified()).thenReturn(<span class="hljs-literal">false</span>);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.hasSimilarMethod(anotherInvocation));
+    }
+
+    <span class="hljs-comment">// ============ matches Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMatchesTrueWithSameMockAndMethod</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">mock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>();
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(mock);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMock()).thenReturn(mock);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertTrue(matcher.matches(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMatchesFalseWithDifferentMock</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">mock1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>();
+        <span class="hljs-type">Object</span> <span class="hljs-variable">mock2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>();
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(mock1);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMock()).thenReturn(mock2);
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.matches(anotherInvocation));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMatchesFalseWithDifferentMethod</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">mock</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>();
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method1</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method2</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"hashCode"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(method1);
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(mock);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(method2);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMock()).thenReturn(mock);
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        assertFalse(matcher.matches(anotherInvocation));
+    }
+
+    <span class="hljs-comment">// ============ createFrom Static Method Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateFromEmptyList</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        List&lt;Invocation&gt; invocations = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+
+        List&lt;InvocationMatcher&gt; result = InvocationMatcher.createFrom(invocations);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateFromSingleInvocation</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+        
+        List&lt;Invocation&gt; invocations = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        invocations.add(invocation);
+
+        List&lt;InvocationMatcher&gt; result = InvocationMatcher.createFrom(invocations);
+
+        assertEquals(<span class="hljs-number">1</span>, result.size());
+        assertEquals(invocation, result.get(<span class="hljs-number">0</span>).getInvocation());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateFromMultipleInvocations</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+        <span class="hljs-keyword">when</span>(anotherInvocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"hashCode"</span>));
+        
+        List&lt;Invocation&gt; invocations = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        invocations.add(invocation);
+        invocations.add(anotherInvocation);
+
+        List&lt;InvocationMatcher&gt; result = InvocationMatcher.createFrom(invocations);
+
+        assertEquals(<span class="hljs-number">2</span>, result.size());
+        assertEquals(invocation, result.get(<span class="hljs-number">0</span>).getInvocation());
+        assertEquals(anotherInvocation, result.get(<span class="hljs-number">1</span>).getInvocation());
+    }
+
+    <span class="hljs-comment">// ============ isVarargMatcher Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsVarargMatcherWithVarargMatcher</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">VarargMatcher</span> <span class="hljs-variable">varargMatcher</span> <span class="hljs-operator">=</span> mock(VarargMatcher.class);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        <span class="hljs-comment">// Using reflection to test private method</span>
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">isVarargMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"isVarargMatcher"</span>, Matcher.class);
+        isVarargMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        assertTrue((<span class="hljs-type">boolean</span>) isVarargMethod.invoke(matcher, varargMatcher));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsVarargMatcherWithNonVarargMatcher</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Matcher</span> <span class="hljs-variable">nonVarargMatcher</span> <span class="hljs-operator">=</span> Matchers.any();
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">isVarargMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"isVarargMatcher"</span>, Matcher.class);
+        isVarargMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        assertFalse((<span class="hljs-type">boolean</span>) isVarargMethod.invoke(matcher, nonVarargMatcher));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsVarargMatcherWithDecoratedVarargMatcher</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">VarargMatcher</span> <span class="hljs-variable">varargMatcher</span> <span class="hljs-operator">=</span> mock(VarargMatcher.class);
+        <span class="hljs-type">MatcherDecorator</span> <span class="hljs-variable">decorator</span> <span class="hljs-operator">=</span> mock(MatcherDecorator.class);
+        <span class="hljs-keyword">when</span>(decorator.getActualMatcher()).thenReturn(varargMatcher);
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">isVarargMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"isVarargMatcher"</span>, Matcher.class);
+        isVarargMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        assertTrue((<span class="hljs-type">boolean</span>) isVarargMethod.invoke(matcher, decorator));
+    }
+
+    <span class="hljs-comment">// ============ isVariableArgument Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsVariableArgumentTrue</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">varargMethod</span> <span class="hljs-operator">=</span> mock(Method.class);
+        <span class="hljs-keyword">when</span>(varargMethod.isVarArgs()).thenReturn(<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(varargMethod);
+        Object[] varargArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"arg1"</span>, <span class="hljs-string">"arg2"</span>};
+        <span class="hljs-keyword">when</span>(anotherInvocation.getRawArguments()).thenReturn(varargArray);
+
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">isVariableMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"isVariableArgument"</span>, Invocation.class, <span class="hljs-type">int</span>.class);
+        isVariableMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        assertTrue((<span class="hljs-type">boolean</span>) isVariableMethod.invoke(matcher, anotherInvocation, <span class="hljs-number">1</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsVariableArgumentFalseWhenNotVarArgs</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">nonVarargMethod</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(nonVarargMethod);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getRawArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"arg"</span>});
+
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">isVariableMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"isVariableArgument"</span>, Invocation.class, <span class="hljs-type">int</span>.class);
+        isVariableMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        assertFalse((<span class="hljs-type">boolean</span>) isVariableMethod.invoke(matcher, anotherInvocation, <span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsVariableArgumentFalseWhenNullArgument</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">varargMethod</span> <span class="hljs-operator">=</span> mock(Method.class);
+        <span class="hljs-keyword">when</span>(varargMethod.isVarArgs()).thenReturn(<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(varargMethod);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getRawArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-literal">null</span>});
+
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">isVariableMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"isVariableArgument"</span>, Invocation.class, <span class="hljs-type">int</span>.class);
+        isVariableMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        assertFalse((<span class="hljs-type">boolean</span>) isVariableMethod.invoke(matcher, anotherInvocation, <span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsVariableArgumentFalseWhenNotArray</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">varargMethod</span> <span class="hljs-operator">=</span> mock(Method.class);
+        <span class="hljs-keyword">when</span>(varargMethod.isVarArgs()).thenReturn(<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(varargMethod);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getRawArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"notAnArray"</span>});
+
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">isVariableMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"isVariableArgument"</span>, Invocation.class, <span class="hljs-type">int</span>.class);
+        isVariableMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        assertFalse((<span class="hljs-type">boolean</span>) isVariableMethod.invoke(matcher, anotherInvocation, <span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-comment">// ============ captureArgumentsFrom Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaptureArgumentsFromNonVarargs</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">CapturesArguments</span> <span class="hljs-variable">captureMatcher</span> <span class="hljs-operator">=</span> mock(CapturesArguments.class);
+        List&lt;Matcher&gt; matchers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        matchers.add((Matcher) captureMatcher);
+
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"arg1"</span>});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(mock(Method.class));
+        <span class="hljs-type">Method</span> <span class="hljs-variable">nonVarargMethod</span> <span class="hljs-operator">=</span> Object.class.getMethod(<span class="hljs-string">"toString"</span>);
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(nonVarargMethod);
+
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(nonVarargMethod);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getArgumentAt(<span class="hljs-number">0</span>, Object.class)).thenReturn(<span class="hljs-string">"arg1"</span>);
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+        matcher.captureArgumentsFrom(anotherInvocation);
+
+        verify(captureMatcher).captureFrom(<span class="hljs-string">"arg1"</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaptureArgumentsFromVarargs</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">CapturesArguments</span> <span class="hljs-variable">captureMatcher</span> <span class="hljs-operator">=</span> mock(CapturesArguments.class);
+        List&lt;Matcher&gt; matchers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        matchers.add((Matcher) captureMatcher);
+
+        <span class="hljs-type">Method</span> <span class="hljs-variable">varargMethod</span> <span class="hljs-operator">=</span> mock(Method.class);
+        <span class="hljs-keyword">when</span>(varargMethod.isVarArgs()).thenReturn(<span class="hljs-literal">true</span>);
+
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"arg1"</span>, <span class="hljs-string">"arg2"</span>});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(varargMethod);
+
+        Object[] varargArray = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-string">"arg1"</span>, <span class="hljs-string">"arg2"</span>};
+        <span class="hljs-keyword">when</span>(anotherInvocation.getMethod()).thenReturn(varargMethod);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getRawArguments()).thenReturn(varargArray);
+        <span class="hljs-keyword">when</span>(anotherInvocation.getArgumentAt(<span class="hljs-number">0</span>, Object.class)).thenReturn(<span class="hljs-string">"arg1"</span>);
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+        matcher.captureArgumentsFrom(anotherInvocation);
+
+        verify(captureMatcher).captureFrom(<span class="hljs-string">"arg1"</span>);
+    }
+
+    <span class="hljs-comment">// ============ safelyArgumentsMatch Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSafelyArgumentsMatch</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>, <span class="hljs-number">2</span>});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>());
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">safelyMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"safelyArgumentsMatch"</span>, Object[].class);
+        safelyMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        <span class="hljs-comment">// Should handle gracefully even if arguments don't match</span>
+        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> safelyMethod.invoke(matcher, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>, <span class="hljs-number">2</span>});
+        assertNotNull(result);
+        assertTrue(result <span class="hljs-keyword">instanceof</span> Boolean);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSafelyArgumentsMatchHandlesException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+        <span class="hljs-keyword">when</span>(invocation.getMock()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>());
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation);
+
+        java.lang.reflect.<span class="hljs-type">Method</span> <span class="hljs-variable">safelyMethod</span> <span class="hljs-operator">=</span> InvocationMatcher.class.getDeclaredMethod(
+            <span class="hljs-string">"safelyArgumentsMatch"</span>, Object[].class);
+        safelyMethod.setAccessible(<span class="hljs-literal">true</span>);
+
+        <span class="hljs-comment">// Should return false on exception</span>
+        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> safelyMethod.invoke(matcher, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>});
+        assertEquals(<span class="hljs-literal">false</span>, result);
+    }
+
+    <span class="hljs-comment">// ============ Edge case Tests ============</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetMatchersIsConsistent</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        List&lt;Matcher&gt; matchers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
+        matchers.add(Matchers.equalTo(<span class="hljs-number">1</span>));
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{<span class="hljs-number">1</span>});
+
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+
+        assertEquals(matcher1.getMatchers(), matcher2.getMatchers());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorWithNullMatchers</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">when</span>(invocation.getArguments()).thenReturn(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>[]{});
+        <span class="hljs-keyword">when</span>(invocation.getMethod()).thenReturn(Object.class.getMethod(<span class="hljs-string">"toString"</span>));
+
+        List&lt;Matcher&gt; matchers = Collections.emptyList();
+        <span class="hljs-type">InvocationMatcher</span> <span class="hljs-variable">matcher</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">InvocationMatcher</span>(invocation, matchers);
+
+        assertNotNull(matcher.getMatchers());
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<h2>References</h2>
+<ol>
+<li><strong>InvocationMatcher Class</strong> - Source provided in context</li>
+<li><strong>JUnit 4.10</strong> - Used for @Test, @Before, and assertions (assertEquals, assertTrue, etc.)</li>
+<li><strong>Hamcrest 1.1</strong> - Used for Matcher interfaces and utility matchers</li>
+<li><strong>Mockito</strong> - Used for mock(), when(), verify() in the same project</li>
+</ol>
+<h2>Key Testing Strategies Applied</h2>
+<ul>
+<li><strong>Constructor coverage</strong>: Both constructor signatures tested</li>
+<li><strong>Boundary cases</strong>: Empty lists, null arguments, varargs edge cases</li>
+<li><strong>Method matching</strong>: Testing name, parameter type, and parameter count variations</li>
+<li><strong>State consistency</strong>: Verifying getters return expected values</li>
+<li><strong>Exception handling</strong>: Testing safe argument matching with fallback behavior</li>
+<li><strong>Reflection testing</strong>: Private methods tested via reflection with proper accessibility</li>
+<li><strong>Mock interactions</strong>: Verifying proper argument capture and processing</li>
+</ul>
