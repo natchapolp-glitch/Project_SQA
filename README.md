@@ -1,3 +1,7 @@
+## Latest local test update: 145/204
+
+Three additional KKU Gemini runs (Codec, Collections, JacksonXml) add to the two earlier Claude runs. The current local summary is 145/204; 59 planned identities remain incomplete. See the current summary and pending-runs manifest under `output/kku-only-20261001/`. Work remains incomplete.
+
 # SQA Project 2.2 — CP353201
 
 ## Current continuation: Claude and Gemini through KKU only
@@ -141,3 +145,11 @@ Advisor: ผศ. ดร.ชิตสุธา สุ่มเล็ก, Khon Kae
 ### Counting test cases
 
 See `output/submission/test-case-counts.csv` for retained declared methods in completed primary suites, separate from run counts and incomplete suite methods. Counts sum across projects and run indices; repeated scenarios are counted. Pilot and validation histories are excluded.
+# Local continuation checkpoint — natchapol.p
+
+The updated local experiment has 140/204 completed primary runs. See
+[`docs/CONTINUATION_NATCHAPOL_P.md`](docs/CONTINUATION_NATCHAPOL_P.md) and
+[`output/kku-only-20261001/continuation-natchapol-p.json`](output/kku-only-20261001/continuation-natchapol-p.json).
+The current local PDF is `SQA_Round2_KKU_Only_natchapol_p.pdf`; earlier reports,
+slides and ZIPs are historical checkpoints. Claude still has successful results
+for only 7/17 projects, and no Classroom submission has been made.

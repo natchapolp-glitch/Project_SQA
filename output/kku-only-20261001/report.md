@@ -4,9 +4,9 @@
 
 CMA-ES และ FSCS-ART เปรียบเทียบกับ Claude และ Gemini ผ่าน KKU IntelSphere
 
-ข้อมูล ณ 2026-10-01T09:37:40.475757+00:00 UTC
+ข้อมูล ณ 2026-10-01T12:13:51.773790+00:00 UTC
 
-สถานะ: สำเร็จ 136/204 รอบตามแผนทีม งานทดลองยังไม่ครบ และยังไม่ใช่หลักฐานการส่ง Classroom
+สถานะ: สำเร็จ 140/204 รอบตามแผนทีม งานทดลองยังไม่ครบ และยังไม่ใช่หลักฐานการส่ง Classroom
 
 ## ขอบเขตและการเปลี่ยนแผน
 
@@ -24,12 +24,12 @@ CMA-ES และ FSCS-ART เปรียบเทียบกับ Claude แ�
 |---|---|---|---|---|---|---|---|
 | CMA-ES | 51/51 | 17/17 | 1,529 | 51 | 0 | 0 | 0 |
 | FSCS-ART | 51/51 | 17/17 | 1,529 | 51 | 0 | 0 | 0 |
-| KKU Claude | 5/51 | 5/17 | 114 | 3 | 2 | 41 | 5 |
-| KKU Gemini | 29/51 | 17/17 | 564 | 13 | 16 | 20 | 2 |
+| KKU Claude | 7/51 | 7/17 | 165 | 3 | 4 | 35 | 9 |
+| KKU Gemini | 31/51 | 17/17 | 595 | 13 | 18 | 17 | 3 |
 
 จำนวน methods เป็นผลรวม declared methods ใน completed suites อาจมีสถานการณ์ซ้ำข้ามรอบ ไม่ใช่ unique scenarios และไม่คูณจำนวนการรัน fixed/buggy ผล failed/missing มีค่าการวัดที่ไม่มีเป็น null ไม่แทนด้วยศูนย์
 
-มี fresh completed records ที่ซ้ำ identity กับผลเดิม 1 รายการ: Time/Gemini/102 เก็บผลใหม่เป็น secondary validation และคงผลเดิมเป็น primary ตามลำดับที่มีหลักฐานก่อน โดยไม่ใช้ fault/coverage เลือกผล จึงไม่เพิ่มจำนวนรอบหรือ methods ในตาราง primary audit ตรวจผลใหม่ที่สำเร็จ 17 Gemini records รวม secondary หนึ่งรายการ และ 2 Claude records
+มี fresh completed records ที่ซ้ำ identity กับผลเดิม 1 รายการ: Time/Gemini/102 เก็บผลใหม่เป็น secondary validation และคงผลเดิมเป็น primary ตามลำดับที่มีหลักฐานก่อน โดยไม่ใช้ fault/coverage เลือกผล จึงไม่เพิ่มจำนวนรอบหรือ methods ในตาราง primary ตรวจผลที่สำเร็จด้วย audit แยกตาม family รวม secondary โดยอ่านจำนวนล่าสุดจาก claude/gemini-evidence-audit.json
 
 ผลเดิมผ่าน baseline audit 171/171 records การนำมาใช้ในชุดนี้อ้าง record path และ SHA-256 ไม่แก้ชื่อโมเดลหรือ generator เดิม เลือกเฉพาะผลอัลกอริทึมและคำตอบ KKU ที่ระบุ resolved model เป็น Claude/Gemini และ metadata ตรงกัน ผล KKU เดิมบางรายการมาจาก Auto Router ซึ่งแยกจากคำตอบใหม่ที่เลือก agent โดยตรง
 
@@ -63,8 +63,8 @@ Macro = ค่าเฉลี่ย covered/total ต่อ run; micro = ผล�
 |---|---|---|---|---|
 | CMA-ES | 51 | 26.6% | 15.1% | 21.3% |
 | FSCS-ART | 51 | 26.4% | 15.6% | 21.6% |
-| KKU Claude | 5 | 67.9% | 65.8% | 27.4% |
-| KKU Gemini | 29 | 75.3% | 66.4% | 61.6% |
+| KKU Claude | 7 | 62.2% | 55.6% | 29.4% |
+| KKU Gemini | 31 | 73.1% | 63.9% | 60.4% |
 
 CMA-ES และ FSCS-ART มีครบ 51 รอบบน sample เดียวกัน Line macro ต่างกัน 0.22 percentage points ผลใกล้กันในค่าเฉลี่ย แต่ coverage ต่ำในบาง fixtures และแต่ละ project มีขนาด classes ต่างกัน การเทียบ AI ต้องดูตัวหารและกลุ่มตรงกันแยก เพราะ sample ที่สำเร็จมี composition ต่างจากอัลกอริทึม
 
@@ -74,8 +74,8 @@ CMA-ES และ FSCS-ART มีครบ 51 รอบบน sample เดีย
 |---|---|---|---|
 | CMA-ES | 9/51 | 5/17 | 29.4% |
 | FSCS-ART | 10/51 | 4/17 | 23.5% |
-| KKU Claude | 3/5 | 3/5 | 60.0% |
-| KKU Gemini | 14/29 | 9/17 | 52.9% |
+| KKU Claude | 4/7 | 4/7 | 57.1% |
+| KKU Gemini | 14/31 | 9/17 | 52.9% |
 
 CMA-ES พบ 5/17 sampled bugs และ FSCS-ART พบ 4/17 แม้ FSCS-ART มีรอบที่พบ fault มากกว่า (10 เทียบกับ 9) การนับระดับ run จึงตอบต่างจากระดับ distinct bug และไม่ควรเลือกวิธีจากตัวเลขใดตัวเลขหนึ่งโดยไม่ระบุหน่วย
 
@@ -83,14 +83,14 @@ CMA-ES พบ 5/17 sampled bugs และ FSCS-ART พบ 4/17 แม้ FSCS-AR
 
 ## เปรียบเทียบสี่วิธีในกลุ่มตรงกัน
 
-มี 4 project-bug-index groups ที่ครบทั้งสี่วิธี: Chart-1/s101, Collections-1/s101, Csv-1/s101, Jsoup-1/s101
+มี 6 project-bug-index groups ที่ครบทั้งสี่วิธี: Chart-1/s101, Codec-1/s102, Collections-1/s101, Csv-1/s101, Gson-1/s101, Jsoup-1/s101
 
 | วิธี | n กลุ่มตรงกัน | Line macro | Condition macro | พบ/รอบ |
 |---|---|---|---|
-| CMA-ES | 4 | 27.1% | 16.6% | 0/4 |
-| FSCS-ART | 4 | 27.5% | 16.3% | 0/4 |
-| KKU Claude | 4 | 59.8% | 57.2% | 2/4 |
-| KKU Gemini | 4 | 74.0% | 70.8% | 2/4 |
+| CMA-ES | 6 | 29.2% | 17.2% | 0/6 |
+| FSCS-ART | 6 | 30.6% | 19.1% | 0/6 |
+| KKU Claude | 6 | 55.9% | 48.2% | 3/6 |
+| KKU Gemini | 6 | 67.5% | 61.0% | 3/6 |
 
 กลุ่มตรงกันลดความต่างของ project/index แต่จำนวนกลุ่มน้อยและเลือกจากชุดที่ผ่านทั้งหมด ยังมี selection bias, model/version และ processing effort ที่ต่างกัน ไม่ใช้เป็น causal ranking และไม่ทดสอบนัยสำคัญกับ sample นี้
 
@@ -100,8 +100,8 @@ CMA-ES พบ 5/17 sampled bugs และ FSCS-ART พบ 4/17 แม้ FSCS-AR
 |---|---|---|---|
 | CMA-ES | 51/51 | 55.64 | 13.50 |
 | FSCS-ART | 51/51 | 54.42 | 13.61 |
-| KKU Claude | 5/5 | 45.66 | 165.00 |
-| KKU Gemini | 29/29 | 36.25 | 105.70 |
+| KKU Claude | 7/7 | 33.44 | 133.18 |
+| KKU Gemini | 31/31 | 36.25 | 109.89 |
 
 Compile rate ใช้เฉพาะ run ที่มีผล compile ชัดเจน ไม่รวม provider failures ที่ไม่ได้คอมไพล์ และไม่รวม attempt ที่ถูกเก็บเป็น history ก่อนซ่อม ค่า generation ของ AI เป็น submit-to-observed-completion upper bound รวมการรอผู้ปฏิบัติงาน ค่าอัลกอริทึมเป็นเวลาเครื่องวัด จึงเปรียบเทียบความเร็วโดยตรงไม่ได้
 
@@ -119,17 +119,19 @@ evaluation รวม build/JVM/test/coverage overhead และได้ผล�
 
 | วิธี | label จริง | ที่มา | records |
 |---|---|---|---|
+| KKU Claude | claude-haiku-latest | new-kku-capture | 4 |
 | KKU Claude | claude-sonnet-5 | reused-audited-baseline | 3 |
-| KKU Claude | claude-sonnet-latest | new-kku-capture | 7 |
+| KKU Claude | claude-sonnet-latest | new-kku-capture | 9 |
 | KKU Gemini | gemini-3.6-flash | reused-audited-baseline | 6 |
-| KKU Gemini | gemini-flash | new-kku-capture | 18 |
+| KKU Gemini | gemini-flash | new-kku-capture | 20 |
+| KKU Gemini | gemini-pro | new-kku-capture | 1 |
 | KKU Gemini | gemini-pro | reused-audited-baseline | 7 |
 
 ตารางนับ records ที่มี label รวม failed records ส่วน metric tables นับเฉพาะ completed การรวมตระกูลโมเดลต่าง versions ใช้ตามข้อจำกัดบริการและแยกเปิดเผย ไม่อ้างว่าเป็นโมเดลเดียวกันหรือ independent deterministic repetitions
 
 ## อุปสรรคและบทเรียน
 
-บริการ Claude ใน KKU แสดง daily usage 100% ระหว่างเก็บ Compress รอบ 101 และ Gemini แสดง 100% หลังเก็บ Jsoup รอบ 103 ไม่ปรากฏ reset time ที่ยืนยันได้ เก็บ quota status และ screenshots จริง ไม่สร้างผลทดแทนจาก AI อื่น Claude Lang/Time มี server busy และ Math ไม่มี final code ที่สังเกตได้ Mockito และ Gemini Cli ตัดก่อนมี test method สมบูรณ์ จึงบันทึก generation_failed
+บัญชีเดิม: บริการ Claude ใน KKU แสดง daily usage 100% ระหว่างเก็บ Compress รอบ 101 และ Gemini แสดง 100% หลังเก็บ Jsoup รอบ 103 ไม่ปรากฏ reset time ที่ยืนยันได้ เก็บ quota status และ screenshots จริง ไม่สร้างผลทดแทนจาก AI อื่น Claude Lang/Time มี server busy และ Math ไม่มี final code ที่สังเกตได้ Mockito และ Gemini Cli ตัดก่อนมี test method สมบูรณ์ จึงบันทึก generation_failed
 
 คำตอบถูกตัดกลาง Java, overloaded APIs และ fixture differences ทำให้ raw output ใช้ไม่ได้ทันที การตรวจ parser/fixed ซ้ำและการเก็บ version history ช่วยกู้ส่วนที่ใช้ได้โดยไม่ปิดบังปัญหา Coverage สูงยังไม่รับประกัน fault detection: อ่านตัวอย่าง Jsoup ใน demo-guide-kku-only.md และเปรียบเทียบ assertions กับ failing_tests
 
@@ -144,14 +146,14 @@ Operator incident: Math/102 exports ถูกบันทึกไป Lang/102 �
 | Chart | 3/3 | 3/3 | 1/3 | 3/3 |
 | Cli | 3/3 | 3/3 | 1/3 | 1/3 |
 | Closure | 3/3 | 3/3 | 0/3 | 1/3 |
-| Codec | 3/3 | 3/3 | 0/3 | 1/3 |
+| Codec | 3/3 | 3/3 | 1/3 | 2/3 |
 | Collections | 3/3 | 3/3 | 1/3 | 2/3 |
 | Compress | 3/3 | 3/3 | 0/3 | 1/3 |
 | Csv | 3/3 | 3/3 | 1/3 | 3/3 |
-| Gson | 3/3 | 3/3 | 0/3 | 1/3 |
+| Gson | 3/3 | 3/3 | 1/3 | 1/3 |
 | JacksonCore | 3/3 | 3/3 | 0/3 | 1/3 |
 | JacksonDatabind | 3/3 | 3/3 | 0/3 | 2/3 |
-| JacksonXml | 3/3 | 3/3 | 0/3 | 1/3 |
+| JacksonXml | 3/3 | 3/3 | 0/3 | 2/3 |
 | Jsoup | 3/3 | 3/3 | 1/3 | 3/3 |
 | JxPath | 3/3 | 3/3 | 0/3 | 1/3 |
 | Lang | 3/3 | 3/3 | 0/3 | 2/3 |
@@ -159,9 +161,19 @@ Operator incident: Math/102 exports ถูกบันทึกไป Lang/102 �
 | Mockito | 3/3 | 3/3 | 0/3 | 2/3 |
 | Time | 3/3 | 3/3 | 0/3 | 2/3 |
 
+## การทำต่อด้วยบัญชี natchapol.p
+
+สร้างและเก็บ 9 คำตอบใหม่ ผ่าน KKU เท่านั้น ใช้ prompt เดิม ไม่ส่ง evaluation logs โมเดลตาม UI คือ claude-sonnet-latest, claude-haiku-latest, gemini-pro และ gemini-flash ไม่อ้าง resolved version ที่มองไม่เห็น รอบใหม่สำเร็จ 4 รอบ เพิ่ม 82 methods ที่รันได้จริง อีก 5 คำตอบเป็น service busy, ปฏิเสธหรือขอข้อมูลเพิ่ม และโค้ดถูกตัด ไม่คูณ test methods กับจำนวน fixed/buggy executions
+
+v38 ซ่อมชื่อ local variable result เป็น result1 ใน Codec/Claude/102 โดยคง assertion expected length 10; v39 เรียก nextTag ใน JacksonXml/Gemini/101 fixture ให้ตรง START_ELEMENT precondition ของ fixed constructor เก็บ failed attempts และ snapshots ทั้งหมดไว้ รายละเอียด hashes อยู่ processing-policy-v38/v39.json และ results/validation ในการทดลอง v38 source ถูก hash ก่อน evaluate แต่ descriptive policy file เขียนภายหลัง ไม่อ้างว่า policy file ถูกเขียนล่วงหน้า
+
+คืน CRLF ใน 3 algorithm files ให้ตรง frozen hash เนื้อหาโค้ดไม่เปลี่ยน เก็บ bytes ก่อนซ่อมใน results/validation/frozen-source-eol-recovery-20261001
+
+การตรวจจาก public branch ไม่พบภาพ provider เดิม 25 ภาพและ incident อีก 1 ภาพตาม gitignore จึง provenance audit ปัจจุบันยังไม่ผ่านเต็มชุด แต่ execution audit ของ baseline 171 records, Claude fresh 4 records และ Gemini fresh 19 records ผ่านทุก record ส่วน fresh 9 captures ในบัญชีนี้มีภาพครบ ไฟล์ PDF/PPTX/ZIP รุ่นเก่าเป็น checkpoint ไม่ใช่ผลล่าสุดและยังไม่ใช่การส่ง Classroom
+
 ## แหล่งข้อมูลและการทำซ้ำ
 
-ผลหลัก: output/kku-only-20261001/summary.json, analysis.json, study-manifest.csv และ record.json ตาม paths ใน manifest ตรวจ provenance-audit.json และ baseline/claude/gemini-evidence-audit.json ก่อนใช้ ทุก completed result ต้องผ่าน audit ที่มี record hash ตรงกัน
+ผลหลัก: output/kku-only-20261001/summary.json, analysis.json, study-manifest.csv และ record.json ตาม paths ใน manifest ตรวจ provenance-audit-current.json และ baseline/claude/gemini-evidence-audit.json ก่อนใช้ ทุก completed result ต้องผ่าน audit ที่มี record hash ตรงกัน
 
 การทำซ้ำ: python3 scripts/study/kku_only.py status แล้วรัน audit_kku_provenance.py สำหรับผลใหม่ใช้ evaluate_provider_normalized_vN.py ที่ตรง processing-policy-vN.json และ runtime paths ของเครื่องนี้ เก็บคำตอบผ่านหน้า KKU ด้วย exact original prompt ตาม docs/KKU_ONLY_CONTINUATION.md
 
