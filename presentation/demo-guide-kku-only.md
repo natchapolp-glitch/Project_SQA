@@ -1,6 +1,6 @@
 # Demo รอบ 2: Claude/Gemini ผ่าน KKU เท่านั้น
 
-ใช้รายงาน/สไลด์ชื่อที่ลงท้าย `_20261002` ใน `output/kku-only-20261001/` เป็นชุดปัจจุบัน
+ใช้รายงาน/สไลด์ชื่อที่ลงท้าย `_20261002_COMPLETE` ใน `output/kku-only-20261001/` เป็นชุดปัจจุบัน
 เปิด `summary.json` และ `analysis.json` ก่อนพูดจำนวนรอบจริง งานยังไม่ครบแผน
 ดู `delivery-status.json` ก่อนอ้างว่าได้ส่ง GitHub หรือ Classroom
 
@@ -68,7 +68,7 @@ python3 scripts/reporting/audit_kku_only_v4.py \
   --output output/kku-only-20261001/gemini-evidence-audit.json
 ```
 
-Execution audit ตรวจ completed records; provenance audit ยังรายงาน missing capture screenshot จากเพื่อนตามจริง ไม่ใช้ receipt เก่าที่ผ่านแทนชุดปัจจุบัน การรัน status ใหม่จะเปลี่ยน timestamp/SHA ของ summary จึงต้อง rebuild analysis/report/deck ก่อนส่งหาก refresh หลังล็อกชุดส่ง Audit ไม่ใช่การประเมินคะแนนจากผู้สอน
+Execution audit ตรวจ completed records; provenance audit ปัจจุบัน 0 issues หลังรับภาพที่ขาด 54 รายการ ไม่ใช้ receipt เก่าที่ผ่านแทนชุดปัจจุบัน การรัน status ใหม่จะเปลี่ยน timestamp/SHA ของ summary จึงต้อง rebuild analysis/report/deck ก่อนส่งหาก refresh หลังล็อกชุดส่ง Audit ไม่ใช่การประเมินคะแนนจากผู้สอน
 อย่ารัน evaluator ทับ completed run ระหว่าง demo
 ถ้าต้องสาธิตรัน JUnit สด ใช้ archive เดิมกับ checkout แยกและเก็บ log แยก:
 

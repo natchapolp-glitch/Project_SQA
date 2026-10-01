@@ -1,6 +1,6 @@
 # SQA round 2: KKU-only continuation, 1 October 2026
 
-Current checkpoint: `docs/SUBMISSION_READY_20261002.md`. Collection stopped at owner request after Claude quota reached 100%; prepare from the captured results. Current deliverables use suffix `_20261002`. Historical checkpoints remain separate.
+Current checkpoint: `docs/SUBMISSION_READY_20261002_COMPLETE.md`. Collection stopped at owner request after Claude quota reached 100%; prepare from the captured results. Current deliverables use suffix `_20261002`. Historical checkpoints remain separate.
 
 The owner changed the AI constraint: use Claude and Gemini only through
 https://gen.ai.kku.ac.th/chat. The original handoff remains as historical context.
@@ -111,7 +111,7 @@ Use `presentation/demo-guide-kku-only.md` for the walkthrough.
 
 Public Git omits full provider screenshots because their sidebar can show
 unrelated chat history. Available originals remain in the private local evidence
-ZIP. Teammate screenshots omitted from Git were not received; the current provenance receipt discloses those missing images. Rechecking all capture files requires the missing teammate originals as well. `.gitattributes`
+ZIP. All 54 missing primary teammate screenshots have now been received and imported; current provenance receipt has zero issues. Private originals are retained locally and in the new verified evidence package. `.gitattributes`
 disables Git EOL conversion so frozen hashes retain their exact bytes.
 
 The owner requested notice before important actions. Announce tool installation,

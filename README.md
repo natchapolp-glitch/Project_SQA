@@ -1,8 +1,8 @@
-## Latest submission checkpoint: 178/204 — 2 October 2026
+## Latest checkpoint: recovered screenshots — 178/204 runs
 
-CMA-ES, FSCS-ART and KKU Gemini: 51/51 each; KKU Claude: 25/51. Experiment incomplete: 26 identities remain. Final current PDF/deck use suffix `_20261002`; local private evidence ZIP uses `_20261002_Evidence`. See `docs/SUBMISSION_READY_20261002.md` and `output/kku-only-20261001/delivery-status.json`.
+All 54 missing primary provider screenshots have been received from the owner-provided ZIP and imported locally; current provenance audit: 200 records, zero issues. Experimental results unchanged: 178/204 completed, 26 incomplete. COMPLETE refers to screenshot recovery, not experiment completion.
 
-Completed execution evidence is audited. Provenance still has 54 missing teammate capture screenshots; only originals available on this machine are packaged. No missing evidence recreated. Owner will submit Classroom themselves before midnight Bangkok time. Historical checkpoint filenames and documents below do not describe the latest state.
+Current report/deck use `_20261002_COMPLETE`. Current private ZIP uses `_20261002_COMPLETE_VERIFIED_Evidence`. Read `docs/SUBMISSION_READY_20261002_COMPLETE.md` and `output/kku-only-20261001/delivery-status.json`. Private images remain outside public Git. Owner will submit Classroom themselves before midnight Bangkok time.
 
 # SQA Project 2.2 — CP353201
 

@@ -1,4 +1,4 @@
-> Current checkpoint: อ่าน docs/SUBMISSION_READY_20261002.md และ delivery-status.json ก่อน เอกสารด้านล่างเป็น handoff/checkpoint เก่า เก็บไว้เป็นประวัติ
+> Current checkpoint: อ่าน docs/SUBMISSION_READY_20261002_COMPLETE.md และ delivery-status.json ก่อน เอกสารด้านล่างเป็น handoff/checkpoint เก่า เก็บไว้เป็นประวัติ
 
 # Handoff งาน SQA รอบที่ 2 — กลุ่ม 14
 
