@@ -1,6 +1,6 @@
 ## Latest test update: 174/204 — Claude Haiku daily limit reached
 
-KKU Claude is 21/51; Gemini and both algorithms are 51/51 each. The natchapol continuation adds five completed runs and 127 retained methods. Cli/102 detects the selected bug. Claude reached 100% daily usage. See `docs/CLAUDE_HAIKU_NATCHAPOL_CHECKPOINT_20261002.md`. 30 Claude identities remain incomplete. Report/slides are earlier checkpoints; latest changes are local and unpushed.
+KKU Claude is 21/51; Gemini and both algorithms are 51/51 each. The natchapol continuation adds five completed runs and 127 retained methods. Cli/102 detects the selected bug. Claude reached 100% daily usage. See `docs/CLAUDE_HAIKU_NATCHAPOL_CHECKPOINT_20261002.md`. 30 Claude identities remain incomplete. Report/slides are earlier checkpoints; Latest experiment and handoff are published on branch `test`; private screenshots remain local.
 
 # SQA Project 2.2 — CP353201
 
