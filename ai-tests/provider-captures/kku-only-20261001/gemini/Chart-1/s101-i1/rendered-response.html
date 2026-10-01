@@ -1,0 +1,385 @@
+<p>An implementation of unit tests for <code>AbstractCategoryItemRenderer</code> (tested via its concrete subclass <code>AreaRenderer</code> within the same package) is provided below.</p>
+<p>These regression tests exercise properties, generators, annotations, initialization, axis resolution, range bounds calculation, equality, and cloning.</p>
+<h3>References</h3>
+<ul>
+<li>JFreeChart API Specification (CategoryItemRenderer &amp; AbstractCategoryItemRenderer)</li>
+<li>Defects4J Chart benchmark dataset (Target class: <code>org.jfree.chart.renderer.category.AbstractCategoryItemRenderer</code>)</li>
+</ul>
+<p><code>org/jfree/chart/renderer/category/AbstractCategoryItemRendererTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.jfree.chart.renderer.category;
+
+<span class="hljs-keyword">import</span> java.awt.BasicStroke;
+<span class="hljs-keyword">import</span> java.awt.Color;
+<span class="hljs-keyword">import</span> java.awt.geom.Rectangle2D;
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> org.jfree.chart.LegendItem;
+<span class="hljs-keyword">import</span> org.jfree.chart.LegendItemCollection;
+<span class="hljs-keyword">import</span> org.jfree.chart.annotations.CategoryAnnotation;
+<span class="hljs-keyword">import</span> org.jfree.chart.annotations.CategoryTextAnnotation;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.CategoryAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.NumberAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.ValueAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategoryItemLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategorySeriesLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategoryToolTipGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.CategoryPlot;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.PlotOrientation;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.PlotRenderingInfo;
+<span class="hljs-keyword">import</span> org.jfree.chart.urls.CategoryURLGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.urls.StandardCategoryURLGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.util.Layer;
+<span class="hljs-keyword">import</span> org.jfree.data.Range;
+<span class="hljs-keyword">import</span> org.jfree.data.category.DefaultCategoryDataset;
+
+<span class="hljs-comment">/**
+ * Regression and unit tests for {<span class="hljs-doctag">@link</span> AbstractCategoryItemRenderer}.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractCategoryItemRendererTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">AbstractCategoryItemRendererTest</span><span class="hljs-params">(String name)</span> {
+        <span class="hljs-built_in">super</span>(name);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPassCount</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertEquals(<span class="hljs-number">1</span>, renderer.getPassCount());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetAndSetPlot</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(renderer.getPlot());
+
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>();
+        renderer.setPlot(plot);
+        assertSame(plot, renderer.getPlot());
+
+        <span class="hljs-keyword">try</span> {
+            renderer.setPlot(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException on null plot"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testItemLabelGenerators</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(renderer.getBaseItemLabelGenerator());
+        assertNull(renderer.getSeriesItemLabelGenerator(<span class="hljs-number">0</span>));
+
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">genBase</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>();
+        renderer.setBaseItemLabelGenerator(genBase);
+        assertSame(genBase, renderer.getBaseItemLabelGenerator());
+        assertSame(genBase, renderer.getItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">genSeries</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>();
+        renderer.setSeriesItemLabelGenerator(<span class="hljs-number">0</span>, genSeries);
+        assertSame(genSeries, renderer.getSeriesItemLabelGenerator(<span class="hljs-number">0</span>));
+        assertSame(genSeries, renderer.getItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+        assertSame(genBase, renderer.getItemLabelGenerator(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+
+        renderer.setSeriesItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">true</span>);
+        assertNull(renderer.getSeriesItemLabelGenerator(<span class="hljs-number">0</span>));
+        assertSame(genBase, renderer.getItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToolTipGenerators</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(renderer.getBaseToolTipGenerator());
+        assertNull(renderer.getSeriesToolTipGenerator(<span class="hljs-number">0</span>));
+
+        <span class="hljs-type">CategoryToolTipGenerator</span> <span class="hljs-variable">genBase</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryToolTipGenerator</span>();
+        renderer.setBaseToolTipGenerator(genBase);
+        assertSame(genBase, renderer.getBaseToolTipGenerator());
+        assertSame(genBase, renderer.getToolTipGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+
+        <span class="hljs-type">CategoryToolTipGenerator</span> <span class="hljs-variable">genSeries</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryToolTipGenerator</span>();
+        renderer.setSeriesToolTipGenerator(<span class="hljs-number">0</span>, genSeries);
+        assertSame(genSeries, renderer.getSeriesToolTipGenerator(<span class="hljs-number">0</span>));
+        assertSame(genSeries, renderer.getToolTipGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+        assertSame(genBase, renderer.getToolTipGenerator(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+
+        renderer.setSeriesToolTipGenerator(<span class="hljs-number">0</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>);
+        assertNull(renderer.getSeriesToolTipGenerator(<span class="hljs-number">0</span>));
+        assertSame(genBase, renderer.getToolTipGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testURLGenerators</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(renderer.getBaseURLGenerator());
+        assertNull(renderer.getSeriesURLGenerator(<span class="hljs-number">0</span>));
+
+        <span class="hljs-type">CategoryURLGenerator</span> <span class="hljs-variable">genBase</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryURLGenerator</span>();
+        renderer.setBaseURLGenerator(genBase);
+        assertSame(genBase, renderer.getBaseURLGenerator());
+        assertSame(genBase, renderer.getURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+
+        <span class="hljs-type">CategoryURLGenerator</span> <span class="hljs-variable">genSeries</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryURLGenerator</span>();
+        renderer.setSeriesURLGenerator(<span class="hljs-number">0</span>, genSeries);
+        assertSame(genSeries, renderer.getSeriesURLGenerator(<span class="hljs-number">0</span>));
+        assertSame(genSeries, renderer.getURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+        assertSame(genBase, renderer.getURLGenerator(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+
+        renderer.setSeriesURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>);
+        assertNull(renderer.getSeriesURLGenerator(<span class="hljs-number">0</span>));
+        assertSame(genBase, renderer.getURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLegendGenerators</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNotNull(renderer.getLegendItemLabelGenerator());
+        assertNull(renderer.getLegendItemToolTipGenerator());
+        assertNull(renderer.getLegendItemURLGenerator());
+
+        <span class="hljs-type">CategorySeriesLabelGenerator</span> <span class="hljs-variable">labelGen</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategorySeriesLabelGenerator</span>(<span class="hljs-string">"{0}"</span>);
+        renderer.setLegendItemLabelGenerator(labelGen);
+        assertSame(labelGen, renderer.getLegendItemLabelGenerator());
+
+        <span class="hljs-type">CategorySeriesLabelGenerator</span> <span class="hljs-variable">tipGen</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategorySeriesLabelGenerator</span>(<span class="hljs-string">"{0}"</span>);
+        renderer.setLegendItemToolTipGenerator(tipGen);
+        assertSame(tipGen, renderer.getLegendItemToolTipGenerator());
+
+        <span class="hljs-type">CategorySeriesLabelGenerator</span> <span class="hljs-variable">urlGen</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategorySeriesLabelGenerator</span>(<span class="hljs-string">"{0}"</span>);
+        renderer.setLegendItemURLGenerator(urlGen);
+        assertSame(urlGen, renderer.getLegendItemURLGenerator());
+
+        <span class="hljs-keyword">try</span> {
+            renderer.setLegendItemLabelGenerator(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException on null label generator"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddAndRemoveAnnotation</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryAnnotation</span> <span class="hljs-variable">annotation1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryTextAnnotation</span>(<span class="hljs-string">"A1"</span>, <span class="hljs-string">"Cat1"</span>, <span class="hljs-number">10.0</span>);
+        <span class="hljs-type">CategoryAnnotation</span> <span class="hljs-variable">annotation2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryTextAnnotation</span>(<span class="hljs-string">"A2"</span>, <span class="hljs-string">"Cat2"</span>, <span class="hljs-number">20.0</span>);
+
+        renderer.addAnnotation(annotation1); <span class="hljs-comment">// Defaults to FOREGROUND</span>
+        renderer.addAnnotation(annotation2, Layer.BACKGROUND);
+
+        assertTrue(renderer.removeAnnotation(annotation1));
+        assertFalse(renderer.removeAnnotation(annotation1)); <span class="hljs-comment">// Already removed</span>
+
+        assertTrue(renderer.removeAnnotation(annotation2));
+        assertFalse(renderer.removeAnnotation(annotation2));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddAnnotationNullArguments</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-keyword">try</span> {
+            renderer.addAnnotation(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException on null annotation"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+
+        <span class="hljs-keyword">try</span> {
+            renderer.addAnnotation(<span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryTextAnnotation</span>(<span class="hljs-string">"A"</span>, <span class="hljs-string">"C"</span>, <span class="hljs-number">1.0</span>), <span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected NullPointerException or IllegalArgumentException on null layer"</span>);
+        } <span class="hljs-keyword">catch</span> (NullPointerException e) {
+            <span class="hljs-comment">// expected</span>
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveAnnotations</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        renderer.addAnnotation(<span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryTextAnnotation</span>(<span class="hljs-string">"A1"</span>, <span class="hljs-string">"Cat1"</span>, <span class="hljs-number">10.0</span>), Layer.FOREGROUND);
+        renderer.addAnnotation(<span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryTextAnnotation</span>(<span class="hljs-string">"A2"</span>, <span class="hljs-string">"Cat2"</span>, <span class="hljs-number">20.0</span>), Layer.BACKGROUND);
+
+        renderer.removeAnnotations();
+        assertFalse(renderer.removeAnnotation(<span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryTextAnnotation</span>(<span class="hljs-string">"A1"</span>, <span class="hljs-string">"Cat1"</span>, <span class="hljs-number">10.0</span>)));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInitialise</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertEquals(<span class="hljs-number">0</span>, renderer.getRowCount());
+        assertEquals(<span class="hljs-number">0</span>, renderer.getColumnCount());
+
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">dataset</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCategoryDataset</span>();
+        dataset.addValue(<span class="hljs-number">1.0</span>, <span class="hljs-string">"R1"</span>, <span class="hljs-string">"C1"</span>);
+        dataset.addValue(<span class="hljs-number">2.0</span>, <span class="hljs-string">"R1"</span>, <span class="hljs-string">"C2"</span>);
+        dataset.addValue(<span class="hljs-number">3.0</span>, <span class="hljs-string">"R2"</span>, <span class="hljs-string">"C1"</span>);
+        dataset.addValue(<span class="hljs-number">4.0</span>, <span class="hljs-string">"R2"</span>, <span class="hljs-string">"C2"</span>);
+
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(dataset, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(<span class="hljs-string">"Category"</span>),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"Value"</span>), renderer);
+        <span class="hljs-type">CategoryItemRendererState</span> <span class="hljs-variable">state</span> <span class="hljs-operator">=</span> renderer.initialise(<span class="hljs-literal">null</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>, <span class="hljs-number">100</span>), plot, dataset, <span class="hljs-literal">null</span>);
+
+        assertNotNull(state);
+        assertEquals(<span class="hljs-number">2</span>, renderer.getRowCount());
+        assertEquals(<span class="hljs-number">2</span>, renderer.getColumnCount());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInitialiseWithNullDataset</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(<span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(<span class="hljs-string">"Category"</span>),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"Value"</span>), renderer);
+        <span class="hljs-type">CategoryItemRendererState</span> <span class="hljs-variable">state</span> <span class="hljs-operator">=</span> renderer.initialise(<span class="hljs-literal">null</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>, <span class="hljs-number">100</span>), plot, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+
+        assertNotNull(state);
+        assertEquals(<span class="hljs-number">0</span>, renderer.getRowCount());
+        assertEquals(<span class="hljs-number">0</span>, renderer.getColumnCount());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testFindRangeBounds</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(renderer.findRangeBounds(<span class="hljs-literal">null</span>));
+        assertNull(renderer.findRangeBounds(<span class="hljs-literal">null</span>, <span class="hljs-literal">true</span>));
+
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">dataset</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCategoryDataset</span>();
+        assertNull(renderer.findRangeBounds(dataset));
+
+        dataset.addValue(<span class="hljs-number">10.0</span>, <span class="hljs-string">"R1"</span>, <span class="hljs-string">"C1"</span>);
+        dataset.addValue(<span class="hljs-number">25.0</span>, <span class="hljs-string">"R1"</span>, <span class="hljs-string">"C2"</span>);
+        dataset.addValue(-<span class="hljs-number">5.0</span>, <span class="hljs-string">"R2"</span>, <span class="hljs-string">"C1"</span>);
+
+        <span class="hljs-type">Range</span> <span class="hljs-variable">range</span> <span class="hljs-operator">=</span> renderer.findRangeBounds(dataset);
+        assertNotNull(range);
+        assertEquals(-<span class="hljs-number">5.0</span>, range.getLowerBound(), <span class="hljs-number">1e-9</span>);
+        assertEquals(<span class="hljs-number">25.0</span>, range.getUpperBound(), <span class="hljs-number">1e-9</span>);
+
+        <span class="hljs-type">Range</span> <span class="hljs-variable">rangeInterval</span> <span class="hljs-operator">=</span> renderer.findRangeBounds(dataset, <span class="hljs-literal">true</span>);
+        assertNotNull(rangeInterval);
+        assertEquals(-<span class="hljs-number">5.0</span>, rangeInterval.getLowerBound(), <span class="hljs-number">1e-9</span>);
+        assertEquals(<span class="hljs-number">25.0</span>, rangeInterval.getUpperBound(), <span class="hljs-number">1e-9</span>);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetDomainAxisAndRangeAxis</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryAxis</span> <span class="hljs-variable">domainAxis</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(<span class="hljs-string">"Domain"</span>);
+        <span class="hljs-type">ValueAxis</span> <span class="hljs-variable">rangeAxis</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"Range"</span>);
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">dataset</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCategoryDataset</span>();
+
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(dataset, domainAxis, rangeAxis, renderer);
+
+        <span class="hljs-type">CategoryAxis</span> <span class="hljs-variable">resolvedDomain</span> <span class="hljs-operator">=</span> renderer.getDomainAxis(plot, dataset);
+        assertSame(domainAxis, resolvedDomain);
+
+        <span class="hljs-type">ValueAxis</span> <span class="hljs-variable">resolvedRange</span> <span class="hljs-operator">=</span> renderer.getRangeAxis(plot, <span class="hljs-number">0</span>);
+        assertSame(rangeAxis, resolvedRange);
+
+        <span class="hljs-type">ValueAxis</span> <span class="hljs-variable">defaultRange</span> <span class="hljs-operator">=</span> renderer.getRangeAxis(plot, <span class="hljs-number">99</span>);
+        assertSame(rangeAxis, defaultRange);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetLegendItemsWhenPlotNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">LegendItemCollection</span> <span class="hljs-variable">items</span> <span class="hljs-operator">=</span> renderer.getLegendItems();
+        assertNotNull(items);
+        assertEquals(<span class="hljs-number">0</span>, items.getItemCount());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetLegendItemsWithDataset</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">dataset</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCategoryDataset</span>();
+        dataset.addValue(<span class="hljs-number">1.0</span>, <span class="hljs-string">"Series 1"</span>, <span class="hljs-string">"Type 1"</span>);
+        dataset.addValue(<span class="hljs-number">2.0</span>, <span class="hljs-string">"Series 2"</span>, <span class="hljs-string">"Type 1"</span>);
+
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(dataset, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(<span class="hljs-string">"Category"</span>),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"Value"</span>), renderer);
+
+        <span class="hljs-type">LegendItemCollection</span> <span class="hljs-variable">items</span> <span class="hljs-operator">=</span> renderer.getLegendItems();
+        assertEquals(<span class="hljs-number">2</span>, items.getItemCount());
+
+        <span class="hljs-type">LegendItem</span> <span class="hljs-variable">item0</span> <span class="hljs-operator">=</span> renderer.getLegendItem(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+        assertNotNull(item0);
+        assertEquals(<span class="hljs-string">"Series 1"</span>, item0.getLabel());
+
+        renderer.setSeriesVisible(<span class="hljs-number">0</span>, Boolean.FALSE);
+        assertNull(renderer.getLegendItem(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+        assertEquals(<span class="hljs-number">1</span>, renderer.getLegendItems().getItemCount());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDrawDomainLineValidation</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>();
+        <span class="hljs-type">Rectangle2D</span> <span class="hljs-variable">area</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">100.0</span>, <span class="hljs-number">100.0</span>);
+
+        <span class="hljs-keyword">try</span> {
+            renderer.drawDomainLine(<span class="hljs-literal">null</span>, plot, area, <span class="hljs-number">10.0</span>, <span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">BasicStroke</span>(<span class="hljs-number">1.0f</span>));
+            fail(<span class="hljs-string">"Expected IllegalArgumentException on null paint"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+
+        <span class="hljs-keyword">try</span> {
+            renderer.drawDomainLine(<span class="hljs-literal">null</span>, plot, area, <span class="hljs-number">10.0</span>, Color.RED, <span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException on null stroke"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCreateState</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">renderer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">dataset</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCategoryDataset</span>();
+        dataset.addValue(<span class="hljs-number">1.0</span>, <span class="hljs-string">"R1"</span>, <span class="hljs-string">"C1"</span>);
+        dataset.addValue(<span class="hljs-number">2.0</span>, <span class="hljs-string">"R2"</span>, <span class="hljs-string">"C1"</span>);
+
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(dataset, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(<span class="hljs-string">"Category"</span>),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"Value"</span>), renderer);
+        <span class="hljs-type">PlotRenderingInfo</span> <span class="hljs-variable">info</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PlotRenderingInfo</span>(<span class="hljs-literal">null</span>);
+        renderer.initialise(<span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">100</span>, <span class="hljs-number">100</span>), plot, dataset, info);
+
+        <span class="hljs-type">CategoryItemRendererState</span> <span class="hljs-variable">state</span> <span class="hljs-operator">=</span> renderer.createState(info);
+        assertNotNull(state);
+        <span class="hljs-type">int</span>[] visibleSeries = state.getVisibleSeriesArray();
+        assertNotNull(visibleSeries);
+        assertEquals(<span class="hljs-number">2</span>, visibleSeries.length);
+        assertEquals(<span class="hljs-number">0</span>, visibleSeries[<span class="hljs-number">0</span>]);
+        assertEquals(<span class="hljs-number">1</span>, visibleSeries[<span class="hljs-number">1</span>]);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEqualsAndHashCode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+
+        assertTrue(r1.equals(r1));
+        assertFalse(r1.equals(<span class="hljs-literal">null</span>));
+        assertFalse(r1.equals(<span class="hljs-string">"Not a renderer"</span>));
+        assertTrue(r1.equals(r2));
+        assertEquals(r1.hashCode(), r2.hashCode());
+
+        r1.setBaseItemLabelGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>());
+        assertFalse(r1.equals(r2));
+        r2.setBaseItemLabelGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>());
+        assertTrue(r1.equals(r2));
+
+        r1.setBaseToolTipGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryToolTipGenerator</span>());
+        assertFalse(r1.equals(r2));
+        r2.setBaseToolTipGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryToolTipGenerator</span>());
+        assertTrue(r1.equals(r2));
+
+        r1.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryURLGenerator</span>());
+        assertFalse(r1.equals(r2));
+        r2.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryURLGenerator</span>());
+        assertTrue(r1.equals(r2));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloning</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> CloneNotSupportedException {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        r1.setBaseItemLabelGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>());
+        r1.setBaseToolTipGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryToolTipGenerator</span>());
+        r1.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryURLGenerator</span>());
+        r1.setSeriesItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>());
+        r1.setSeriesToolTipGenerator(<span class="hljs-number">0</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryToolTipGenerator</span>());
+        r1.setSeriesURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryURLGenerator</span>());
+
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r2</span> <span class="hljs-operator">=</span> (AreaRenderer) r1.clone();
+        assertNotSame(r1, r2);
+        assertSame(r1.getClass(), r2.getClass());
+        assertTrue(r1.equals(r2));
+
+        r2.setSeriesItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-literal">null</span>);
+        assertFalse(r1.equals(r2));
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

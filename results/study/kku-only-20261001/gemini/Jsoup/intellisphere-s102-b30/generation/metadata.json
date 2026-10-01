@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "intellisphere",
+  "provider": "KKU AI Sphere / IntelliSphere",
+  "model": "gemini-flash",
+  "project": "Jsoup",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 102,
+  "prompt_iteration": 1,
+  "generated_at": "2026-10-01T09:26:07.137Z",
+  "ingested_at": "2026-10-01T09:30:17.407782+00:00",
+  "parameters": {
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "org/jsoup/nodes/DocumentRegressionTest.java",
+      "before_sha256": "926b1aab095023d11014614eebea8d791614fba47666dc2197f96a1d80b0bd37",
+      "after_sha256": "fe1a4382b722311e9d041e312ae64597ad3f59a349aceb25602539418bfe7962",
+      "fixed_api_compatibility": [
+        {
+          "kind": "explicit_unboxing",
+          "method": "elementSiblingIndex",
+          "reason": "Fixed API returns Integer; JUnit assertEquals(long,long) and assertEquals(Object,Object) are ambiguous. Explicit intValue preserves expected value 0."
+        }
+      ],
+      "selection": "Fixed compiler diagnostics and fixed API return type only; no buggy outcomes."
+    },
+    {
+      "path": "org/jsoup/nodes/DocumentRegressionTest.java",
+      "before_sha256": "fe1a4382b722311e9d041e312ae64597ad3f59a349aceb25602539418bfe7962",
+      "after_sha256": "133160406e114b9406ef2c9b8f8168aad3f1ef67051e623d54068effaf1ee1d3",
+      "fixed_api_compatibility": [
+        {
+          "kind": "explicit_unboxing",
+          "method": "elementSiblingIndex",
+          "reason": "Same Integer return type / JUnit ambiguity on body call. Expected value 1 unchanged; v36 fixed failure preserved."
+        }
+      ],
+      "selection": "Fixed compiler and fixed declarations only; no buggy outcomes."
+    }
+  ],
+  "notes": [
+    "Exact original prompt only. No evaluation feedback sent.",
+    "response.md serializes rendered DOM blocks, exact Java text preserved alongside rendered-response.html/text.",
+    "Observed UI upper-bound duration; displayed model label recorded exactly, resolved version unknown.",
+    "Local processing v37: hash-identified Claude Cli complete-prefix recovery plus hash-identified Claude Jsoup complete-prefix recovery plus fixed-diagnosed Time String-null overload disambiguation plus exact-tail, hash-identified Gemini Lang complete-prefix recovery before evaluation; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "76fbf869f45859606c66d2194ec76c415f1c1e0eb7c973a6b0222c63448c77bd",
+  "response_sha256": "a02466e87494249757b3eda2f09440c989f19909a12cd43aec5a957fb3d0214b",
+  "context_manifest_sha256": "60c539de78398707f144f85511a2ec04cdecbb1279a4c20e474c842c86a81519",
+  "source_files": [
+    {
+      "path": "src/main/java/org/jsoup/nodes/Document.java",
+      "class": "org.jsoup.nodes.Document",
+      "sha256": "80ad1c53572ff2d2b6435129db05bb21bf708d4c435260a1513aa15d3536c417",
+      "bytes": 4365
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.xml",
+      "sha256": "4be0b6876e22761aa8206f0c94b4a3741d882967de1a20342a32a9aa242424e5",
+      "bytes": 1121
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "14c6da806406de8ceb4853d398440c02ad32300288d0c97f6161531edc5ebdf6",
+      "bytes": 4466
+    }
+  ],
+  "java_files": [
+    {
+      "path": "org/jsoup/nodes/DocumentRegressionTest.java",
+      "sha256": "133160406e114b9406ef2c9b8f8168aad3f1ef67051e623d54068effaf1ee1d3",
+      "bytes": 6508
+    }
+  ],
+  "external_suite": "Jsoup-1f-intellisphere.102.tar.bz2",
+  "external_suite_sha256": "1889ccc35009f105210f67c80d3813b8064f9153c3ce415d96fffe06284eab8f",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

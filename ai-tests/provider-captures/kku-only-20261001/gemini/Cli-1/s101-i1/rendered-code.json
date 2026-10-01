@@ -1,0 +1,6 @@
+[
+  {
+    "language": "hljs language-java",
+    "text": "package org.apache.commons.cli;\n\nimport java.util.Iterator;\nimport java.util.List;\nimport junit.framework.TestCase;\n\n/**\n * Deterministic regression tests for {@link CommandLine}.\n */\npublic class CommandLineRegressionTest extends TestCase {\n\n    /**\n     * Subclass of Option allowing deterministic configuration of values and type\n     * without relying on internal parsing state.\n     */\n    private static class StubOption extends Option {\n        private final String[] values;\n        private final Object type;\n\n        public StubOption(String opt, String longOpt) {\n            this(opt, longOpt, null, null);\n        }\n\n        public StubOption(String opt, String longOpt, String[] values) {\n            this(opt, longOpt, values, null);\n        }\n\n        public StubOption(String opt, String longOpt, String[] values, Object type) {\n            super(opt, longOpt, values != null, \"Stub Option\");\n            this.values = values;\n            this.type = type;\n        }\n\n        public String[] getValues() {\n            return this.values;\n        }\n\n        public Object getType() {\n            return this.type;\n        }\n    }\n\n    public void testEmptyCommandLineState() {"
+  }
+]

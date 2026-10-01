@@ -1,0 +1,269 @@
+References used: provided source file src/java/org/apache/commons/cli/CommandLine.java and project build file build.xml (JUnit 3.8.1, package-private constructor/mutators require same package test placement).
+
+src/test/org/apache/commons/cli/CommandLineTest.java
+
+java
+package org.apache.commons.cli;
+
+import java.util.Iterator;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+public class CommandLineTest extends TestCase {
+
+    public void testEmptyCommandLineHasNoOptionsOrArgs() {
+        CommandLine cmd = new CommandLine();
+
+        assertFalse(cmd.hasOption("a"));
+        assertFalse(cmd.hasOption('a'));
+        assertNull(cmd.getOptionValue("a"));
+        assertNull(cmd.getOptionValue('a'));
+        assertNull(cmd.getOptionValues("a"));
+        assertNull(cmd.getOptionValues('a'));
+        assertNull(cmd.getOptionObject("a"));
+        assertNull(cmd.getOptionObject('a'));
+
+        assertEquals(0, cmd.getArgs().length);
+        assertEquals(0, cmd.getArgList().size());
+        assertEquals(0, cmd.getOptions().length);
+        assertFalse(cmd.iterator().hasNext());
+    }
+
+    public void testAddArgPreservesOrderInArrayAndList() {
+        CommandLine cmd = new CommandLine();
+
+        cmd.addArg("first");
+        cmd.addArg("second");
+        cmd.addArg(null);
+
+        String[] args = cmd.getArgs();
+        assertEquals(3, args.length);
+        assertEquals("first", args[0](undefined));
+        assertEquals("second", args[1](undefined));
+        assertNull(args[2](undefined));
+
+        List argList = cmd.getArgList();
+        assertEquals(3, argList.size());
+        assertEquals("first", argList.get(0));
+        assertEquals("second", argList.get(1));
+        assertNull(argList.get(2));
+    }
+
+    public void testGetArgsReturnsIndependentArraySnapshot() {
+        CommandLine cmd = new CommandLine();
+        cmd.addArg("value");
+
+        String[] args1 = cmd.getArgs();
+        args1[0](undefined) = "changed";
+
+        String[] args2 = cmd.getArgs();
+        assertEquals(1, args2.length);
+        assertEquals("value", args2[0](undefined));
+    }
+
+    public void testGetArgListIsLiveList() {
+        CommandLine cmd = new CommandLine();
+        cmd.addArg("initial");
+
+        List argList = cmd.getArgList();
+        argList.add("addedThroughListView");
+
+        String[] args = cmd.getArgs();
+        assertEquals(2, args.length);
+        assertEquals("initial", args[0](undefined));
+        assertEquals("addedThroughListView", args[1](undefined));
+    }
+
+    public void testHasOptionAndGetValueByShortName() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("a", "alpha", true, "desc");
+        option.addValue("value1");
+        cmd.addOption(option);
+
+        assertTrue(cmd.hasOption("a"));
+        assertTrue(cmd.hasOption('a'));
+        assertEquals("value1", cmd.getOptionValue("a"));
+        assertEquals("value1", cmd.getOptionValue('a'));
+    }
+
+    public void testHasOptionAndGetValueByLongName() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("a", "alpha", true, "desc");
+        option.addValue("value1");
+        cmd.addOption(option);
+
+        assertTrue(cmd.hasOption("alpha"));
+        assertEquals("value1", cmd.getOptionValue("alpha"));
+        assertEquals("value1", cmd.getOptionValue("--alpha"));
+    }
+
+    public void testLeadingHyphensAreStrippedWhenResolvingOption() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("b", "beta", true, "desc");
+        option.addValue("v");
+        cmd.addOption(option);
+
+        assertTrue(cmd.hasOption("-b"));
+        assertTrue(cmd.hasOption("--beta"));
+        assertEquals("v", cmd.getOptionValue("-b"));
+        assertEquals("v", cmd.getOptionValue("--beta"));
+        assertNotNull(cmd.getOptionValues("--beta"));
+        assertEquals("v", cmd.getOptionValues("--beta")[0](undefined));
+    }
+
+    public void testMissingOptionReturnsNullOrDefault() {
+        CommandLine cmd = new CommandLine();
+
+        assertNull(cmd.getOptionValue("missing"));
+        assertNull(cmd.getOptionValue('m'));
+        assertNull(cmd.getOptionValues("missing"));
+        assertNull(cmd.getOptionObject("missing"));
+        assertEquals("default", cmd.getOptionValue("missing", "default"));
+        assertEquals("default", cmd.getOptionValue('m', "default"));
+    }
+
+    public void testOptionWithoutValuesIsPresentButValueAccessReturnsNull() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("f", "flag", false, "desc");
+        cmd.addOption(option);
+
+        assertTrue(cmd.hasOption("f"));
+        assertTrue(cmd.hasOption("flag"));
+        assertNull(cmd.getOptionValue("f"));
+        assertNull(cmd.getOptionValue("flag"));
+        assertNull(cmd.getOptionValues("f"));
+        assertNull(cmd.getOptionObject("f"));
+        assertEquals("fallback", cmd.getOptionValue("f", "fallback"));
+    }
+
+    public void testGetOptionValuesReturnsAllAddedValuesInOrder() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("m", "multi", true, "desc");
+        option.addValue("one");
+        option.addValue("two");
+        cmd.addOption(option);
+
+        String[] valuesByShort = cmd.getOptionValues("m");
+        assertNotNull(valuesByShort);
+        assertEquals(2, valuesByShort.length);
+        assertEquals("one", valuesByShort[0](undefined));
+        assertEquals("two", valuesByShort[1](undefined));
+
+        String[] valuesByLong = cmd.getOptionValues("multi");
+        assertNotNull(valuesByLong);
+        assertEquals(2, valuesByLong.length);
+        assertEquals("one", valuesByLong[0](undefined));
+        assertEquals("two", valuesByLong[1](undefined));
+
+        assertEquals("one", cmd.getOptionValue("m"));
+    }
+
+    public void testGetOptionObjectConvertsNumberUsingOptionType() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("n", "number", true, "desc");
+        option.setType(Number.class);
+        option.addValue("123");
+        cmd.addOption(option);
+
+        Object valueByShort = cmd.getOptionObject("n");
+        Object valueByLong = cmd.getOptionObject("number");
+
+        assertNotNull(valueByShort);
+        assertTrue(valueByShort instanceof Number);
+        assertEquals(123L, ((Number) valueByShort).longValue());
+
+        assertNotNull(valueByLong);
+        assertTrue(valueByLong instanceof Number);
+        assertEquals(123L, ((Number) valueByLong).longValue());
+    }
+
+    public void testGetOptionObjectReturnsNullWhenOptionHasNoValueEvenIfPresent() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("n", "number", true, "desc");
+        option.setType(Number.class);
+        cmd.addOption(option);
+
+        assertTrue(cmd.hasOption("n"));
+        assertNull(cmd.getOptionObject("n"));
+        assertNull(cmd.getOptionObject('n'));
+    }
+
+    public void testDefaultValueIsIgnoredWhenActualValueExists() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("x", "execute", true, "desc");
+        option.addValue("actual");
+        cmd.addOption(option);
+
+        assertEquals("actual", cmd.getOptionValue("x", "default"));
+        assertEquals("actual", cmd.getOptionValue('x', "default"));
+        assertEquals("actual", cmd.getOptionValue("execute", "default"));
+    }
+
+    public void testIteratorAndGetOptionsContainAddedOptions() {
+        CommandLine cmd = new CommandLine();
+        Option a = new Option("a", "alpha", false, "desc");
+        Option b = new Option("b", "beta", true, "desc");
+        b.addValue("value");
+        cmd.addOption(a);
+        cmd.addOption(b);
+
+        Option[] options = cmd.getOptions();
+        assertEquals(2, options.length);
+
+        boolean sawA = false;
+        boolean sawB = false;
+        for (int i = 0; i < options.length; i++) {
+            if (options[i] == a) {
+                sawA = true;
+            }
+            if (options[i] == b) {
+                sawB = true;
+            }
+        }
+        assertTrue(sawA);
+        assertTrue(sawB);
+
+        Iterator it = cmd.iterator();
+        int count = 0;
+        while (it.hasNext()) {
+            Object next = it.next();
+            assertTrue(next == a || next == b);
+            count++;
+        }
+        assertEquals(2, count);
+    }
+
+    public void testGetOptionsReturnsIndependentArray() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("a", "alpha", false, "desc");
+        cmd.addOption(option);
+
+        Option[] first = cmd.getOptions();
+        assertEquals(1, first.length);
+        first[0](undefined) = null;
+
+        Option[] second = cmd.getOptions();
+        assertEquals(1, second.length);
+        assertSame(option, second[0](undefined));
+    }
+
+    public void testDuplicateEquivalentOptionsDoNotCreateDuplicateEntries() {
+        CommandLine cmd = new CommandLine();
+        Option first = new Option("a", "alpha", true, "desc");
+        first.addValue("first");
+        Option second = new Option("a", "alpha", true, "desc");
+        second.addValue("second");
+
+        cmd.addOption(first);
+        cmd.addOption(second);
+
+        assertEquals(1, cmd.getOptions().length);
+        assertTrue(cmd.hasOption("a"));
+        assertTrue(cmd.hasOption("alpha"));
+        assertEquals("first", cmd.getOptionValue("a"));
+    }
+}
+
+
+Copy

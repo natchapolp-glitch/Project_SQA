@@ -9,6 +9,11 @@ third-party runtime dependencies:
 - `atcg.cmaes.CMAES` implements full-covariance CMA-ES with rank-one and
   rank-mu covariance updates and deterministic seeds.
 
+Round 2 uses `scripts/study/run.py` and `generate.py` on all 17 project identities.
+It generates from fixed behavior, with shared API declarations for eligibility.
+The old Lang pilot below remains separate; current metrics and reproducible
+configuration are documented in `docs/study-protocol.md`.
+
 Run their unit tests from WSL:
 
 ```bash

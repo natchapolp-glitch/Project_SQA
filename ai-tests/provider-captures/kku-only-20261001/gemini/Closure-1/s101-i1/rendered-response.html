@@ -1,0 +1,232 @@
+<p>An independent regression test suite for <code>com.google.javascript.jscomp.RemoveUnusedVars</code> has been created below. It verifies unreferenced variable and function collection, continuation handling, parameter stripping, side-effect preservation, call-site modifications, and lifecycle preconditions under the fixed reference behavior.</p>
+<p><code>com/google/javascript/jscomp/RemoveUnusedVarsRegressionTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">/*
+ * Copyright 2011 The Closure Compiler Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span class="hljs-keyword">package</span> com.google.javascript.jscomp;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Node;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Token;
+
+<span class="hljs-comment">/**
+ * Regression tests for {<span class="hljs-doctag">@link</span> RemoveUnusedVars}.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RemoveUnusedVarsRegressionTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+  <span class="hljs-keyword">private</span> Node <span class="hljs-title function_">processCode</span><span class="hljs-params">(
+      String js,
+      <span class="hljs-type">boolean</span> removeGlobals,
+      <span class="hljs-type">boolean</span> preserveFunctionExpressionNames,
+      <span class="hljs-type">boolean</span> modifyCallSites)</span> {
+    <span class="hljs-type">Compiler</span> <span class="hljs-variable">compiler</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Compiler</span>();
+    compiler.initCompilerOptionsIfTesting();
+    compiler.setLifeCycleStage(AbstractCompiler.LifeCycleStage.NORMALIZED);
+
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> compiler.parseTestCode(js);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> compiler.parseTestCode(<span class="hljs-string">""</span>);
+
+    <span class="hljs-type">RemoveUnusedVars</span> <span class="hljs-variable">pass</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(
+        compiler,
+        removeGlobals,
+        preserveFunctionExpressionNames,
+        modifyCallSites);
+    pass.process(externs, root);
+    <span class="hljs-keyword">return</span> root;
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testUnnormalizedStageThrowsException</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Compiler</span> <span class="hljs-variable">compiler</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Compiler</span>();
+    compiler.initCompilerOptionsIfTesting();
+    <span class="hljs-comment">// Do not set NORMALIZED lifecycle stage</span>
+
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> compiler.parseTestCode(<span class="hljs-string">"var a = 1;"</span>);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> compiler.parseTestCode(<span class="hljs-string">""</span>);
+
+    <span class="hljs-type">RemoveUnusedVars</span> <span class="hljs-variable">pass</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-keyword">try</span> {
+      pass.process(externs, root);
+      fail(<span class="hljs-string">"Expected IllegalStateException when compiler stage is not normalized"</span>);
+    } <span class="hljs-keyword">catch</span> (IllegalStateException expected) {
+      <span class="hljs-comment">// Expected exception</span>
+    }
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnusedGlobalVar</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var a = 1;"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertFalse(root.hasChildren());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreserveUnusedGlobalVarWhenRemoveGlobalsFalse</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var a = 1;"</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    assertTrue(root.getFirstChild().isVar());
+    assertEquals(<span class="hljs-string">"a"</span>, root.getFirstChild().getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnusedLocalVarEvenWhenRemoveGlobalsFalse</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"function f() { var a = 1; } f();"</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">fn</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(fn.isFunction());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">body</span> <span class="hljs-operator">=</span> fn.getLastChild();
+    <span class="hljs-comment">// Body should now be empty because 'a' was removed</span>
+    assertFalse(body.hasChildren());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreserveReferencedVar</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var a = 1; a;"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    assertTrue(root.getFirstChild().isVar());
+    assertEquals(<span class="hljs-string">"a"</span>, root.getFirstChild().getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnusedVarWithSideEffectsPreservesRhs</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var a = foo();"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    <span class="hljs-comment">// "var a = foo();" must be replaced with "foo();" (an EXPR_RESULT node)</span>
+    <span class="hljs-type">Node</span> <span class="hljs-variable">first</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(first.isExprResult());
+    assertTrue(first.getFirstChild().isCall());
+    assertEquals(<span class="hljs-string">"foo"</span>, first.getFirstChild().getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveOneOfMultipleDeclarations</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var a = 1, b = 2; b;"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">varNode</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(varNode.isVar());
+    <span class="hljs-comment">// Only 'b' should remain in the var declaration</span>
+    assertEquals(<span class="hljs-number">1</span>, varNode.getChildCount());
+    assertEquals(<span class="hljs-string">"b"</span>, varNode.getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedFunctionDeclaration</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"function unused() {}"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertFalse(root.hasChildren());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreserveReferencedFunctionDeclaration</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"function used() {} used();"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">first</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(first.isFunction());
+    assertEquals(<span class="hljs-string">"used"</span>, first.getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedTrailingFunctionArgs</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"function f(a, b) { return a; } f(1, 2);"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">fn</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(fn.isFunction());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">paramList</span> <span class="hljs-operator">=</span> fn.getFirstChild().getNext();
+    <span class="hljs-comment">// 'b' is trailing and unreferenced, so it should be stripped</span>
+    assertEquals(<span class="hljs-number">1</span>, paramList.getChildCount());
+    assertEquals(<span class="hljs-string">"a"</span>, paramList.getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreserveFunctionArgsWhenArgumentsEscaped</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"function f(a, b) { return arguments; } f(1, 2);"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">fn</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(fn.isFunction());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">paramList</span> <span class="hljs-operator">=</span> fn.getFirstChild().getNext();
+    <span class="hljs-comment">// When arguments is referenced, all parameters should be retained</span>
+    assertEquals(<span class="hljs-number">2</span>, paramList.getChildCount());
+    assertEquals(<span class="hljs-string">"a"</span>, paramList.getFirstChild().getString());
+    assertEquals(<span class="hljs-string">"b"</span>, paramList.getFirstChild().getNext().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDoNotRemoveFunctionArgsWhenRemoveGlobalsFalse</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"function f(a, b) { return a; } f(1, 2);"</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">fn</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(fn.isFunction());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">paramList</span> <span class="hljs-operator">=</span> fn.getFirstChild().getNext();
+    assertEquals(<span class="hljs-number">2</span>, paramList.getChildCount());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreserveFunctionExpressionNameWhenRequested</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var f = function myName() {}; f();"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">varNode</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    <span class="hljs-type">Node</span> <span class="hljs-variable">fnNode</span> <span class="hljs-operator">=</span> varNode.getFirstChild().getFirstChild();
+    assertTrue(fnNode.isFunction());
+    assertEquals(<span class="hljs-string">"myName"</span>, fnNode.getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveFunctionExpressionNameWhenNotPreserved</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var f = function myName() {}; f();"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">varNode</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    <span class="hljs-type">Node</span> <span class="hljs-variable">fnNode</span> <span class="hljs-operator">=</span> varNode.getFirstChild().getFirstChild();
+    assertTrue(fnNode.isFunction());
+    assertEquals(<span class="hljs-string">""</span>, fnNode.getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedPropertyAssignToLiteral</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var x = {}; x.prop = 1;"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-comment">// Neither 'x' nor the property assignment externalizes state, so both are removed</span>
+    assertFalse(root.hasChildren());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreservePropertyAssignToUnknownValue</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var x = getUnknown(); x.prop = 1;"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-comment">// Initializer may escape or have external state, so 'x' should be preserved</span>
+    assertTrue(root.hasChildren());
+    assertTrue(root.getFirstChild().isVar());
+    assertEquals(<span class="hljs-string">"x"</span>, root.getFirstChild().getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreserveForInVariable</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"for (var key in obj) {}"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">forNode</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(forNode.isFor());
+    assertTrue(forNode.getFirstChild().isVar());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedSimpleAssign</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var x; x = 1;"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertFalse(root.hasChildren());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedAssignWithSideEffects</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(<span class="hljs-string">"var x; x = foo();"</span>, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    assertTrue(root.hasChildren());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">expr</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertTrue(expr.isExprResult());
+    assertTrue(expr.getFirstChild().isCall());
+    assertEquals(<span class="hljs-string">"foo"</span>, expr.getFirstChild().getFirstChild().getString());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testModifyCallSitesRemovesUnusedArgument</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">js</span> <span class="hljs-operator">=</span> <span class="hljs-string">"function f(a, b) { return a; } f(1, 2);"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">root</span> <span class="hljs-operator">=</span> processCode(js, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">true</span>);
+
+    <span class="hljs-comment">// Function definition signature updated</span>
+    <span class="hljs-type">Node</span> <span class="hljs-variable">fn</span> <span class="hljs-operator">=</span> root.getFirstChild();
+    assertEquals(<span class="hljs-number">1</span>, fn.getFirstChild().getNext().getChildCount());
+
+    <span class="hljs-comment">// Call site argument '2' removed</span>
+    <span class="hljs-type">Node</span> <span class="hljs-variable">callExpr</span> <span class="hljs-operator">=</span> root.getLastChild();
+    <span class="hljs-type">Node</span> <span class="hljs-variable">callNode</span> <span class="hljs-operator">=</span> callExpr.getFirstChild();
+    assertTrue(callNode.isCall());
+    <span class="hljs-comment">// Children: CALLEE ('f') and first arg ('1')</span>
+    assertEquals(<span class="hljs-number">2</span>, callNode.getChildCount());
+  }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<h3>References</h3>
+<ul>
+<li>Closure Compiler <code>com.google.javascript.jscomp.RemoveUnusedVars</code> source implementation and algorithmic documentation.</li>
+<li>Defects4J Closure revision <code>1f</code> API configuration and test environment specifications.</li>
+</ul>

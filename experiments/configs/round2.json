@@ -1,0 +1,17 @@
+{
+  "study": "prospective-shared-api-fixed-reference-v2",
+  "defects4j_version": "3.0.1",
+  "timezone": "America/Los_Angeles",
+  "generators": ["cmaes", "fscs-art", "claude", "intellisphere"],
+  "seeds": [101, 102, 103],
+  "budgets": [30],
+  "selection": "lowest active bug ID per project; unsupported targets retained as blocked",
+  "scope_limit": "one active bug per project, not every active bug; no instructor approval inferred",
+  "input_domain": "declared methods, scalar/array inputs, bounded recursive fixtures, null boundaries and concrete subclasses for abstract targets",
+  "cmaes_fitness": "fixed outcome frequency minimization; no buggy observations or patch feedback",
+  "coverage_scope": "all classes modified by the selected fix",
+  "api_eligibility": "intersection of fixed and buggy declaration signatures, with common fixture class names; no buggy behavior used in generation",
+  "long_observations": "SHA-256 and UTF-8 byte length for exact serialized outcomes longer than 16000 characters",
+  "command_timeout_seconds": 900,
+  "observation_timeout_seconds": 10
+}

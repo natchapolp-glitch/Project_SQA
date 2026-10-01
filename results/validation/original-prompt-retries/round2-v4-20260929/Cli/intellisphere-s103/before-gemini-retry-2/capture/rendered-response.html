@@ -1,0 +1,353 @@
+<div id="messageContentDataId5wpjmmVrBjKB" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Based on the provided source code and build configuration, I will generate unit tests for the <code>org.apache.commons.cli.CommandLine</code> class.</p>
+<p><strong>Analysis:</strong></p>
+<ol>
+<li><strong>Build System:</strong> The project uses Ant (<code>build.xml</code>).</li>
+<li><strong>JUnit Version:</strong> The dependency is <code>junit-3.8.1.jar</code>, so tests must be written for JUnit 3.x (extending <code>junit.framework.TestCase</code>, using <code>setUp</code>, etc.).</li>
+<li><strong>Java Version:</strong> The build compiles with <code>target="1.6" source="1.6"</code>, but the constraint asks for Java 11 compatible syntax unless an older source level is required. Using Java 5+ features (generics, enhanced for-loops) is compatible with a target of 1.6 and fits Java 11. I will use generics for type safety but maintain JUnit 3 structure.</li>
+<li><strong>Class Under Test:</strong> <code>org.apache.commons.cli.CommandLine</code>. It has a package-private constructor, so it cannot be directly instantiated in a test in a different package. It must be tested via its public API after being populated by its package-private methods, or by extending it, or by placing the test in the <em>same package</em> (<code>org.apache.commons.cli</code>). Placing the test in the same package is the correct, non-invasive approach as it's a common practice for unit testing (package-private access).</li>
+<li><strong>Key Methods:</strong>
+<ul>
+<li><code>hasOption(String opt)</code>, <code>hasOption(char opt)</code></li>
+<li><code>getOptionObject(String opt)</code>, <code>getOptionObject(char opt)</code></li>
+<li><code>getOptionValue(String opt)</code>, <code>getOptionValue(char opt)</code>, <code>getOptionValue(String opt, String defaultValue)</code>, <code>getOptionValue(char opt, String defaultValue)</code></li>
+<li><code>getArgs()</code>, <code>getArgList()</code></li>
+<li><code>getOptionValues(String opt)</code>, <code>getOptionValues(char opt)</code></li>
+<li><code>iterator()</code>, <code>getOptions()</code></li>
+<li><code>addArg(String arg)</code>, <code>addOption(Option opt)</code></li>
+</ul>
+</li>
+</ol>
+<p>Since <code>addOption</code> and <code>addArg</code> are package-private, the test class must be in <code>org.apache.commons.cli</code> to populate the <code>CommandLine</code> instance.</p>
+<p><strong>Test Plan:</strong></p>
+<ul>
+<li><code>setUp</code> will create a fresh <code>CommandLine</code> instance and some <code>Option</code> objects.</li>
+<li>Test adding options and checking <code>hasOption</code> with short and long names.</li>
+<li>Test <code>getOptionValue</code> with values, multiple values, and defaults.</li>
+<li>Test <code>getOptionValues</code> with multiple values.</li>
+<li>Test <code>getOptionObject</code> based on the type of the Option.</li>
+<li>Test <code>getArgs</code> and <code>getArgList</code> for leftover arguments.</li>
+<li>Test <code>iterator</code> and <code>getOptions</code>.</li>
+<li>Test edge cases: null inputs, empty strings, non-existent options, options with no values.</li>
+</ul>
+<p><strong>Important Note on <code>getOptionObject</code>:</strong>
+The source code uses <code>TypeHandler.createValue(res, type)</code>.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-type">Object</span> <span class="hljs-variable">type</span> <span class="hljs-operator">=</span> option.getType();
+<span class="hljs-keyword">return</span> (res == <span class="hljs-literal">null</span>) ? <span class="hljs-literal">null</span> : TypeHandler.createValue(res, type);
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<p>The <code>Option</code> class has a constructor <code>Option(String opt, boolean hasArg, String description)</code> and another one that accepts an <code>Object type</code>. We need an <code>Option</code> that carries a type to fully test this. Let's assume <code>Option</code> has:
+<code>public Option(String opt, String longOpt, boolean hasArg, String description)</code> and
+<code>public Object getType()</code> (provided from creating an <code>Option</code> with a type).
+I will construct <code>Option</code> objects with types (e.g., <code>Integer.class</code>, <code>Float.class</code>, <code>URL.class</code>) to verify the type conversion.</p>
+<p>Let's proceed with generating the test file.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">src/java/org/apache/commons/cli/CommandLineTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.cli;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> java.util.Iterator;
+<span class="hljs-keyword">import</span> java.net.URL;
+
+<span class="hljs-comment">/**
+ * Unit tests for the {<span class="hljs-doctag">@link</span> CommandLine} class.
+ *
+ * <span class="hljs-doctag">@author</span> Test Generator
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CommandLineTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> CommandLine cmdLine;
+    <span class="hljs-keyword">private</span> Option optA;
+    <span class="hljs-keyword">private</span> Option optB;
+    <span class="hljs-keyword">private</span> Option optC;
+    <span class="hljs-keyword">private</span> Option optLong;
+
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> {
+        cmdLine = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CommandLine</span>();
+        
+        <span class="hljs-comment">// Standard options</span>
+        optA = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"a"</span>, <span class="hljs-string">"alpha"</span>, <span class="hljs-literal">false</span>, <span class="hljs-string">"Option A without arg"</span>);
+        optB = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"b"</span>, <span class="hljs-string">"beta"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Option B with arg"</span>);
+        optC = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"c"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Option C with arg"</span>);
+        optLong = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"d"</span>, <span class="hljs-string">"delta"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Option D with long opt"</span>);
+        
+        <span class="hljs-comment">// Option with a type for getOptionObject tests</span>
+        <span class="hljs-type">Option</span> <span class="hljs-variable">optInt</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"e"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Integer option"</span>);
+        <span class="hljs-comment">// Assuming Option has a way to set type, or constructor that takes type.</span>
+        <span class="hljs-comment">// The source shows Option has getType(), and we can use its constructor.</span>
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Tests for hasOption</span>
+    <span class="hljs-comment">// ====================================</span>
+    
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionStringTrue</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        assertTrue(<span class="hljs-string">"Option 'a' should be present"</span>, cmdLine.hasOption(<span class="hljs-string">"a"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionStringFalse</span><span class="hljs-params">()</span> {
+        assertFalse(<span class="hljs-string">"Option 'x' should not be present"</span>, cmdLine.hasOption(<span class="hljs-string">"x"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionCharTrue</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        assertTrue(<span class="hljs-string">"Option 'a' char should be present"</span>, cmdLine.hasOption(<span class="hljs-string">'a'</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionCharFalse</span><span class="hljs-params">()</span> {
+        assertFalse(<span class="hljs-string">"Option 'z' char should not be present"</span>, cmdLine.hasOption(<span class="hljs-string">'z'</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionLongOpt</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        assertTrue(<span class="hljs-string">"Long option 'alpha' should be present"</span>, cmdLine.hasOption(<span class="hljs-string">"alpha"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionAfterMultipleAdds</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        cmdLine.addOption(optB);
+        assertTrue(cmdLine.hasOption(<span class="hljs-string">"a"</span>));
+        assertTrue(cmdLine.hasOption(<span class="hljs-string">"b"</span>));
+        assertFalse(cmdLine.hasOption(<span class="hljs-string">"c"</span>));
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Tests for getOptionValue</span>
+    <span class="hljs-comment">// ====================================</span>
+    
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueStringWithArg</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optB);
+        optB.addValue(<span class="hljs-string">"betaValue"</span>);
+        assertEquals(<span class="hljs-string">"betaValue"</span>, cmdLine.getOptionValue(<span class="hljs-string">"b"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueStringNoArg</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        assertNull(<span class="hljs-string">"Option A should have no values"</span>, cmdLine.getOptionValue(<span class="hljs-string">"a"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueStringNotFound</span><span class="hljs-params">()</span> {
+        assertNull(<span class="hljs-string">"Non-existent option should return null"</span>, cmdLine.getOptionValue(<span class="hljs-string">"x"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueChar</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optC);
+        optC.addValue(<span class="hljs-string">"charlie"</span>);
+        assertEquals(<span class="hljs-string">"charlie"</span>, cmdLine.getOptionValue(<span class="hljs-string">'c'</span>));
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Tests for getOptionValue with default</span>
+    <span class="hljs-comment">// ====================================</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueStringDefaultUsed</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">defaultValue</span> <span class="hljs-operator">=</span> <span class="hljs-string">"default"</span>;
+        assertEquals(defaultValue, cmdLine.getOptionValue(<span class="hljs-string">"a"</span>, defaultValue));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueStringDefaultNotUsed</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optB);
+        optB.addValue(<span class="hljs-string">"realValue"</span>);
+        assertEquals(<span class="hljs-string">"realValue"</span>, cmdLine.getOptionValue(<span class="hljs-string">"b"</span>, <span class="hljs-string">"defaultValue"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueCharDefault</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">defaultValue</span> <span class="hljs-operator">=</span> <span class="hljs-string">"myDefault"</span>;
+        assertEquals(defaultValue, cmdLine.getOptionValue(<span class="hljs-string">'z'</span>, defaultValue));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueCharDefaultNotUsed</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optC);
+        optC.addValue(<span class="hljs-string">"charlieValue"</span>);
+        assertEquals(<span class="hljs-string">"charlieValue"</span>, cmdLine.getOptionValue(<span class="hljs-string">'c'</span>, <span class="hljs-string">"default"</span>));
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Tests for getOptionValues</span>
+    <span class="hljs-comment">// ====================================</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesStringMultiple</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optB);
+        optB.addValue(<span class="hljs-string">"val1"</span>);
+        optB.addValue(<span class="hljs-string">"val2"</span>);
+        
+        String[] values = cmdLine.getOptionValues(<span class="hljs-string">"b"</span>);
+        assertNotNull(values);
+        assertEquals(<span class="hljs-number">2</span>, values.length);
+        assertEquals(<span class="hljs-string">"val1"</span>, values[<span class="hljs-number">0</span>](undefined));
+        assertEquals(<span class="hljs-string">"val2"</span>, values[<span class="hljs-number">1</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesStringNotFound</span><span class="hljs-params">()</span> {
+        assertNull(cmdLine.getOptionValues(<span class="hljs-string">"z"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesChar</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optC);
+        optC.addValue(<span class="hljs-string">"cVal1"</span>);
+        optC.addValue(<span class="hljs-string">"cVal2"</span>);
+        
+        String[] values = cmdLine.getOptionValues(<span class="hljs-string">'c'</span>);
+        assertEquals(<span class="hljs-number">2</span>, values.length);
+        assertEquals(<span class="hljs-string">"cVal1"</span>, values[<span class="hljs-number">0</span>](undefined));
+        assertEquals(<span class="hljs-string">"cVal2"</span>, values[<span class="hljs-number">1</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesStringEmptyOption</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Option exists but has no values</span>
+        cmdLine.addOption(optA);
+        String[] values = cmdLine.getOptionValues(<span class="hljs-string">"a"</span>);
+        <span class="hljs-comment">// The getValues() returns an array of values. If none, it might be null or empty array depending on Option implementation.</span>
+        <span class="hljs-comment">// Let's check for null safety.</span>
+        <span class="hljs-comment">// If values are null, the code returns null directly.</span>
+        assertNotNull(values);
+        assertEquals(<span class="hljs-number">0</span>, values.length);
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Tests for getOptionObject</span>
+    <span class="hljs-comment">// ====================================</span>
+    
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectStringInteger</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Option with type</span>
+        <span class="hljs-type">Option</span> <span class="hljs-variable">intOption</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"i"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Integer opt"</span>, Integer.class);
+        cmdLine.addOption(intOption);
+        intOption.addValue(<span class="hljs-string">"123"</span>);
+        
+        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> cmdLine.getOptionObject(<span class="hljs-string">"i"</span>);
+        assertTrue(<span class="hljs-string">"Result should be an Integer"</span>, result <span class="hljs-keyword">instanceof</span> Integer);
+        assertEquals(Integer.valueOf(<span class="hljs-number">123</span>), result);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectStringNoType</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optB);
+        optB.addValue(<span class="hljs-string">"someValue"</span>);
+        
+        <span class="hljs-comment">// When no type is specified, getType() likely returns null or String.class?</span>
+        <span class="hljs-comment">// Based on TypeHandler.createValue, if type is null, it might just return the string.</span>
+        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> cmdLine.getOptionObject(<span class="hljs-string">"b"</span>);
+        <span class="hljs-comment">// The behavior is to use TypeHandler.createValue(res, type)</span>
+        <span class="hljs-comment">// In typical Commons CLI, a null type means String.</span>
+        <span class="hljs-comment">// Check the actual TypeHandler source for exact behavior, but we assume String or Object.</span>
+        assertNotNull(result);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectStringNotFound</span><span class="hljs-params">()</span> {
+        assertNull(cmdLine.getOptionObject(<span class="hljs-string">"x"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectChar</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Option</span> <span class="hljs-variable">floatOption</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"f"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Float opt"</span>, Float.class);
+        cmdLine.addOption(floatOption);
+        floatOption.addValue(<span class="hljs-string">"3.14"</span>);
+        
+        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> cmdLine.getOptionObject(<span class="hljs-string">'f'</span>);
+        assertTrue(<span class="hljs-string">"Result should be a Float"</span>, result <span class="hljs-keyword">instanceof</span> Float);
+        assertEquals(Float.valueOf(<span class="hljs-number">3.14f</span>), result);
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Tests for Args (addArg, getArgs, getArgList)</span>
+    <span class="hljs-comment">// ====================================</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddAndGetArgs</span><span class="hljs-params">()</span> {
+        cmdLine.addArg(<span class="hljs-string">"arg1"</span>);
+        cmdLine.addArg(<span class="hljs-string">"arg2"</span>);
+        
+        String[] args = cmdLine.getArgs();
+        assertEquals(<span class="hljs-number">2</span>, args.length);
+        assertEquals(<span class="hljs-string">"arg1"</span>, args[<span class="hljs-number">0</span>](undefined));
+        assertEquals(<span class="hljs-string">"arg2"</span>, args[<span class="hljs-number">1</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddAndGetArgList</span><span class="hljs-params">()</span> {
+        cmdLine.addArg(<span class="hljs-string">"one"</span>);
+        cmdLine.addArg(<span class="hljs-string">"two"</span>);
+        
+        <span class="hljs-type">List</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> cmdLine.getArgList();
+        assertEquals(<span class="hljs-number">2</span>, argList.size());
+        assertEquals(<span class="hljs-string">"one"</span>, argList.get(<span class="hljs-number">0</span>));
+        assertEquals(<span class="hljs-string">"two"</span>, argList.get(<span class="hljs-number">1</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNoArgs</span><span class="hljs-params">()</span> {
+        String[] args = cmdLine.getArgs();
+        assertNotNull(args);
+        assertEquals(<span class="hljs-number">0</span>, args.length);
+        
+        <span class="hljs-type">List</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> cmdLine.getArgList();
+        assertNotNull(argList);
+        assertEquals(<span class="hljs-number">0</span>, argList.size());
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Tests for Iterator and getOptions</span>
+    <span class="hljs-comment">// ====================================</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIteratorEmpty</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Iterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> cmdLine.iterator();
+        assertFalse(it.hasNext());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIteratorPopulated</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        cmdLine.addOption(optB);
+        
+        <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
+        <span class="hljs-type">Iterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> cmdLine.iterator();
+        <span class="hljs-keyword">while</span> (it.hasNext()) {
+            <span class="hljs-type">Object</span> <span class="hljs-variable">opt</span> <span class="hljs-operator">=</span> it.next();
+            assertTrue(opt <span class="hljs-keyword">instanceof</span> Option);
+            count++;
+        }
+        assertEquals(<span class="hljs-number">2</span>, count);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptions</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        cmdLine.addOption(optB);
+        
+        Option[] opts = cmdLine.getOptions();
+        assertEquals(<span class="hljs-number">2</span>, opts.length);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionsEmpty</span><span class="hljs-params">()</span> {
+        Option[] opts = cmdLine.getOptions();
+        assertEquals(<span class="hljs-number">0</span>, opts.length);
+    }
+
+    <span class="hljs-comment">// ====================================</span>
+    <span class="hljs-comment">// Edge Cases and Stress Tests</span>
+    <span class="hljs-comment">// ====================================</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddSameOptionTwice</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Adding the same Option object twice; Set should prevent duplicates</span>
+        cmdLine.addOption(optA);
+        cmdLine.addOption(optA);
+        
+        Option[] opts = cmdLine.getOptions();
+        assertEquals(<span class="hljs-number">1</span>, opts.length);
+        assertTrue(cmdLine.hasOption(<span class="hljs-string">"a"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testOptionsWithValuesAndArguments</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optB);
+        optB.addValue(<span class="hljs-string">"bValue"</span>);
+        cmdLine.addArg(<span class="hljs-string">"leftover"</span>);
+        
+        assertTrue(cmdLine.hasOption(<span class="hljs-string">"b"</span>));
+        assertEquals(<span class="hljs-string">"bValue"</span>, cmdLine.getOptionValue(<span class="hljs-string">"b"</span>));
+        assertEquals(<span class="hljs-number">1</span>, cmdLine.getArgs().length);
+        assertEquals(<span class="hljs-string">"leftover"</span>, cmdLine.getArgs()[<span class="hljs-number">0</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHyphenatedOptionQuery</span><span class="hljs-params">()</span> {
+        cmdLine.addOption(optA);
+        <span class="hljs-comment">// Option stores 'a' without hyphens, but resolveOption strips leading hyphens</span>
+        assertTrue(cmdLine.hasOption(<span class="hljs-string">"-a"</span>));
+        assertTrue(cmdLine.hasOption(<span class="hljs-string">"--a"</span>));
+        assertTrue(cmdLine.hasOption(<span class="hljs-string">"--alpha"</span>));
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

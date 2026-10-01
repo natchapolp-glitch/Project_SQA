@@ -1,0 +1,390 @@
+<div id="messageContentDataId1bqTel5LOsek" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Based on the provided source code for <code>RemoveUnusedVars</code>, the build configuration indicates this is an Ant-based project with JUnit on the classpath (lib/rhino/lib/junit.jar from the build files). Since the specific JUnit version is not explicitly numbered in the provided build files but the Rhino test script mentions JUnit 4.10, I will generate JUnit 4.10 compatible tests. The project source level is Java 1.6, so Java 11 syntax cannot be used, and assertions must be compatible with Java 1.6.</p>
+<p>The tests will focus on the public and package-private methods of <code>RemoveUnusedVars</code>. A <code>CompilerPass</code> needs a valid <code>AbstractCompiler</code> to operate. For simplicity and to avoid complex setup, I will test <code>RemoveUnusedVars</code> through its public <code>process</code> method by providing mock or test stubs for <code>AbstractCompiler</code> or using existing test infrastructure. However, the constraint is not to change production code or add dependencies, so I will mock the compiler using a subclass if necessary to prevent compilation errors.</p>
+<p>Given the complexity of <code>AbstractCompiler</code>, I will create a minimal test double that returns commonly used objects (e.g., <code>CodingConvention</code>, lifecycle stage). Since <code>process</code> expects <code>LifeCycleStage</code> to be <code>NORMALIZED</code>, the mock must support this.</p>
+<p>The test class will be placed in <code>com/google/javascript/jscomp/</code> package.</p>
+<p>Below is the generated test file:</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">com/google/javascript/jscomp/RemoveUnusedVarsTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">/*
+ * Copyright 2008 The Closure Compiler Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span class="hljs-keyword">package</span> com.google.javascript.jscomp;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertEquals;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertFalse;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNotNull;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertTrue;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.fail;
+
+<span class="hljs-keyword">import</span> com.google.common.collect.ImmutableList;
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.CodingConvention.AssertionFunctionSpec;
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.CodingConvention.SubclassRelationship;
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.NodeTraversal.Callback;
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.parsing.JsDocInfoParser;
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.testing.NodelessUnitTest;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.IR;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Node;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Token;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.jstype.JSType;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.jstype.JSTypeRegistry;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.jstype.ObjectType;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.jstype.StaticSourceFile;
+
+<span class="hljs-keyword">import</span> org.junit.Before;
+<span class="hljs-keyword">import</span> org.junit.Test;
+<span class="hljs-keyword">import</span> org.junit.runner.RunWith;
+<span class="hljs-keyword">import</span> org.junit.runners.JUnit4;
+
+<span class="hljs-keyword">import</span> java.util.ArrayList;
+<span class="hljs-keyword">import</span> java.util.HashMap;
+<span class="hljs-keyword">import</span> java.util.HashSet;
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> java.util.Map;
+<span class="hljs-keyword">import</span> java.util.Set;
+
+<span class="hljs-comment">/**
+ * Tests for {<span class="hljs-doctag">@link</span> RemoveUnusedVars}.
+ */</span>
+<span class="hljs-meta">@RunWith(JUnit4.class)</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RemoveUnusedVarsTest</span> {
+
+  <span class="hljs-keyword">private</span> AbstractCompiler compiler;
+  <span class="hljs-keyword">private</span> RemoveUnusedVars pass;
+
+  <span class="hljs-meta">@Before</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> {
+    compiler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TestCompiler</span>();
+    pass = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">true</span>);
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcessDoesNotThrowOnEmptyScript</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script();
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcessRemovesUnusedGlobalVar</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">code</span> <span class="hljs-operator">=</span> <span class="hljs-string">"var unused = 1;"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> parse(code);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+    assertTrue(<span class="hljs-string">"Unused var should be removed"</span>,
+        script.getFirstChild() == <span class="hljs-literal">null</span> || !script.getFirstChild().isVar());
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcessKeepsUsedGlobalVar</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">code</span> <span class="hljs-operator">=</span> <span class="hljs-string">"var used = 1; alert(used);"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> parse(code);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">firstChild</span> <span class="hljs-operator">=</span> script.getFirstChild();
+    assertNotNull(firstChild);
+    assertTrue(<span class="hljs-string">"Used var should be kept"</span>,
+        firstChild.isVar() || firstChild.isScript());
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseFunctionDoesNotThrow</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(IR.name(<span class="hljs-string">""</span>), IR.paramList(), IR.block());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(function);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRemovableVarReturnsFalseForExported</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> createVar(<span class="hljs-string">"exportedVar"</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+    <span class="hljs-comment">// exported is off-limits</span>
+    assertFalse(pass.isRemovableVar(<span class="hljs-keyword">var</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRemovableVarReturnsFalseIfGlobalsNotRemoved</span><span class="hljs-params">()</span> {
+    pass = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+    <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> createVar(<span class="hljs-string">"localVar"</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+    <span class="hljs-comment">// global var with removeGlobals=false</span>
+    assertFalse(pass.isRemovableVar(<span class="hljs-keyword">var</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMarkReferencedVarAddsToReferencedSet</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> createVar(<span class="hljs-string">"myVar"</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+    <span class="hljs-type">boolean</span> <span class="hljs-variable">added</span> <span class="hljs-operator">=</span> pass.markReferencedVar(<span class="hljs-keyword">var</span>);
+    assertTrue(<span class="hljs-string">"Variable should be newly referenced"</span>, added);
+    added = pass.markReferencedVar(<span class="hljs-keyword">var</span>);
+    assertFalse(<span class="hljs-string">"Variable should already be referenced"</span>, added);
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFunctionArgListReturnsParamList</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(
+        IR.name(<span class="hljs-string">""</span>),
+        IR.paramList(IR.name(<span class="hljs-string">"a"</span>), IR.name(<span class="hljs-string">"b"</span>)),
+        IR.block());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> RemoveUnusedVars.getFunctionArgList(function);
+    assertNotNull(argList);
+    assertEquals(<span class="hljs-number">2</span>, argList.getChildCount());
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFunctionArgListEmpty</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(IR.name(<span class="hljs-string">""</span>), IR.paramList(), IR.block());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> RemoveUnusedVars.getFunctionArgList(function);
+    assertNotNull(argList);
+    assertEquals(<span class="hljs-number">0</span>, argList.getChildCount());
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCollectMaybeUnreferencedVarsAddsUnreferenced</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">Scope</span> <span class="hljs-variable">globalScope</span> <span class="hljs-operator">=</span> compiler.getTopScope();
+    <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> createVar(<span class="hljs-string">"unreferencedVar"</span>, <span class="hljs-literal">true</span>, globalScope);
+    <span class="hljs-comment">// Hack: we need a scope containing the var</span>
+    pass.collectMaybeUnreferencedVars(globalScope);
+    <span class="hljs-comment">// No public getter for maybeUnreferenced, so alternative assertion</span>
+    <span class="hljs-comment">// is to run full process and check removal</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">code</span> <span class="hljs-operator">=</span> <span class="hljs-string">"var unreferencedVar = 1;"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> parse(code);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+    <span class="hljs-comment">// The var should be removed</span>
+    <span class="hljs-type">Node</span> <span class="hljs-variable">first</span> <span class="hljs-operator">=</span> script.getFirstChild();
+    <span class="hljs-keyword">if</span> (first != <span class="hljs-literal">null</span> &amp;&amp; first.isVar()) {
+      fail(<span class="hljs-string">"Unreferenced var was not removed"</span>);
+    }
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInterpretAssignsMarkReferencedWhenAssignedAndUsed</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">code</span> <span class="hljs-operator">=</span> <span class="hljs-string">"var x = {}; x.foo = 1; alert(x);"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> parse(code);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+    <span class="hljs-comment">// x should be kept</span>
+    assertNotNull(findName(script, <span class="hljs-string">"x"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveAllAssignsRemovingAssigns</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">code</span> <span class="hljs-operator">=</span> <span class="hljs-string">"var x = 1; x = 2;"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> parse(code);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+    <span class="hljs-comment">// 'x' should be removed because not used</span>
+    assertNull(findName(script, <span class="hljs-string">"x"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedFunctionArgsRemovesUnusedArgs</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">code</span> <span class="hljs-operator">=</span> <span class="hljs-string">"function foo(a, b) { alert(b); }"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> parse(code);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">func</span> <span class="hljs-operator">=</span> findFunction(script, <span class="hljs-string">"foo"</span>);
+    assertNotNull(func);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">params</span> <span class="hljs-operator">=</span> func.getFirstChild().getNext();
+    assertEquals(<span class="hljs-string">"Only one arg should remain"</span>, <span class="hljs-number">1</span>, params.getChildCount());
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseAndRemoveUnusedReferencesDoesNotCrash</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">String</span> <span class="hljs-variable">code</span> <span class="hljs-operator">=</span> <span class="hljs-string">"var a = 1; var b = 2; alert(b);"</span>;
+    <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> parse(code);
+    <span class="hljs-type">Node</span> <span class="hljs-variable">externs</span> <span class="hljs-operator">=</span> IR.script();
+    pass.process(externs, script);
+    <span class="hljs-comment">// Should not throw</span>
+  }
+
+  <span class="hljs-comment">// Helpers</span>
+
+  <span class="hljs-keyword">private</span> Node <span class="hljs-title function_">parse</span><span class="hljs-params">(String code)</span> {
+    compiler.init(<span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleSourceFile</span>(<span class="hljs-string">"testcode.js"</span>), <span class="hljs-literal">null</span>);
+    compiler.parse(code);
+    <span class="hljs-keyword">return</span> compiler.getRoot();
+  }
+
+  <span class="hljs-keyword">private</span> Var <span class="hljs-title function_">createVar</span><span class="hljs-params">(String name, <span class="hljs-type">boolean</span> isLocal, Scope scope)</span> {
+    <span class="hljs-keyword">if</span> (scope == <span class="hljs-literal">null</span>) {
+      scope = compiler.getTopScope();
+    }
+    <span class="hljs-type">Node</span> <span class="hljs-variable">nameNode</span> <span class="hljs-operator">=</span> IR.name(name);
+    <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Var</span>(<span class="hljs-literal">false</span>, nameNode, <span class="hljs-literal">null</span>, scope, -<span class="hljs-number">1</span>, compiler);
+    <span class="hljs-comment">// We can't easily add it to the scope, but the var is enough for testing</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">var</span>;
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Node <span class="hljs-title function_">findName</span><span class="hljs-params">(Node root, String name)</span> {
+    <span class="hljs-keyword">if</span> (root.isName() &amp;&amp; root.getString().equals(name)) {
+      <span class="hljs-keyword">return</span> root;
+    }
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">Node</span> <span class="hljs-variable">child</span> <span class="hljs-operator">=</span> root.getFirstChild(); child != <span class="hljs-literal">null</span>; child = child.getNext()) {
+      <span class="hljs-type">Node</span> <span class="hljs-variable">found</span> <span class="hljs-operator">=</span> findName(child, name);
+      <span class="hljs-keyword">if</span> (found != <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> found;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Node <span class="hljs-title function_">findFunction</span><span class="hljs-params">(Node root, String name)</span> {
+    <span class="hljs-keyword">if</span> (root.isFunction()) {
+      <span class="hljs-type">Node</span> <span class="hljs-variable">firstChild</span> <span class="hljs-operator">=</span> root.getFirstChild();
+      <span class="hljs-keyword">if</span> (firstChild.getString().equals(name)) {
+        <span class="hljs-keyword">return</span> root;
+      }
+    }
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">Node</span> <span class="hljs-variable">child</span> <span class="hljs-operator">=</span> root.getFirstChild(); child != <span class="hljs-literal">null</span>; child = child.getNext()) {
+      <span class="hljs-type">Node</span> <span class="hljs-variable">found</span> <span class="hljs-operator">=</span> findFunction(child, name);
+      <span class="hljs-keyword">if</span> (found != <span class="hljs-literal">null</span>) <span class="hljs-keyword">return</span> found;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleSourceFile</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">StaticSourceFile</span> {
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String name;
+
+    SimpleSourceFile(String name) {
+      <span class="hljs-built_in">this</span>.name = name;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getName</span><span class="hljs-params">()</span> {
+      <span class="hljs-keyword">return</span> name;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">isExtern</span><span class="hljs-params">()</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getLineOffset</span><span class="hljs-params">(<span class="hljs-type">int</span> lineno)</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getColumnOffset</span><span class="hljs-params">(<span class="hljs-type">int</span> lineno, <span class="hljs-type">int</span> charno)</span> {
+      <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> {
+      <span class="hljs-keyword">return</span> name;
+    }
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestCompiler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AbstractCompiler</span> {
+    <span class="hljs-keyword">private</span> Node root;
+    <span class="hljs-keyword">private</span> CodingConvention codingConvention;
+    <span class="hljs-keyword">private</span> Scope topScope;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">LifeCycleStage</span> <span class="hljs-variable">stage</span> <span class="hljs-operator">=</span> LifeCycleStage.NORMALIZED;
+
+    TestCompiler() {
+      <span class="hljs-built_in">this</span>.codingConvention = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCodingConvention</span>();
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">init</span><span class="hljs-params">(StaticSourceFile externs, List&lt;StaticSourceFile&gt; inputs)</span> {
+      <span class="hljs-comment">// no-op</span>
+    }
+
+    <span class="hljs-keyword">public</span> Node <span class="hljs-title function_">getRoot</span><span class="hljs-params">()</span> {
+      <span class="hljs-keyword">return</span> root;
+    }
+
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">parse</span><span class="hljs-params">(String code)</span> {
+      root = IR.script();
+      <span class="hljs-type">Node</span> <span class="hljs-variable">child</span> <span class="hljs-operator">=</span> IR.exprResult(IR.name(code));
+      root.addChildToBack(child);
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> CodingConvention <span class="hljs-title function_">getCodingConvention</span><span class="hljs-params">()</span> {
+      <span class="hljs-keyword">return</span> codingConvention;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> Scope <span class="hljs-title function_">getTopScope</span><span class="hljs-params">()</span> {
+      <span class="hljs-keyword">if</span> (topScope == <span class="hljs-literal">null</span>) {
+        topScope = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Scope</span>(root, <span class="hljs-literal">null</span>);
+      }
+      <span class="hljs-keyword">return</span> topScope;
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">reportCodeChange</span><span class="hljs-params">()</span> {
+      <span class="hljs-comment">// nothing</span>
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addToDebugLog</span><span class="hljs-params">(String message)</span> {
+      <span class="hljs-comment">// nothing</span>
+    }
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> LifeCycleStage <span class="hljs-title function_">getLifeCycleStage</span><span class="hljs-params">()</span> {
+      <span class="hljs-keyword">return</span> stage;
+    }
+
+    <span class="hljs-comment">// Unsupported abstract methods stubs</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">process</span><span class="hljs-params">(CompilerPass p)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    CompilerPass <span class="hljs-title function_">getCodeGrabbingPass</span><span class="hljs-params">(CompilerPass p, List&lt;SourceFile&gt; files)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    Node <span class="hljs-title function_">getNodeForCodeInsertion</span><span class="hljs-params">(JSSourceFile <span class="hljs-keyword">module</span>)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    CompilerOptions <span class="hljs-title function_">getOptions</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">setScope</span><span class="hljs-params">(Node n)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    Node <span class="hljs-title function_">getRootForSyntheticCode</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">addChangeHandler</span><span class="hljs-params">(CodeChangeHandler handler)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">removeChangeHandler</span><span class="hljs-params">(CodeChangeHandler handler)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> JSTypeRegistry <span class="hljs-title function_">getTypeRegistry</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> ErrorManager <span class="hljs-title function_">getErrorManager</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> SymbolTable <span class="hljs-title function_">getSymbolTable</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> Node <span class="hljs-title function_">getRootForCodingConvention</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setCodingConvention</span><span class="hljs-params">(CodingConvention convention)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> PassConfig <span class="hljs-title function_">getPassConfig</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">void</span> <span class="hljs-title function_">forAllComments</span><span class="hljs-params">(Node root, Callback cb)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    Node <span class="hljs-title function_">parse</span><span class="hljs-params">(JSSourceFile file)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    Node <span class="hljs-title function_">parseSyntheticCode</span><span class="hljs-params">(String code)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> SourceFile <span class="hljs-title function_">getSourceFileByName</span><span class="hljs-params">(String sourceName)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setSourceMap</span><span class="hljs-params">(SourceMap sourceMap)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> Region <span class="hljs-title function_">getSourceRegion</span><span class="hljs-params">(JSSourceFile sourceFile, <span class="hljs-type">int</span> lineNumber)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> Node <span class="hljs-title function_">getSynthesizedExternsRoot</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+    <span class="hljs-meta">@Override</span>
+    Node <span class="hljs-title function_">getSynthesizedExternsRootForTesting</span><span class="hljs-params">()</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">UnsupportedOperationException</span>(); }
+  }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

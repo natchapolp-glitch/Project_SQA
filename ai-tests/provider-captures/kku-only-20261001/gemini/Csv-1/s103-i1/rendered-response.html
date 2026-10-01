@@ -1,0 +1,361 @@
+<p>An independent regression test suite for <code>org.apache.commons.csv.ExtendedBufferedReader</code> is provided below.</p>
+<p><code>org/apache/commons/csv/ExtendedBufferedReaderTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span class="hljs-keyword">package</span> org.apache.commons.csv;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertEquals;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNull;
+
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.StringReader;
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ExtendedBufferedReaderTest</span> {
+
+    <span class="hljs-keyword">private</span> ExtendedBufferedReader <span class="hljs-title function_">createBufferedReader</span><span class="hljs-params">(String input)</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExtendedBufferedReader</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StringReader</span>(input));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInitialState</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"abc"</span>);
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadSingleCharacters</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"ab"</span>);
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">first</span> <span class="hljs-operator">=</span> br.read();
+        assertEquals(<span class="hljs-string">'a'</span>, first);
+        assertEquals(<span class="hljs-string">'a'</span>, br.readAgain());
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">second</span> <span class="hljs-operator">=</span> br.read();
+        assertEquals(<span class="hljs-string">'b'</span>, second);
+        assertEquals(<span class="hljs-string">'b'</span>, br.readAgain());
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">eof</span> <span class="hljs-operator">=</span> br.read();
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, eof);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadEmptyStream</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">""</span>);
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">read</span> <span class="hljs-operator">=</span> br.read();
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, read);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLookAheadDoesNotConsume</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"xy"</span>);
+
+        assertEquals(<span class="hljs-string">'x'</span>, br.lookAhead());
+        assertEquals(<span class="hljs-string">'x'</span>, br.lookAhead());
+        assertEquals(<span class="hljs-string">'x'</span>, br.read());
+        assertEquals(<span class="hljs-string">'y'</span>, br.lookAhead());
+        assertEquals(<span class="hljs-string">'y'</span>, br.read());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLookAheadAtEof</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">""</span>);
+
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.lookAhead());
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLookAheadDoesNotAffectLineNumberOrReadAgain</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"a\nb"</span>);
+
+        assertEquals(<span class="hljs-string">'a'</span>, br.read());
+        assertEquals(<span class="hljs-string">'a'</span>, br.readAgain());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'\n'</span>, br.lookAhead());
+        assertEquals(<span class="hljs-string">'a'</span>, br.readAgain());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLinesWithCrLfIncrementsLineNumberOnce</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"foo\r\nbar"</span>);
+
+        assertEquals(<span class="hljs-string">'f'</span>, br.read());
+        assertEquals(<span class="hljs-string">'o'</span>, br.read());
+        assertEquals(<span class="hljs-string">'o'</span>, br.read());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'\r'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'\n'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'b'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLineCountCrOnly</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"a\rb\rc"</span>);
+
+        assertEquals(<span class="hljs-string">'a'</span>, br.read());
+        assertEquals(<span class="hljs-string">'\r'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'b'</span>, br.read());
+        assertEquals(<span class="hljs-string">'\r'</span>, br.read());
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'c'</span>, br.read());
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLineCountLfOnly</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"a\nb\nc"</span>);
+
+        assertEquals(<span class="hljs-string">'a'</span>, br.read());
+        assertEquals(<span class="hljs-string">'\n'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'b'</span>, br.read());
+        assertEquals(<span class="hljs-string">'\n'</span>, br.read());
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'c'</span>, br.read());
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLineCountMixed</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"\r\n\n\r"</span>);
+
+        assertEquals(<span class="hljs-string">'\r'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'\n'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'\n'</span>, br.read());
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+
+        assertEquals(<span class="hljs-string">'\r'</span>, br.read());
+        assertEquals(<span class="hljs-number">3</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadCharArrayLengthZero</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"abc"</span>);
+        <span class="hljs-type">char</span>[] buf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">5</span>];
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">readCount</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+        assertEquals(<span class="hljs-number">0</span>, readCount);
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadCharArraySimple</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"hello"</span>);
+        <span class="hljs-type">char</span>[] buf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">5</span>];
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">readCount</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>);
+        assertEquals(<span class="hljs-number">5</span>, readCount);
+        assertEquals(<span class="hljs-string">"hello"</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(buf, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>));
+        assertEquals(<span class="hljs-string">'o'</span>, br.readAgain());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadCharArrayWithOffsets</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"abc"</span>);
+        <span class="hljs-type">char</span>[] buf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">10</span>];
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">readCount</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
+        assertEquals(<span class="hljs-number">3</span>, readCount);
+        assertEquals(<span class="hljs-string">"abc"</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(buf, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>));
+        assertEquals(<span class="hljs-string">'c'</span>, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadCharArrayCrLfInSameBuffer</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"1\r\n2\r3\n4"</span>);
+        <span class="hljs-type">char</span>[] buf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">10</span>];
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">readCount</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">0</span>, buf.length);
+        assertEquals(<span class="hljs-number">8</span>, readCount);
+        assertEquals(<span class="hljs-number">3</span>, br.getLineNumber());
+        assertEquals(<span class="hljs-string">'4'</span>, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadCharArrayCrLfSplitAcrossReads</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"a\r\nb"</span>);
+        <span class="hljs-type">char</span>[] buf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">2</span>];
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">count1</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">0</span>, <span class="hljs-number">2</span>);
+        assertEquals(<span class="hljs-number">2</span>, count1);
+        assertEquals(<span class="hljs-string">'a'</span>, buf[<span class="hljs-number">0</span>]);
+        assertEquals(<span class="hljs-string">'\r'</span>, buf[<span class="hljs-number">1</span>]);
+        assertEquals(<span class="hljs-string">'\r'</span>, br.readAgain());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">count2</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">0</span>, <span class="hljs-number">2</span>);
+        assertEquals(<span class="hljs-number">2</span>, count2);
+        assertEquals(<span class="hljs-string">'\n'</span>, buf[<span class="hljs-number">0</span>]);
+        assertEquals(<span class="hljs-string">'b'</span>, buf[<span class="hljs-number">1</span>]);
+        assertEquals(<span class="hljs-string">'b'</span>, br.readAgain());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadCharArrayAtEof</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">""</span>);
+        <span class="hljs-type">char</span>[] buf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">5</span>];
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">readCount</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, readCount);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLineSingleLine</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"hello world"</span>);
+
+        <span class="hljs-type">String</span> <span class="hljs-variable">line</span> <span class="hljs-operator">=</span> br.readLine();
+        assertEquals(<span class="hljs-string">"hello world"</span>, line);
+        assertEquals(<span class="hljs-string">'d'</span>, br.readAgain());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        assertNull(br.readLine());
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLineMultipleLines</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"line1\nline2\rline3\r\nline4"</span>);
+
+        assertEquals(<span class="hljs-string">"line1"</span>, br.readLine());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+        assertEquals(<span class="hljs-string">'1'</span>, br.readAgain());
+
+        assertEquals(<span class="hljs-string">"line2"</span>, br.readLine());
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+        assertEquals(<span class="hljs-string">'2'</span>, br.readAgain());
+
+        assertEquals(<span class="hljs-string">"line3"</span>, br.readLine());
+        assertEquals(<span class="hljs-number">3</span>, br.getLineNumber());
+        assertEquals(<span class="hljs-string">'3'</span>, br.readAgain());
+
+        assertEquals(<span class="hljs-string">"line4"</span>, br.readLine());
+        assertEquals(<span class="hljs-number">4</span>, br.getLineNumber());
+        assertEquals(<span class="hljs-string">'4'</span>, br.readAgain());
+
+        assertNull(br.readLine());
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+        assertEquals(<span class="hljs-number">4</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLineEmptyLine</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"\nnext"</span>);
+
+        <span class="hljs-type">String</span> <span class="hljs-variable">firstLine</span> <span class="hljs-operator">=</span> br.readLine();
+        assertEquals(<span class="hljs-string">""</span>, firstLine);
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+
+        <span class="hljs-type">String</span> <span class="hljs-variable">secondLine</span> <span class="hljs-operator">=</span> br.readLine();
+        assertEquals(<span class="hljs-string">"next"</span>, secondLine);
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+        assertEquals(<span class="hljs-string">'t'</span>, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReadLineAtEof</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">""</span>);
+
+        assertNull(br.readLine());
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+        assertEquals(<span class="hljs-number">0</span>, br.getLineNumber());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInterleavedReadAndLookAhead</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"abc"</span>);
+
+        assertEquals(<span class="hljs-string">'a'</span>, br.lookAhead());
+        assertEquals(<span class="hljs-string">'a'</span>, br.read());
+        assertEquals(<span class="hljs-string">'a'</span>, br.readAgain());
+
+        assertEquals(<span class="hljs-string">'b'</span>, br.lookAhead());
+        assertEquals(<span class="hljs-string">'b'</span>, br.read());
+        assertEquals(<span class="hljs-string">'b'</span>, br.readAgain());
+
+        assertEquals(<span class="hljs-string">'c'</span>, br.read());
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.lookAhead());
+        assertEquals(<span class="hljs-string">'c'</span>, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInterleavedReadAndReadLine</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"a\r\nline2"</span>);
+
+        assertEquals(<span class="hljs-string">'a'</span>, br.read());
+        assertEquals(<span class="hljs-string">'\r'</span>, br.read());
+        assertEquals(<span class="hljs-number">1</span>, br.getLineNumber());
+
+        <span class="hljs-type">String</span> <span class="hljs-variable">line</span> <span class="hljs-operator">=</span> br.readLine();
+        assertEquals(<span class="hljs-string">""</span>, line);
+        assertEquals(<span class="hljs-number">2</span>, br.getLineNumber());
+
+        <span class="hljs-type">String</span> <span class="hljs-variable">nextLine</span> <span class="hljs-operator">=</span> br.readLine();
+        assertEquals(<span class="hljs-string">"line2"</span>, nextLine);
+        assertEquals(<span class="hljs-number">3</span>, br.getLineNumber());
+        assertEquals(<span class="hljs-string">'2'</span>, br.readAgain());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInterleavedCharArrayReadAndReadAgain</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-type">ExtendedBufferedReader</span> <span class="hljs-variable">br</span> <span class="hljs-operator">=</span> createBufferedReader(<span class="hljs-string">"abcdef"</span>);
+        <span class="hljs-type">char</span>[] buf = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">3</span>];
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> br.read(buf, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>);
+        assertEquals(<span class="hljs-number">3</span>, count);
+        assertEquals(<span class="hljs-string">'c'</span>, br.readAgain());
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">nextChar</span> <span class="hljs-operator">=</span> br.read();
+        assertEquals(<span class="hljs-string">'d'</span>, nextChar);
+        assertEquals(<span class="hljs-string">'d'</span>, br.readAgain());
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<h3>References</h3>
+<ul>
+<li>Apache Commons CSV: <code>org.apache.commons.csv.ExtendedBufferedReader</code> specification and implementation.</li>
+<li>JUnit 4 Test Framework API documentation.</li>
+</ul>

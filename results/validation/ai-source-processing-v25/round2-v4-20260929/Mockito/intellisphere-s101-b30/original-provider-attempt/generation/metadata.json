@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "intellisphere",
+  "provider": "KKU AI Sphere / IntelliSphere",
+  "model": "deepseek-v4-pro",
+  "project": "Mockito",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 101,
+  "prompt_iteration": 1,
+  "generated_at": "2026-09-28T21:20:20.151Z",
+  "ingested_at": "2026-10-01T06:53:38.561053+00:00",
+  "parameters": {
+    "routing_mode": "Auto Router",
+    "resolved_model_label": "Deepseek - deepseek-v4-pro",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "af717448b87ba3090e588878ae932543b7631d82357192307483417b050f1c87",
+      "after_sha256": "96fd854ec6dbc68e613ec8b9b842945cd45a97ce140bff92af423f220da432e3",
+      "local_syntax_recovery": [
+        {
+          "kind": "syntax_parenthesis",
+          "old": "new Object[]{mockObject}));",
+          "new": "new Object[]{mockObject});",
+          "reason": "Remove the extra closing parenthesis; mock return value unchanged."
+        }
+      ],
+      "selection": "Parser diagnostics and known source tail; no fixed/buggy test outcomes used."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "96fd854ec6dbc68e613ec8b9b842945cd45a97ce140bff92af423f220da432e3",
+      "after_sha256": "9285c436770286fee89b581d304be051c683768594490f286de83058ff789ad6",
+      "local_compiler_repairs": [
+        {
+          "old": "thenReturn(method(\"toString\")));",
+          "new": "thenReturn(method(\"toString\"));",
+          "reason": "Remove second parser-diagnosed extra parenthesis."
+        }
+      ],
+      "selection": "Fixed parser/compiler diagnostics; no buggy outcomes used."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "9285c436770286fee89b581d304be051c683768594490f286de83058ff789ad6",
+      "after_sha256": "e322970405d45a9e37658efc7e13f4997e299b4d3b7385e6bbaba7ae818b7a13",
+      "local_compiler_repairs": [
+        {
+          "old": "assertSame(inv, matcher.getInvocation()));",
+          "new": "assertSame(inv, matcher.getInvocation());",
+          "reason": "Remove extra closing parenthesis in assertion."
+        }
+      ],
+      "selection": "Exact parser/compiler diagnostics on source or fixed revision; no buggy outcomes used."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "e322970405d45a9e37658efc7e13f4997e299b4d3b7385e6bbaba7ae818b7a13",
+      "after_sha256": "9063a7ae15fdf04ea44d3bccc9fe9accc30c8b0c8a2f5e4e1c37bb6b1fa4200b",
+      "local_syntax_recovery": [
+        {
+          "kind": "drop_incomplete_trailing_method",
+          "method": "testIsVarargMatcher_ThroughMatcherDecorator_ReturnsTrue",
+          "discarded_characters": 762,
+          "reason": "Provider Java block ends during this method; retain preceding complete tests."
+        }
+      ],
+      "selection": "Parser-diagnosed truncated tail only; no fixed or buggy outcomes used."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "9063a7ae15fdf04ea44d3bccc9fe9accc30c8b0c8a2f5e4e1c37bb6b1fa4200b",
+      "after_sha256": "0f99a12600917e8a02180a35b404509cc15c8aa00a5664a57b68f37d3cbad56e",
+      "local_compatibility_repairs": [
+        {
+          "reason": "Supply missing reflection helper already implied by original method(Object.class,\"toString\") call; arguments and assertions unchanged."
+        }
+      ],
+      "selection": "Fixed compilation diagnostics and fixed API only; no buggy feedback or expected-value changes."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "0f99a12600917e8a02180a35b404509cc15c8aa00a5664a57b68f37d3cbad56e",
+      "after_sha256": "df58d1f45d60e9d5a0781d9607125d022b3f2b6e3de59855dbcbec1b8d215e72",
+      "local_compatibility_repairs": [
+        {
+          "reason": "Resolve missing no-argument Object-method helper overload. Unknown method names still fail fixed validation and are not fabricated."
+        }
+      ],
+      "selection": "Fixed API/compilation only; original assertion values unchanged, fixed-only pruning retained."
+    },
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "df58d1f45d60e9d5a0781d9607125d022b3f2b6e3de59855dbcbec1b8d215e72",
+      "after_sha256": "b30778ca2933ce3d331bf994ed428fc4d255a3cddc4024d9bd81d023ca430fa8",
+      "renderer_suffixes_removed": 2,
+      "budget_removed_methods": [],
+      "selection": "First 30 methods in sorted file/source order; no execution outcomes used."
+    }
+  ],
+  "notes": [
+    "Input: exact prepared prompt.",
+    "Source is verbatim from visible Java blocks; Markdown fence markers added around code, code unchanged. Full rendered HTML/text retained.",
+    "Provider Copy Text did not replace clipboard; this is rendered provider/UI source, not verified original API response.",
+    "Duration is a UI observation upper bound, including capture latency.",
+    "Provider UI may introduce (undefined) after array indices; resulting compile failure cannot be attributed solely to the raw model.",
+    "Local processing v23 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "dc4243b3178e22d7b8c2ec5d1308a674adf7b837b2ab657c82188655b67124e1",
+  "response_sha256": "042e0de08104556b552eb8fb0e36c3b3a6838a306998fb43aa97365ea8d90b8f",
+  "context_manifest_sha256": "54d1d47c8bf65ec4eb2558d08ea28adf889b360bd1513cb8a7de3cafa3366cde",
+  "source_files": [
+    {
+      "path": "src/org/mockito/internal/invocation/InvocationMatcher.java",
+      "class": "org.mockito.internal.invocation.InvocationMatcher",
+      "sha256": "add7f54dd156ec1e4f2f5c84ca4c72c1ffe8d403d6bdd37673c20ffd389e8f45",
+      "bytes": 7234
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.gradle",
+      "sha256": "2540e8db956055bf67f949fa200b8f5bd25048286675f5be4918bd0be8e2e08e",
+      "bytes": 3554
+    },
+    {
+      "path": "buildSrc/build.gradle",
+      "sha256": "e6e1ba8c7283a15d464a7ab9d0993a37ff7616c998e53a9a552e9ebe6e712f0a",
+      "bytes": 798
+    },
+    {
+      "path": "cglib-and-asm/build.gradle",
+      "sha256": "a6245d08b92d67c56280235539f872fcd844ec49c91d2394edd61af1147ccca7",
+      "bytes": 588
+    },
+    {
+      "path": "gradle.properties",
+      "sha256": "b6ba6a6d228f58621b07c6dd1c15f97628aaa816fbe37ee61dde75b55124c0bb",
+      "bytes": 48
+    },
+    {
+      "path": "settings.gradle",
+      "sha256": "2de17192bc37f368b7458f9081ee6335f4dc1f02c254b621223fa3a144b36620",
+      "bytes": 360
+    }
+  ],
+  "java_files": [
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "sha256": "b30778ca2933ce3d331bf994ed428fc4d255a3cddc4024d9bd81d023ca430fa8",
+      "bytes": 20555
+    }
+  ],
+  "external_suite": "Mockito-1f-intellisphere.101.tar.bz2",
+  "external_suite_sha256": "6b3f858a7489af3de92f3d731d77600a42fd92f713499d19a5069e21131dae15",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

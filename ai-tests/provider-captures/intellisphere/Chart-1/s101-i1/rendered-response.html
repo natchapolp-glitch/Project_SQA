@@ -1,0 +1,117 @@
+<div id="messageContentDataIdKRuQJxGWxsw6" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Looking at the supplied source and the eligible API surface (which exposes methods inherited from <code>AbstractCategoryItemRenderer</code> through the concrete <code>AreaRenderer</code> subclass), I will exercise <code>AbstractCategoryItemRenderer</code>'s behavior using <code>AreaRenderer</code> as a concrete instance, plus direct access to protected members since the test resides in the same package (<code>org.jfree.chart.renderer.category</code>).</p>
+<p>The build uses Ant with <code>source="1.4"</code>/<code>target="1.4"</code> and a plain <code>junit.jar</code> dependency (no Maven, no JUnit 5 markers) — consistent with the classic Defects4J Chart setup that uses JUnit 3.8.1 style tests. I use <code>junit.framework.TestCase</code>, which is compatible with both JUnit 3 and JUnit 4's vintage engine, to avoid assuming an unavailable JUnit 4/5 API.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.jfree.chart.renderer.category;
+
+<span class="hljs-keyword">import</span> java.awt.Graphics2D;
+<span class="hljs-keyword">import</span> java.awt.geom.Rectangle2D;
+<span class="hljs-keyword">import</span> java.awt.image.BufferedImage;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-keyword">import</span> org.jfree.chart.LegendItem;
+<span class="hljs-keyword">import</span> org.jfree.chart.LegendItemCollection;
+<span class="hljs-keyword">import</span> org.jfree.chart.annotations.CategoryTextAnnotation;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.CategoryAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.NumberAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.ValueAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategoryItemLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategoryToolTipGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.CategoryPlot;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.PlotOrientation;
+<span class="hljs-keyword">import</span> org.jfree.chart.urls.CategoryURLGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.urls.StandardCategoryURLGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.util.Layer;
+<span class="hljs-keyword">import</span> org.jfree.chart.util.RectangleEdge;
+<span class="hljs-keyword">import</span> org.jfree.data.Range;
+<span class="hljs-keyword">import</span> org.jfree.data.category.DefaultCategoryDataset;
+
+<span class="hljs-comment">/**
+ * Regression tests for {<span class="hljs-doctag">@link</span> AbstractCategoryItemRenderer}, exercised
+ * through the concrete {<span class="hljs-doctag">@link</span> AreaRenderer} subclass and (for protected
+ * members) via same-package access.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractCategoryItemRendererTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> DefaultCategoryDataset <span class="hljs-title function_">createDataset</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">dataset</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCategoryDataset</span>();
+        dataset.addValue(<span class="hljs-number">1.0</span>, <span class="hljs-string">"Row0"</span>, <span class="hljs-string">"Col0"</span>);
+        dataset.addValue(<span class="hljs-number">2.0</span>, <span class="hljs-string">"Row0"</span>, <span class="hljs-string">"Col1"</span>);
+        dataset.addValue(<span class="hljs-number">3.0</span>, <span class="hljs-string">"Row0"</span>, <span class="hljs-string">"Col2"</span>);
+        dataset.addValue(<span class="hljs-number">4.0</span>, <span class="hljs-string">"Row1"</span>, <span class="hljs-string">"Col0"</span>);
+        dataset.addValue(<span class="hljs-number">5.0</span>, <span class="hljs-string">"Row1"</span>, <span class="hljs-string">"Col1"</span>);
+        dataset.addValue(<span class="hljs-number">6.0</span>, <span class="hljs-string">"Row1"</span>, <span class="hljs-string">"Col2"</span>);
+        <span class="hljs-keyword">return</span> dataset;
+    }
+
+    <span class="hljs-comment">// ---- basic state ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetPassCount</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertEquals(<span class="hljs-number">1</span>, r.getPassCount());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPlotDefaultNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(r.getPlot());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetPlotNullThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-keyword">try</span> {
+            r.setPlot(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetGetPlot</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">dataset</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">CategoryAxis</span> <span class="hljs-variable">domainAxis</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(<span class="hljs-string">"Category"</span>);
+        <span class="hljs-type">ValueAxis</span> <span class="hljs-variable">rangeAxis</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"Value"</span>);
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(dataset, domainAxis, rangeAxis, r);
+        r.setPlot(plot);
+        assertSame(plot, r.getPlot());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRowColumnCountDefaultZero</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertEquals(<span class="hljs-number">0</span>, r.getRowCount());
+        assertEquals(<span class="hljs-number">0</span>, r.getColumnCount());
+    }
+
+    <span class="hljs-comment">// ---- item label generator ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testBaseItemLabelGeneratorDefaultNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(r.getBaseItemLabelGenerator());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetGetBaseItemLabelGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">g</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>();
+        r.setBaseItemLabelGenerator(g);
+        assertSame(g, r.getBaseItemLabelGenerator());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSeriesItemLabelGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(r.getSeriesItemLabelGenerator(<span class="hljs-number">0</span>));
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">g</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>();
+        r.setSeriesItemLabelGenerator(<span class="hljs-number">0</span>, g);
+        assertSame(g, r.getSeriesItemLabelGenerator(<span class="hljs-number">0</span>));
+        assertNull(r.getSeriesItemLabelGenerator(<span class="hljs-number">1</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetItemLabelGeneratorFallback</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">base</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategoryItemLabelGenerator</span>();
+        r.setBaseItemLabelGenerator(base);
+        <span class="hljs-comment">// no series-level generator set for row 0 -&gt; fallback to base</span>
+        assertSame(base, r.getItemL</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

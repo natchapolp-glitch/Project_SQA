@@ -1,0 +1,49 @@
+<p>An academic regression test suite for <code>org.apache.commons.cli.CommandLine</code> has been generated below. It adheres to JUnit 3.8.1 conventions (compatible with Java 1.3+ through Java 11) and covers all target methods across typical usage, edge cases, default value fallbacks, hyphen normalization, and option value retrieval.</p>
+<h3>References</h3>
+<ul>
+<li>Apache Commons CLI Documentation: <code>org.apache.commons.cli.CommandLine</code>, <code>org.apache.commons.cli.Option</code> (Apache Software Foundation).</li>
+<li>Defects4J Benchmark: Project <code>Cli</code>, reference revision <code>1f</code>.</li>
+</ul>
+<p><code>org/apache/commons/cli/CommandLineTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.cli;
+
+<span class="hljs-keyword">import</span> java.util.Iterator;
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-comment">/**
+ * Regression test suite for {<span class="hljs-doctag">@link</span> CommandLine}.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CommandLineTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-comment">/**
+     * Helper subclass of Option providing controlled value and type behavior
+     * across all supported Commons CLI versions.
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">StubOption</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Option</span> {
+        <span class="hljs-keyword">private</span> String[] values;
+
+        <span class="hljs-keyword">public</span> <span class="hljs-title function_">StubOption</span><span class="hljs-params">(String opt, String description)</span> {
+            <span class="hljs-built_in">super</span>(opt, description);
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-title function_">StubOption</span><span class="hljs-params">(String opt, String longOpt, String[] values)</span> {
+            <span class="hljs-built_in">super</span>(opt, longOpt, <span class="hljs-literal">true</span>, <span class="hljs-string">"Stub option description"</span>);
+            <span class="hljs-built_in">this</span>.values = values;
+        }
+
+        <span class="hljs-keyword">public</span> String[] getValues() {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.values;
+        }
+
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getValue</span><span class="hljs-params">()</span> {
+            <span class="hljs-keyword">return</span> (<span class="hljs-built_in">this</span>.values != <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-built_in">this</span>.values.length &gt; <span class="hljs-number">0</span>) ? <span class="hljs-built_in">this</span>.values[<span class="hljs-number">0</span>] : <span class="hljs-literal">null</span>;
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">CommandLineTest</span><span class="hljs-params">(String name)</span> {
+        <span class="hljs-built_in">super</span>(name);
+    }
+
+    <span class="hljs-comment">/**
+     * Verifies that a newly created CommandLine</span></code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

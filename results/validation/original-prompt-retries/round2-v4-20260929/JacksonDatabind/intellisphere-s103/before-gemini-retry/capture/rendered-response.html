@@ -1,0 +1,405 @@
+<div id="messageContentDataIdf8JVcNPrhPTp" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Based on the provided source code and API declarations for <code>BeanPropertyWriter</code>, I will generate unit tests focusing on the specified methods. The project uses JUnit 4.10. I will create tests for various methods including constructors, property accessors, serialization hints, and internal settings.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">// com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java</span>
+<span class="hljs-keyword">package</span> com.fasterxml.jackson.databind.ser;
+
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.JsonGenerator;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.io.SerializedString;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.*;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.introspect.AnnotatedField;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.util.NameTransformer;
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-keyword">import</span> java.lang.reflect.Field;
+<span class="hljs-keyword">import</span> java.lang.reflect.Method;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.mockito.Mockito.*;
+
+<span class="hljs-comment">/**
+ * Tests for {<span class="hljs-doctag">@link</span> BeanPropertyWriter} focusing on the documented reference behavior.
+ * Uses mocks for dependencies that are not easily instantiated.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BeanPropertyWriterTest</span> {
+
+    <span class="hljs-comment">// --- Helper to create a mock BeanPropertyDefinition ---</span>
+    <span class="hljs-keyword">private</span> BeanPropertyDefinition <span class="hljs-title function_">mockPropDef</span><span class="hljs-params">(String name, <span class="hljs-type">boolean</span> required)</span> {
+        <span class="hljs-type">BeanPropertyDefinition</span> <span class="hljs-variable">propDef</span> <span class="hljs-operator">=</span> mock(BeanPropertyDefinition.class);
+        <span class="hljs-keyword">when</span>(propDef.getName()).thenReturn(name);
+        <span class="hljs-keyword">when</span>(propDef.isRequired()).thenReturn(required);
+        <span class="hljs-keyword">return</span> propDef;
+    }
+
+    <span class="hljs-comment">// --- Test hasSerializer ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSerializerWhenNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        assertFalse(writer.hasSerializer());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSerializerWhenNotNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        JsonSerializer&lt;Object&gt; ser = mock(JsonSerializer.class);
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), ser);
+        assertTrue(writer.hasSerializer());
+    }
+
+    <span class="hljs-comment">// --- Test hasNullSerializer ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasNullSerializerWhenNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        assertFalse(writer.hasNullSerializer());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasNullSerializerAfterAssignment</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        writer.assignNullSerializer(mock(JsonSerializer.class));
+        assertTrue(writer.hasNullSerializer());
+    }
+
+    <span class="hljs-comment">// --- Test willSuppressNulls ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWillSuppressNullsTrue</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithSuppression(<span class="hljs-literal">true</span>);
+        assertTrue(writer.willSuppressNulls());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWillSuppressNullsFalse</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithSuppression(<span class="hljs-literal">false</span>);
+        assertFalse(writer.willSuppressNulls());
+    }
+
+    <span class="hljs-comment">// --- Test isRequired ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRequiredTrue</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithSuppressionAndRequired(<span class="hljs-literal">true</span>, <span class="hljs-literal">true</span>);
+        assertTrue(writer.isRequired());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRequiredFalse</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithSuppressionAndRequired(<span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>);
+        assertFalse(writer.isRequired());
+    }
+
+    <span class="hljs-comment">// --- Test getSerializedName ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetSerializedName</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMemberAndName(<span class="hljs-string">"testProp"</span>, mockFieldMember(), <span class="hljs-literal">null</span>);
+        assertEquals(<span class="hljs-string">"testProp"</span>, writer.getSerializedName().getValue());
+    }
+
+    <span class="hljs-comment">// --- Test getName ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetNameMatchesSerializedName</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMemberAndName(<span class="hljs-string">"testProp"</span>, mockFieldMember(), <span class="hljs-literal">null</span>);
+        assertEquals(<span class="hljs-string">"testProp"</span>, writer.getName());
+    }
+
+    <span class="hljs-comment">// --- Test getType ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeReturnsDeclaredType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        <span class="hljs-type">JavaType</span> <span class="hljs-variable">declaredType</span> <span class="hljs-operator">=</span> writer.getType();
+        assertNotNull(declaredType);
+    }
+
+    <span class="hljs-comment">// --- Test getWrapperName ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetWrapperNameNotNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        <span class="hljs-comment">// getWrapperName may be null if not set in propDef; mock returns null by default</span>
+        assertNull(writer.getWrapperName());
+    }
+
+    <span class="hljs-comment">// --- Test getMember ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetMemberReturnsSameInstance</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">AnnotatedMember</span> <span class="hljs-variable">member</span> <span class="hljs-operator">=</span> mockFieldMember();
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(member, <span class="hljs-literal">null</span>);
+        assertSame(member, writer.getMember());
+    }
+
+    <span class="hljs-comment">// --- Test assignSerializer ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAssignSerializerSuccess</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        JsonSerializer&lt;Object&gt; ser = mock(JsonSerializer.class);
+        writer.assignSerializer(ser);
+        assertSame(ser, writer.getSerializer());
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalStateException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAssignSerializerOverrideThrows</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), mock(JsonSerializer.class));
+        writer.assignSerializer(mock(JsonSerializer.class));
+    }
+
+    <span class="hljs-comment">// --- Test assignNullSerializer ---</span>
+    <span class="hljs-meta">@Test(expected = IllegalStateException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAssignNullSerializerOverrideThrows</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        writer.assignNullSerializer(mock(JsonSerializer.class));
+        writer.assignNullSerializer(mock(JsonSerializer.class));
+    }
+
+    <span class="hljs-comment">// --- Test getSerializationType ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetSerializationTypeWhenConfigured</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMemberAndSerType(mockFieldMember(), <span class="hljs-literal">null</span>,
+                com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance().constructType(String.class));
+        assertNotNull(writer.getSerializationType());
+    }
+
+    <span class="hljs-comment">// --- Test getRawSerializationType ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetRawSerializationTypeReturnsNullWhenSerTypeNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMemberAndSerType(mockFieldMember(), <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+        assertNull(writer.getRawSerializationType());
+    }
+
+    <span class="hljs-comment">// --- Test rename ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRenameReturnsNewWriterWhenNameChanges</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMemberAndName(<span class="hljs-string">"oldName"</span>, mockFieldMember(), <span class="hljs-literal">null</span>);
+        <span class="hljs-type">NameTransformer</span> <span class="hljs-variable">transformer</span> <span class="hljs-operator">=</span> NameTransformer.simpleTransformer(<span class="hljs-string">"newPrefix"</span>, <span class="hljs-literal">null</span>);
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">renamed</span> <span class="hljs-operator">=</span> writer.rename(transformer);
+        assertNotSame(writer, renamed);
+        assertTrue(renamed.getName().startsWith(<span class="hljs-string">"newPrefix"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRenameReturnsSameWriterWhenNoChange</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMemberAndName(<span class="hljs-string">"name"</span>, mockFieldMember(), <span class="hljs-literal">null</span>);
+        <span class="hljs-type">NameTransformer</span> <span class="hljs-variable">transformer</span> <span class="hljs-operator">=</span> NameTransformer.NOP;
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">renamed</span> <span class="hljs-operator">=</span> writer.rename(transformer);
+        assertSame(writer, renamed);
+    }
+
+    <span class="hljs-comment">// --- Test get ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFromField</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">TestBean</span> <span class="hljs-variable">bean</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TestBean</span>();
+        bean.publicField = <span class="hljs-string">"fieldValue"</span>;
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterForField(TestBean.class.getField(<span class="hljs-string">"publicField"</span>));
+        assertEquals(<span class="hljs-string">"fieldValue"</span>, writer.get(bean));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFromMethod</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">TestBean</span> <span class="hljs-variable">bean</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TestBean</span>();
+        bean.setValue(<span class="hljs-number">42</span>);
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterForMethod(TestBean.class.getMethod(<span class="hljs-string">"getValue"</span>));
+        assertEquals(<span class="hljs-number">42</span>, writer.get(bean));
+    }
+
+    <span class="hljs-comment">// --- Test getPropertyType ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetPropertyTypeForField</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterForField(TestBean.class.getField(<span class="hljs-string">"publicField"</span>));
+        assertEquals(String.class, writer.getPropertyType());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetPropertyTypeForMethod</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterForMethod(TestBean.class.getMethod(<span class="hljs-string">"getValue"</span>));
+        assertEquals(<span class="hljs-type">int</span>.class, writer.getPropertyType());
+    }
+
+    <span class="hljs-comment">// --- Test getGenericPropertyType ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetGenericPropertyTypeForField</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterForField(TestBean.class.getField(<span class="hljs-string">"publicField"</span>));
+        assertEquals(String.class, writer.getGenericPropertyType());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetGenericPropertyTypeForMethod</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterForMethod(TestBean.class.getMethod(<span class="hljs-string">"getValue"</span>));
+        assertEquals(<span class="hljs-type">int</span>.class, writer.getGenericPropertyType());
+    }
+
+    <span class="hljs-comment">// --- Test getViews ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetViewsNotNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        assertNotNull(writer.getViews());
+    }
+
+    <span class="hljs-comment">// --- Test getInternalSetting, setInternalSetting, removeInternalSetting ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInternalSettingsLifecycle</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        assertNull(writer.getInternalSetting(<span class="hljs-string">"key"</span>));
+
+        <span class="hljs-type">Object</span> <span class="hljs-variable">old</span> <span class="hljs-operator">=</span> writer.setInternalSetting(<span class="hljs-string">"key"</span>, <span class="hljs-string">"value"</span>);
+        assertNull(old);
+        assertEquals(<span class="hljs-string">"value"</span>, writer.getInternalSetting(<span class="hljs-string">"key"</span>));
+
+        old = writer.setInternalSetting(<span class="hljs-string">"key"</span>, <span class="hljs-string">"newValue"</span>);
+        assertEquals(<span class="hljs-string">"value"</span>, old);
+        assertEquals(<span class="hljs-string">"newValue"</span>, writer.getInternalSetting(<span class="hljs-string">"key"</span>));
+
+        <span class="hljs-type">Object</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> writer.removeInternalSetting(<span class="hljs-string">"key"</span>);
+        assertEquals(<span class="hljs-string">"newValue"</span>, removed);
+        assertNull(writer.getInternalSetting(<span class="hljs-string">"key"</span>));
+
+        removed = writer.removeInternalSetting(<span class="hljs-string">"missing"</span>);
+        assertNull(removed);
+    }
+
+    <span class="hljs-comment">// --- Test toString ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToStringContainsName</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMemberAndName(<span class="hljs-string">"myProp"</span>, mockFieldMember(), <span class="hljs-literal">null</span>);
+        assertTrue(writer.toString().contains(<span class="hljs-string">"myProp"</span>));
+    }
+
+    <span class="hljs-comment">// --- Test serializeAsPlaceholder ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSerializeAsPlaceholderWithoutNullSerializer</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        <span class="hljs-type">JsonGenerator</span> <span class="hljs-variable">jgen</span> <span class="hljs-operator">=</span> mock(JsonGenerator.class);
+        <span class="hljs-type">SerializerProvider</span> <span class="hljs-variable">prov</span> <span class="hljs-operator">=</span> mock(SerializerProvider.class);
+
+        writer.serializeAsPlaceholder(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>(), jgen, prov);
+        verify(jgen).writeNull();
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSerializeAsPlaceholderWithNullSerializer</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        JsonSerializer&lt;Object&gt; nullSer = mock(JsonSerializer.class);
+        writer.assignNullSerializer(nullSer);
+
+        <span class="hljs-type">JsonGenerator</span> <span class="hljs-variable">jgen</span> <span class="hljs-operator">=</span> mock(JsonGenerator.class);
+        <span class="hljs-type">SerializerProvider</span> <span class="hljs-variable">prov</span> <span class="hljs-operator">=</span> mock(SerializerProvider.class);
+
+        writer.serializeAsPlaceholder(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>(), jgen, prov);
+        verify(nullSer).serialize(eq(<span class="hljs-literal">null</span>), eq(jgen), eq(prov));
+    }
+
+    <span class="hljs-comment">// --- Test unwrappingWriter ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testUnwrappingWriterReturnsDifferentInstance</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">unwrapped</span> <span class="hljs-operator">=</span> writer.unwrappingWriter(NameTransformer.NOP);
+        assertNotNull(unwrapped);
+        assertNotSame(writer, unwrapped);
+    }
+
+    <span class="hljs-comment">// --- Test setNonTrivialBaseType ---</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetNonTrivialBaseType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">writer</span> <span class="hljs-operator">=</span> createWriterWithMember(mockFieldMember(), <span class="hljs-literal">null</span>);
+        <span class="hljs-type">JavaType</span> <span class="hljs-variable">type</span> <span class="hljs-operator">=</span> com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance().constructType(String.class);
+        writer.setNonTrivialBaseType(type);
+        <span class="hljs-comment">// No direct getter, but we verify no exception is thrown</span>
+    }
+
+    <span class="hljs-comment">// --- Helper classes and methods ---</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestBean</span> {
+        <span class="hljs-keyword">public</span> String publicField;
+        <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> value;
+
+        <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getValue</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> value; }
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setValue</span><span class="hljs-params">(<span class="hljs-type">int</span> v)</span> { value = v; }
+    }
+
+    <span class="hljs-keyword">private</span> AnnotatedField <span class="hljs-title function_">mockFieldMember</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-type">Field</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> TestBean.class.getField(<span class="hljs-string">"publicField"</span>);
+            <span class="hljs-type">AnnotatedField</span> <span class="hljs-variable">af</span> <span class="hljs-operator">=</span> mock(AnnotatedField.class);
+            <span class="hljs-keyword">when</span>(af.getMember()).thenReturn(f);
+            <span class="hljs-keyword">when</span>(af.getAnnotation(any())).thenReturn(<span class="hljs-literal">null</span>);
+            <span class="hljs-keyword">return</span> af;
+        } <span class="hljs-keyword">catch</span> (NoSuchFieldException e) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(e);
+        }
+    }
+
+    <span class="hljs-keyword">private</span> AnnotatedMethod <span class="hljs-title function_">mockMethodMember</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-type">Method</span> <span class="hljs-variable">m</span> <span class="hljs-operator">=</span> TestBean.class.getMethod(<span class="hljs-string">"getValue"</span>);
+            <span class="hljs-type">AnnotatedMethod</span> <span class="hljs-variable">am</span> <span class="hljs-operator">=</span> mock(AnnotatedMethod.class);
+            <span class="hljs-keyword">when</span>(am.getMember()).thenReturn(m);
+            <span class="hljs-keyword">when</span>(am.getAnnotation(any())).thenReturn(<span class="hljs-literal">null</span>);
+            <span class="hljs-keyword">return</span> am;
+        } <span class="hljs-keyword">catch</span> (NoSuchMethodException e) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(e);
+        }
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriterWithMember</span><span class="hljs-params">(AnnotatedMember member, JsonSerializer&lt;?&gt; ser)</span> {
+        <span class="hljs-keyword">return</span> createWriter(member, <span class="hljs-string">"prop"</span>, <span class="hljs-literal">false</span>, ser, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriterWithSuppression</span><span class="hljs-params">(<span class="hljs-type">boolean</span> suppressNulls)</span> {
+        <span class="hljs-keyword">return</span> createWriter(mockFieldMember(), <span class="hljs-string">"prop"</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, suppressNulls, <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriterWithSuppressionAndRequired</span><span class="hljs-params">(<span class="hljs-type">boolean</span> suppressNulls, <span class="hljs-type">boolean</span> required)</span> {
+        <span class="hljs-keyword">return</span> createWriter(mockFieldMember(), <span class="hljs-string">"prop"</span>, required, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, suppressNulls, <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriterWithMemberAndName</span><span class="hljs-params">(String name, AnnotatedMember member, JsonSerializer&lt;?&gt; ser)</span> {
+        <span class="hljs-keyword">return</span> createWriter(member, name, <span class="hljs-literal">false</span>, ser, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriterWithMemberAndSerType</span><span class="hljs-params">(AnnotatedMember member, JsonSerializer&lt;?&gt; ser, JavaType serType)</span> {
+        <span class="hljs-keyword">return</span> createWriter(member, <span class="hljs-string">"prop"</span>, <span class="hljs-literal">false</span>, ser, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, serType);
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriterForField</span><span class="hljs-params">(Field f)</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-type">AnnotatedField</span> <span class="hljs-variable">af</span> <span class="hljs-operator">=</span> mock(AnnotatedField.class);
+            <span class="hljs-keyword">when</span>(af.getMember()).thenReturn(f);
+            <span class="hljs-keyword">when</span>(af.getAnnotation(any())).thenReturn(<span class="hljs-literal">null</span>);
+            <span class="hljs-keyword">return</span> createWriter(af, f.getName(), <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(e);
+        }
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriterForMethod</span><span class="hljs-params">(Method m)</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-type">AnnotatedMethod</span> <span class="hljs-variable">am</span> <span class="hljs-operator">=</span> mock(AnnotatedMethod.class);
+            <span class="hljs-keyword">when</span>(am.getMember()).thenReturn(m);
+            <span class="hljs-keyword">when</span>(am.getAnnotation(any())).thenReturn(<span class="hljs-literal">null</span>);
+            <span class="hljs-keyword">return</span> createWriter(am, m.getName(), <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(e);
+        }
+    }
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter <span class="hljs-title function_">createWriter</span><span class="hljs-params">(AnnotatedMember member, String name, <span class="hljs-type">boolean</span> required,
+                                            JsonSerializer&lt;?&gt; ser, TypeSerializer typeSer,
+                                            <span class="hljs-type">boolean</span> suppressNulls, JavaType serType)</span> {
+        <span class="hljs-type">BeanPropertyDefinition</span> <span class="hljs-variable">propDef</span> <span class="hljs-operator">=</span> mock(BeanPropertyDefinition.class);
+        <span class="hljs-keyword">when</span>(propDef.getName()).thenReturn(name);
+        <span class="hljs-keyword">when</span>(propDef.isRequired()).thenReturn(required);
+        <span class="hljs-keyword">if</span> (serType == <span class="hljs-literal">null</span>) {
+            <span class="hljs-comment">// Use a default declared type: String for methods returning String, or generic Object</span>
+            JavaType declared;
+            <span class="hljs-keyword">if</span> (member <span class="hljs-keyword">instanceof</span> AnnotatedMethod) {
+                declared = com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance().constructType(
+                        ((AnnotatedMethod)member).getMember().getReturnType());
+            } <span class="hljs-keyword">else</span> {
+                declared = com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance().constructType(Object.class);
+            }
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanPropertyWriter</span>(propDef, member, <span class="hljs-literal">null</span>, declared,
+                    ser, typeSer, serType, suppressNulls, <span class="hljs-literal">null</span>);
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanPropertyWriter</span>(propDef, member, <span class="hljs-literal">null</span>,
+                com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance().constructType(Object.class),
+                ser, typeSer, serType, suppressNulls, <span class="hljs-literal">null</span>);
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

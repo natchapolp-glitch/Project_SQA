@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "intellisphere",
+  "provider": "KKU AI Sphere / IntelliSphere",
+  "model": "deepseek-v4-pro",
+  "project": "JacksonCore",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 103,
+  "prompt_iteration": 1,
+  "generated_at": "2026-09-28T23:48:44.566Z",
+  "ingested_at": "2026-09-29T14:55:14.175672+00:00",
+  "parameters": {
+    "routing_mode": "Auto Router",
+    "resolved_model_label": "Deepseek - deepseek-v4-pro",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "com/fasterxml/jackson/core/io/NumberInputTest.java",
+      "before_sha256": "2933e10bbf1457ff94d9e4727c07cb6393bf90a2caa4bebce866677a4b76ff6e",
+      "after_sha256": "ae6f6ae2b62fec3720c32a3727000fc8dcd4624181b9b70ed710139fd57bc1a6",
+      "filename_header_removed": "com/fasterxml/jackson/core/io/NumberInputTest.java",
+      "selection": "Remove only a non-Java filename hint matching the declared package/class source path. No execution outcomes used."
+    },
+    {
+      "path": "com/fasterxml/jackson/core/util/TextBufferTest.java",
+      "before_sha256": "1a62632e34d888d798c37118457afde505f14869edfcb59c67c612ac28ec6ecf",
+      "after_sha256": "61b248494ac9db7e12478977650d37c576a78208c7e3cf39e691cbf1a59be09d",
+      "filename_header_removed": "com/fasterxml/jackson/core/util/TextBufferTest.java",
+      "selection": "Remove only a non-Java filename hint matching the declared package/class source path. No execution outcomes used."
+    },
+    {
+      "path": "com/fasterxml/jackson/core/io/NumberInputTest.java",
+      "before_sha256": "ae6f6ae2b62fec3720c32a3727000fc8dcd4624181b9b70ed710139fd57bc1a6",
+      "after_sha256": "6eea1ea9316cb42e096019a901419e9111a769a0585830bb3ab6d9dd7705677a",
+      "local_compatibility_repairs": [
+        {
+          "old": "assertThrows(NumberFormatException.class, () -> NumberInput.parseInt(\"2147483648\"));",
+          "new": "try { NumberInput.parseInt(\"2147483648\"); fail(\"Expected NumberFormatException\"); } catch (NumberFormatException expected) { }",
+          "reason": "Equivalent exception assertion for JUnit 4.10 and Java 6; no expected value changed."
+        },
+        {
+          "old": "assertThrows(NumberFormatException.class, () -> NumberInput.parseInt(\"+123\"));",
+          "new": "try { NumberInput.parseInt(\"+123\"); fail(\"Expected NumberFormatException\"); } catch (NumberFormatException expected) { }",
+          "reason": "Equivalent exception assertion for JUnit 4.10 and Java 6; no expected value changed."
+        },
+        {
+          "old": "assertThrows(NumberFormatException.class, () -> NumberInput.parseLong(\"1.0\"));",
+          "new": "try { NumberInput.parseLong(\"1.0\"); fail(\"Expected NumberFormatException\"); } catch (NumberFormatException expected) { }",
+          "reason": "Equivalent exception assertion for JUnit 4.10 and Java 6; no expected value changed."
+        },
+        {
+          "old": "assertThrows(NumberFormatException.class, () -> NumberInput.parseBigDecimal(\"invalid\"));",
+          "new": "try { NumberInput.parseBigDecimal(\"invalid\"); fail(\"Expected NumberFormatException\"); } catch (NumberFormatException expected) { }",
+          "reason": "Equivalent exception assertion for JUnit 4.10 and Java 6; no expected value changed."
+        }
+      ],
+      "selection": "Selected from fixed compilation diagnostics and fixed API source only; no buggy feedback."
+    },
+    {
+      "path": "com/fasterxml/jackson/core/io/NumberInputTest.java",
+      "before_sha256": "6eea1ea9316cb42e096019a901419e9111a769a0585830bb3ab6d9dd7705677a",
+      "after_sha256": "2c300ebd11593bec95a66be1c067f606d0d970b7e3c51ac8e23d059a4113ca69",
+      "renderer_suffixes_removed": 0,
+      "budget_removed_methods": [
+        "com.fasterxml.jackson.core.io.NumberInputTest::testParseBigDecimalStringValid",
+        "com.fasterxml.jackson.core.io.NumberInputTest::testParseBigDecimalStringInvalid",
+        "com.fasterxml.jackson.core.io.NumberInputTest::testParseBigDecimalCharArray",
+        "com.fasterxml.jackson.core.io.NumberInputTest::testParseBigDecimalCharArraySubArray"
+      ],
+      "selection": "First 30 methods in sorted file/source order; no execution outcomes used."
+    },
+    {
+      "path": "com/fasterxml/jackson/core/util/TextBufferTest.java",
+      "before_sha256": "61b248494ac9db7e12478977650d37c576a78208c7e3cf39e691cbf1a59be09d",
+      "after_sha256": null,
+      "renderer_suffixes_removed": 3,
+      "budget_removed_methods": [
+        "com.fasterxml.jackson.core.util.TextBufferTest::testResetWithEmptyAndAppend",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testResetWithSharedBuffer",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testResetWithCopy",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testResetWithString",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testAppendStringLongerThanSegment",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testAppendStringSubstring",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testContentsAsDouble",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testContentsAsDecimal",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testBuildResultArray",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testExpandCurrentSegment",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testFinishAndGetCurrentSegment",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testReleaseBuffers",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testClearSegments",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testSetCurrentLength",
+        "com.fasterxml.jackson.core.util.TextBufferTest::testHasTextAsCharacters"
+      ],
+      "selection": "First 30 methods in sorted file/source order; no execution outcomes used."
+    },
+    {
+      "path": "com/fasterxml/jackson/core/io/NumberInputTest.java",
+      "before_sha256": "2c300ebd11593bec95a66be1c067f606d0d970b7e3c51ac8e23d059a4113ca69",
+      "after_sha256": "b4d7f9e7239e4d2cd1c0f691afc9d27b46daffaa3dd1db5af02f4c4ec959e1cb",
+      "fixed_failed_methods_removed": [
+        "com.fasterxml.jackson.core.io.NumberInputTest::testParseIntStringWithSignAndSpaces"
+      ],
+      "selection": "Only assertion failures on fixed revision; no buggy outcomes used."
+    }
+  ],
+  "notes": [
+    "Input: exact prepared prompt.",
+    "Verbatim visible Java blocks exported with Markdown fences added; rendered HTML/text retained.",
+    "UI export is not a verified original API response; renderer may introduce (undefined) after array indices.",
+    "Duration is a UI observation upper bound.",
+    "Local processing v4 adds disclosed fixed-API/JUnit compatibility repairs without changing assertion expectations; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "2408713862df069ed6794f20213679d6ac5e4eb5cb1a8a2efcf48974b8639ad6",
+  "response_sha256": "35b4e829581b075b8342d3ece73902ab7d88ebc15542d38d3c1a3d8321d4e721",
+  "context_manifest_sha256": "37397692c5c9422bb0daabc3fba4a92c620e0c5e854838c277237d9854c03bc9",
+  "source_files": [
+    {
+      "path": "src/main/java/com/fasterxml/jackson/core/io/NumberInput.java",
+      "class": "com.fasterxml.jackson.core.io.NumberInput",
+      "sha256": "3cd025e914432e58605ac0ee504eac0ecb1de91a06fa79bd3c75e57bb4758f41",
+      "bytes": 11026
+    },
+    {
+      "path": "src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java",
+      "class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "sha256": "74aee08fbb35a2446cf324328a4e8bbec95d30c91b08270cd5fb50ec0db18c52",
+      "bytes": 22116
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.xml",
+      "sha256": "d029b949470ecb4134e2e3e1d4072d3ec307ab74fcef538e327e3b93c31d58b8",
+      "bytes": 1142
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "f875148a0aea3977054682025c291e63dc16fafd5ab12c9f6fdf825d8243fa57",
+      "bytes": 5971
+    }
+  ],
+  "java_files": [
+    {
+      "path": "com/fasterxml/jackson/core/io/NumberInputTest.java",
+      "sha256": "b4d7f9e7239e4d2cd1c0f691afc9d27b46daffaa3dd1db5af02f4c4ec959e1cb",
+      "bytes": 5156
+    }
+  ],
+  "external_suite": "JacksonCore-1f-intellisphere.103.tar.bz2",
+  "external_suite_sha256": "a790ee0628d069a1b96bfc650b79fffc9c432bf818aac52d16a24f1787139e0a",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

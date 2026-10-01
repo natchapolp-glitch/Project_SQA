@@ -1,0 +1,341 @@
+<div id="messageContentDataIdT0NCfYALXdWp" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Based on the provided source code and build configuration, I'll generate tests for the <code>RemoveUnusedVars</code> class. The project uses Ant and JUnit 4 (based on the build files and common Closure Compiler testing patterns). I'll create tests that exercise the documented behavior.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">// test/com/google/javascript/jscomp/RemoveUnusedVarsTest.java</span>
+<span class="hljs-keyword">package</span> com.google.javascript.jscomp;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertEquals;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertFalse;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNotNull;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertTrue;
+
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.Scope.Var;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Node;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Token;
+
+<span class="hljs-keyword">import</span> org.junit.Before;
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-comment">/**
+ * Tests for {<span class="hljs-doctag">@link</span> RemoveUnusedVars}.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RemoveUnusedVarsTest</span> {
+    <span class="hljs-keyword">private</span> Compiler compiler;
+    <span class="hljs-keyword">private</span> RemoveUnusedVars removeUnusedVars;
+    <span class="hljs-keyword">private</span> Node root;
+    <span class="hljs-keyword">private</span> Node externs;
+
+    <span class="hljs-meta">@Before</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> {
+        compiler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Compiler</span>();
+        root = IR.block();
+        externs = IR.block();
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFunctionArgList_withNoArgs</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(IR.name(<span class="hljs-string">"f"</span>), IR.paramList(), IR.block());
+        <span class="hljs-type">Node</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> RemoveUnusedVars.getFunctionArgList(function);
+        assertNotNull(argList);
+        assertTrue(argList.isParamList());
+        assertEquals(<span class="hljs-number">0</span>, argList.getChildCount());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFunctionArgList_withSingleArg</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(
+            IR.name(<span class="hljs-string">"f"</span>), IR.paramList(IR.name(<span class="hljs-string">"a"</span>)), IR.block());
+        <span class="hljs-type">Node</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> RemoveUnusedVars.getFunctionArgList(function);
+        assertNotNull(argList);
+        assertTrue(argList.isParamList());
+        assertEquals(<span class="hljs-number">1</span>, argList.getChildCount());
+        assertEquals(<span class="hljs-string">"a"</span>, argList.getFirstChild().getString());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFunctionArgList_withMultipleArgs</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(
+            IR.name(<span class="hljs-string">"f"</span>),
+            IR.paramList(IR.name(<span class="hljs-string">"a"</span>), IR.name(<span class="hljs-string">"b"</span>), IR.name(<span class="hljs-string">"c"</span>)),
+            IR.block());
+        <span class="hljs-type">Node</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> RemoveUnusedVars.getFunctionArgList(function);
+        assertNotNull(argList);
+        assertEquals(<span class="hljs-number">3</span>, argList.getChildCount());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcess_withNullDefinitionFinder</span><span class="hljs-params">()</span> {
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.process(externs, root, <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcess_withDefinitionFinder</span><span class="hljs-params">()</span> {
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">SimpleDefinitionFinder</span> <span class="hljs-variable">defFinder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SimpleDefinitionFinder</span>(compiler);
+        defFinder.process(externs, root);
+        removeUnusedVars.process(externs, root, defFinder);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcess_withModifyCallSites</span><span class="hljs-params">()</span> {
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">true</span>);
+        removeUnusedVars.process(externs, root);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCollectMaybeUnreferencedVars_withSimpleVar</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">js</span> <span class="hljs-operator">=</span> <span class="hljs-string">"var a = 1;"</span>;
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>), IR.number(<span class="hljs-number">1</span>))));
+        <span class="hljs-type">Scope</span> <span class="hljs-variable">scope</span> <span class="hljs-operator">=</span> compiler.getTopScope();
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.collectMaybeUnreferencedVars(scope);
+        Scope.<span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> scope.getVar(<span class="hljs-string">"a"</span>);
+        assertNotNull(<span class="hljs-keyword">var</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInterpretAssigns_withUnreferencedVar</span><span class="hljs-params">()</span> {
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>))));
+        <span class="hljs-type">Scope</span> <span class="hljs-variable">scope</span> <span class="hljs-operator">=</span> compiler.getTopScope();
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.collectMaybeUnreferencedVars(scope);
+        removeUnusedVars.interpretAssigns();
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMarkReferencedVar_startsWithEmptyReferenced</span><span class="hljs-params">()</span> {
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>))));
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> removeUnusedVars.markReferencedVar(<span class="hljs-keyword">var</span>);
+        assertTrue(result);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMarkReferencedVar_alreadyReferenced</span><span class="hljs-params">()</span> {
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>))));
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.markReferencedVar(<span class="hljs-keyword">var</span>);
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> removeUnusedVars.markReferencedVar(<span class="hljs-keyword">var</span>);
+        assertFalse(result);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRemovableVar_withUnreferencedVar</span><span class="hljs-params">()</span> {
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)), IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"b"</span>))));
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">removable</span> <span class="hljs-operator">=</span> removeUnusedVars.isRemovableVar(<span class="hljs-keyword">var</span>);
+        assertTrue(removable);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRemovableVar_withReferencedVar</span><span class="hljs-params">()</span> {
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"b"</span>)),
+            IR.exprResult(IR.name(<span class="hljs-string">"a"</span>))));
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.markReferencedVar(<span class="hljs-keyword">var</span>);
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">removable</span> <span class="hljs-operator">=</span> removeUnusedVars.isRemovableVar(<span class="hljs-keyword">var</span>);
+        assertFalse(removable);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRemovableVar_withGlobalAndRemoveGlobalsFalse</span><span class="hljs-params">()</span> {
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>))));
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">removable</span> <span class="hljs-operator">=</span> removeUnusedVars.isRemovableVar(<span class="hljs-keyword">var</span>);
+        assertFalse(removable);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRemovableVar_withExportedVar</span><span class="hljs-params">()</span> {
+        compiler.compile(IR.externs(IR.script()), IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>))));
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        compiler.getCodingConvention().addExportedName(<span class="hljs-string">"a"</span>);
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">removable</span> <span class="hljs-operator">=</span> removeUnusedVars.isRemovableVar(<span class="hljs-keyword">var</span>);
+        assertFalse(removable);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedVars_removesUnreferencedVar</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)));
+        compiler.compile(IR.externs(IR.script()), script);
+        <span class="hljs-type">Scope</span> <span class="hljs-variable">scope</span> <span class="hljs-operator">=</span> compiler.getTopScope();
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.collectMaybeUnreferencedVars(scope);
+        removeUnusedVars.removeUnreferencedVars();
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedVars_preservesReferencedVar</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.exprResult(IR.name(<span class="hljs-string">"a"</span>)));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+        removeUnusedVars.markReferencedVar(<span class="hljs-keyword">var</span>);
+        removeUnusedVars.removeUnreferencedVars();
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedFunctionArgs_withRemoveGlobalsFalse</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(IR.function(
+            IR.name(<span class="hljs-string">"f"</span>), IR.paramList(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.block(IR.returnNode(IR.name(<span class="hljs-string">"b"</span>)))));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.traverseAndRemoveUnusedReferences(script);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseFunction_callsCollectMaybeUnreferencedVars</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(IR.function(
+            IR.name(<span class="hljs-string">"f"</span>), IR.paramList(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.block(IR.exprResult(IR.name(<span class="hljs-string">"a"</span>)))));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.traverseAndRemoveUnusedReferences(script);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseNode_withFunctionDeclaration</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(
+            IR.name(<span class="hljs-string">"f"</span>), IR.paramList(),
+            IR.block());
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(function);
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">Scope</span> <span class="hljs-variable">scope</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SyntacticScopeCreator</span>(compiler).createScope(script, <span class="hljs-literal">null</span>);
+        removeUnusedVars.traverseNode(script, <span class="hljs-literal">null</span>, scope);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseNode_withAssign</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.exprResult(IR.assign(IR.name(<span class="hljs-string">"a"</span>), IR.number(<span class="hljs-number">1</span>))));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">Scope</span> <span class="hljs-variable">scope</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SyntacticScopeCreator</span>(compiler).createScope(script, <span class="hljs-literal">null</span>);
+        removeUnusedVars.traverseNode(script, <span class="hljs-literal">null</span>, scope);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseNode_withNameReference</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"b"</span>)),
+            IR.exprResult(IR.name(<span class="hljs-string">"a"</span>)));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">Scope</span> <span class="hljs-variable">scope</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SyntacticScopeCreator</span>(compiler).createScope(script, <span class="hljs-literal">null</span>);
+        removeUnusedVars.traverseNode(script, <span class="hljs-literal">null</span>, scope);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseNode_withCallExpression</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.exprResult(IR.call(IR.name(<span class="hljs-string">"foo"</span>))));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">Scope</span> <span class="hljs-variable">scope</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SyntacticScopeCreator</span>(compiler).createScope(script, <span class="hljs-literal">null</span>);
+        removeUnusedVars.traverseNode(script, <span class="hljs-literal">null</span>, scope);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveAllAssigns_removesAssignNode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.exprResult(IR.assign(IR.name(<span class="hljs-string">"a"</span>), IR.number(<span class="hljs-number">1</span>))));
+        compiler.compile(IR.externs(IR.script()), script);
+        <span class="hljs-type">Var</span> <span class="hljs-variable">var</span> <span class="hljs-operator">=</span> compiler.getTopScope().getVar(<span class="hljs-string">"a"</span>);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.traverseAndRemoveUnusedReferences(script);
+        removeUnusedVars.removeAllAssigns(<span class="hljs-keyword">var</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseAndRemoveUnusedReferences_removesUnusedGlobals</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"b"</span>)));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.traverseAndRemoveUnusedReferences(script);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTraverseAndRemoveUnusedReferences_withNestedFunction</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.function(
+                IR.name(<span class="hljs-string">"outer"</span>),
+                IR.paramList(),
+                IR.block(
+                    IR.function(
+                        IR.name(<span class="hljs-string">"inner"</span>),
+                        IR.paramList(),
+                        IR.block())
+                )
+            )
+        );
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.traverseAndRemoveUnusedReferences(script);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcess_withMultipleTraversals</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)),
+            IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"b"</span>)),
+            IR.exprResult(IR.assign(IR.name(<span class="hljs-string">"a"</span>), IR.name(<span class="hljs-string">"b"</span>))));
+        compiler.compile(IR.externs(IR.script()), script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.process(externs, script);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcess_withExternsAndRoot</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Node</span> <span class="hljs-variable">externsRoot</span> <span class="hljs-operator">=</span> IR.externs(IR.script());
+        <span class="hljs-type">Node</span> <span class="hljs-variable">script</span> <span class="hljs-operator">=</span> IR.script(IR.<span class="hljs-keyword">var</span>(IR.name(<span class="hljs-string">"a"</span>)));
+        compiler.compile(externsRoot, script);
+
+        removeUnusedVars = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(compiler, <span class="hljs-literal">true</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">false</span>);
+        removeUnusedVars.process(externsRoot, script);
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

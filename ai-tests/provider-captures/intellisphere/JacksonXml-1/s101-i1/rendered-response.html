@@ -1,0 +1,336 @@
+<div id="messageContentDataIdF8PRsWoS5PSB" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> com.fasterxml.jackson.dataformat.xml.deser;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+
+<span class="hljs-keyword">import</span> java.io.StringReader;
+
+<span class="hljs-keyword">import</span> javax.xml.stream.XMLInputFactory;
+<span class="hljs-keyword">import</span> javax.xml.stream.XMLStreamReader;
+
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.Base64Variants;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.JsonParseException;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.JsonParser;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.JsonToken;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.ObjectCodec;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.io.IOContext;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.util.BufferRecycler;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.util.ByteArrayBuilder;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;
+
+<span class="hljs-comment">/**
+ * Regression tests for {<span class="hljs-doctag">@link</span> FromXmlParser}.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">FromXmlParserTest</span>
+{
+    <span class="hljs-keyword">private</span> XMLStreamReader <span class="hljs-title function_">createXmlReader</span><span class="hljs-params">(String xml)</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">XMLInputFactory</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> XMLInputFactory.newInstance();
+        f.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+        <span class="hljs-keyword">return</span> f.createXMLStreamReader(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StringReader</span>(xml));
+    }
+
+    <span class="hljs-keyword">private</span> FromXmlParser <span class="hljs-title function_">newParser</span><span class="hljs-params">(String xml)</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">return</span> newParser(xml, <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-keyword">private</span> FromXmlParser <span class="hljs-title function_">newParser</span><span class="hljs-params">(String xml, ObjectCodec codec)</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">IOContext</span> <span class="hljs-variable">ctxt</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IOContext</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferRecycler</span>(), xml, <span class="hljs-literal">false</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">FromXmlParser</span>(ctxt, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, codec, createXmlReader(xml));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testVersionReturnsPackageVersion</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        assertNotNull(p.version());
+        assertTrue(p.version().getMajorVersion() &gt;= <span class="hljs-number">0</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRequiresCustomCodecReturnsTrue</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        assertTrue(p.requiresCustomCodec());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetCodecReturnsPassedCodec</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">ObjectCodec</span> <span class="hljs-variable">codec</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectMapper</span>();
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>, codec);
+        assertSame(codec, p.getCodec());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetCodecChangesCodec</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        <span class="hljs-type">ObjectCodec</span> <span class="hljs-variable">codec</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectMapper</span>();
+        p.setCodec(codec);
+        assertSame(codec, p.getCodec());
+        p.setCodec(<span class="hljs-literal">null</span>);
+        assertNull(p.getCodec());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetXMLTextElementNameChangesDefault</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        assertEquals(FromXmlParser.DEFAULT_UNNAMED_TEXT_PROPERTY, p._cfgNameForTextElement);
+        p.setXMLTextElementName(<span class="hljs-string">"value"</span>);
+        assertEquals(<span class="hljs-string">"value"</span>, p._cfgNameForTextElement);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInitialNextTokenIsStartObject</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLeafElementTokenSequence</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals(<span class="hljs-string">"root"</span>, p.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals(<span class="hljs-string">"text"</span>, p.getText());
+        assertNull(p.nextToken());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNestedElementTokenSequence</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;&lt;name&gt;value&lt;/name&gt;&lt;/root&gt;"</span>);
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals(<span class="hljs-string">"root"</span>, p.getCurrentName());
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals(<span class="hljs-string">"name"</span>, p.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals(<span class="hljs-string">"value"</span>, p.getText());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        assertNull(p.nextToken());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNextTextValueLeafText</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        assertNull(p.nextTextValue());
+        assertNull(p.nextTextValue());
+        assertEquals(<span class="hljs-string">"text"</span>, p.nextTextValue());
+        assertNull(p.nextTextValue());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTextOnFieldNameAndValue</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals(<span class="hljs-string">"root"</span>, p.getText());
+        assertEquals(<span class="hljs-string">"root"</span>, p.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals(<span class="hljs-string">"text"</span>, p.getText());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetValueAsString</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals(<span class="hljs-string">"root"</span>, p.getValueAsString());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals(<span class="hljs-string">"text"</span>, p.getValueAsString());
+        assertEquals(<span class="hljs-string">"text"</span>, p.getValueAsString(<span class="hljs-string">"default"</span>));
+        assertNull(p.nextToken());
+        assertNull(p.getValueAsString(<span class="hljs-string">"default"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetValueAsStringWithDefaultOnEndObject</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;&lt;name&gt;value&lt;/name&gt;&lt;/root&gt;"</span>);
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        assertEquals(<span class="hljs-string">"fallback"</span>, p.getValueAsString(<span class="hljs-string">"fallback"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTextCharactersLengthOffset</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        <span class="hljs-type">char</span>[] chars = p.getTextCharacters();
+        assertNotNull(chars);
+        assertArrayEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[] { <span class="hljs-string">'t'</span>, <span class="hljs-string">'e'</span>, <span class="hljs-string">'x'</span>, <span class="hljs-string">'t'</span> }, chars);
+        assertEquals(<span class="hljs-number">4</span>, p.getTextLength());
+        assertEquals(<span class="hljs-number">0</span>, p.getTextOffset());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasTextCharactersReturnsFalse</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        assertFalse(p.hasTextCharacters());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetEmbeddedObjectReturnsNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        assertNull(p.getEmbeddedObject());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNumericAccessorsReturnZeroOrNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;123&lt;/root&gt;"</span>);
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        assertNull(p.getBigIntegerValue());
+        assertNull(p.getDecimalValue());
+        assertEquals(<span class="hljs-number">0.0</span>, p.getDoubleValue(), <span class="hljs-number">0.0</span>);
+        assertEquals(<span class="hljs-number">0.0f</span>, p.getFloatValue(), <span class="hljs-number">0.0f</span>);
+        assertEquals(<span class="hljs-number">0</span>, p.getIntValue());
+        assertEquals(<span class="hljs-number">0L</span>, p.getLongValue());
+        assertNull(p.getNumberType());
+        assertNull(p.getNumberValue());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetBinaryValueDecodesBase64</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;aGVsbG8=&lt;/root&gt;"</span>);
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        <span class="hljs-type">byte</span>[] binary = p.getBinaryValue(Base64Variants.MIME);
+        assertArrayEquals(<span class="hljs-string">"hello"</span>.getBytes(<span class="hljs-string">"UTF-8"</span>), binary);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetBinaryValueInvalidBase64ThrowsJsonParseException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;!&lt;/root&gt;"</span>);
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        <span class="hljs-keyword">try</span> {
+            p.getBinaryValue(Base64Variants.MIME);
+            fail(<span class="hljs-string">"Expected JsonParseException"</span>);
+        } <span class="hljs-keyword">catch</span> (JsonParseException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloseAndIsClosed</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        assertFalse(p.isClosed());
+        p.close();
+        assertTrue(p.isClosed());
+        p.close();
+        assertTrue(p.isClosed());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetStaxReaderReturnsSameInstance</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">XMLStreamReader</span> <span class="hljs-variable">reader</span> <span class="hljs-operator">=</span> createXmlReader(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        <span class="hljs-type">IOContext</span> <span class="hljs-variable">ctxt</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IOContext</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferRecycler</span>(), <span class="hljs-string">"&lt;root/&gt;"</span>, <span class="hljs-literal">false</span>);
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">FromXmlParser</span>(ctxt, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">null</span>, reader);
+        assertSame(reader, p.getStaxReader());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTokenAndCurrentLocationNotNull</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        assertNotNull(p.getTokenLocation());
+        assertNotNull(p.getCurrentLocation());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testOverrideFormatFeatures</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        assertEquals(<span class="hljs-number">0</span>, p.getFormatFeatures());
+
+        <span class="hljs-type">JsonParser</span> <span class="hljs-variable">parser</span> <span class="hljs-operator">=</span> p.overrideFormatFeatures(<span class="hljs-number">3</span>, <span class="hljs-number">1</span>);
+        assertSame(p, parser);
+        assertEquals(<span class="hljs-number">1</span>, p.getFormatFeatures());
+
+        p.overrideFormatFeatures(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+        assertEquals(<span class="hljs-number">0</span>, p.getFormatFeatures());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testFeatureCollectDefaultsReturnsZero</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, FromXmlParser.Feature.collectDefaults());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsExpectedStartArrayTokenConvertsStartObjectToArray</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;&lt;item&gt;1&lt;/item&gt;&lt;/root&gt;"</span>);
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertTrue(p.isExpectedStartArrayToken());
+        assertEquals(JsonToken.START_ARRAY, p.currentToken());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsExpectedStartArrayTokenFalseOnFieldName</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertFalse(p.isExpectedStartArrayToken());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testOverrideCurrentName</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        p.overrideCurrentName(<span class="hljs-string">"changed"</span>);
+        assertEquals(<span class="hljs-string">"changed"</span>, p.getCurrentName());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsEmptyBoundaries</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        assertTrue(p._isEmpty(<span class="hljs-literal">null</span>));
+        assertTrue(p._isEmpty(<span class="hljs-string">""</span>));
+        assertTrue(p._isEmpty(<span class="hljs-string">" \t\n"</span>));
+        assertFalse(p._isEmpty(<span class="hljs-string">"a"</span>));
+        assertFalse(p._isEmpty(<span class="hljs-string">" a "</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetByteArrayBuilderReturnsEmptyBuilder</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        <span class="hljs-type">ByteArrayBuilder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> p._getByteArrayBuilder();
+        assertNotNull(builder);
+        assertEquals(<span class="hljs-number">0</span>, builder.toByteArray().length);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHandleEofThrowsWhenNotInRoot</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root&gt;text&lt;/root&gt;"</span>);
+        p.nextToken();
+        <span class="hljs-keyword">try</span> {
+            p._handleEOF();
+            fail(<span class="hljs-string">"Expected JsonParseException"</span>);
+        } <span class="hljs-keyword">catch</span> (JsonParseException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReleaseBuffersDoesNotThrow</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">FromXmlParser</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> newParser(<span class="hljs-string">"&lt;root/&gt;"</span>);
+        p._releaseBuffers();
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

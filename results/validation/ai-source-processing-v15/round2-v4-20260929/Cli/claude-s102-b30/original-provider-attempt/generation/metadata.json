@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "claude",
+  "provider": "Anthropic Claude",
+  "model": "Sonnet 5.5 Medium",
+  "project": "Cli",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 102,
+  "prompt_iteration": 1,
+  "generated_at": "2026-10-01T06:07:03.963Z",
+  "ingested_at": "2026-10-01T06:10:33.776340+00:00",
+  "parameters": {
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://claude.ai/chat/1706610b-4649-488b-8ca8-1bc201102088",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "org/apache/commons/cli/CommandLineGeneratedTest.java",
+      "before_sha256": "56e4478038c3bb0349c9a57df145a34c29bfe85e79129e8db57fecf2075cf8ab",
+      "after_sha256": "261a7251c9790e3455147ace99522033386e5ed2759672eeafb9daab52d04002",
+      "local_compatibility_repairs": [
+        {
+          "old": "o.addValueForProcessing(value);",
+          "new": "o.addValue(value);",
+          "reason": "Fixed Option.java declares package-visible addValue(String), routing to processValue; same-package test helper."
+        }
+      ],
+      "selection": "Preceding fixed compiler error and fixed API source only; assertions unchanged."
+    },
+    {
+      "path": "org/apache/commons/cli/CommandLineGeneratedTest.java",
+      "before_sha256": "261a7251c9790e3455147ace99522033386e5ed2759672eeafb9daab52d04002",
+      "after_sha256": "913188499477b68d15b052bafd2f712f1a70295437e48b3d4d45c8a92c7a02c3",
+      "renderer_suffixes_removed": 0,
+      "budget_removed_methods": [
+        "org.apache.commons.cli.CommandLineGeneratedTest::testAddSameOptionTwiceStoredOnce"
+      ],
+      "selection": "First 30 methods in sorted file/source order; no execution outcomes used."
+    }
+  ],
+  "notes": [
+    "Exact original Cli prompt only, no logs sent. Complete code from rendered DOM; generation duration is observed upper bound.",
+    "Local processing v14 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "0d1318639f51428784888fc4905cd815c9b3a2c5ec9bd956db06f13cdc410939",
+  "response_sha256": "a88a382a5e31a5b10ea5a46251178db89d29f6e61a89e58235c7100936aa6037",
+  "context_manifest_sha256": "0c962d8307bd9382c8079fd0df5c8e208fbe3dd1dad26f1e09b1fb78c271f49f",
+  "source_files": [
+    {
+      "path": "src/java/org/apache/commons/cli/CommandLine.java",
+      "class": "org.apache.commons.cli.CommandLine",
+      "sha256": "4000f382a138b952dbfc784318dbff32d21219c6b04ca5f22ee37396da944d35",
+      "bytes": 8462
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.xml",
+      "sha256": "44c8191b99da786a155eb3a5cafe5cd585359ae36149d2e03badae187d5449c2",
+      "bytes": 8520
+    },
+    {
+      "path": "project.properties",
+      "sha256": "86b89b0b6b59fef03c96e6f13c4da7fe3a525615ffe114a91262703e8bba6aa7",
+      "bytes": 1288
+    }
+  ],
+  "java_files": [
+    {
+      "path": "org/apache/commons/cli/CommandLineGeneratedTest.java",
+      "sha256": "913188499477b68d15b052bafd2f712f1a70295437e48b3d4d45c8a92c7a02c3",
+      "bytes": 8550
+    }
+  ],
+  "external_suite": "Cli-1f-claude.102.tar.bz2",
+  "external_suite_sha256": "10e00adf67b6bed39e8f5481cc3d0c8860ec51f2e541158262a1c215f9722e5e",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

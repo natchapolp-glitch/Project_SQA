@@ -1,0 +1,327 @@
+package org.apache.commons.lang3.math;
+
+import org.junit.Test;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Regression tests for {@link NumberUtils}.
+ */
+public class NumberUtilsRegressionTest {
+
+    @Test
+    public void testConstructor() {
+        assertNotNull(new NumberUtils());
+    }
+
+    @Test
+    public void testToInt() {
+        assertEquals(0, NumberUtils.toInt(null));
+        assertEquals(0, NumberUtils.toInt(""));
+        assertEquals(0, NumberUtils.toInt("invalid"));
+        assertEquals(123, NumberUtils.toInt("123"));
+        assertEquals(5, NumberUtils.toInt(null, 5));
+        assertEquals(5, NumberUtils.toInt("invalid", 5));
+        assertEquals(-10, NumberUtils.toInt("-10", 5));
+    }
+
+    @Test
+    public void testToLong() {
+        assertEquals(0L, NumberUtils.toLong(null));
+        assertEquals(0L, NumberUtils.toLong(""));
+        assertEquals(0L, NumberUtils.toLong("abc"));
+        assertEquals(1234567890123L, NumberUtils.toLong("1234567890123"));
+        assertEquals(7L, NumberUtils.toLong(null, 7L));
+        assertEquals(7L, NumberUtils.toLong("abc", 7L));
+        assertEquals(-99L, NumberUtils.toLong("-99", 7L));
+    }
+
+    @Test
+    public void testToFloat() {
+        assertEquals(0.0f, NumberUtils.toFloat(null), 0.0f);
+        assertEquals(0.0f, NumberUtils.toFloat(""), 0.0f);
+        assertEquals(0.0f, NumberUtils.toFloat("not-a-float"), 0.0f);
+        assertEquals(1.5f, NumberUtils.toFloat("1.5"), 0.0f);
+        assertEquals(2.5f, NumberUtils.toFloat(null, 2.5f), 0.0f);
+        assertEquals(2.5f, NumberUtils.toFloat("not-a-float", 2.5f), 0.0f);
+        assertEquals(-3.25f, NumberUtils.toFloat("-3.25", 2.5f), 0.0f);
+    }
+
+    @Test
+    public void testToDouble() {
+        assertEquals(0.0d, NumberUtils.toDouble(null), 0.0d);
+        assertEquals(0.0d, NumberUtils.toDouble(""), 0.0d);
+        assertEquals(0.0d, NumberUtils.toDouble("bad"), 0.0d);
+        assertEquals(1.75d, NumberUtils.toDouble("1.75"), 0.0d);
+        assertEquals(4.2d, NumberUtils.toDouble(null, 4.2d), 0.0d);
+        assertEquals(4.2d, NumberUtils.toDouble("bad", 4.2d), 0.0d);
+        assertEquals(-8.5d, NumberUtils.toDouble("-8.5", 4.2d), 0.0d);
+    }
+
+    @Test
+    public void testToByte() {
+        assertEquals((byte) 0, NumberUtils.toByte(null));
+        assertEquals((byte) 0, NumberUtils.toByte(""));
+        assertEquals((byte) 0, NumberUtils.toByte("invalid"));
+        assertEquals((byte) 12, NumberUtils.toByte("12"));
+        assertEquals((byte) 3, NumberUtils.toByte(null, (byte) 3));
+        assertEquals((byte) 3, NumberUtils.toByte("invalid", (byte) 3));
+        assertEquals((byte) -5, NumberUtils.toByte("-5", (byte) 3));
+    }
+
+    @Test
+    public void testToShort() {
+        assertEquals((short) 0, NumberUtils.toShort(null));
+        assertEquals((short) 0, NumberUtils.toShort(""));
+        assertEquals((short) 0, NumberUtils.toShort("invalid"));
+        assertEquals((short) 321, NumberUtils.toShort("321"));
+        assertEquals((short) 9, NumberUtils.toShort(null, (short) 9));
+        assertEquals((short) 9, NumberUtils.toShort("invalid", (short) 9));
+        assertEquals((short) -123, NumberUtils.toShort("-123", (short) 9));
+    }
+
+    @Test
+    public void testCreateFloatAndDouble() {
+        assertNull(NumberUtils.createFloat(null));
+        assertEquals(Float.valueOf(3.14f), NumberUtils.createFloat("3.14"));
+
+        assertNull(NumberUtils.createDouble(null));
+        assertEquals(Double.valueOf(3.14159d), NumberUtils.createDouble("3.14159"));
+    }
+
+    @Test
+    public void testCreateIntegerAndLong() {
+        assertNull(NumberUtils.createInteger(null));
+        assertEquals(Integer.valueOf(1234), NumberUtils.createInteger("1234"));
+        assertEquals(Integer.valueOf(0x1a), NumberUtils.createInteger("0x1a"));
+        assertEquals(Integer.valueOf(077), NumberUtils.createInteger("077"));
+
+        assertNull(NumberUtils.createLong(null));
+        assertEquals(Long.valueOf(123456789L), NumberUtils.createLong("123456789"));
+        assertEquals(Long.valueOf(0x1aL), NumberUtils.createLong("0x1a"));
+        assertEquals(Long.valueOf(077L), NumberUtils.createLong("077"));
+    }
+
+    @Test
+    public void testCreateBigInteger() {
+        assertNull(NumberUtils.createBigInteger(null));
+        assertEquals(new BigInteger("12345678901234567890"), NumberUtils.createBigInteger("12345678901234567890"));
+        assertEquals(new BigInteger("ff", 16), NumberUtils.createBigInteger("0xff"));
+        assertEquals(new BigInteger("-ff", 16), NumberUtils.createBigInteger("-0xff"));
+        assertEquals(new BigInteger("20", 16), NumberUtils.createBigInteger("#20"));
+        assertEquals(new BigInteger("-20", 16), NumberUtils.createBigInteger("-#20"));
+        assertEquals(new BigInteger("77", 8), NumberUtils.createBigInteger("077"));
+        assertEquals(new BigInteger("-77", 8), NumberUtils.createBigInteger("-077"));
+    }
+
+    @Test
+    public void testCreateBigDecimal() {
+        assertNull(NumberUtils.createBigDecimal(null));
+        assertEquals(new BigDecimal("123.45678901234567890"), NumberUtils.createBigDecimal("123.45678901234567890"));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testCreateBigDecimalBlank() {
+        NumberUtils.createBigDecimal("   ");
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testCreateBigDecimalDoubleMinus() {
+        NumberUtils.createBigDecimal("--1.23");
+    }
+
+    @Test
+    public void testCreateNumberHexPrefixes() {
+        assertEquals(Integer.valueOf(255), NumberUtils.createNumber("0xff"));
+        assertEquals(Integer.valueOf(255), NumberUtils.createNumber("0Xff"));
+        assertEquals(Integer.valueOf(-255), NumberUtils.createNumber("-0xff"));
+        assertEquals(Integer.valueOf(-255), NumberUtils.createNumber("-0Xff"));
+        assertEquals(Integer.valueOf(255), NumberUtils.createNumber("#ff"));
+        assertEquals(Integer.valueOf(-255), NumberUtils.createNumber("-#ff"));
+
+        // Leading zeroes stripping check
+        assertEquals(Integer.valueOf(1), NumberUtils.createNumber("0x0001"));
+
+        // Hex lengths determining Integer, Long, BigInteger
+        assertEquals(Long.valueOf(0x80000000L), NumberUtils.createNumber("0x80000000"));
+        assertEquals(Long.valueOf(0x100000000L), NumberUtils.createNumber("0x100000000"));
+        assertEquals(new BigInteger("8000000000000000", 16), NumberUtils.createNumber("0x8000000000000000"));
+        assertEquals(new BigInteger("10000000000000000", 16), NumberUtils.createNumber("0x10000000000000000"));
+    }
+
+    @Test
+    public void testCreateNumberTypeQualifiers() {
+        assertEquals(Long.valueOf(1234L), NumberUtils.createNumber("1234L"));
+        assertEquals(Long.valueOf(1234L), NumberUtils.createNumber("1234l"));
+        assertEquals(Float.valueOf(12.34f), NumberUtils.createNumber("12.34f"));
+        assertEquals(Float.valueOf(12.34f), NumberUtils.createNumber("12.34F"));
+        assertEquals(Double.valueOf(12.34d), NumberUtils.createNumber("12.34d"));
+        assertEquals(Double.valueOf(12.34d), NumberUtils.createNumber("12.34D"));
+    }
+
+    @Test
+    public void testCreateNumberInferredTypes() {
+        assertNull(NumberUtils.createNumber(null));
+        assertEquals(Integer.valueOf(100), NumberUtils.createNumber("100"));
+        assertEquals(Long.valueOf(100000000000L), NumberUtils.createNumber("100000000000"));
+        assertEquals(new BigInteger("100000000000000000000000"), NumberUtils.createNumber("100000000000000000000000"));
+
+        // Decimals <= 7 digits past point defaults to Float
+        assertEquals(Float.valueOf("1.23456"), NumberUtils.createNumber("1.23456"));
+        // Decimals between 8 and 16 digits past point defaults to Double
+        assertEquals(Double.valueOf("1.2345678901"), NumberUtils.createNumber("1.2345678901"));
+        // Decimals > 16 digits past point defaults to BigDecimal
+        assertEquals(new BigDecimal("1.234567890123456789"), NumberUtils.createNumber("1.234567890123456789"));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testCreateNumberBlank() {
+        NumberUtils.createNumber("  ");
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testCreateNumberDoubleExponent() {
+        NumberUtils.createNumber("1.2e3e4");
+    }
+
+    @Test
+    public void testIsDigits() {
+        assertFalse(NumberUtils.isDigits(null));
+        assertFalse(NumberUtils.isDigits(""));
+        assertFalse(NumberUtils.isDigits("12a3"));
+        assertFalse(NumberUtils.isDigits("-123"));
+        assertFalse(NumberUtils.isDigits("12.3"));
+        assertTrue(NumberUtils.isDigits("0"));
+        assertTrue(NumberUtils.isDigits("12345"));
+    }
+
+    @Test
+    public void testIsNumber() {
+        assertFalse(NumberUtils.isNumber(null));
+        assertFalse(NumberUtils.isNumber(""));
+        assertFalse(NumberUtils.isNumber("0x"));
+        assertFalse(NumberUtils.isNumber("-0x"));
+        assertFalse(NumberUtils.isNumber("1.2.3"));
+        assertFalse(NumberUtils.isNumber("12e"));
+        assertFalse(NumberUtils.isNumber("12e+"));
+        assertFalse(NumberUtils.isNumber("e12"));
+        assertFalse(NumberUtils.isNumber("123L2"));
+
+        assertTrue(NumberUtils.isNumber("123"));
+        assertTrue(NumberUtils.isNumber("-123"));
+        assertTrue(NumberUtils.isNumber("0x1A"));
+        assertTrue(NumberUtils.isNumber("-0x1A"));
+        assertTrue(NumberUtils.isNumber("1.23"));
+        assertTrue(NumberUtils.isNumber(".23"));
+        assertTrue(NumberUtils.isNumber("1."));
+        assertTrue(NumberUtils.isNumber("1.23e4"));
+        assertTrue(NumberUtils.isNumber("-1.23E-4"));
+        assertTrue(NumberUtils.isNumber("123L"));
+        assertTrue(NumberUtils.isNumber("12.3f"));
+        assertTrue(NumberUtils.isNumber("12.3d"));
+    }
+
+    @Test
+    public void testMinLongArray() {
+        assertEquals(1L, NumberUtils.min(new long[]{3L, 1L, 2L}));
+        assertEquals(-5L, NumberUtils.min(new long[]{-5L, 0L, 5L}));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMinLongArrayEmpty() {
+        NumberUtils.min(new long[0]);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMinLongArrayNull() {
+        NumberUtils.min((long[]) null);
+    }
+
+    @Test
+    public void testMaxIntArray() {
+        assertEquals(3, NumberUtils.max(new int[]{1, 3, 2}));
+        assertEquals(-1, NumberUtils.max(new int[]{-5, -1, -3}));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMaxIntArrayEmpty() {
+        NumberUtils.max(new int[0]);
+    }
+
+    @Test
+    public void testMinMaxDoubleArrayNaN() {
+        double[] arrayWithNaN = new double[]{1.0, Double.NaN, 2.0};
+        assertTrue(Double.isNaN(NumberUtils.min(arrayWithNaN)));
+        assertTrue(Double.isNaN(NumberUtils.max(arrayWithNaN)));
+
+        double[] normalArray = new double[]{1.5, 4.5, -2.5};
+        assertEquals(-2.5, NumberUtils.min(normalArray), 0.0);
+        assertEquals(4.5, NumberUtils.max(normalArray), 0.0);
+    }
+
+    @Test
+    public void testMinMaxFloatArrayNaN() {
+        float[] arrayWithNaN = new float[]{1.0f, Float.NaN, 2.0f};
+        assertTrue(Float.isNaN(NumberUtils.min(arrayWithNaN)));
+        assertTrue(Float.isNaN(NumberUtils.max(arrayWithNaN)));
+
+        float[] normalArray = new float[]{1.5f, 4.5f, -2.5f};
+        assertEquals(-2.5f, NumberUtils.min(normalArray), 0.0f);
+        assertEquals(4.5f, NumberUtils.max(normalArray), 0.0f);
+    }
+
+    @Test
+    public void testMinMaxThreePrimitives() {
+        // long
+        assertEquals(1L, NumberUtils.min(1L, 2L, 3L));
+        assertEquals(1L, NumberUtils.min(3L, 1L, 2L));
+        assertEquals(1L, NumberUtils.min(3L, 2L, 1L));
+        assertEquals(3L, NumberUtils.max(1L, 2L, 3L));
+        assertEquals(3L, NumberUtils.max(3L, 1L, 2L));
+        assertEquals(3L, NumberUtils.max(2L, 3L, 1L));
+
+        // int
+        assertEquals(1, NumberUtils.min(1, 2, 3));
+        assertEquals(1, NumberUtils.min(3, 1, 2));
+        assertEquals(1, NumberUtils.min(3, 2, 1));
+        assertEquals(3, NumberUtils.max(1, 2, 3));
+        assertEquals(3, NumberUtils.max(3, 1, 2));
+        assertEquals(3, NumberUtils.max(2, 3, 1));
+
+        // short
+        assertEquals((short) 1, NumberUtils.min((short) 1, (short) 2, (short) 3));
+        assertEquals((short) 1, NumberUtils.min((short) 3, (short) 1, (short) 2));
+        assertEquals((short) 1, NumberUtils.min((short) 3, (short) 2, (short) 1));
+        assertEquals((short) 3, NumberUtils.max((short) 1, (short) 2, (short) 3));
+        assertEquals((short) 3, NumberUtils.max((short) 3, (short) 1, (short) 2));
+        assertEquals((short) 3, NumberUtils.max((short) 2, (short) 3, (short) 1));
+
+        // byte
+        assertEquals((byte) 1, NumberUtils.min((byte) 1, (byte) 2, (byte) 3));
+        assertEquals((byte) 1, NumberUtils.min((byte) 3, (byte) 1, (byte) 2));
+        assertEquals((byte) 1, NumberUtils.min((byte) 3, (byte) 2, (byte) 1));
+        assertEquals((byte) 3, NumberUtils.max((byte) 1, (byte) 2, (byte) 3));
+        assertEquals((byte) 3, NumberUtils.max((byte) 3, (byte) 1, (byte) 2));
+        assertEquals((byte) 3, NumberUtils.max((byte) 2, (byte) 3, (byte) 1));
+    }
+
+    @Test
+    public void testMinMaxThreeFloatsAndDoubles() {
+        assertEquals(1.0d, NumberUtils.min(1.0d, 2.0d, 3.0d), 0.0d);
+        assertEquals(3.0d, NumberUtils.max(1.0d, 2.0d, 3.0d), 0.0d);
+        assertTrue(Double.isNaN(NumberUtils.min(1.0d, Double.NaN, 3.0d)));
+        assertTrue(Double.isNaN(NumberUtils.max(1.0d, Double.NaN, 3.0d)));
+
+        assertEquals(1.0f, NumberUtils.min(1.0f, 2.0f, 3.0f), 0.0f);
+        assertEquals(3.0f, NumberUtils.max(1.0f, 2.0f, 3.0f), 0.0f);
+        assertTrue(Float.isNaN(NumberUtils.min(1.0f, Float.NaN, 3.0f)));
+        assertTrue(Float.isNaN(NumberUtils.max(1.0f, Float.NaN, 3.0f)));
+    }
+}

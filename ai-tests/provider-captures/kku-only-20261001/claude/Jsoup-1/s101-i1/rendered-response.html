@@ -1,0 +1,332 @@
+<p>I could not compile or run these tests, so none of the expected values below have been executed.</p>
+<p><strong>Assumptions from the supplied build files</strong></p>
+<ul>
+<li><code>pom.xml</code> declares JUnit <strong>4.5</strong> and Commons Lang <strong>2.4</strong>, and the compiler source/target level is <strong>1.5</strong>. So the tests use <code>org.junit.Test</code> and <code>org.junit.Assert</code>, with no diamond operator, lambdas, <code>assertThrows</code> or JUnit 5.</li>
+<li>The tests sit in package <code>org.jsoup.nodes</code> so they can reach the package-visible <code>childNodes</code> field, which <code>Document</code> itself uses.</li>
+<li>Only APIs visible in the supplied source are used: <code>appendElement</code>, <code>prependElement</code>, <code>appendChild</code>, <code>getElementsByTag</code>, <code>select</code>, <code>Elements.first()</code>/<code>isEmpty()</code>, <code>TextNode(String,String)</code>, <code>html()</code>, <code>baseUri()</code>, <code>nodeName()</code> and <code>text()</code>. I did not use APIs that I could not confirm for this revision, such as <code>Elements.size()</code>.</li>
+<li>Exact pretty-printed HTML layout is not shown in the supplied source, so assertions on HTML use <code>contains</code> and <code>indexOf</code> rather than full-string equality.</li>
+<li>The private <code>normalise(Element)</code> is covered only indirectly, through <code>normalise()</code>.</li>
+</ul>
+<p><code>org/jsoup/nodes/DocumentGeneratedTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.jsoup.nodes;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertEquals;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertFalse;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNotNull;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNull;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertSame;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertTrue;
+
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-comment">/**
+ * Regression tests for org.jsoup.nodes.Document (jsoup 1.1.2-SNAPSHOT reference revision).
+ * Written for JUnit 4.5 / Java 1.5 source level.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DocumentGeneratedTest</span> {
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">BASE</span> <span class="hljs-operator">=</span> <span class="hljs-string">"http://example.com/"</span>;
+
+    <span class="hljs-comment">// ---------- constructor / nodeName ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">constructorCreatesEmptyDocumentWithBaseUri</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        assertEquals(BASE, doc.baseUri());
+        assertNull(doc.head());
+        assertNull(doc.body());
+        assertTrue(doc.select(<span class="hljs-string">"html"</span>).isEmpty());
+        assertEquals(<span class="hljs-number">0</span>, doc.childNodes.size());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">nodeNameIsDocument</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"#document"</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(<span class="hljs-string">""</span>).nodeName());
+        assertEquals(<span class="hljs-string">"#document"</span>, Document.createShell(BASE).nodeName());
+    }
+
+    <span class="hljs-comment">// ---------- createShell ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">createShellBuildsHtmlHeadBody</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        assertEquals(BASE, doc.baseUri());
+        assertNotNull(doc.select(<span class="hljs-string">"html"</span>).first());
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        assertEquals(<span class="hljs-string">"head"</span>, doc.head().nodeName());
+        assertEquals(<span class="hljs-string">"body"</span>, doc.body().nodeName());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">createShellAcceptsEmptyBaseUri</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(<span class="hljs-string">""</span>);
+        assertEquals(<span class="hljs-string">""</span>, doc.baseUri());
+        assertNotNull(doc.body());
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">createShellNullBaseUriThrows</span><span class="hljs-params">()</span> {
+        Document.createShell(<span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-comment">// ---------- head / body ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">headAndBodyAreSameAsFirstByTag</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        assertSame(doc.getElementsByTag(<span class="hljs-string">"head"</span>).first(), doc.head());
+        assertSame(doc.getElementsByTag(<span class="hljs-string">"body"</span>).first(), doc.body());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">headAndBodyNullOnEmptyDocument</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        assertNull(doc.head());
+        assertNull(doc.body());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">bodyFoundWhenAddedManually</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">html</span> <span class="hljs-operator">=</span> doc.appendElement(<span class="hljs-string">"html"</span>);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">body</span> <span class="hljs-operator">=</span> html.appendElement(<span class="hljs-string">"body"</span>);
+        assertSame(body, doc.body());
+        assertNull(doc.head());
+    }
+
+    <span class="hljs-comment">// ---------- title ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleIsEmptyWhenNoTitleElement</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, Document.createShell(BASE).title());
+        assertEquals(<span class="hljs-string">""</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE).title());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleSetterAddsTitleToHead</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.title(<span class="hljs-string">"Hello"</span>);
+        assertEquals(<span class="hljs-string">"Hello"</span>, doc.title());
+        <span class="hljs-type">Element</span> <span class="hljs-variable">titleEl</span> <span class="hljs-operator">=</span> doc.head().getElementsByTag(<span class="hljs-string">"title"</span>).first();
+        assertNotNull(titleEl);
+        assertEquals(<span class="hljs-string">"Hello"</span>, titleEl.text());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleSetterUpdatesExistingTitle</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.title(<span class="hljs-string">"First"</span>);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">before</span> <span class="hljs-operator">=</span> doc.getElementsByTag(<span class="hljs-string">"title"</span>).first();
+        doc.title(<span class="hljs-string">"Second"</span>);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">after</span> <span class="hljs-operator">=</span> doc.getElementsByTag(<span class="hljs-string">"title"</span>).first();
+        assertSame(before, after);
+        assertEquals(<span class="hljs-string">"Second"</span>, doc.title());
+        assertFalse(doc.outerHtml().contains(<span class="hljs-string">"First"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleGetterTrimsWhitespace</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.title(<span class="hljs-string">"   Padded Title   "</span>);
+        assertEquals(<span class="hljs-string">"Padded Title"</span>, doc.title());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleReadsExistingTitleElementOutsideHead</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        doc.appendElement(<span class="hljs-string">"title"</span>).text(<span class="hljs-string">"Direct"</span>);
+        assertEquals(<span class="hljs-string">"Direct"</span>, doc.title());
+        doc.title(<span class="hljs-string">"Changed"</span>);
+        assertEquals(<span class="hljs-string">"Changed"</span>, doc.title());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleSetterAcceptsEmptyString</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.title(<span class="hljs-string">""</span>);
+        assertEquals(<span class="hljs-string">""</span>, doc.title());
+        assertNotNull(doc.getElementsByTag(<span class="hljs-string">"title"</span>).first());
+    }
+
+    <span class="hljs-meta">@Test(expected = IllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleSetterNullThrows</span><span class="hljs-params">()</span> {
+        Document.createShell(BASE).title(<span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = NullPointerException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">titleSetterWithoutHeadThrowsNpe</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// no title element and no head element: head() returns null</span>
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE).title(<span class="hljs-string">"x"</span>);
+    }
+
+    <span class="hljs-comment">// ---------- createElement ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">createElementUsesDocumentBaseUri</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">a</span> <span class="hljs-operator">=</span> doc.createElement(<span class="hljs-string">"a"</span>);
+        assertEquals(<span class="hljs-string">"a"</span>, a.nodeName());
+        assertEquals(BASE, a.baseUri());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">createElementDoesNotAttachToDocument</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.createElement(<span class="hljs-string">"div"</span>);
+        assertTrue(doc.getElementsByTag(<span class="hljs-string">"div"</span>).isEmpty());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">createElementReturnsNewInstanceEachCall</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">one</span> <span class="hljs-operator">=</span> doc.createElement(<span class="hljs-string">"p"</span>);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">two</span> <span class="hljs-operator">=</span> doc.createElement(<span class="hljs-string">"p"</span>);
+        assertTrue(one != two);
+    }
+
+    <span class="hljs-comment">// ---------- text(String) ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">textSetsBodyTextAndReturnsDocument</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> doc.text(<span class="hljs-string">"Hello there"</span>);
+        assertSame(doc, result);
+        assertEquals(<span class="hljs-string">"Hello there"</span>, doc.body().text());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">textReplacesExistingBodyContent</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.body().appendElement(<span class="hljs-string">"p"</span>).text(<span class="hljs-string">"old"</span>);
+        doc.text(<span class="hljs-string">"new"</span>);
+        assertTrue(doc.body().getElementsByTag(<span class="hljs-string">"p"</span>).isEmpty());
+        assertEquals(<span class="hljs-string">"new"</span>, doc.body().text());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">textDoesNotDestroyDocumentStructure</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.text(<span class="hljs-string">"content"</span>);
+        assertNotNull(doc.select(<span class="hljs-string">"html"</span>).first());
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+    }
+
+    <span class="hljs-meta">@Test(expected = NullPointerException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">textWithoutBodyThrowsNpe</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE).text(<span class="hljs-string">"x"</span>);
+    }
+
+    <span class="hljs-comment">// ---------- outerHtml ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">outerHtmlHasNoWrapperTag</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        <span class="hljs-type">String</span> <span class="hljs-variable">html</span> <span class="hljs-operator">=</span> doc.outerHtml();
+        assertEquals(doc.html(), html);
+        assertTrue(html.contains(<span class="hljs-string">"&lt;html&gt;"</span>));
+        assertTrue(html.contains(<span class="hljs-string">"&lt;body&gt;"</span>));
+        assertFalse(html.contains(<span class="hljs-string">"#root"</span>));
+        assertFalse(html.contains(<span class="hljs-string">"#document"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">outerHtmlIncludesTitleAndBodyText</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.title(<span class="hljs-string">"T1"</span>);
+        doc.text(<span class="hljs-string">"Body text"</span>);
+        <span class="hljs-type">String</span> <span class="hljs-variable">html</span> <span class="hljs-operator">=</span> doc.outerHtml();
+        assertTrue(html.contains(<span class="hljs-string">"T1"</span>));
+        assertTrue(html.contains(<span class="hljs-string">"Body text"</span>));
+    }
+
+    <span class="hljs-comment">// ---------- normalise ----------</span>
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseOnEmptyDocumentCreatesHtmlHeadBody</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        <span class="hljs-type">Document</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> doc.normalise();
+        assertSame(doc, result);
+        assertNotNull(doc.select(<span class="hljs-string">"html"</span>).first());
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        <span class="hljs-type">String</span> <span class="hljs-variable">html</span> <span class="hljs-operator">=</span> doc.outerHtml();
+        assertTrue(html.indexOf(<span class="hljs-string">"&lt;head&gt;"</span>) &lt; html.indexOf(<span class="hljs-string">"&lt;body&gt;"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseAddsMissingHeadAndBodyToExistingHtml</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">html</span> <span class="hljs-operator">=</span> doc.appendElement(<span class="hljs-string">"html"</span>);
+        assertNull(doc.head());
+        doc.normalise();
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        assertSame(html, doc.select(<span class="hljs-string">"html"</span>).first());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseAddsMissingBodyWhenHeadPresent</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">html</span> <span class="hljs-operator">=</span> doc.appendElement(<span class="hljs-string">"html"</span>);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">head</span> <span class="hljs-operator">=</span> html.appendElement(<span class="hljs-string">"head"</span>);
+        doc.normalise();
+        assertSame(head, doc.head());
+        assertNotNull(doc.body());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseMovesRootTextIntoBody</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        <span class="hljs-type">TextNode</span> <span class="hljs-variable">tn</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextNode</span>(<span class="hljs-string">"Loose text"</span>, <span class="hljs-string">""</span>);
+        doc.appendChild(tn);
+        doc.normalise();
+        assertFalse(doc.childNodes.contains(tn));
+        assertTrue(doc.body().text().contains(<span class="hljs-string">"Loose text"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseMovesHtmlAndHeadTextIntoBodyKeepingOrder</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        doc.head().appendChild(<span class="hljs-keyword">new</span> <span class="hljs-title class_">TextNode</span>(<span class="hljs-string">"inHead"</span>, <span class="hljs-string">""</span>));
+        doc.appendChild(<span class="hljs-keyword">new</span> <span class="hljs-title class_">TextNode</span>(<span class="hljs-string">"inRoot"</span>, <span class="hljs-string">""</span>));
+        doc.normalise();
+        <span class="hljs-type">String</span> <span class="hljs-variable">bodyText</span> <span class="hljs-operator">=</span> doc.body().text();
+        assertTrue(bodyText.contains(<span class="hljs-string">"inHead"</span>));
+        assertTrue(bodyText.contains(<span class="hljs-string">"inRoot"</span>));
+        assertTrue(bodyText.indexOf(<span class="hljs-string">"inRoot"</span>) &lt; bodyText.indexOf(<span class="hljs-string">"inHead"</span>));
+        assertFalse(doc.head().text().contains(<span class="hljs-string">"inHead"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseLeavesBlankTextNodesInPlace</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        <span class="hljs-type">TextNode</span> <span class="hljs-variable">blank</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextNode</span>(<span class="hljs-string">"   "</span>, <span class="hljs-string">""</span>);
+        doc.appendChild(blank);
+        doc.normalise();
+        assertTrue(doc.childNodes.contains(blank));
+        assertEquals(<span class="hljs-number">0</span>, doc.body().childNodes.size());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseKeepsExistingBodyElements</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> Document.createShell(BASE);
+        <span class="hljs-type">Element</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> doc.body().appendElement(<span class="hljs-string">"p"</span>);
+        p.text(<span class="hljs-string">"para"</span>);
+        doc.normalise();
+        assertSame(p, doc.body().getElementsByTag(<span class="hljs-string">"p"</span>).first());
+        assertEquals(<span class="hljs-string">"para"</span>, p.text());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">normaliseIsIdempotentOnStructure</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Document</span> <span class="hljs-variable">doc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(BASE);
+        doc.normalise();
+        <span class="hljs-type">Element</span> <span class="hljs-variable">html</span> <span class="hljs-operator">=</span> doc.select(<span class="hljs-string">"html"</span>).first();
+        <span class="hljs-type">Element</span> <span class="hljs-variable">head</span> <span class="hljs-operator">=</span> doc.head();
+        <span class="hljs-type">Element</span> <span class="hljs-variable">body</span> <span class="hljs-operator">=</span> doc.body();
+        doc.normalise();
+        assertSame(html, doc.select(<span class="hljs-string">"html"</span>).first());
+        assertSame(head, doc.head());
+        assertS</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

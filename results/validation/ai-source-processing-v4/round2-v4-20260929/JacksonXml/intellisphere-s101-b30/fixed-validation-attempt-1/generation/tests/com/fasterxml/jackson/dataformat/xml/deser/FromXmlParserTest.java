@@ -1,0 +1,333 @@
+package com.fasterxml.jackson.dataformat.xml.deser;
+
+import static org.junit.Assert.*;
+
+import java.io.StringReader;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.Base64Variants;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.util.BufferRecycler;
+import com.fasterxml.jackson.core.util.ByteArrayBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * Regression tests for {@link FromXmlParser}.
+ */
+public class FromXmlParserTest
+{
+    private XMLStreamReader createXmlReader(String xml) throws Exception {
+        XMLInputFactory f = XMLInputFactory.newInstance();
+        f.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+        return f.createXMLStreamReader(new StringReader(xml));
+    }
+
+    private FromXmlParser newParser(String xml) throws Exception {
+        return newParser(xml, null);
+    }
+
+    private FromXmlParser newParser(String xml, ObjectCodec codec) throws Exception {
+        IOContext ctxt = new IOContext(new BufferRecycler(), xml, false);
+        return new FromXmlParser(ctxt, 0, 0, codec, createXmlReader(xml));
+    }
+
+    @Test
+    public void testVersionReturnsPackageVersion() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        assertNotNull(p.version());
+        assertTrue(p.version().getMajorVersion() >= 0);
+    }
+
+    @Test
+    public void testRequiresCustomCodecReturnsTrue() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        assertTrue(p.requiresCustomCodec());
+    }
+
+    @Test
+    public void testGetCodecReturnsPassedCodec() throws Exception {
+        ObjectCodec codec = new ObjectMapper();
+        FromXmlParser p = newParser("<root/>", codec);
+        assertSame(codec, p.getCodec());
+    }
+
+    @Test
+    public void testSetCodecChangesCodec() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        ObjectCodec codec = new ObjectMapper();
+        p.setCodec(codec);
+        assertSame(codec, p.getCodec());
+        p.setCodec(null);
+        assertNull(p.getCodec());
+    }
+
+    @Test
+    public void testSetXMLTextElementNameChangesDefault() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        assertEquals(FromXmlParser.DEFAULT_UNNAMED_TEXT_PROPERTY, p._cfgNameForTextElement);
+        p.setXMLTextElementName("value");
+        assertEquals("value", p._cfgNameForTextElement);
+    }
+
+    @Test
+    public void testInitialNextTokenIsStartObject() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+    }
+
+    @Test
+    public void testLeafElementTokenSequence() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("root", p.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals("text", p.getText());
+        assertNull(p.nextToken());
+    }
+
+    @Test
+    public void testNestedElementTokenSequence() throws Exception {
+        FromXmlParser p = newParser("<root><name>value</name></root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("root", p.getCurrentName());
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("name", p.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals("value", p.getText());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        assertNull(p.nextToken());
+    }
+
+    @Test
+    public void testNextTextValueLeafText() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        assertNull(p.nextTextValue());
+        assertNull(p.nextTextValue());
+        assertEquals("text", p.nextTextValue());
+        assertNull(p.nextTextValue());
+    }
+
+    @Test
+    public void testGetTextOnFieldNameAndValue() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("root", p.getText());
+        assertEquals("root", p.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals("text", p.getText());
+    }
+
+    @Test
+    public void testGetValueAsString() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("root", p.getValueAsString());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals("text", p.getValueAsString());
+        assertEquals("text", p.getValueAsString("default"));
+        assertNull(p.nextToken());
+        assertNull(p.getValueAsString("default"));
+    }
+
+    @Test
+    public void testGetValueAsStringWithDefaultOnEndObject() throws Exception {
+        FromXmlParser p = newParser("<root><name>value</name></root>");
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        assertEquals("fallback", p.getValueAsString("fallback"));
+    }
+
+    @Test
+    public void testGetTextCharactersLengthOffset() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        char[] chars = p.getTextCharacters();
+        assertNotNull(chars);
+        assertArrayEquals(new char[] { 't', 'e', 'x', 't' }, chars);
+        assertEquals(4, p.getTextLength());
+        assertEquals(0, p.getTextOffset());
+    }
+
+    @Test
+    public void testHasTextCharactersReturnsFalse() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        assertFalse(p.hasTextCharacters());
+    }
+
+    @Test
+    public void testGetEmbeddedObjectReturnsNull() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        p.nextToken();
+        p.nextToken();
+        assertNull(p.getEmbeddedObject());
+    }
+
+    @Test
+    public void testNumericAccessorsReturnZeroOrNull() throws Exception {
+        FromXmlParser p = newParser("<root>123</root>");
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        assertNull(p.getBigIntegerValue());
+        assertNull(p.getDecimalValue());
+        assertEquals(0.0, p.getDoubleValue(), 0.0);
+        assertEquals(0.0f, p.getFloatValue(), 0.0f);
+        assertEquals(0, p.getIntValue());
+        assertEquals(0L, p.getLongValue());
+        assertNull(p.getNumberType());
+        assertNull(p.getNumberValue());
+    }
+
+    @Test
+    public void testGetBinaryValueDecodesBase64() throws Exception {
+        FromXmlParser p = newParser("<root>aGVsbG8=</root>");
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        byte[] binary = p.getBinaryValue(Base64Variants.MIME);
+        assertArrayEquals("hello".getBytes("UTF-8"), binary);
+    }
+
+    @Test
+    public void testGetBinaryValueInvalidBase64ThrowsJsonParseException() throws Exception {
+        FromXmlParser p = newParser("<root>!</root>");
+        p.nextToken();
+        p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+
+        try {
+            p.getBinaryValue(Base64Variants.MIME);
+            fail("Expected JsonParseException");
+        } catch (JsonParseException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testCloseAndIsClosed() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        assertFalse(p.isClosed());
+        p.close();
+        assertTrue(p.isClosed());
+        p.close();
+        assertTrue(p.isClosed());
+    }
+
+    @Test
+    public void testGetStaxReaderReturnsSameInstance() throws Exception {
+        XMLStreamReader reader = createXmlReader("<root/>");
+        IOContext ctxt = new IOContext(new BufferRecycler(), "<root/>", false);
+        FromXmlParser p = new FromXmlParser(ctxt, 0, 0, null, reader);
+        assertSame(reader, p.getStaxReader());
+    }
+
+    @Test
+    public void testGetTokenAndCurrentLocationNotNull() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        assertNotNull(p.getTokenLocation());
+        assertNotNull(p.getCurrentLocation());
+    }
+
+    @Test
+    public void testOverrideFormatFeatures() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        assertEquals(0, p.getFormatFeatures());
+
+        JsonParser parser = p.overrideFormatFeatures(3, 1);
+        assertSame(p, parser);
+        assertEquals(1, p.getFormatFeatures());
+
+        p.overrideFormatFeatures(0, 1);
+        assertEquals(0, p.getFormatFeatures());
+    }
+
+    @Test
+    public void testFeatureCollectDefaultsReturnsZero() {
+        assertEquals(0, FromXmlParser.Feature.collectDefaults());
+    }
+
+    @Test
+    public void testIsExpectedStartArrayTokenConvertsStartObjectToArray() throws Exception {
+        FromXmlParser p = newParser("<root><item>1</item></root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertTrue(p.isExpectedStartArrayToken());
+        assertEquals(JsonToken.START_ARRAY, p.getCurrentToken());
+    }
+
+    @Test
+    public void testIsExpectedStartArrayTokenFalseOnFieldName() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertFalse(p.isExpectedStartArrayToken());
+    }
+
+    @Test
+    public void testOverrideCurrentName() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        p.overrideCurrentName("changed");
+        assertEquals("changed", p.getCurrentName());
+    }
+
+    @Test
+    public void testIsEmptyBoundaries() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        assertTrue(p._isEmpty(null));
+        assertTrue(p._isEmpty(""));
+        assertTrue(p._isEmpty(" \t\n"));
+        assertFalse(p._isEmpty("a"));
+        assertFalse(p._isEmpty(" a "));
+    }
+
+    @Test
+    public void testGetByteArrayBuilderReturnsEmptyBuilder() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        ByteArrayBuilder builder = p._getByteArrayBuilder();
+        assertNotNull(builder);
+        assertEquals(0, builder.toByteArray().length);
+    }
+
+    @Test
+    public void testHandleEofThrowsWhenNotInRoot() throws Exception {
+        FromXmlParser p = newParser("<root>text</root>");
+        p.nextToken();
+        try {
+            p._handleEOF();
+            fail("Expected JsonParseException");
+        } catch (JsonParseException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    @Test
+    public void testReleaseBuffersDoesNotThrow() throws Exception {
+        FromXmlParser p = newParser("<root/>");
+        p._releaseBuffers();
+    }
+}

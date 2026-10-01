@@ -1,0 +1,168 @@
+<div id="messageContentDataIdDdCRez4E70Oo" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>com/google/gson/TypeInfoFactoryTest.java</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> com.google.gson;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> java.lang.reflect.Field;
+<span class="hljs-keyword">import</span> java.lang.reflect.ParameterizedType;
+<span class="hljs-keyword">import</span> java.lang.reflect.Type;
+<span class="hljs-keyword">import</span> java.util.List;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TypeInfoFactoryTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+  <span class="hljs-meta">@SuppressWarnings("unused")</span>
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RawTypesClass</span> {
+    <span class="hljs-keyword">private</span> String stringField;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">int</span> intField;
+    <span class="hljs-keyword">private</span> String[] stringArrayField;
+    <span class="hljs-keyword">private</span> List&lt;String&gt; stringListField;
+    <span class="hljs-keyword">private</span> List&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">String</span>&gt; wildcardListField;
+  }
+
+  <span class="hljs-meta">@SuppressWarnings("unused")</span>
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">GenericParent</span>&lt;T&gt; {
+    <span class="hljs-keyword">private</span> T genericField;
+    <span class="hljs-keyword">private</span> T[] genericArrayField;
+    <span class="hljs-keyword">private</span> List&lt;T&gt; genericListField;
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteChild</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">GenericParent</span>&lt;Integer&gt; {
+  }
+
+  <span class="hljs-meta">@SuppressWarnings("unused")</span>
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">KeyValueParent</span>&lt;K, V&gt; {
+    <span class="hljs-keyword">private</span> K keyField;
+    <span class="hljs-keyword">private</span> V valueField;
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteKeyValueChild</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">KeyValueParent</span>&lt;String, Double&gt; {
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MiddleChild</span>&lt;T&gt; <span class="hljs-keyword">extends</span> <span class="hljs-title class_">GenericParent</span>&lt;T&gt; {
+  }
+
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">GrandChild</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">MiddleChild</span>&lt;Boolean&gt; {
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForArrayValidArray</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">TypeInfoArray</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForArray(String[].class);
+    assertNotNull(typeInfo);
+    assertEquals(String[].class, typeInfo.getRawClass());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForArrayPrimitiveArray</span><span class="hljs-params">()</span> {
+    <span class="hljs-type">TypeInfoArray</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForArray(<span class="hljs-type">int</span>[].class);
+    assertNotNull(typeInfo);
+    assertEquals(<span class="hljs-type">int</span>[].class, typeInfo.getRawClass());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForArrayInvalidNonArray</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">try</span> {
+      TypeInfoFactory.getTypeInfoForArray(String.class);
+      fail(<span class="hljs-string">"Expected IllegalArgumentException for non-array type"</span>);
+    } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+      <span class="hljs-comment">// Expected exception</span>
+    }
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldSimpleClass</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> RawTypesClass.class.getDeclaredField(<span class="hljs-string">"stringField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, RawTypesClass.class);
+    assertNotNull(typeInfo);
+    assertEquals(String.class, typeInfo.getActualType());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldPrimitiveClass</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> RawTypesClass.class.getDeclaredField(<span class="hljs-string">"intField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, RawTypesClass.class);
+    assertNotNull(typeInfo);
+    assertEquals(<span class="hljs-type">int</span>.class, typeInfo.getActualType());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldObjectArray</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> RawTypesClass.class.getDeclaredField(<span class="hljs-string">"stringArrayField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, RawTypesClass.class);
+    assertNotNull(typeInfo);
+    assertEquals(String[].class, typeInfo.getActualType());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldParameterizedType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> RawTypesClass.class.getDeclaredField(<span class="hljs-string">"stringListField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, RawTypesClass.class);
+    assertNotNull(typeInfo);
+    assertTrue(typeInfo.getActualType() <span class="hljs-keyword">instanceof</span> ParameterizedType);
+    <span class="hljs-type">ParameterizedType</span> <span class="hljs-variable">paramType</span> <span class="hljs-operator">=</span> (ParameterizedType) typeInfo.getActualType();
+    assertEquals(List.class, paramType.getRawType());
+    assertEquals(<span class="hljs-number">1</span>, paramType.getActualTypeArguments().length);
+    assertEquals(String.class, paramType.getActualTypeArguments()[<span class="hljs-number">0</span>](undefined));
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldWildcardType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> RawTypesClass.class.getDeclaredField(<span class="hljs-string">"wildcardListField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, RawTypesClass.class);
+    assertNotNull(typeInfo);
+    assertTrue(typeInfo.getActualType() <span class="hljs-keyword">instanceof</span> ParameterizedType);
+    <span class="hljs-type">ParameterizedType</span> <span class="hljs-variable">paramType</span> <span class="hljs-operator">=</span> (ParameterizedType) typeInfo.getActualType();
+    assertEquals(List.class, paramType.getRawType());
+    assertEquals(String.class, paramType.getActualTypeArguments()[<span class="hljs-number">0</span>](undefined));
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldInheritedGenericVariable</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> GenericParent.class.getDeclaredField(<span class="hljs-string">"genericField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, ConcreteChild.class);
+    assertNotNull(typeInfo);
+    assertEquals(Integer.class, typeInfo.getActualType());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldInheritedGenericArray</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> GenericParent.class.getDeclaredField(<span class="hljs-string">"genericArrayField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, ConcreteChild.class);
+    assertNotNull(typeInfo);
+    assertEquals(Integer[].class, typeInfo.getActualType());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldInheritedGenericList</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> GenericParent.class.getDeclaredField(<span class="hljs-string">"genericListField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, ConcreteChild.class);
+    assertNotNull(typeInfo);
+    assertTrue(typeInfo.getActualType() <span class="hljs-keyword">instanceof</span> ParameterizedType);
+    <span class="hljs-type">ParameterizedType</span> <span class="hljs-variable">paramType</span> <span class="hljs-operator">=</span> (ParameterizedType) typeInfo.getActualType();
+    assertEquals(List.class, paramType.getRawType());
+    assertEquals(Integer.class, paramType.getActualTypeArguments()[<span class="hljs-number">0</span>](undefined));
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldMultipleGenericVariables</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">keyField</span> <span class="hljs-operator">=</span> KeyValueParent.class.getDeclaredField(<span class="hljs-string">"keyField"</span>);
+    <span class="hljs-type">Field</span> <span class="hljs-variable">valueField</span> <span class="hljs-operator">=</span> KeyValueParent.class.getDeclaredField(<span class="hljs-string">"valueField"</span>);
+
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">keyTypeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(keyField, ConcreteKeyValueChild.class);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">valueTypeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(valueField, ConcreteKeyValueChild.class);
+
+    assertEquals(String.class, keyTypeInfo.getActualType());
+    assertEquals(Double.class, valueTypeInfo.getActualType());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldMultilevelInheritance</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> GenericParent.class.getDeclaredField(<span class="hljs-string">"genericField"</span>);
+    <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">typeInfo</span> <span class="hljs-operator">=</span> TypeInfoFactory.getTypeInfoForField(field, GrandChild.class);
+    assertNotNull(typeInfo);
+    assertEquals(Boolean.class, typeInfo.getActualType());
+  }
+
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForFieldUnresolvedTypeVariableThrowsException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+    <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> GenericParent.class.getDeclaredField(<span class="hljs-string">"genericField"</span>);
+    <span class="hljs-keyword">try</span> {
+      TypeInfoFactory.getTypeInfoForField(field, GenericParent.class);
+      fail(<span class="hljs-string">"Expected UnsupportedOperationException for unresolved type variable"</span>);
+    } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+      <span class="hljs-comment">// Expected exception</span>
+    }
+  }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<h2>References</h2>
+<ol>
+<li>Google Gson Project Source Repository (<code>gson/src/main/java/com/google/gson/TypeInfoFactory.java</code>).</li>
+<li>Google Gson Project Build Configuration (<code>gson/pom.xml</code>), JUnit 3.8.2 test dependency specification.</li>
+<li>Java Platform, Standard Edition 8 / 11 API Specification (<code>java.lang.reflect.Type</code>, <code>java.lang.reflect.ParameterizedType</code>, <code>java.lang.reflect.Field</code>).</li>
+</ol>
+</div>

@@ -1,0 +1,465 @@
+Rendered KKU IntelSphere response. Model label: Deepseek - deepseek-v4-pro
+
+```java
+// src/test/org/apache/commons/codec/language/CaverphoneTest.java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+
+public class CaverphoneTest extends TestCase {
+    
+    private Caverphone caverphone;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        caverphone = new Caverphone();
+    }
+
+    public void testEncodeString() {
+        assertEquals("1111111111", caverphone.encode((String) null));
+        assertEquals("1111111111", caverphone.encode(""));
+        assertEquals("STFNSN1111", caverphone.encode("Stevenson"));
+        assertEquals("PTRSN111111", caverphone.encode("Peterson"));
+    }
+
+    public void testEncodeObject() throws EncoderException {
+        assertEquals("STFNSN1111", caverphone.encode((Object) "Stevenson"));
+        assertEquals("PTRSN111111", caverphone.encode((Object) "Peterson"));
+    }
+
+    public void testEncodeObjectNonString() {
+        try {
+            caverphone.encode(new Integer(123));
+            fail("Expected EncoderException for non-String object");
+        } catch (EncoderException e) {
+            assertEquals("Parameter supplied to Caverphone encode is not of type java.lang.String", e.getMessage());
+        }
+    }
+
+    public void testCaverphoneNull() {
+        assertEquals("1111111111", caverphone.caverphone(null));
+    }
+
+    public void testCaverphoneEmpty() {
+        assertEquals("1111111111", caverphone.caverphone(""));
+    }
+
+    public void testCaverphoneStevenson() {
+        assertEquals("STFNSN1111", caverphone.caverphone("Stevenson"));
+    }
+
+    public void testCaverphonePeterson() {
+        assertEquals("PTRSN111111", caverphone.caverphone("Peterson"));
+    }
+
+    public void testCaverphoneName() {
+        assertEquals("HNTR111111", caverphone.caverphone("Hunter"));
+    }
+
+    public void testCaverphoneThompson() {
+        assertEquals("TMPSN11111", caverphone.caverphone("Thompson"));
+    }
+
+    public void testCaverphoneMackay() {
+        assertEquals("MKA1111111", caverphone.caverphone("Mackay"));
+    }
+
+    public void testCaverphoneWright() {
+        assertEquals("RAT1111111", caverphone.caverphone("Wright"));
+    }
+
+    public void testCaverphoneWithDigits() {
+        assertEquals("TTK1111111", caverphone.caverphone("test123test"));
+    }
+
+    public void testCaverphoneUpperCase() {
+        assertEquals("STFNSN1111", caverphone.caverphone("STEVENSON"));
+    }
+
+    public void testCaverphoneMixedCase() {
+        assertEquals("STFNSN1111", caverphone.caverphone("StEvEnSoN"));
+    }
+
+    public void testCaverphoneSingleChar() {
+        String result = caverphone.caverphone("a");
+        assertNotNull(result);
+        assertEquals(10, result.length());
+    }
+
+    public void testCaverphoneOutputLength() {
+        assertEquals(10, caverphone.caverphone("test").length());
+        assertEquals(10, caverphone.caverphone("longerword").length());
+    }
+
+    public void testIsCaverphoneEqualTrue() {
+        assertTrue(caverphone.isCaverphoneEqual("Stevenson", "Stevenson"));
+        assertTrue(caverphone.isCaverphoneEqual("Stevenson", "STEVENSON"));
+    }
+
+    public void testIsCaverphoneEqualFalse() {
+        assertFalse(caverphone.isCaverphoneEqual("Stevenson", "Peterson"));
+        assertFalse(caverphone.isCaverphoneEqual("Smith", "Jones"));
+    }
+
+    public void testIsCaverphoneEqualNullInput() {
+        assertTrue(caverphone.isCaverphoneEqual(null, null));
+        assertTrue(caverphone.isCaverphoneEqual("", null));
+        assertTrue(caverphone.isCaverphoneEqual(null, ""));
+    }
+
+    public void testCaverphoneCoughPrefix() {
+        assertEquals("KF11111111", caverphone.caverphone("cough"));
+    }
+
+    public void testCaverphoneRoughPrefix() {
+        assertEquals("RF11111111", caverphone.caverphone("rough"));
+    }
+
+    public void testCaverphoneToughPrefix() {
+        assertEquals("TF11111111", caverphone.caverphone("tough"));
+    }
+
+    public void testCaverphoneEnoughPrefix() {
+        assertEquals("ANF1111111", caverphone.caverphone("enough"));
+    }
+
+    public void testCaverphoneGnPrefix() {
+        assertEquals("N111111111", caverphone.caverphone("gnat"));
+    }
+
+    public void testCaverphoneMbPrefix() {
+        assertEquals("M111111111", caverphone.caverphone("mbamba"));
+    }
+
+    public void testCaverphoneWithSpaces() {
+        assertEquals("STFNSN1111", caverphone.caverphone("Ste ven son"));
+    }
+
+    public void testCaverphoneWithPunctuation() {
+        assertEquals("STFNSN1111", caverphone.caverphone("Ste'venson"));
+    }
+
+    public void testCaverphoneIdenticalEncode() {
+        String str = "Robertson";
+        assertEquals(caverphone.caverphone(str), caverphone.encode(str));
+    }
+}
+
+```
+
+```java
+// src/test/org/apache/commons/codec/language/MetaphoneTest.java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+
+public class MetaphoneTest extends TestCase {
+    
+    private Metaphone metaphone;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        metaphone = new Metaphone();
+    }
+
+    public void testMetaphoneNull() {
+        assertEquals("", metaphone.metaphone(null));
+    }
+
+    public void testMetaphoneEmpty() {
+        assertEquals("", metaphone.metaphone(""));
+    }
+
+    public void testMetaphoneSingleChar() {
+        assertEquals("A", metaphone.metaphone("a"));
+        assertEquals("B", metaphone.metaphone("b"));
+        assertEquals("K", metaphone.metaphone("c"));
+    }
+
+    public void testMetaphoneBasicWords() {
+        assertEquals("KST", metaphone.metaphone("cost"));
+        assertEquals("BR", metaphone.metaphone("berry"));
+        assertEquals("JMS", metaphone.metaphone("James"));
+    }
+
+    public void testMetaphoneInitialGn() {
+        assertEquals("N", metaphone.metaphone("gnaw"));
+        assertEquals("N", metaphone.metaphone("gnome"));
+    }
+
+    public void testMetaphoneInitialKn() {
+        assertEquals("N", metaphone.metaphone("knee"));
+        assertEquals("N", metaphone.metaphone("know"));
+    }
+
+    public void testMetaphoneInitialPn() {
+        assertEquals("N", metaphone.metaphone("pneumatic"));
+    }
+
+    public void testMetaphoneInitialAe() {
+        assertEquals("E", metaphone.metaphone("aeon"));
+    }
+
+    public void testMetaphoneInitialWr() {
+        assertEquals("R", metaphone.metaphone("wrong"));
+        assertEquals("R", metaphone.metaphone("wrap"));
+    }
+
+    public void testMetaphoneInitialWh() {
+        assertEquals("W", metaphone.metaphone("what"));
+        assertEquals("W", metaphone.metaphone("when"));
+    }
+
+    public void testMetaphoneInitialX() {
+        assertEquals("S", metaphone.metaphone("xavier"));
+    }
+
+    public void testMetaphoneB() {
+        assertEquals("BM", metaphone.metaphone("bamb"));
+        assertEquals("BK", metaphone.metaphone("back"));
+        assertEquals("BM", metaphone.metaphone("bomb"));
+    }
+
+    public void testMetaphoneC() {
+        assertEquals("SNS", metaphone.metaphone("science"));
+        assertEquals("SK", metaphone.metaphone("school"));
+        assertEquals("K", metaphone.metaphone("cat"));
+        assertEquals("X", metaphone.metaphone("ciao"));
+        assertEquals("S", metaphone.metaphone("center"));
+        assertEquals("S", metaphone.metaphone("cycle"));
+    }
+
+    public void testMetaphoneD() {
+        assertEquals("JT", metaphone.metaphone("edge"));
+        assertEquals("TR", metaphone.metaphone("door"));
+    }
+
+    public void testMetaphoneG() {
+        assertEquals("J", metaphone.metaphone("giant"));
+        assertEquals("K", metaphone.metaphone("goat"));
+        assertEquals("", metaphone.metaphone("agh"));
+        assertEquals("K", metaphone.metaphone("egg"));
+        assertEquals("N", metaphone.metaphone("gnome"));
+        assertEquals("NK", metaphone.metaphone("ginkgo"));
+    }
+
+    public void testMetaphoneH() {
+        assertEquals("H", metaphone.metaphone("hat"));
+        assertEquals("", metaphone.metaphone("lah"));
+        assertEquals("", metaphone.metaphone("fish"));
+        assertEquals("", metaphone.metaphone("ghost"));
+    }
+
+    public void testMetaphoneK() {
+        assertEquals("K", metaphone.metaphone("king"));
+        assertEquals("K", metaphone.metaphone("cookie"));
+        assertEquals("K", metaphone.metaphone("back"));
+    }
+
+    public void testMetaphoneP() {
+        assertEquals("FS", metaphone.metaphone("philosophy"));
+        assertEquals("P", metaphone.metaphone("pen"));
+    }
+
+    public void testMetaphoneQ() {
+        assertEquals("K", metaphone.metaphone("quick"));
+        assertEquals("K", metaphone.metaphone("queen"));
+    }
+
+    public void testMetaphoneS() {
+        assertEquals("X", metaphone.metaphone("shoes"));
+        assertEquals("XS", metaphone.metaphone("sugar"));
+        assertEquals("S", metaphone.metaphone("sun"));
+        assertEquals("X", metaphone.metaphone("sciatic"));
+    }
+
+    public void testMetaphoneT() {
+        assertEquals("X", metaphone.metaphone("nation"));
+        assertEquals("X", metaphone.metaphone("ratio"));
+        assertEquals("0", metaphone.metaphone("thin"));
+        assertEquals("T", metaphone.metaphone("top"));
+        assertEquals("", metaphone.metaphone("tch"));
+    }
+
+    public void testMetaphoneV() {
+        assertEquals("F", metaphone.metaphone("voice"));
+        assertEquals("F", metaphone.metaphone("vocal"));
+    }
+
+    public void testMetaphoneW() {
+        assertEquals("W", metaphone.metaphone("wait"));
+        assertEquals("", metaphone.metaphone("low"));
+    }
+
+    public void testMetaphoneX() {
+        assertEquals("KS", metaphone.metaphone("xmas"));
+        assertEquals("KS", metaphone.metaphone("exact"));
+    }
+
+    public void testMetaphoneZ() {
+        assertEquals("S", metaphone.metaphone("zoo"));
+        assertEquals("S", metaphone.metaphone("zero"));
+    }
+
+    public void testMetaphoneMaxCodeLen() {
+        assertEquals(4, metaphone.getMaxCodeLen());
+        metaphone.setMaxCodeLen(3);
+        assertEquals(3, metaphone.getMaxCodeLen());
+        assertEquals("KS", metaphone.metaphone("xmas"));
+        metaphone.setMaxCodeLen(4); // restore
+    }
+
+    public void testMetaphoneMaxCodeLenEffect() {
+        metaphone.setMaxCodeLen(2);
+        String result = metaphone.metaphone("chemistry");
+        assertTrue(result.length() <= 2);
+        metaphone.setMaxCodeLen(4); // restore
+    }
+
+    public void testEncodeString() {
+        assertEquals("", metaphone.encode((String) null));
+        assertEquals("", metaphone.encode(""));
+        assertEquals(metaphone.metaphone("test"), metaphone.encode("test"));
+    }
+
+    public void testEncodeObject() throws EncoderException {
+        assertEquals(metaphone.metaphone("hello"), metaphone.encode((Object) "hello"));
+    }
+
+    public void testEncodeObjectNonString() {
+        try {
+            metaphone.encode(new Integer(123));
+            fail("Expected EncoderException for non-String object");
+        } catch (EncoderException e) {
+            assertTrue(e.getMessage().indexOf("Metaphone") >= 0);
+        }
+    }
+
+    public void testIsMetaphoneEqualTrue() {
+        assertTrue(metaphone.isMetaphoneEqual("center", "centre"));
+        assertTrue(metaphone.isMetaphoneEqual("dol", "doll"));
+    }
+
+    public void testIsMetaphoneEqualFalse() {
+        assertFalse(metaphone.isMetaphoneEqual("cat", "dog"));
+        assertFalse(metaphone.isMetaphoneEqual("hello", "world"));
+    }
+
+    public void testIsMetaphoneEqualCaseSensitive() {
+        assertTrue(metaphone.isMetaphoneEqual("HELLO", "hello"));
+    }
+}
+
+```
+
+```java
+// src/test/org/apache/commons/codec/language/SoundexUtilsTest.java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+
+public class SoundexUtilsTest extends TestCase {
+
+    public void testCleanNull() {
+        assertNull(SoundexUtils.clean(null));
+    }
+
+    public void testCleanEmpty() {
+        assertEquals("", SoundexUtils.clean(""));
+    }
+
+    public void testCleanUpperCase() {
+        assertEquals("HELLO", SoundexUtils.clean("hello"));
+        assertEquals("WORLD", SoundexUtils.clean("worLd"));
+        assertEquals("JAVA", SoundexUtils.clean("JAVA"));
+    }
+
+    public void testCleanWithDigits() {
+        assertEquals("TEST", SoundexUtils.clean("test123"));
+        assertEquals("HELLO", SoundexUtils.clean("h3el7lo"));
+    }
+
+    public void testCleanWithPunctuation() {
+        assertEquals("HELLO", SoundexUtils.clean("hel-lo"));
+        assertEquals("WORLD", SoundexUtils.clean("wor'ld"));
+        assertEquals("CODEC", SoundexUtils.clean("co.dec"));
+    }
+
+    public void testCleanWithWhitespace() {
+        assertEquals("HELLO", SoundexUtils.clean("hel lo"));
+        assertEquals("OPEN", SoundexUtils.clean(" o p e n "));
+    }
+
+    public void testCleanOnlyLetters() {
+        assertEquals("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 
+                     SoundexUtils.clean("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+        assertEquals("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 
+                     SoundexUtils.clean("abcdefghijklmnopqrstuvwxyz"));
+    }
+
+    public void testCleanSpecialCharacters() {
+        assertEquals("TEST", SoundexUtils.clean("t@e#s$t%^"));
+        assertEquals("HELLO", SoundexUtils.clean("{hello}"));
+    }
+
+    public void testCleanMixedInput() {
+        assertEquals("HELLO123WORLD", SoundexUtils.clean("Hello 123 World!!!"));
+        assertEquals("APACHECOMMONS", SoundexUtils.clean("Apache, Commons!"));
+    }
+
+    public void testDifferenceEncodedNullFirst() {
+        assertEquals(0, SoundexUtils.differenceEncoded(null, "test"));
+    }
+
+    public void testDifferenceEncodedNullSecond() {
+        assertEquals(0, SoundexUtils.differenceEncoded("test", null));
+    }
+
+    public void testDifferenceEncodedBothNull() {
+        assertEquals(0, SoundexUtils.differenceEncoded(null, null));
+    }
+
+    public void testDifferenceEncodedEmpty() {
+        assertEquals(0, SoundexUtils.differenceEncoded("", ""));
+        assertEquals(0, SoundexUtils.differenceEncoded("", "test"));
+        assertEquals(0, SoundexUtils.differenceEncoded("test", ""));
+    }
+
+    public void testDifferenceEncodedIdentical() {
+        assertEquals(4, SoundexUtils.differenceEncoded("TEST", "TEST"));
+        assertEquals(3, SoundexUtils.differenceEncoded("ABC", "ABC"));
+    }
+
+    public void testDifferenceEncodedPartialMatch() {
+        assertEquals(2, SoundexUtils.differenceEncoded("ABCD", "ABCE"));
+        assertEquals(1, SoundexUtils.differenceEncoded("ABCD", "AXXX"));
+        assertEquals(0, SoundexUtils.differenceEncoded("ABCD", "XXXX"));
+    }
+
+    public void testDifferenceEncodedDifferentLengths() {
+        assertEquals(3, SoundexUtils.differenceEncoded("ABC", "ABCDEF"));
+        assertEquals(3, SoundexUtils.differenceEncoded("ABCDEF", "ABC"));
+    }
+
+    public void testDifferenceWithSoundex() throws Exception {
+        Soundex soundex = new Soundex();
+        assertEquals(4, SoundexUtils.difference(soundex, "Smith", "Smythe"));
+        assertEquals(4, SoundexUtils.difference(soundex, "Robert", "Rupert"));
+    }
+
+    public void testDifferenceWithRefinedSoundex() throws Exception {
+        RefinedSoundex refinedSoundex = new RefinedSoundex();
+        int result = SoundexUtils.difference(refinedSoundex, "hello", "hallo");
+        assertTrue(result >= 0);
+    }
+
+    public void testDifferenceWithMetaphone() throws Exception {
+        Metaphone metaphone = new Metaphone();
+        int result = SoundexUtils.difference(metaphone, "center", "centre");
+        assertTrue(result > 0);
+    }
+}
+
+```

@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "intellisphere",
+  "provider": "KKU AI Sphere / IntelliSphere",
+  "model": "gemini-pro",
+  "project": "JacksonXml",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 102,
+  "prompt_iteration": 1,
+  "generated_at": "2026-10-01T06:23:14.633Z",
+  "ingested_at": "2026-10-01T06:29:14.475574+00:00",
+  "parameters": {
+    "selected_agent": "Gemini",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "before_sha256": "1a8168f1bc41fa2ea76da13bec0df906e71f3360338e352f2cbf5466b66311ff",
+      "after_sha256": "2931651a77418ed18edbf9f16ca158774889e69ca7afb93af0ae5d59126c1e93",
+      "local_compatibility_repairs": [
+        {
+          "old": ".currentToken()",
+          "new": ".getCurrentToken()",
+          "reason": "Legacy fixed JsonParser dependency exposes getCurrentToken; preserved token assertions."
+        }
+      ],
+      "selection": "Fixed compiler error and fixed API compatibility already established in v4/v5."
+    },
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "before_sha256": "2931651a77418ed18edbf9f16ca158774889e69ca7afb93af0ae5d59126c1e93",
+      "after_sha256": "27e23fbdfd44f3ce7915a43fa495cbce27c901d15e28722939862217ac416531",
+      "local_compatibility_repairs": [
+        {
+          "old": "return new FromXmlParser(ctxt, genericFeatures, xmlFeatures, codec, sr);",
+          "new": "sr.nextTag();\n        return new FromXmlParser(ctxt, genericFeatures, xmlFeatures, codec, sr);",
+          "occurrences": 1,
+          "reason": "Fixed XmlTokenStream constructor requires START_ELEMENT; fresh StAX reader starts on START_DOCUMENT. Advance fixture to first tag before constructing parser."
+        }
+      ],
+      "selection": "Preserved fixed logs and fixed API source only; no buggy outcome, production or assertion changes."
+    }
+  ],
+  "notes": [
+    "Exact original JacksonXml prompt only, no logs sent. Complete rendered DOM code; observed generation upper bound.",
+    "Local processing v18 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "c515e4e8ba7f4cb85e904a77ea96dd5dc15f177f883b57e31394d6236a7dcf62",
+  "response_sha256": "f5a229d06b54de2ff451b43bd9da49c1e141eab18f164884b7e9c294385594f8",
+  "context_manifest_sha256": "a58b2435e53af5040020a9a82fab0032bc927577d3230ca5d565403382da63ee",
+  "source_files": [
+    {
+      "path": "src/main/java/com/fasterxml/jackson/dataformat/xml/deser/FromXmlParser.java",
+      "class": "com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser",
+      "sha256": "8c3b885b733a0b42b2ab10e92c2a3ed86e83e888cbf71a058372d638f311a549",
+      "bytes": 32260
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.xml",
+      "sha256": "651958c9f84a3471dfe45070209ea484f3fba93357489c4155d273735202a061",
+      "bytes": 1172
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "743f9740e2b44c756635e86f81297a3081997f380f2fa2715560740c65f8786f",
+      "bytes": 5498
+    }
+  ],
+  "java_files": [
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "sha256": "27e23fbdfd44f3ce7915a43fa495cbce27c901d15e28722939862217ac416531",
+      "bytes": 14882
+    }
+  ],
+  "external_suite": "JacksonXml-1f-intellisphere.102.tar.bz2",
+  "external_suite_sha256": "5246220642057647ec87934041049d00cc64b49c20eb92959409700437e7c600",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

@@ -1,0 +1,363 @@
+<div id="messageContentDataIddU725h6JqDi9" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Based on the provided production source code and build configuration (JUnit 4.8.2, Java 1.6+), I will generate deterministic regression tests for <code>com.fasterxml.jackson.core.io.NumberInput</code> and <code>com.fasterxml.jackson.core.util.TextBuffer</code>.</p>
+<h3>Test for <code>NumberInput</code></h3>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">com/fasterxml/jackson/core/io/NumberInputTest.java
+<span class="hljs-keyword">package</span> com.fasterxml.jackson.core.io;
+
+<span class="hljs-keyword">import</span> org.junit.Test;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+<span class="hljs-keyword">import</span> java.math.BigDecimal;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NumberInputTest</span> {
+
+    <span class="hljs-comment">// parseInt from char array</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseIntCharArraySingleDigit</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, NumberInput.parseInt(<span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[]{<span class="hljs-string">'0'</span>}, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>));
+        assertEquals(<span class="hljs-number">9</span>, NumberInput.parseInt(<span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[]{<span class="hljs-string">'9'</span>}, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseIntCharArrayMax9Digits</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">123456789</span>, NumberInput.parseInt(<span class="hljs-string">"123456789"</span>.toCharArray(), <span class="hljs-number">0</span>, <span class="hljs-number">9</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseIntCharArrayWithOffset</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">42</span>, NumberInput.parseInt(<span class="hljs-string">"abc42"</span>.toCharArray(), <span class="hljs-number">3</span>, <span class="hljs-number">2</span>));
+    }
+
+    <span class="hljs-comment">// parseInt from String</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseIntStringSingleDigit</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, NumberInput.parseInt(<span class="hljs-string">"0"</span>));
+        assertEquals(<span class="hljs-number">5</span>, NumberInput.parseInt(<span class="hljs-string">"5"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseIntStringNegativeMaxRange</span><span class="hljs-params">()</span> {
+        assertEquals(-<span class="hljs-number">2147483648</span>, NumberInput.parseInt(<span class="hljs-string">"-2147483648"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseIntStringPositiveOverflow</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Delegates to Integer.parseInt which throws exception</span>
+        assertThrows(NumberFormatException.class, () -&gt; NumberInput.parseInt(<span class="hljs-string">"2147483648"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseIntStringWithSignAndSpaces</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Delegates to Integer.parseInt because spaces are not digits</span>
+        assertThrows(NumberFormatException.class, () -&gt; NumberInput.parseInt(<span class="hljs-string">"+123"</span>));
+    }
+
+    <span class="hljs-comment">// parseLong from char array</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseLongCharArrayValid</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">long</span> <span class="hljs-variable">expected</span> <span class="hljs-operator">=</span> ((<span class="hljs-type">long</span>)<span class="hljs-number">123456789</span>) * <span class="hljs-number">1000000000L</span> + <span class="hljs-number">987654321L</span>;
+        assertEquals(expected, NumberInput.parseLong(<span class="hljs-string">"123456789987654321"</span>.toCharArray(), <span class="hljs-number">0</span>, <span class="hljs-number">18</span>));
+    }
+
+    <span class="hljs-comment">// parseLong from String</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseLongStringFitsInt</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">123L</span>, NumberInput.parseLong(<span class="hljs-string">"123"</span>));
+        assertEquals(-<span class="hljs-number">1L</span>, NumberInput.parseLong(<span class="hljs-string">"-1"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseLongStringOverInt</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">10000000000L</span>, NumberInput.parseLong(<span class="hljs-string">"10000000000"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseLongStringDecimals</span><span class="hljs-params">()</span> {
+        assertThrows(NumberFormatException.class, () -&gt; NumberInput.parseLong(<span class="hljs-string">"1.0"</span>));
+    }
+
+    <span class="hljs-comment">// inLongRange char array</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInLongRangeCharArraySmallPositive</span><span class="hljs-params">()</span> {
+        assertTrue(NumberInput.inLongRange(<span class="hljs-string">"123"</span>.toCharArray(), <span class="hljs-number">0</span>, <span class="hljs-number">3</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInLongRangeCharArrayMaxPositive</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">maxLong</span> <span class="hljs-operator">=</span> <span class="hljs-string">"9223372036854775807"</span>;
+        assertTrue(NumberInput.inLongRange(maxLong.toCharArray(), <span class="hljs-number">0</span>, maxLong.length(), <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInLongRangeCharArrayOverflowPositive</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">overflow</span> <span class="hljs-operator">=</span> <span class="hljs-string">"9223372036854775808"</span>;
+        assertFalse(NumberInput.inLongRange(overflow.toCharArray(), <span class="hljs-number">0</span>, overflow.length(), <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInLongRangeCharArrayMinNegative</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">minLongNoSign</span> <span class="hljs-operator">=</span> <span class="hljs-string">"9223372036854775808"</span>; <span class="hljs-comment">// digits for MIN_VALUE</span>
+        assertTrue(NumberInput.inLongRange(minLongNoSign.toCharArray(), <span class="hljs-number">0</span>, minLongNoSign.length(), <span class="hljs-literal">true</span>));
+    }
+
+    <span class="hljs-comment">// inLongRange String</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInLongRangeStringSmallNegative</span><span class="hljs-params">()</span> {
+        assertTrue(NumberInput.inLongRange(<span class="hljs-string">"123"</span>, <span class="hljs-literal">true</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInLongRangeStringOverflowNegative</span><span class="hljs-params">()</span> {
+        assertFalse(NumberInput.inLongRange(<span class="hljs-string">"9223372036854775809"</span>, <span class="hljs-literal">true</span>));
+    }
+
+    <span class="hljs-comment">// parseAsInt</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsIntNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">10</span>, NumberInput.parseAsInt(<span class="hljs-literal">null</span>, <span class="hljs-number">10</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsIntEmptyString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">20</span>, NumberInput.parseAsInt(<span class="hljs-string">""</span>, <span class="hljs-number">20</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsIntLeadingPlusSign</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5</span>, NumberInput.parseAsInt(<span class="hljs-string">"+5"</span>, <span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsIntWithDecimalCoercion</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">5</span>, NumberInput.parseAsInt(<span class="hljs-string">"5.9"</span>, <span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsIntInvalidText</span><span class="hljs-params">()</span> {
+        assertEquals(-<span class="hljs-number">1</span>, NumberInput.parseAsInt(<span class="hljs-string">"not-a-number"</span>, -<span class="hljs-number">1</span>));
+    }
+
+    <span class="hljs-comment">// parseAsLong</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsLongNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">100L</span>, NumberInput.parseAsLong(<span class="hljs-literal">null</span>, <span class="hljs-number">100L</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsLongLeadingMinusSign</span><span class="hljs-params">()</span> {
+        assertEquals(-<span class="hljs-number">50L</span>, NumberInput.parseAsLong(<span class="hljs-string">"-50"</span>, <span class="hljs-number">0L</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsLongWithDecimalCoercion</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">10L</span>, NumberInput.parseAsLong(<span class="hljs-string">"10.1"</span>, <span class="hljs-number">0L</span>));
+    }
+
+    <span class="hljs-comment">// parseAsDouble</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsDoubleNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">2.5</span>, NumberInput.parseAsDouble(<span class="hljs-literal">null</span>, <span class="hljs-number">2.5</span>), <span class="hljs-number">0.0</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsDoubleWhitespace</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0</span>, NumberInput.parseAsDouble(<span class="hljs-string">"   "</span>, <span class="hljs-number">0.0</span>), <span class="hljs-number">0.0</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseAsDoubleInvalidFormat</span><span class="hljs-params">()</span> {
+        assertEquals(-<span class="hljs-number">1.0</span>, NumberInput.parseAsDouble(<span class="hljs-string">"abc"</span>, -<span class="hljs-number">1.0</span>), <span class="hljs-number">0.0</span>);
+    }
+
+    <span class="hljs-comment">// parseDouble</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseDoubleValid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">3.14</span>, NumberInput.parseDouble(<span class="hljs-string">"3.14"</span>), <span class="hljs-number">0.0</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseDoubleNastyValue</span><span class="hljs-params">()</span> {
+        assertEquals(Double.MIN_VALUE, NumberInput.parseDouble(NumberInput.NASTY_SMALL_DOUBLE), <span class="hljs-number">0.0</span>);
+    }
+
+    <span class="hljs-comment">// parseBigDecimal</span>
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseBigDecimalStringValid</span><span class="hljs-params">()</span> {
+        assertEquals(BigDecimal.valueOf(<span class="hljs-number">100</span>), NumberInput.parseBigDecimal(<span class="hljs-string">"100"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseBigDecimalStringInvalid</span><span class="hljs-params">()</span> {
+        assertThrows(NumberFormatException.class, () -&gt; NumberInput.parseBigDecimal(<span class="hljs-string">"invalid"</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseBigDecimalCharArray</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-string">"2.5"</span>), NumberInput.parseBigDecimal(<span class="hljs-string">"2.5"</span>.toCharArray()));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testParseBigDecimalCharArraySubArray</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">char</span>[] buffer = <span class="hljs-string">"xx12.34yy"</span>.toCharArray();
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-string">"12.34"</span>), NumberInput.parseBigDecimal(buffer, <span class="hljs-number">2</span>, <span class="hljs-number">5</span>));
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<h3>Test for <code>TextBuffer</code></h3>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">com/fasterxml/jackson/core/util/TextBufferTest.java
+<span class="hljs-keyword">package</span> com.fasterxml.jackson.core.util;
+
+<span class="hljs-keyword">import</span> org.junit.Test;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+<span class="hljs-keyword">import</span> java.math.BigDecimal;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TextBufferTest</span> {
+
+    <span class="hljs-keyword">private</span> BufferRecycler <span class="hljs-title function_">getRecycler</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferRecycler</span>();
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testResetWithEmptyAndAppend</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.append(<span class="hljs-string">'A'</span>);
+        buf.append(<span class="hljs-string">'B'</span>);
+        assertEquals(<span class="hljs-string">"AB"</span>, buf.contentsAsString());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testResetWithSharedBuffer</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        <span class="hljs-type">char</span>[] data = <span class="hljs-string">"Hello"</span>.toCharArray();
+        buf.resetWithShared(data, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>);
+        assertEquals(<span class="hljs-string">"Hello"</span>, buf.contentsAsString());
+        assertSame(data, buf.getTextBuffer());
+        assertEquals(<span class="hljs-number">0</span>, buf.getTextOffset());
+        assertEquals(<span class="hljs-number">5</span>, buf.size());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testResetWithCopy</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        <span class="hljs-type">char</span>[] data = <span class="hljs-string">"World"</span>.toCharArray();
+        buf.resetWithCopy(data, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>);
+        assertEquals(<span class="hljs-string">"orld"</span>, buf.contentsAsString());
+        assertNotSame(data, buf.getTextBuffer());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testResetWithString</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithString(<span class="hljs-string">"Test"</span>);
+        assertEquals(<span class="hljs-string">"Test"</span>, buf.toString());
+        assertTrue(buf.hasTextAsCharacters() == <span class="hljs-literal">false</span>); <span class="hljs-comment">// ResultString present</span>
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAppendStringLongerThanSegment</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        <span class="hljs-type">char</span>[] data = <span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[<span class="hljs-number">1200</span>](undefined);
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">1200</span>; i++) data[i] = <span class="hljs-string">'x'</span>;
+        buf.append(data, <span class="hljs-number">0</span>, <span class="hljs-number">1200</span>);
+        assertEquals(<span class="hljs-number">1200</span>, buf.size());
+        <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> buf.contentsAsString();
+        assertEquals(<span class="hljs-number">1200</span>, result.length());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAppendStringSubstring</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.append(<span class="hljs-string">"Hello World"</span>, <span class="hljs-number">6</span>, <span class="hljs-number">5</span>);
+        assertEquals(<span class="hljs-string">"World"</span>, buf.contentsAsString());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testContentsAsDouble</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.append(<span class="hljs-string">"3.14"</span>, <span class="hljs-number">0</span>, <span class="hljs-number">4</span>);
+        assertEquals(<span class="hljs-number">3.14</span>, buf.contentsAsDouble(), <span class="hljs-number">0.0</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testContentsAsDecimal</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.append(<span class="hljs-string">"1.5"</span>, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>);
+        assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-string">"1.5"</span>), buf.contentsAsDecimal());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testBuildResultArray</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.append(<span class="hljs-string">"ABC"</span>, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>);
+        assertArrayEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">char</span>[]{<span class="hljs-string">'A'</span>,<span class="hljs-string">'B'</span>,<span class="hljs-string">'C'</span>}, buf.buildResultArray());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testExpandCurrentSegment</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.emptyAndGetCurrentSegment();
+        <span class="hljs-type">int</span> <span class="hljs-variable">oldLen</span> <span class="hljs-operator">=</span> buf.getCurrentSegment().length;
+        buf.expandCurrentSegment();
+        assertTrue(buf.getCurrentSegment().length &gt; oldLen);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testFinishAndGetCurrentSegment</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        <span class="hljs-type">char</span>[] seg1 = buf.emptyAndGetCurrentSegment();
+        seg1[<span class="hljs-number">0</span>](undefined) = <span class="hljs-string">'X'</span>;
+        buf.setCurrentLength(<span class="hljs-number">1</span>);
+        <span class="hljs-type">char</span>[] seg2 = buf.finishCurrentSegment();
+        seg2[<span class="hljs-number">0</span>](undefined) = <span class="hljs-string">'Y'</span>;
+        buf.setCurrentLength(<span class="hljs-number">1</span>);
+        assertEquals(<span class="hljs-string">"XY"</span>, buf.contentsAsString());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testReleaseBuffers</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BufferRecycler</span> <span class="hljs-variable">recycler</span> <span class="hljs-operator">=</span> getRecycler();
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(recycler);
+        buf.resetWithEmpty();
+        buf.append(<span class="hljs-string">"test"</span>, <span class="hljs-number">0</span>, <span class="hljs-number">4</span>);
+        buf.releaseBuffers();
+        <span class="hljs-comment">// After release, buffer should be empty</span>
+        assertEquals(<span class="hljs-string">""</span>, buf.contentsAsString());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testClearSegments</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.append(<span class="hljs-string">"long string to force segments maybe"</span>, <span class="hljs-number">0</span>, <span class="hljs-number">38</span>);
+        buf.clearSegments();
+        assertEquals(<span class="hljs-number">0</span>, buf.size());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetCurrentLength</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf.resetWithEmpty();
+        buf.emptyAndGetCurrentSegment();
+        buf.setCurrentLength(<span class="hljs-number">5</span>);
+        assertEquals(<span class="hljs-number">5</span>, buf.getCurrentSegmentSize());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasTextAsCharacters</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf1.resetWithEmpty();
+        assertTrue(buf1.hasTextAsCharacters());
+
+        <span class="hljs-type">TextBuffer</span> <span class="hljs-variable">buf2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TextBuffer</span>(getRecycler());
+        buf2.resetWithString(<span class="hljs-string">"String"</span>);
+        assertFalse(buf2.hasTextAsCharacters());
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

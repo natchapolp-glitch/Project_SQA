@@ -1,0 +1,75 @@
+{
+  "tool": "intellisphere",
+  "model": "deepseek-v4-pro",
+  "generated_at": "2026-09-28T23:28:28.699Z",
+  "submitted_at": "2026-09-28T23:25:21.409Z",
+  "generation_seconds": 191.30892322700004,
+  "parameters": {
+    "routing_mode": "Auto Router",
+    "resolved_model_label": "Deepseek - deepseek-v4-pro",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "manual_edits": [
+    {
+      "path": "com/google/javascript/jscomp/RemoveUnusedVarsTest.java",
+      "before_sha256": "5d5baf8def0a2e197b51fcdb7f044c2efa38292b7440a6012dc002566fd29c8f",
+      "after_sha256": "99487c7b9d577b5a7407562a205562f5b601a4ec9b90fa38dcf7542bca66ecc6",
+      "local_compatibility_repairs": [
+        {
+          "old": "options.setLanguage(LanguageMode.ECMASCRIPT5);",
+          "new": "options.setLanguageIn(LanguageMode.ECMASCRIPT5);",
+          "occurrences": 3,
+          "reason": "Fixed CompilerOptions.java exposes setLanguageIn(LanguageMode)."
+        },
+        {
+          "old": "LifeCycleStage.NORMALIZED",
+          "new": "AbstractCompiler.LifeCycleStage.NORMALIZED",
+          "occurrences": 4,
+          "reason": "Qualify nested enum declared in fixed AbstractCompiler.java."
+        }
+      ],
+      "selection": "Selected from fixed compilation diagnostics and fixed API source only; no buggy feedback."
+    },
+    {
+      "path": "com/google/javascript/jscomp/RemoveUnusedVarsTest.java",
+      "before_sha256": "99487c7b9d577b5a7407562a205562f5b601a4ec9b90fa38dcf7542bca66ecc6",
+      "after_sha256": "36e61faa55caba4a3a92317b4198f0c0ccb1565cf75a64839aa6ee252e23fc16",
+      "local_compatibility_repairs": [
+        {
+          "occurrences": 4,
+          "reason": "Fixed Compiler.compile accepts CompilerOptions, not a CompilerPass. Use fixed init/parseInputs/Normalize/process APIs to run the original selected pass."
+        }
+      ],
+      "selection": "Fixed production API and prior fixed compiler diagnostics only; original inputs, pass constructor flags, assertions and expected values unchanged."
+    },
+    {
+      "path": "com/google/javascript/jscomp/RemoveUnusedVarsTest.java",
+      "before_sha256": "36e61faa55caba4a3a92317b4198f0c0ccb1565cf75a64839aa6ee252e23fc16",
+      "after_sha256": "cf6458e6c41e379088984e9945fbe44b4ac28730554b8507f02de8b7fe116c43",
+      "local_compatibility_repairs": [
+        {
+          "old": "RemoveUnusedVars.getFunctionArgList(function)",
+          "new": "invokeOriginalFunctionArgList(function)",
+          "occurrences": 2,
+          "reason": "Fixed getFunctionArgList is private static; reflection invokes the same method with the same input and preserves all assertions."
+        }
+      ],
+      "selection": "Fixed compiler diagnostic and fixed production visibility only; no buggy feedback."
+    }
+  ],
+  "notes": [
+    "Input: exact prepared prompt.",
+    "Verbatim visible Java blocks exported with Markdown fences added; rendered HTML/text retained.",
+    "UI export is not a verified original API response; renderer may introduce (undefined) after array indices.",
+    "Duration is a UI observation upper bound.",
+    "Local processing v21 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/Closure/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v21-fixed-recovery",
+  "raw_test_method_count": 29,
+  "retained_test_method_count": 29
+}

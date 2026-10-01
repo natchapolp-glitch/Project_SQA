@@ -1,0 +1,869 @@
+<div id="messageContentDataIddBEBHn1IWKKB" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Looking at the production code, I need to understand the behaviors and write tests. Note that <code>SoundexUtils</code> is package-private (no <code>public</code> modifier on the class), so tests must be in the same package. The build uses JUnit 3.8.1 (based on <code>pom.xml</code>), so tests should extend <code>junit.framework.TestCase</code> or use JUnit 3-style methods.</p>
+<p>Let me analyze the methods:</p>
+<ul>
+<li><code>Caverphone.caverphone(String)</code> - has null/empty handling, many regex replacements</li>
+<li><code>Caverphone.encode(Object)</code> - throws EncoderException for non-String</li>
+<li><code>Caverphone.encode(String)</code> - delegates to caverphone</li>
+<li><code>Caverphone.isCaverphoneEqual(String, String)</code> - compares two encodings</li>
+<li><code>Metaphone.metaphone(String)</code> - complex algorithm with many special cases</li>
+<li><code>Metaphone.encode(Object)</code> - throws EncoderException for non-String</li>
+<li><code>Metaphone.encode(String)</code> - delegates to metaphone</li>
+<li><code>Metaphone.isMetaphoneEqual(String, String)</code> - compares two encodings</li>
+<li><code>Metaphone.getMaxCodeLen()</code> / <code>setMaxCodeLen(int)</code> - configurable max length</li>
+<li><code>SoundexUtils.clean(String)</code> - package-private, removes non-letters and uppercases</li>
+<li><code>SoundexUtils.difference(StringEncoder, String, String)</code> - package-private</li>
+<li><code>SoundexUtils.differenceEncoded(String, String)</code> - package-private</li>
+</ul>
+<p>Since <code>SoundexUtils</code> is package-private, I'll put the test in the same package <code>org.apache.commons.codec.language</code>.</p>
+<p>The JUnit version is 3.8.1, so I'll use <code>junit.framework.TestCase</code> with <code>test</code>-prefixed methods.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">org/apache/commons/codec/language/CaverphoneTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.codec.language;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> org.apache.commons.codec.EncoderException;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CaverphoneTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> Caverphone caverphone;
+
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> {
+        caverphone = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Caverphone</span>();
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"1111111111"</span>, caverphone.caverphone(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneEmptyString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"1111111111"</span>, caverphone.caverphone(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneSimple</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"STFN111111"</span>, caverphone.caverphone(<span class="hljs-string">"Stevenson"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphonePeter</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"PTA1111111"</span>, caverphone.caverphone(<span class="hljs-string">"Peter"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneDavid</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"TFT1111111"</span>, caverphone.caverphone(<span class="hljs-string">"David"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneWithDigitsAndPunctuation</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"STFN111111"</span>, caverphone.caverphone(<span class="hljs-string">"Stevenson!@#123"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneCaseInsensitive</span><span class="hljs-params">()</span> {
+        assertEquals(caverphone.caverphone(<span class="hljs-string">"hello"</span>), caverphone.caverphone(<span class="hljs-string">"HELLO"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEncodeObjectString</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> EncoderException {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> caverphone.encode(<span class="hljs-string">"Stevenson"</span>);
+        assertTrue(result <span class="hljs-keyword">instanceof</span> String);
+        assertEquals(<span class="hljs-string">"STFN111111"</span>, (String) result);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEncodeObjectNonString</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            caverphone.encode(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Integer</span>(<span class="hljs-number">42</span>));
+            fail(<span class="hljs-string">"Expected EncoderException"</span>);
+        } <span class="hljs-keyword">catch</span> (EncoderException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEncodeString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"STFN111111"</span>, caverphone.encode(<span class="hljs-string">"Stevenson"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsCaverphoneEqualTrue</span><span class="hljs-params">()</span> {
+        assertTrue(caverphone.isCaverphoneEqual(<span class="hljs-string">"Stevenson"</span>, <span class="hljs-string">"Stevenson"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsCaverphoneEqualFalse</span><span class="hljs-params">()</span> {
+        assertFalse(caverphone.isCaverphoneEqual(<span class="hljs-string">"Stevenson"</span>, <span class="hljs-string">"David"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsCaverphoneEqualBothNull</span><span class="hljs-params">()</span> {
+        assertTrue(caverphone.isCaverphoneEqual(<span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsCaverphoneEqualOneNull</span><span class="hljs-params">()</span> {
+        assertFalse(caverphone.isCaverphoneEqual(<span class="hljs-literal">null</span>, <span class="hljs-string">"David"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneFinalE</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"BRN1111111"</span>, caverphone.caverphone(<span class="hljs-string">"brown"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphonePrefixCough</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"KF11111111"</span>, caverphone.caverphone(<span class="hljs-string">"cough"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphonePrefixGn</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"N111111111"</span>, caverphone.caverphone(<span class="hljs-string">"gnome"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphonePrefixMb</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"M111111111"</span>, caverphone.caverphone(<span class="hljs-string">"mb"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCaverphoneCq</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"K111111111"</span>, caverphone.caverphone(<span class="hljs-string">"acquit"</span>));
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">org/apache/commons/codec/language/MetaphoneTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.codec.language;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> org.apache.commons.codec.EncoderException;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MetaphoneTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> Metaphone metaphone;
+
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> {
+        metaphone = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Metaphone</span>();
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, metaphone.metaphone(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneEmptyString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, metaphone.metaphone(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneSingleChar</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"A"</span>, metaphone.metaphone(<span class="hljs-string">"a"</span>));
+        assertEquals(<span class="hljs-string">"B"</span>, metaphone.metaphone(<span class="hljs-string">"B"</span>));
+        assertEquals(<span class="hljs-string">"Z"</span>, metaphone.metaphone(<span class="hljs-string">"z"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneKN</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"N"</span>, metaphone.metaphone(<span class="hljs-string">"Knight"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneGN</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"N"</span>, metaphone.metaphone(<span class="hljs-string">"Gnome"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphonePN</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"N"</span>, metaphone.metaphone(<span class="hljs-string">"Pneumatic"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneAE</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"E"</span>, metaphone.metaphone(<span class="hljs-string">"Aerial"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneWR</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"R"</span>, metaphone.metaphone(<span class="hljs-string">"Write"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneWH</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"W"</span>, metaphone.metaphone(<span class="hljs-string">"When"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneInitialX</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"S"</span>, metaphone.metaphone(<span class="hljs-string">"Xylophone"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneMaxCodeLenDefault</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">4</span>, metaphone.getMaxCodeLen());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneSetMaxCodeLen</span><span class="hljs-params">()</span> {
+        metaphone.setMaxCodeLen(<span class="hljs-number">6</span>);
+        assertEquals(<span class="hljs-number">6</span>, metaphone.getMaxCodeLen());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneSetMaxCodeLenNegative</span><span class="hljs-params">()</span> {
+        metaphone.setMaxCodeLen(-<span class="hljs-number">1</span>);
+        assertEquals(-<span class="hljs-number">1</span>, metaphone.getMaxCodeLen());
+        <span class="hljs-comment">// With negative max, while condition fails immediately</span>
+        assertEquals(<span class="hljs-string">""</span>, metaphone.metaphone(<span class="hljs-string">"hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneMaxCodeLenZero</span><span class="hljs-params">()</span> {
+        metaphone.setMaxCodeLen(<span class="hljs-number">0</span>);
+        assertEquals(<span class="hljs-number">0</span>, metaphone.getMaxCodeLen());
+        assertEquals(<span class="hljs-string">""</span>, metaphone.metaphone(<span class="hljs-string">"hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEncodeObjectString</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> EncoderException {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> metaphone.encode(<span class="hljs-string">"Knight"</span>);
+        assertTrue(result <span class="hljs-keyword">instanceof</span> String);
+        assertEquals(<span class="hljs-string">"N"</span>, (String) result);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEncodeObjectNonString</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            metaphone.encode(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Integer</span>(<span class="hljs-number">42</span>));
+            fail(<span class="hljs-string">"Expected EncoderException"</span>);
+        } <span class="hljs-keyword">catch</span> (EncoderException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEncodeString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"N"</span>, metaphone.encode(<span class="hljs-string">"Knight"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsMetaphoneEqualTrue</span><span class="hljs-params">()</span> {
+        assertTrue(metaphone.isMetaphoneEqual(<span class="hljs-string">"Knight"</span>, <span class="hljs-string">"Night"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsMetaphoneEqualFalse</span><span class="hljs-params">()</span> {
+        assertFalse(metaphone.isMetaphoneEqual(<span class="hljs-string">"Knight"</span>, <span class="hljs-string">"Day"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsMetaphoneEqualBothNull</span><span class="hljs-params">()</span> {
+        assertTrue(metaphone.isMetaphoneEqual(<span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsMetaphoneEqualOneNull</span><span class="hljs-params">()</span> {
+        assertFalse(metaphone.isMetaphoneEqual(<span class="hljs-literal">null</span>, <span class="hljs-string">"Day"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneBAtEndAfterM</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"TM"</span>, metaphone.metaphone(<span class="hljs-string">"tomb"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneCIA</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"X"</span>, metaphone.metaphone(<span class="hljs-string">"special"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneSCH</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"SK"</span>, metaphone.metaphone(<span class="hljs-string">"school"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneCH</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"K"</span>, metaphone.metaphone(<span class="hljs-string">"character"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneDGE</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"J"</span>, metaphone.metaphone(<span class="hljs-string">"edge"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphonePH</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"F"</span>, metaphone.metaphone(<span class="hljs-string">"phone"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneTH</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"0"</span>, metaphone.metaphone(<span class="hljs-string">"thin"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneX</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"KS"</span>, metaphone.metaphone(<span class="hljs-string">"box"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMetaphoneZ</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"S"</span>, metaphone.metaphone(<span class="hljs-string">"zebra"</span>));
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">org/apache/commons/codec/language/SoundexUtilsTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.codec.language;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> org.apache.commons.codec.EncoderException;
+<span class="hljs-keyword">import</span> org.apache.commons.codec.StringEncoder;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SoundexUtilsTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanNull</span><span class="hljs-params">()</span> {
+        assertNull(SoundexUtils.clean(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanEmptyString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, SoundexUtils.clean(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanAllLetters</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"HELLO"</span>, SoundexUtils.clean(<span class="hljs-string">"Hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanLowerCase</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"HELLO"</span>, SoundexUtils.clean(<span class="hljs-string">"hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanWithNonLetters</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"HELLO"</span>, SoundexUtils.clean(<span class="hljs-string">"He1llo2!@#"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanOnlyNonLetters</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, SoundexUtils.clean(<span class="hljs-string">"123!@#"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanMixedCase</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"ABC"</span>, SoundexUtils.clean(<span class="hljs-string">"aBc"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanPreservesLetterOrder</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"AC"</span>, SoundexUtils.clean(<span class="hljs-string">"a1b2c"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedBothNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedFirstNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-literal">null</span>, <span class="hljs-string">"ABC"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedSecondNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABC"</span>, <span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedIdentical</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">20</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABCDEFGHIJKLMNOPQRST"</span>, <span class="hljs-string">"ABCDEFGHIJKLMNOPQRST"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedNoMatch</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABC"</span>, <span class="hljs-string">"XYZ"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedLengthMismatch</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">3</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABCD"</span>, <span class="hljs-string">"ABC"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedLongerFirst</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">2</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"AB"</span>, <span class="hljs-string">"ABCD"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedEmptyStrings</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">""</span>, <span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedWithEmptyString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABC"</span>, <span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceWithCaVerphoneEncoder</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> EncoderException {
+        stringEncoder = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Caverphone</span>();
+        assertEquals(<span class="hljs-number">5</span>, SoundexUtils.difference(stringEncoder, <span class="hljs-string">"hello"</span>, <span class="hljs-string">"hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceWithMetaphoneEncoder</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> EncoderException {
+        <span class="hljs-type">StringEncoder</span> <span class="hljs-variable">encoder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Metaphone</span>();
+        <span class="hljs-comment">// "Knight" and "Night" both encode to "N"</span>
+        assertEquals(<span class="hljs-number">1</span>, SoundexUtils.difference(encoder, <span class="hljs-string">"Knight"</span>, <span class="hljs-string">"Night"</span>));
+    }
+
+    <span class="hljs-keyword">private</span> StringEncoder stringEncoder;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceWithEncoderException</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">StringEncoder</span> <span class="hljs-variable">throwingEncoder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringEncoder</span>() {
+            <span class="hljs-keyword">public</span> String <span class="hljs-title function_">encode</span><span class="hljs-params">(String s)</span> <span class="hljs-keyword">throws</span> EncoderException {
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">EncoderException</span>(<span class="hljs-string">"Test exception"</span>);
+            }
+
+            <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">encode</span><span class="hljs-params">(Object obj)</span> <span class="hljs-keyword">throws</span> EncoderException {
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">EncoderException</span>(<span class="hljs-string">"Test exception"</span>);
+            }
+        };
+        <span class="hljs-keyword">try</span> {
+            SoundexUtils.difference(throwingEncoder, <span class="hljs-string">"hello"</span>, <span class="hljs-string">"world"</span>);
+            fail(<span class="hljs-string">"Expected EncoderException"</span>);
+        } <span class="hljs-keyword">catch</span> (EncoderException e) {
+            assertEquals(<span class="hljs-string">"Test exception"</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanWithSpaceOnly</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, SoundexUtils.clean(<span class="hljs-string">"   "</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanWithUnicodeLetter</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"AE"</span>, SoundexUtils.clean(<span class="hljs-string">"a\u00e9"</span>));
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<p>I noticed an issue in my <code>SoundexUtilsTest</code> - I have a field <code>stringEncoder</code> that I referenced before declaration. Let me fix the test file:</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">org/apache/commons/codec/language/SoundexUtilsTest.java
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.codec.language;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> org.apache.commons.codec.EncoderException;
+<span class="hljs-keyword">import</span> org.apache.commons.codec.StringEncoder;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SoundexUtilsTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanNull</span><span class="hljs-params">()</span> {
+        assertNull(SoundexUtils.clean(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanEmptyString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, SoundexUtils.clean(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanAllLetters</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"HELLO"</span>, SoundexUtils.clean(<span class="hljs-string">"Hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanLowerCase</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"HELLO"</span>, SoundexUtils.clean(<span class="hljs-string">"hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanWithNonLetters</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"HELLO"</span>, SoundexUtils.clean(<span class="hljs-string">"He1llo2!@#"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanOnlyNonLetters</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, SoundexUtils.clean(<span class="hljs-string">"123!@#"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanMixedCase</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"ABC"</span>, SoundexUtils.clean(<span class="hljs-string">"aBc"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanPreservesLetterOrder</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"AC"</span>, SoundexUtils.clean(<span class="hljs-string">"a1b2c"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanWithSpaceOnly</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">""</span>, SoundexUtils.clean(<span class="hljs-string">"   "</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCleanWithUnicodeLetter</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"AE"</span>, SoundexUtils.clean(<span class="hljs-string">"a\u00e9"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedBothNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedFirstNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-literal">null</span>, <span class="hljs-string">"ABC"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedSecondNull</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABC"</span>, <span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedIdentical</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">3</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABC"</span>, <span class="hljs-string">"ABC"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedNoMatch</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABC"</span>, <span class="hljs-string">"XYZ"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedLengthMismatch</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">3</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABCD"</span>, <span class="hljs-string">"ABC"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedLongerFirst</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">2</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"AB"</span>, <span class="hljs-string">"ABCD"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedEmptyStrings</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">""</span>, <span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceEncodedWithEmptyString</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, SoundexUtils.differenceEncoded(<span class="hljs-string">"ABC"</span>, <span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceWithCaVerphoneEncoder</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> EncoderException {
+        <span class="hljs-type">StringEncoder</span> <span class="hljs-variable">encoder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Caverphone</span>();
+        <span class="hljs-comment">// Caverphone encoding of "hello" is identical to itself</span>
+        assertEquals(<span class="hljs-number">10</span>, SoundexUtils.difference(encoder, <span class="hljs-string">"hello"</span>, <span class="hljs-string">"hello"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceWithMetaphoneEncoder</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> EncoderException {
+        <span class="hljs-type">StringEncoder</span> <span class="hljs-variable">encoder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Metaphone</span>();
+        <span class="hljs-comment">// "Knight" and "Night" both encode to "N"</span>
+        assertEquals(<span class="hljs-number">1</span>, SoundexUtils.difference(encoder, <span class="hljs-string">"Knight"</span>, <span class="hljs-string">"Night"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDifferenceWithEncoderThrowsException</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">StringEncoder</span> <span class="hljs-variable">throwingEncoder</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StringEncoder</span>() {
+            <span class="hljs-keyword">public</span> String <span class="hljs-title function_">encode</span><span class="hljs-params">(String s)</span> <span class="hljs-keyword">throws</span> EncoderException {
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">EncoderException</span>(<span class="hljs-string">"Test exception"</span>);
+            }
+
+            <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">encode</span><span class="hljs-params">(Object obj)</span> <span class="hljs-keyword">throws</span> EncoderException {
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">EncoderException</span>(<span class="hljs-string">"Test exception"</span>);
+            }
+        };
+        <span class="hljs-keyword">try</span> {
+            SoundexUtils.difference(throwingEncoder, <span class="hljs-string">"hello"</span>, <span class="hljs-string">"world"</span>);
+            fail(<span class="hljs-string">"Expected EncoderException"</span>);
+        } <span class="hljs-keyword">catch</span> (EncoderException e) {
+            assertEquals(<span class="hljs-string">"Test exception"</span>, e.getMessage());
+        }
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<p>Wait, I need to verify the Caverphone encoding of "hello". Let me trace through:</p>
+<ol>
+<li>"hello" - lowercase, no changes</li>
+<li>No final 'e'</li>
+<li>No prefix matches</li>
+<li>Replacements:
+<ul>
+<li>No cq, ci, ce, cy</li>
+<li>No tch</li>
+<li>No c</li>
+<li>No q</li>
+<li>No x</li>
+<li>No v</li>
+<li>No dg</li>
+<li>No tio, tia</li>
+<li>No d</li>
+<li>No ph</li>
+<li>No b</li>
+<li>No sh</li>
+<li>No z</li>
+<li>"hello" starts with 'h', not vowel, so no ^[aeiou] match</li>
+<li>No [aeiou] replacement (no vowels)</li>
+<li>No j</li>
+<li>No y</li>
+<li>"h" not matched by ^y</li>
+<li>No 3gh3, gh</li>
+<li>No g</li>
+<li>No s+, t+, p+, k+, f+, m+, n+ (no consecutive)</li>
+<li>No w</li>
+<li>"^h" -&gt; "A": "Aello"</li>
+<li>"h" -&gt; "2": already replaced</li>
+<li>No r, l</li>
+</ul>
+</li>
+<li>Removals:
+<ul>
+<li>"2" -&gt; "" (no 2)</li>
+<li>No "3$"</li>
+<li>No "3"</li>
+</ul>
+</li>
+<li>Append "1111111111"</li>
+<li>Take first 10 chars</li>
+</ol>
+<p>So "hello" -&gt; "Aello" -&gt; "AELLO" -&gt; "AELLO1111111111" -&gt; first 10: "AELLO11111"</p>
+<p>Wait, let me re-trace. After step 4:</p>
+<ul>
+<li>"hello"</li>
+<li>No cq, ci, ce, cy</li>
+<li>"c" → "k" (no c)</li>
+<li>"q" → "k" (no q)</li>
+<li>"x" → "k" (no x)</li>
+<li>"v" → "f" (no v)</li>
+<li>"dg" → "2g" (no dg)</li>
+<li>"tio" → "sio" (no)</li>
+<li>"tia" → "sia" (no)</li>
+<li>"d" → "t" (no d)</li>
+<li>"ph" → "fh" (no ph)</li>
+<li>"b" → "p" (no b)</li>
+<li>"sh" → "s2" (no sh)</li>
+<li>"z" → "s" (no z)</li>
+<li>"^[aeiou]" → "A" (starts with 'h', no)</li>
+<li>"[aeiou]" → "3" (no vowels except... "hello" has 'e' and 'o' as vowels)</li>
+</ul>
+<p>Wait, "hello" has 'e' and 'o' which are vowels. So "[aeiou]" → "3" replaces them:
+"h3ll3"</p>
+<ul>
+<li>"j" → "y" (no j)</li>
+<li>"^y3" → "Y3" (no)</li>
+<li>"^y" → "A" (no)</li>
+<li>"y" → "3" (no y)</li>
+<li>"3gh3" → "3kh3" (no)</li>
+<li>"gh" → "22" (no gh)</li>
+<li>"g" → "k" (no g)</li>
+<li>"s+" → "S" (no consecutive s)</li>
+<li>"t+" → "T" (no)</li>
+<li>"p+" → "P" (no)</li>
+<li>"k+" → "K" (no)</li>
+<li>"f+" → "F" (no)</li>
+<li>"m+" → "M" (no)</li>
+<li>"n+" → "N" (no)</li>
+<li>"w3" → "W3" (no w)</li>
+<li>"wh3" → "Wh3" (no)</li>
+<li>"w$" → "3" (no)</li>
+<li>"w" → "2" (no w)</li>
+<li>"^h" → "A": "A3ll3"</li>
+<li>"h" → "2" (no h)</li>
+<li>"r3" → "R3" (no r)</li>
+<li>"r$" → "3" (no)</li>
+<li>"r" → "2" (no r)</li>
+<li>"l3" → "L3" (no l3)</li>
+<li>"l$" → "3" (doesn't end with l)</li>
+<li>"l" → "2": "A3223" → wait, "A3ll3" has "ll", so it becomes "A3223"? Let me be careful.</li>
+</ul>
+<p>Actually: "h3ll3" → "^h" → "A3ll3"
+Then "l" → "2" applied to each 'l': "A3223"</p>
+<ol start="5">
+<li>Removals:</li>
+</ol>
+<ul>
+<li>"2" → "": "A33"</li>
+<li>"3$" → "A": ends with '3', so "A3A"</li>
+<li>"3" → "": "AA"</li>
+</ul>
+<ol start="6">
+<li>Append "1111111111": "AA1111111111"</li>
+<li>First 10: "AA11111111"</li>
+</ol>
+<p>So "hello" encodes to "AA11111111" (10 chars).</p>
+<p>For difference, "hello" and "hello" would both encode to "AA11111111", so difference is 10.</p>
+<p>But wait - I need to double check "h3ll3":</p>
+<p>After "[aeiou]" → "3":
+"hello" → "h3ll3" (e becomes 3, o becomes 3)</p>
+<p>Then "^h" → "A":
+"h3ll3" → "A3ll3"</p>
+<p>Then "l" → "2":
+"A3ll3" → "A3223" (two l's become two 2's)</p>
+<p>Then "2" → "" (remove all 2):
+"A3223" → "A33"</p>
+<p>Then "3$" → "A":
+"A33" → "A3A" (the last 3 becomes A)</p>
+<p>Then "3" → "":
+"A3A" → "AA"</p>
+<p>So "hello" → "AA" → "AA1111111111" → "AA11111111" (10 chars)</p>
+<p>Yes, difference should be 10.</p>
+<p>But wait - I need to double-check my assertion in <code>testDifferenceWithCaVerphoneEncoder</code>. The difference should be 10 because both encode to the same 10-character string.</p>
+<p>Actually, let me reconsider - the Caverphone always returns 10 characters (unless null/empty). So <code>difference</code> of identical strings would be 10 since the encodings are identical and 10 chars long.</p>
+<p>My assertion of 10 is correct.</p>
+<p>However, there's an issue - the <code>difference</code> test with Metaphone. "Knight" → "N" (after removing silent K), "Night" → "N". Both are 1 character, so difference is 1. Correct.</p>
+<p>Let me also reconsider the Caverphone test values more carefully. Let me trace through a few:</p>
+<p>"Stevenson":</p>
+<ol>
+<li>"stevenson" (lowercase)</li>
+<li>No non-A-Z chars</li>
+<li>No final 'e' (doesn't end in e)</li>
+<li>Prefix: no cough, rough, tough, enough, trough, gn, mb</li>
+<li>Replacements:
+<ul>
+<li>cq → no</li>
+<li>ci → no</li>
+<li>ce → no</li>
+<li>cy → no</li>
+<li>tch → no</li>
+<li>c → k: no c</li>
+<li>q → k: no</li>
+<li>x → k: no</li>
+<li>v → f: "stefenson"</li>
+<li>dg → no</li>
+<li>tio → no</li>
+<li>tia → no</li>
+<li>d → t: no d</li>
+<li>ph → no</li>
+<li>b → p: no b</li>
+<li>sh → s2: no</li>
+<li>z → s: no</li>
+<li>^[aeiou] → A: starts with 's', no</li>
+<li>[aeiou] → 3: "st3f3ns3n" (e becomes 3, e becomes 3, o becomes 3)</li>
+<li>j → y: no</li>
+<li>^y3 → no</li>
+<li>^y → no</li>
+<li>y → 3: no</li>
+<li>3gh3 → no</li>
+<li>gh → no</li>
+<li>g → k: no</li>
+<li>s+ → S: no consecutive s (only one s at start)</li>
+<li>t+ → T: no</li>
+<li>p+ → no</li>
+<li>k+ → no</li>
+<li>f+ → F: no</li>
+<li>m+ → M: no</li>
+<li>n+ → N: no (only one n)</li>
+<li>w3 → no</li>
+<li>wh3 → no</li>
+<li>w$ → no</li>
+<li>w → 2: no w</li>
+<li>^h → no</li>
+<li>h → 2: no h</li>
+<li>r3 → no</li>
+<li>r$ → no</li>
+<li>r → 2: no r</li>
+<li>l3 → no</li>
+<li>l$ → no</li>
+<li>l → 2: no l</li>
+</ul>
+</li>
+</ol>
+<p>So far: "st3f3ns3n"</p>
+<ol start="6">
+<li>
+<p>Removals:</p>
+<ul>
+<li>"2" → "": no change</li>
+<li>"3$" → "A": ends with 'n', no</li>
+<li>"3" → "": "stfnsn"</li>
+</ul>
+</li>
+<li>
+<p>Append: "stfnsn1111111111"</p>
+</li>
+<li>
+<p>First 10: "stfnsn1111"</p>
+</li>
+</ol>
+<p>Wait - uppercase? The code uses <code>replaceAll("^[aeiou]", "A")</code> which produces uppercase 'A'. But there's no explicit uppercase conversion of the whole string. Let me re-check...</p>
+<p>Actually, <code>txt.toLowerCase(java.util.Locale.ENGLISH)</code> only converts to lowercase. There's no uppercase conversion for the entire string. So the output should be lowercase "stfnsn1111".</p>
+<p>But wait, that doesn't match my expected "STFN111111". Let me re-trace...</p>
+<p>Actually hmm, the "v" → "f" conversion: "stevenson" → "stefenson" (the v becomes f).</p>
+<p>Then "[aeiou]" → "3": "stefenson" → "st3f3ns3n" (e at position 2 becomes 3, e at position 4 becomes 3, o at position 7 becomes 3)</p>
+<p>Then "3" → "": "stfnsn"</p>
+<p>Then append "1111111111": "stfnsn1111111111"
+First 10 chars: "stfnsn1111"</p>
+<p>So "Stevenson" → "stfnsn1111", not "STFN111111".</p>
+<p>Hmm, that's confusing. Let me look at the actual code more carefully...</p>
+<p>The code doesn't uppercase the result. It starts with <code>txt.toLowerCase()</code>, and then various replacements add uppercase 'A', 'S', 'T', 'P', 'K', 'F', 'M', 'N', 'W', 'R', 'L', 'Y' for specific patterns.</p>
+<p>Wait, I see:</p>
+<ul>
+<li><code>txt.replaceAll("^[aeiou]", "A")</code> - uppercase A for initial vowel</li>
+<li><code>txt.replaceAll("s+", "S")</code> - uppercase S for repeated s</li>
+<li><code>txt.replaceAll("t+", "T")</code> - uppercase T</li>
+<li><code>txt.replaceAll("p+", "P")</code> - uppercase P</li>
+<li><code>txt.replaceAll("k+", "K")</code> - uppercase K</li>
+<li><code>txt.replaceAll("f+", "F")</code> - uppercase F</li>
+<li><code>txt.replaceAll("m+", "M")</code> - uppercase M</li>
+<li><code>txt.replaceAll("n+", "N")</code> - uppercase N</li>
+<li><code>txt.replaceAll("w3", "W3")</code> - uppercase W</li>
+<li><code>txt.replaceAll("wh3", "Wh3")</code> - uppercase W</li>
+<li><code>txt.replaceAll("^h", "A")</code> - uppercase A</li>
+<li><code>txt.replaceAll("r3", "R3")</code> - uppercase R</li>
+<li><code>txt.replaceAll("l3", "L3")</code> - uppercase L</li>
+<li><code>txt.replaceAll("^y3", "Y3")</code> - uppercase Y</li>
+</ul>
+<p>So "Stevenson" → "st3f3ns3n" → remove 3's → "stfnsn"</p>
+<p>Actually, wait. "stevenson" has "n" at position 6 and "n" at position 8, but they're not adjacent. So <code>n+</code> doesn't match.</p>
+<p>Let me re-trace "stevenson" more carefully:</p>
+<p>"stevenson" (after lowercase)</p>
+<ol>
+<li>Remove non-A-Z: "stevenson"</li>
+<li>Remove final e: doesn't end in e</li>
+<li>Prefix replacements: none match</li>
+<li>Replacements (in order):
+<ul>
+<li>cq: no</li>
+<li>ci: no</li>
+<li>ce: no</li>
+<li>cy: no</li>
+<li>tch: no</li>
+<li>c → k: no c</li>
+<li>q → k: no q</li>
+<li>x → k: no x</li>
+<li>v → f: "stefenson"</li>
+<li>dg: no</li>
+<li>tio: no</li>
+<li>tia: no</li>
+<li>d → t: no d</li>
+<li>ph: no</li>
+<li>b → p: no b</li>
+<li>sh: no</li>
+<li>z → s: no z</li>
+<li>^[aeiou] → A: starts with 's', no</li>
+<li>[aeiou] → 3: "st3f3ns3n" (e at index 2 → 3, e at index 4 → 3, o at index 7 → 3)</li>
+<li>j → y: no</li>
+<li>^y3: no</li>
+<li>^y: no</li>
+<li>y → 3: no</li>
+<li>3gh3: no</li>
+<li>gh: no</li>
+<li>g → k: no</li>
+<li>s+ → S: no (only one s)</li>
+<li>t+ → T: no</li>
+<li>p+ → P: no</li>
+<li>k+ → K: no</li>
+<li>f+ → F: no (one f)</li>
+<li>m+ → M: no</li>
+<li>n+ → N: no (single n's)</li>
+<li>w3: no</li>
+<li>wh3: no</li>
+<li>w$: no</li>
+<li>w → 2: no w</li>
+<li>^h: no</li>
+<li>h → 2: no h</li>
+<li>r3: no</li>
+<li>r$: no</li>
+<li>r → 2: no</li>
+<li>l3: no</li>
+<li>l$: no</li>
+<li>l → 2: no</li>
+</ul>
+</li>
+</ol>
+<p>Result: "st3f3ns3n"</p>
+<ol start="5">
+<li>
+<p>Removals:</p>
+<ul>
+<li>"2" → "": no change</li>
+<li>"3$" → "A": ends with 'n', not 3, so no change</li>
+<li>"3" → "": "stfnsn"</li>
+</ul>
+</li>
+<li>
+<p>Append "1111111111": "stfnsn1111111111"</p>
+</li>
+<li>
+<p>First 10: "stfnsn1111"</p>
+</li>
+</ol>
+<p>So the expected value should be "stfnsn1111", not "STFN111111". I need to update my tests.</p>
+<p>Actually, let me reconsider. The <code>s+</code> pattern matches one or more 's' characters. But there's only one 's' in "st3f3ns3n" (the initial 's'). A single 's' matches <code>s+</code>. Wait, <code>s+</code> means one or more. So a single 's' DOES match <code>s+</code>, and it gets replaced with 'S'.</p>
+<p>Let me re-trace with this understanding:</p>
+<p>"s" → "S" (from <code>s+</code> → "S")</p>
+<p>But wait, the timing matters. The string at that point is "st3f3ns3n". The pattern <code>s+</code> matches one or more 's'. There's an 's' at position 0 and another 's' at position 6.</p>
+<p>At position 0: 's' - this matches <code>s+</code> since it's one 's'. It becomes 'S'.
+At position 6: 's' - wait, the string is "st3f3ns3n". Position 6 is... let me count:</p>
+<ul>
+<li>s(0), t(1), 3(2), f(3), 3(4), n(5), s(6), 3(7), n(8)</li>
+</ul>
+<p>So there's an 's' at position 0 and 's' at position 6. Neither is adjacent to another 's'. So <code>s+</code> would match each individually, meaning both become 'S'.</p>
+<p>But wait, <code>replaceAll</code> processes left to right. After replacing the first 's' with 'S', the string becomes "St3f3ns3n". Then the second 's' at position 6 becomes 'S': "St3f3nS3n".</p>
+<p>Similarly for <code>t+</code>: one 't' at position 1 becomes 'T': "ST3f3nS3n".
+<code>f+</code>: one 'f' at position 3 becomes 'F': "ST3F3nS3n".
+<code>n+</code>: one 'n' at position 5 and 'n' at position 8. Both individually match. First 'n' becomes 'N': "ST3F3NS3n". Second 'n' becomes 'N': "ST3F3NS3N".</p>
+<p>Then removals:</p>
+<ul>
+<li>"2" → "": no change</li>
+<li>"3$" → "A": ends with 'N', no change</li>
+<li>"3" → "": "STFNSN"</li>
+</ul>
+<p>Append: "STFNSN1111111111"
+First 10: "STFNSN1111"</p>
+<p>Hmm, still not my original "STFN111111". Let me count again:</p>
+<ul>
+<li>STFNSN - that's 6 characters</li>
+<li>Plus 4 ones = "STFNSN1111"</li>
+</ul>
+<p>But maybe I'm overcomplicating this. The actual Caverphone test values depend on the specific implementation. Since I'm being asked to write deterministic regression tests based on the fixed reference behavior, I should trace through the code carefully.</p>
+<p>Actually, I think I'm overthinking this. The <code>s+</code> pattern matches one or more 's' characters as a group, but when there are non-adjacent 's' characters, each is a separate match. However, <code>replaceAll</code> replaces each match individually. So:</p>
+<p>"s" in "st3f3ns3n":</p>
+<ul>
+<li>First match: 's' at position 0 → 'S': "St3f3ns3n"</li>
+<li>Second match: 's' at position 6 → 'S': "St3f3nS3n"</li>
+</ul>
+<p>Then "t+" → 't' at position 1 → 'T': "ST3f3nS3n"</p>
+<p>Actually, wait. Let me look at the code flow again:</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java">txt = txt.replaceAll(<span class="hljs-string">"s+"</span>, <span class="hljs-string">"S"</span>);
+txt = txt.replaceAll(<span class="hljs-string">"t+"</span>, <span class="hljs-string">"T"</span>);
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<p>The string at this point after all previous replacements:</p>
+<ul>
+<li>Starting: "stevenson"</li>
+<li>v→f: "stefenson"</li>
+<li>[aeiou]→3: "st3f3ns3n"</li>
+</ul>
+<p>Now "s+" → "S":</p>
+<ul>
+<li>First 's' at position 0: matches <code>s+</code> (one s). Becomes 'S'.</li>
+<li>Between position 0 and 6, no more 's'.</li>
+<li>'s' at position 6: matches <code>s+</code> (one s). Becomes 'S'.</li>
+</ul>
+<p>Result: "St3f3nS3n"</p>
+<p>"t+" → "T":</p>
+<ul>
+<li>'t' at position 1: matches <code>t+</code>. Becomes 'T'.</li>
+</ul>
+<p>Result: "ST3f3nS3n"</p>
+</div>

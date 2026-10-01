@@ -1,0 +1,330 @@
+<div id="messageContentDataIdLoRYiTpsHvgP" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">// org/apache/commons/jxpath/ri/model/dom/DOMNodePointerTest.java</span>
+<span class="hljs-keyword">package</span> org.apache.commons.jxpath.ri.model.dom;
+
+<span class="hljs-keyword">import</span> java.util.Locale;
+
+<span class="hljs-keyword">import</span> javax.xml.parsers.DocumentBuilder;
+<span class="hljs-keyword">import</span> javax.xml.parsers.DocumentBuilderFactory;
+
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.JXPathException;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.Compiler;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.QName;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.NodeTest;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.model.NodePointer;
+<span class="hljs-keyword">import</span> org.w3c.dom.Attr;
+<span class="hljs-keyword">import</span> org.w3c.dom.Document;
+<span class="hljs-keyword">import</span> org.w3c.dom.Element;
+<span class="hljs-keyword">import</span> org.w3c.dom.Node;
+<span class="hljs-keyword">import</span> org.w3c.dom.ProcessingInstruction;
+<span class="hljs-keyword">import</span> org.w3c.dom.Text;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DOMNodePointerTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> Document doc;
+    <span class="hljs-keyword">private</span> Element root;
+    <span class="hljs-keyword">private</span> Element child;
+    <span class="hljs-keyword">private</span> Text textNode;
+    <span class="hljs-keyword">private</span> ProcessingInstruction pi;
+    <span class="hljs-keyword">private</span> Element langElem;
+    <span class="hljs-keyword">private</span> DOMNodePointer rootPtr;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">DocumentBuilderFactory</span> <span class="hljs-variable">dbf</span> <span class="hljs-operator">=</span> DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(<span class="hljs-literal">true</span>);
+        <span class="hljs-type">DocumentBuilder</span> <span class="hljs-variable">db</span> <span class="hljs-operator">=</span> dbf.newDocumentBuilder();
+        doc = db.newDocument();
+        <span class="hljs-comment">// root element with namespace</span>
+        root = doc.createElementNS(<span class="hljs-string">"http://example.com"</span>, <span class="hljs-string">"root"</span>);
+        root.setPrefix(<span class="hljs-string">"ex"</span>);
+        doc.appendChild(root);
+        <span class="hljs-comment">// child element with same namespace</span>
+        child = doc.createElementNS(<span class="hljs-string">"http://example.com"</span>, <span class="hljs-string">"child"</span>);
+        child.setPrefix(<span class="hljs-string">"ex"</span>);
+        root.appendChild(child);
+        <span class="hljs-comment">// text node inside child</span>
+        textNode = doc.createTextNode(<span class="hljs-string">"text content"</span>);
+        child.appendChild(textNode);
+        <span class="hljs-comment">// processing instruction</span>
+        pi = doc.createProcessingInstruction(<span class="hljs-string">"target"</span>, <span class="hljs-string">"data"</span>);
+        root.appendChild(pi);
+        <span class="hljs-comment">// element with xml:lang</span>
+        langElem = doc.createElement(<span class="hljs-string">"langElem"</span>);
+        langElem.setAttribute(<span class="hljs-string">"xml:lang"</span>, <span class="hljs-string">"en-US"</span>);
+        root.appendChild(langElem);
+        <span class="hljs-comment">// set default namespace on root (xmlns)</span>
+        root.setAttributeNS(<span class="hljs-string">"http://www.w3.org/2000/xmlns/"</span>, <span class="hljs-string">"xmlns"</span>, <span class="hljs-string">"http://default.example.com"</span>);
+        <span class="hljs-comment">// set a namespace prefix</span>
+        root.setAttributeNS(<span class="hljs-string">"http://www.w3.org/2000/xmlns/"</span>, <span class="hljs-string">"xmlns:ns"</span>, <span class="hljs-string">"http://ns.example.com"</span>);
+
+        rootPtr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(root, Locale.US);
+    }
+
+    <span class="hljs-comment">// 1.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetBaseValue</span><span class="hljs-params">()</span> {
+        assertSame(root, rootPtr.getBaseValue());
+    }
+
+    <span class="hljs-comment">// 2.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetImmediateNode</span><span class="hljs-params">()</span> {
+        assertSame(root, rootPtr.getImmediateNode());
+    }
+
+    <span class="hljs-comment">// 3.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetNamespaceURI_element</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"http://example.com"</span>, rootPtr.getNamespaceURI());
+    }
+
+    <span class="hljs-comment">// 4.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetDefaultNamespaceURI</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// root has xmlns attribute default namespace</span>
+        assertEquals(<span class="hljs-string">"http://default.example.com"</span>, rootPtr.getDefaultNamespaceURI());
+    }
+
+    <span class="hljs-comment">// 5.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetNamespaceURI_withPrefix</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// ns prefix defined on root</span>
+        assertEquals(<span class="hljs-string">"http://ns.example.com"</span>, rootPtr.getNamespaceURI(<span class="hljs-string">"ns"</span>));
+    }
+
+    <span class="hljs-comment">// 6.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetName_elementAndPI</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// element</span>
+        <span class="hljs-type">QName</span> <span class="hljs-variable">name</span> <span class="hljs-operator">=</span> rootPtr.getName();
+        assertEquals(<span class="hljs-string">"ex"</span>, name.getPrefix());
+        assertEquals(<span class="hljs-string">"root"</span>, name.getName());
+        <span class="hljs-comment">// PI</span>
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">piPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(pi, Locale.US);
+        <span class="hljs-type">QName</span> <span class="hljs-variable">piName</span> <span class="hljs-operator">=</span> piPtr.getName();
+        assertEquals(<span class="hljs-string">"target"</span>, piName.getName());
+        assertNull(piName.getPrefix());
+    }
+
+    <span class="hljs-comment">// 7.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAsPath_element</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// root element with namespace, prefix not default -&gt; should use prefix</span>
+        <span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> rootPtr.asPath();
+        assertTrue(path.contains(<span class="hljs-string">"ex:root["</span>));
+    }
+
+    <span class="hljs-comment">// 8.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAsPath_textNode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">textPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(textNode, Locale.US);
+        <span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> textPtr.asPath();
+        assertTrue(path.startsWith(<span class="hljs-string">"/text()["</span>));
+    }
+
+    <span class="hljs-comment">// 9.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAsPath_withId_escape</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">idPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(root, Locale.US, <span class="hljs-string">"id'\"value"</span>);
+        <span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> idPtr.asPath();
+        assertTrue(path.startsWith(<span class="hljs-string">"id('"</span>));
+        assertTrue(path.contains(<span class="hljs-string">"&amp;apos;"</span>));
+        assertTrue(path.contains(<span class="hljs-string">"&amp;quot;"</span>));
+    }
+
+    <span class="hljs-comment">// 10.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetValue_textNode_replace</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">textPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(textNode, Locale.US);
+        textPtr.setValue(<span class="hljs-string">"new text"</span>);
+        assertEquals(<span class="hljs-string">"new text"</span>, textPtr.getValue());
+    }
+
+    <span class="hljs-comment">// 11.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetValue_emptyRemove</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">textPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(textNode, Locale.US);
+        <span class="hljs-type">Node</span> <span class="hljs-variable">parent</span> <span class="hljs-operator">=</span> textNode.getParentNode();
+        assertNotNull(parent);
+        textPtr.setValue(<span class="hljs-string">""</span>);
+        <span class="hljs-comment">// verify node removed</span>
+        assertNull(textNode.getParentNode());
+    }
+
+    <span class="hljs-comment">// 12.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemove</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">childPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(child, Locale.US);
+        childPtr.remove();
+        assertNull(child.getParentNode());
+    }
+
+    <span class="hljs-comment">// 13.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveRootException</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// root has no parent</span>
+        <span class="hljs-keyword">try</span> {
+            rootPtr.remove();
+            fail(<span class="hljs-string">"Should throw JXPathException"</span>);
+        } <span class="hljs-keyword">catch</span> (JXPathException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-comment">// 14.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCompareChildNodePointers</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">childPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(child, Locale.US);
+        <span class="hljs-type">DOMNodePointer</span> <span class="hljs-variable">piPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DOMNodePointer</span>(pi, Locale.US);
+        <span class="hljs-comment">// child comes before pi in document order</span>
+        assertTrue(rootPtr.compareChildNodePointers(childPtr, piPtr) &lt; <span class="hljs-number">0</span>);
+        assertTrue(rootPtr.compareChildNodePointers(piPtr, childPtr) &gt; <span class="hljs-number">0</span>);
+        <span class="hljs-comment">// same node</span>
+        assertEquals(<span class="hljs-number">0</span>, rootPtr.compareChildNodePointers(childPtr, childPtr));
+    }
+
+    <span class="hljs-comment">// 15.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTestNode_static</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// NodeNameTest with wildcard true and no prefix -&gt; true</span>
+        <span class="hljs-type">NodeTest</span> <span class="hljs-variable">wildcardNameTest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NodeNameTest</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">QName</span>(<span class="hljs-literal">null</span>, <span class="hljs-string">"any"</span>), <span class="hljs-literal">null</span>, <span class="hljs-literal">true</span>);
+        assertTrue(DOMNodePointer.testNode(root, wildcardNameTest));
+        <span class="hljs-comment">// NodeNameTest with matching local name and namespace</span>
+        <span class="hljs-type">NodeTest</span> <span class="hljs-variable">nameTest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NodeNameTest</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">QName</span>(<span class="hljs-string">"ex"</span>, <span class="hljs-string">"root"</span>), <span class="hljs-string">"http://example.com"</span>);
+        assertTrue(DOMNodePointer.testNode(root, nameTest));
+        <span class="hljs-comment">// NodeTypeTest NODE_TYPE_NODE: element -&gt; true</span>
+        <span class="hljs-type">NodeTypeTest</span> <span class="hljs-variable">nodeTest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NodeTypeTest</span>(Compiler.NODE_TYPE_NODE);
+        assertTrue(DOMNodePointer.testNode(root, nodeTest));
+        <span class="hljs-comment">// NodeTypeTest NODE_TYPE_COMMENT: element -&gt; false</span>
+        assertFalse(DOMNodePointer.testNode(root, <span class="hljs-keyword">new</span> <span class="hljs-title class_">NodeTypeTest</span>(Compiler.NODE_TYPE_COMMENT)));
+        <span class="hljs-comment">// ProcessingInstructionTest</span>
+        <span class="hljs-type">ProcessingInstructionTest</span> <span class="hljs-variable">piTest</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ProcessingInstructionTest</span>(<span class="hljs-string">"target"</span>);
+        assertTrue(DOMNodePointer.testNode(pi, piTest));
+        piTest = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ProcessingInstructionTest</span>(<span class="hljs-string">"other"</span>);
+        assertFalse(DOMNodePointer.testNode(pi, piTest));
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">// org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointerTest.java</span>
+<span class="hljs-keyword">package</span> org.apache.commons.jxpath.ri.model.jdom;
+
+<span class="hljs-keyword">import</span> java.util.Locale;
+
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.JXPathException;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.Compiler;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.QName;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.NodeTest;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+<span class="hljs-keyword">import</span> org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest;
+<span class="hljs-keyword">import</span> org.jdom.CDATA;
+<span class="hljs-keyword">import</span> org.jdom.Document;
+<span class="hljs-keyword">import</span> org.jdom.Element;
+<span class="hljs-keyword">import</span> org.jdom.Namespace;
+<span class="hljs-keyword">import</span> org.jdom.ProcessingInstruction;
+<span class="hljs-keyword">import</span> org.jdom.Text;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">JDOMNodePointerTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> Document doc;
+    <span class="hljs-keyword">private</span> Element root;
+    <span class="hljs-keyword">private</span> Element child;
+    <span class="hljs-keyword">private</span> Text textNode;
+    <span class="hljs-keyword">private</span> CDATA cdata;
+    <span class="hljs-keyword">private</span> ProcessingInstruction pi;
+    <span class="hljs-keyword">private</span> Element langElem;
+    <span class="hljs-keyword">private</span> JDOMNodePointer rootPtr;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Namespace</span> <span class="hljs-variable">ns</span> <span class="hljs-operator">=</span> Namespace.getNamespace(<span class="hljs-string">"ex"</span>, <span class="hljs-string">"http://example.com"</span>);
+        root = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Element</span>(<span class="hljs-string">"root"</span>, ns);
+        <span class="hljs-comment">// set default namespace via xmlns attribute</span>
+        root.addNamespaceDeclaration(Namespace.getNamespace(<span class="hljs-string">""</span>, <span class="hljs-string">"http://default.example.com"</span>));
+        <span class="hljs-comment">// namespace prefix</span>
+        root.addNamespaceDeclaration(Namespace.getNamespace(<span class="hljs-string">"ns"</span>, <span class="hljs-string">"http://ns.example.com"</span>));
+
+        child = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Element</span>(<span class="hljs-string">"child"</span>, ns);
+        root.addContent(child);
+        <span class="hljs-comment">// text node</span>
+        textNode = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Text</span>(<span class="hljs-string">"text content"</span>);
+        child.addContent(textNode);
+        <span class="hljs-comment">// CDATA</span>
+        cdata = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CDATA</span>(<span class="hljs-string">"cdata content"</span>);
+        root.addContent(cdata);
+        <span class="hljs-comment">// processing instruction</span>
+        pi = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ProcessingInstruction</span>(<span class="hljs-string">"target"</span>, <span class="hljs-string">"data"</span>);
+        root.addContent(pi);
+        <span class="hljs-comment">// lang element</span>
+        langElem = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Element</span>(<span class="hljs-string">"langElem"</span>);
+        langElem.setAttribute(<span class="hljs-string">"lang"</span>, <span class="hljs-string">"en-US"</span>, Namespace.XML_NAMESPACE);
+        root.addContent(langElem);
+
+        doc = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Document</span>(root);
+
+        rootPtr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">JDOMNodePointer</span>(root, Locale.US);
+    }
+
+    <span class="hljs-comment">// 1.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetBaseValue</span><span class="hljs-params">()</span> {
+        assertSame(root, rootPtr.getBaseValue());
+    }
+
+    <span class="hljs-comment">// 2.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetImmediateNode</span><span class="hljs-params">()</span> {
+        assertSame(root, rootPtr.getImmediateNode());
+    }
+
+    <span class="hljs-comment">// 3.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetNamespaceURI_element</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"http://example.com"</span>, rootPtr.getNamespaceURI());
+    }
+
+    <span class="hljs-comment">// 4.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetNamespaceURI_withPrefix</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"http://ns.example.com"</span>, rootPtr.getNamespaceURI(<span class="hljs-string">"ns"</span>));
+    }
+
+    <span class="hljs-comment">// 5.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetName_element</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">QName</span> <span class="hljs-variable">name</span> <span class="hljs-operator">=</span> rootPtr.getName();
+        assertEquals(<span class="hljs-string">"ex"</span>, name.getPrefix());
+        assertEquals(<span class="hljs-string">"root"</span>, name.getName());
+    }
+
+    <span class="hljs-comment">// 6.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetName_pi</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">JDOMNodePointer</span> <span class="hljs-variable">piPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JDOMNodePointer</span>(pi, Locale.US);
+        <span class="hljs-type">QName</span> <span class="hljs-variable">piName</span> <span class="hljs-operator">=</span> piPtr.getName();
+        assertEquals(<span class="hljs-string">"target"</span>, piName.getName());
+        assertNull(piName.getPrefix());
+    }
+
+    <span class="hljs-comment">// 7.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAsPath_element</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> rootPtr.asPath();
+        assertTrue(path.contains(<span class="hljs-string">"ex:root["</span>));
+    }
+
+    <span class="hljs-comment">// 8.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAsPath_textNode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">JDOMNodePointer</span> <span class="hljs-variable">textPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JDOMNodePointer</span>(textNode, Locale.US);
+        <span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> textPtr.asPath();
+        assertTrue(path.startsWith(<span class="hljs-string">"/text()["</span>));
+    }
+
+    <span class="hljs-comment">// 9.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAsPath_pi</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">JDOMNodePointer</span> <span class="hljs-variable">piPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JDOMNodePointer</span>(pi, Locale.US);
+        <span class="hljs-type">String</span> <span class="hljs-variable">path</span> <span class="hljs-operator">=</span> piPtr.asPath();
+        assertTrue(path.contains(<span class="hljs-string">"processing-instruction('target')"</span>));
+    }
+
+    <span class="hljs-comment">// 10.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetValue_text_replace</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">JDOMNodePointer</span> <span class="hljs-variable">textPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JDOMNodePointer</span>(textNode, Locale.US);
+        textPtr.setValue(<span class="hljs-string">"new text"</span>);
+        assertEquals(<span class="hljs-string">"new text"</span>, textPtr.getValue());
+    }
+
+    <span class="hljs-comment">// 11.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetValue_empty_remove</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">JDOMNodePointer</span> <span class="hljs-variable">textPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JDOMNodePointer</span>(textNode, Locale.US);
+        textPtr.setValue(<span class="hljs-string">""</span>);
+        assertNull(textNode.getParent());
+    }
+
+    <span class="hljs-comment">// 12.</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemove</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">JDOMNodePointer</span> <span class="hljs-variable">childPtr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JDOMNodePointer</span>(child,</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

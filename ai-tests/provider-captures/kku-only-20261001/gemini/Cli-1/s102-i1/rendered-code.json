@@ -1,0 +1,6 @@
+[
+  {
+    "language": "hljs language-java",
+    "text": "package org.apache.commons.cli;\n\nimport java.util.Iterator;\nimport java.util.List;\nimport junit.framework.TestCase;\n\n/**\n * Regression test suite for {@link CommandLine}.\n */\npublic class CommandLineTest extends TestCase {\n\n    /**\n     * Helper subclass of Option providing controlled value and type behavior\n     * across all supported Commons CLI versions.\n     */\n    private static class StubOption extends Option {\n        private String[] values;\n\n        public StubOption(String opt, String description) {\n            super(opt, description);\n        }\n\n        public StubOption(String opt, String longOpt, String[] values) {\n            super(opt, longOpt, true, \"Stub option description\");\n            this.values = values;\n        }\n\n        public String[] getValues() {\n            return this.values;\n        }\n\n        public String getValue() {\n            return (this.values != null && this.values.length > 0) ? this.values[0] : null;\n        }\n    }\n\n    public CommandLineTest(String name) {\n        super(name);\n    }\n\n    /**\n     * Verifies that a newly created CommandLine"
+  }
+]

@@ -1,5 +1,10 @@
 # Experiment design
 
+This document preserves the earlier Lang pilot design. The current all-project
+Round 2 protocol, input budget, fixed-only generation and follow-up validation
+rules are in `docs/study-protocol.md`. Pilot differential evidence is reported
+separately and is not pooled into the v4 study metrics.
+
 ## Research questions
 
 - RQ1: How do CMA-ES, FSCS-ART, Claude, and IntelliSphere compare in line and
@@ -38,6 +43,13 @@ observable state; exclude nondeterministic inputs.
 - Report AI token usage and prompt iterations separately; they are not equivalent
   to program evaluations.
 - Record failures rather than silently discarding uncompilable tests.
+
+The actual AI integration policy is in `docs/ai-workflow.md`. Original prompts
+are used without transmitting evaluation logs. Source-order caps and fixed-only
+pruning are disclosed local processing. The policy was added during integration,
+not preregistered. AI methods can contain multiple calls/assertions, so budget 30
+is not an equal program-call or compute budget across the four methods. AI UI
+observation timing cannot rank model compute speed against algorithm timing.
 
 ## Per-run record
 

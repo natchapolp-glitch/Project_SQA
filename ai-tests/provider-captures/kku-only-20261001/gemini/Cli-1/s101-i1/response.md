@@ -1,0 +1,51 @@
+An academic regression test suite for org.apache.commons.cli.CommandLine is provided below.
+
+The test suite is written using JUnit 3.8.1 (extending junit.framework.TestCase), consistent with the project's Ant build configuration and Java 1.6+ compatibility constraints. It thoroughly tests option resolution (canonical, short, long, and hyphen-prefixed forms), default fallbacks, value conversions, and leftover argument tracking without relying on external dependencies.
+
+src/test/org/apache/commons/cli/CommandLineRegressionTest.java
+
+```java
+package org.apache.commons.cli;
+
+import java.util.Iterator;
+import java.util.List;
+import junit.framework.TestCase;
+
+/**
+ * Deterministic regression tests for {@link CommandLine}.
+ */
+public class CommandLineRegressionTest extends TestCase {
+
+    /**
+     * Subclass of Option allowing deterministic configuration of values and type
+     * without relying on internal parsing state.
+     */
+    private static class StubOption extends Option {
+        private final String[] values;
+        private final Object type;
+
+        public StubOption(String opt, String longOpt) {
+            this(opt, longOpt, null, null);
+        }
+
+        public StubOption(String opt, String longOpt, String[] values) {
+            this(opt, longOpt, values, null);
+        }
+
+        public StubOption(String opt, String longOpt, String[] values, Object type) {
+            super(opt, longOpt, values != null, "Stub Option");
+            this.values = values;
+            this.type = type;
+        }
+
+        public String[] getValues() {
+            return this.values;
+        }
+
+        public Object getType() {
+            return this.type;
+        }
+    }
+
+    public void testEmptyCommandLineState() {
+```

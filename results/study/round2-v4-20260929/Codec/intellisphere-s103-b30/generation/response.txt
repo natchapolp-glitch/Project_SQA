@@ -1,0 +1,388 @@
+Rendered KKU IntelSphere response. Model label: Deepseek - deepseek-v4-pro
+
+```java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+
+/**
+ * Tests for {@link Caverphone}.
+ *
+ * @version $Id$
+ */
+public class CaverphoneTest extends TestCase {
+
+    private Caverphone caverphone;
+
+    public void setUp() {
+        caverphone = new Caverphone();
+    }
+
+    public void tearDown() {
+        caverphone = null;
+    }
+
+    // Test caverphone method
+
+    public void testCaverphoneNullInput() {
+        assertEquals("1111111111", caverphone.caverphone(null));
+    }
+
+    public void testCaverphoneEmptyString() {
+        assertEquals("1111111111", caverphone.caverphone(""));
+    }
+
+    public void testCaverphoneBasicExample() {
+        // Example from Caverphone 2.0 spec
+        assertEquals("STFNSN1111", caverphone.caverphone("Stevenson"));
+    }
+
+    public void testCaverphoneAnotherBasic() {
+        assertEquals("PTRSN11111", caverphone.caverphone("Peterson"));
+    }
+
+    public void testCaverphoneAllVowels() {
+        assertEquals("AAAAA11111", caverphone.caverphone("aeiou"));
+    }
+
+    public void testCaverphoneRandomString() {
+        assertNotNull(caverphone.caverphone("randomstring"));
+    }
+
+    public void testCaverphoneUpperCaseConversion() {
+        assertEquals(caverphone.caverphone("Test"), caverphone.caverphone("test"));
+    }
+
+    public void testCaverphoneNumbersRemoved() {
+        // Numbers should be stripped
+        assertEquals(caverphone.caverphone("test"), caverphone.caverphone("test123"));
+    }
+
+    // Test encode(String) method
+
+    public void testEncodeStringBasic() {
+        assertEquals("STFNSN1111", caverphone.encode("Stevenson"));
+    }
+
+    // Test encode(Object) method
+
+    public void testEncodeObjectWithString() throws EncoderException {
+        Object result = caverphone.encode((Object) "Stevenson");
+        assertTrue(result instanceof String);
+        assertEquals("STFNSN1111", result);
+    }
+
+    public void testEncodeObjectWithNonString() {
+        try {
+            caverphone.encode(new Integer(5));
+            fail("Expected EncoderException");
+        } catch (EncoderException e) {
+            String expectedMessage = "Parameter supplied to Caverphone encode is not of type java.lang.String";
+            assertTrue(e.getMessage().contains(expectedMessage));
+        }
+    }
+
+    // Test isCaverphoneEqual method
+
+    public void testIsCaverphoneEqualTrue() {
+        assertTrue(caverphone.isCaverphoneEqual("Stevenson", "Stevenson"));
+    }
+
+    public void testIsCaverphoneEqualFalse() {
+        assertFalse(caverphone.isCaverphoneEqual("Stevenson", "Peterson"));
+    }
+
+    public void testIsCaverphoneEqualCaseInsensitive() {
+        assertTrue(caverphone.isCaverphoneEqual("Stevenson", "stevenson"));
+    }
+
+    public void testIsCaverphoneEqualBothNull() {
+        assertTrue(caverphone.isCaverphoneEqual(null, null));
+    }
+
+    public void testIsCaverphoneEqualOneNull() {
+        assertFalse(caverphone.isCaverphoneEqual("Stevenson", null));
+        assertFalse(caverphone.isCaverphoneEqual(null, "Stevenson"));
+    }
+}
+
+```
+
+```java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+
+/**
+ * Tests for {@link Metaphone}.
+ *
+ * @version $Id$
+ */
+public class MetaphoneTest extends TestCase {
+
+    private Metaphone metaphone;
+
+    public void setUp() {
+        metaphone = new Metaphone();
+    }
+
+    public void tearDown() {
+        metaphone = null;
+    }
+
+    // Test metaphone method basic outputs
+
+    public void testMetaphoneNull() {
+        assertEquals("", metaphone.metaphone(null));
+    }
+
+    public void testMetaphoneEmpty() {
+        assertEquals("", metaphone.metaphone(""));
+    }
+
+    public void testMetaphoneSingleCharacter() {
+        assertEquals("A", metaphone.metaphone("A"));
+        assertEquals("B", metaphone.metaphone("B"));
+        assertEquals("Z", metaphone.metaphone("z"));
+    }
+
+    public void testMetaphoneBasicExamples() {
+        assertEquals("TST", metaphone.metaphone("TEST"));
+        assertEquals("LKN", metaphone.metaphone("lucene"));
+    }
+
+    public void testMetaphoneMaxCodeLen() {
+        assertEquals("ALKN", metaphone.metaphone("ALKNSSS"));
+        assertEquals("ABRS", metaphone.metaphone("ABRSSS"));
+    }
+
+    // Test encode methods
+
+    public void testEncodeString() {
+        assertEquals("TST", metaphone.encode("test"));
+    }
+
+    public void testEncodeObjectWithString() throws EncoderException {
+        Object result = metaphone.encode((Object) "test");
+        assertTrue(result instanceof String);
+        assertEquals("TST", result);
+    }
+
+    public void testEncodeObjectWithNonString() {
+        try {
+            metaphone.encode(new Integer(1));
+            fail("Expected EncoderException");
+        } catch (EncoderException e) {
+            assertTrue(e.getMessage().contains("Parameter supplied to Metaphone encode"));
+        }
+    }
+
+    // Test isMetaphoneEqual
+
+    public void testIsMetaphoneEqualTrue() {
+        assertTrue(metaphone.isMetaphoneEqual("test", "test"));
+    }
+
+    public void testIsMetaphoneEqualFalse() {
+        assertFalse(metaphone.isMetaphoneEqual("test", "jest"));
+    }
+
+    public void testIsMetaphoneEqualCaseInsensitive() {
+        assertTrue(metaphone.isMetaphoneEqual("Test", "test"));
+    }
+
+    // Test getMaxCodeLen and setMaxCodeLen
+
+    public void testDefaultMaxCodeLen() {
+        assertEquals(4, metaphone.getMaxCodeLen());
+    }
+
+    public void testSetMaxCodeLen() {
+        metaphone.setMaxCodeLen(7);
+        assertEquals(7, metaphone.getMaxCodeLen());
+        // Test that truncation occurs at new length
+        String encoded = metaphone.encode("ALGORITHM");
+        assertTrue(encoded.length() <= 7);
+    }
+
+    public void testSetMaxCodeLenZero() {
+        metaphone.setMaxCodeLen(0);
+        assertEquals(0, metaphone.getMaxCodeLen());
+        assertEquals("", metaphone.encode("test"));
+    }
+
+    // private method logic tested via public API
+
+    public void testInitialAE() {
+        assertEquals("LKN", metaphone.metaphone("AELUCENE"));
+    }
+
+    public void testInitialWR() {
+        assertEquals("RKN", metaphone.metaphone("WRECKON"));
+    }
+
+    public void testInitialWH() {
+        assertEquals("W", metaphone.metaphone("WHE"));
+    }
+
+    public void testInitialX() {
+        assertEquals("S", metaphone.metaphone("XE"));
+    }
+
+    public void testInitialKN() {
+        assertEquals("N", metaphone.metaphone("KNE"));
+    }
+
+    public void testInitialGN() {
+        assertEquals("N", metaphone.metaphone("GNOME"));
+    }
+
+    public void testInitialPN() {
+        assertEquals("N", metaphone.metaphone("PNOMON"));
+    }
+
+    public void testSCH() {
+        assertEquals("SK", metaphone.metaphone("SCHOOL"));
+    }
+
+    public void testCIA() {
+        assertEquals("X", metaphone.metaphone("CI"));
+    }
+
+    public void testCE() {
+        assertEquals("S", metaphone.metaphone("CERT"));
+    }
+
+    public void testDoubleMetaphone() {
+        // Testing Los Vegas vs. Los Angeles context?
+        // Just ensure stable output
+        String m1 = metaphone.metaphone("LOS");
+        String m2 = metaphone.metaphone("LOZ");
+        // LOS vs LOZ both evaluate to LS
+        assertEquals(m1, m2);
+    }
+
+    public void testPH() {
+        assertEquals("F", metaphone.metaphone("PHO"));
+    }
+
+    public void testTH() {
+        assertEquals("0", metaphone.metaphone("THEO"));
+    }
+
+    public void testDGE() {
+        assertEquals("J", metaphone.metaphone("DGE"));
+    }
+
+    public void testTIA() {
+        assertEquals("X", metaphone.metaphone("PATIA"));
+    }
+}
+
+```
+
+```java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+
+/**
+ * Tests for {@link SoundexUtils}. Since the class is package-private,
+ * we must test via a package-accessible way.
+ * We use a simple custom StringEncoder for testing difference methods.
+ */
+public class SoundexUtilsTest extends TestCase {
+
+    public void testCleanNull() {
+        // We need a public caller or reflection.
+        // Since SoundexUtils.clean is package-private, we test indirectly.
+        // Typically, we can test this via a Soundex instance, but we are
+        // constrained to not assume Soundex is a target.
+        // Let's use reflection for direct test.
+        try {
+            java.lang.reflect.Method method = SoundexUtils.class.getDeclaredMethod("clean", String.class);
+            method.setAccessible(true);
+            assertNull(method.invoke(null, (String) null));
+        } catch (Exception e) {
+            fail("Reflection test failed: " + e.getMessage());
+        }
+    }
+
+    public void testCleanEmpty() {
+        try {
+            java.lang.reflect.Method method = SoundexUtils.class.getDeclaredMethod("clean", String.class);
+            method.setAccessible(true);
+            assertEquals("", method.invoke(null, ""));
+        } catch (Exception e) {
+            fail("Reflection test failed: " + e.getMessage());
+        }
+    }
+
+    public void testCleanLettersOnly() {
+        try {
+            java.lang.reflect.Method method = SoundexUtils.class.getDeclaredMethod("clean", String.class);
+            method.setAccessible(true);
+            assertEquals("ABC", method.invoke(null, "abc"));
+        } catch (Exception e) {
+            fail("Reflection test failed: " + e.getMessage());
+        }
+    }
+
+    public void testCleanNumbersRemoved() {
+        try {
+            java.lang.reflect.Method method = SoundexUtils.class.getDeclaredMethod("clean", String.class);
+            method.setAccessible(true);
+            assertEquals("ABC", method.invoke(null, "a1b2c3"));
+        } catch (Exception e) {
+            fail("Reflection test failed: " + e.getMessage());
+        }
+    }
+
+    public void testCleanMixed() {
+        try {
+            java.lang.reflect.Method method = SoundexUtils.class.getDeclaredMethod("clean", String.class);
+            method.setAccessible(true);
+            assertEquals("AB", method.invoke(null, "a-1 b!2"));
+        } catch (Exception e) {
+            fail("Reflection test failed: " + e.getMessage());
+        }
+    }
+
+    // differenceEncoded tests
+
+    public void testDifferenceEncodedNulls() {
+        assertEquals(0, SoundexUtils.differenceEncoded(null, null));
+        assertEquals(0, SoundexUtils.differenceEncoded("A", null));
+        assertEquals(0, SoundexUtils.differenceEncoded(null, "A"));
+    }
+
+    public void testDifferenceEncodedEmpty() {
+        assertEquals(0, SoundexUtils.differenceEncoded("", ""));
+        assertEquals(0, SoundexUtils.differenceEncoded("A", ""));
+    }
+
+    public void testDifferenceEncodedSame() {
+        assertEquals(4, SoundexUtils.differenceEncoded("ABCD", "ABCD"));
+    }
+
+    public void testDifferenceEncodedPartial() {
+        assertEquals(2, SoundexUtils.differenceEncoded("ABC", "AXC"));
+    }
+
+    // difference tests
+
+    public void testDifference() throws Exception {
+        // Use Metaphone as concrete encoder
+        org.apache.commons.codec.StringEncoder encoder = new Metaphone();
+        assertEquals(4, SoundexUtils.difference(encoder, "test", "test"));
+    }
+
+    public void testDifferenceDifferentStrings() throws Exception {
+        org.apache.commons.codec.StringEncoder encoder = new Metaphone();
+        assertTrue(SoundexUtils.difference(encoder, "test", "jest") < 4);
+    }
+}
+
+```

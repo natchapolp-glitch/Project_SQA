@@ -1,0 +1,357 @@
+<p>Below are deterministic regression unit test suites for <code>BigFraction</code> and <code>Fraction</code>, targeting the eligible shared API declarations, boundary values, exception paths, and conversion operations using JUnit 4.</p>
+<h3><code>org/apache/commons/math3/fraction/BigFractionRegressionTest.java</code></h3>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.math3.fraction;
+
+<span class="hljs-keyword">import</span> java.math.BigDecimal;
+<span class="hljs-keyword">import</span> java.math.BigInteger;
+<span class="hljs-keyword">import</span> org.apache.commons.math3.exception.MathArithmeticException;
+<span class="hljs-keyword">import</span> org.apache.commons.math3.exception.MathIllegalArgumentException;
+<span class="hljs-keyword">import</span> org.apache.commons.math3.exception.NullArgumentException;
+<span class="hljs-keyword">import</span> org.apache.commons.math3.exception.ZeroException;
+<span class="hljs-keyword">import</span> org.junit.Assert;
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BigFractionRegressionTest</span> {
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIntegerConstructorsAndGetters</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">bf1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">6</span>, -<span class="hljs-number">8</span>);
+        Assert.assertEquals(-<span class="hljs-number">3</span>, bf1.getNumeratorAsInt());
+        Assert.assertEquals(<span class="hljs-number">4</span>, bf1.getDenominatorAsInt());
+        Assert.assertEquals(-<span class="hljs-number">3L</span>, bf1.getNumeratorAsLong());
+        Assert.assertEquals(<span class="hljs-number">4L</span>, bf1.getDenominatorAsLong());
+        Assert.assertEquals(BigInteger.valueOf(-<span class="hljs-number">3</span>), bf1.getNumerator());
+        Assert.assertEquals(BigInteger.valueOf(<span class="hljs-number">4</span>), bf1.getDenominator());
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">bf2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">5</span>);
+        Assert.assertEquals(BigInteger.valueOf(<span class="hljs-number">5</span>), bf2.getNumerator());
+        Assert.assertEquals(BigInteger.ONE, bf2.getDenominator());
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">bf3</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">10L</span>);
+        Assert.assertEquals(BigInteger.valueOf(<span class="hljs-number">10</span>), bf3.getNumerator());
+        Assert.assertEquals(BigInteger.ONE, bf3.getDenominator());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDoubleConstructorExact</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">bf</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">0.5</span>);
+        Assert.assertEquals(BigInteger.ONE, bf.getNumerator());
+        Assert.assertEquals(BigInteger.valueOf(<span class="hljs-number">2</span>), bf.getDenominator());
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">zero</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">0.0</span>);
+        Assert.assertEquals(BigInteger.ZERO, zero.getNumerator());
+        Assert.assertEquals(BigInteger.ONE, zero.getDenominator());
+    }
+
+    <span class="hljs-meta">@Test(expected = MathIllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDoubleConstructorNaNThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(Double.NaN);
+    }
+
+    <span class="hljs-meta">@Test(expected = MathIllegalArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDoubleConstructorInfinityThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(Double.POSITIVE_INFINITY);
+    }
+
+    <span class="hljs-meta">@Test(expected = ZeroException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testZeroDenominatorThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(BigInteger.ONE, BigInteger.ZERO);
+    }
+
+    <span class="hljs-meta">@Test(expected = NullArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNullNumeratorThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-literal">null</span>, BigInteger.ONE);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetReducedFraction</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">reduced</span> <span class="hljs-operator">=</span> BigFraction.getReducedFraction(<span class="hljs-number">0</span>, <span class="hljs-number">10</span>);
+        Assert.assertSame(BigFraction.ZERO, reduced);
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">normal</span> <span class="hljs-operator">=</span> BigFraction.getReducedFraction(<span class="hljs-number">4</span>, <span class="hljs-number">6</span>);
+        Assert.assertEquals(<span class="hljs-number">2</span>, normal.getNumeratorAsInt());
+        Assert.assertEquals(<span class="hljs-number">3</span>, normal.getDenominatorAsInt());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testArithmeticAddSubtract</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>);
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">6</span>);
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">sum</span> <span class="hljs-operator">=</span> f1.add(f2);
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>), sum);
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">diff</span> <span class="hljs-operator">=</span> f1.subtract(f2);
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">6</span>), diff);
+
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">4</span>, <span class="hljs-number">3</span>), f1.add(<span class="hljs-number">1</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(-<span class="hljs-number">2</span>, <span class="hljs-number">3</span>), f1.subtract(<span class="hljs-number">1</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">7</span>, <span class="hljs-number">3</span>), f1.add(<span class="hljs-number">2L</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(-<span class="hljs-number">5</span>, <span class="hljs-number">3</span>), f1.subtract(<span class="hljs-number">2L</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">10</span>, <span class="hljs-number">3</span>), f1.add(BigInteger.valueOf(<span class="hljs-number">3</span>)));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(-<span class="hljs-number">8</span>, <span class="hljs-number">3</span>), f1.subtract(BigInteger.valueOf(<span class="hljs-number">3</span>)));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testArithmeticMultiplyDivide</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">5</span>);
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>);
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">prod</span> <span class="hljs-operator">=</span> f1.multiply(f2);
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">10</span>), prod);
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">quot</span> <span class="hljs-operator">=</span> f1.divide(f2);
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">8</span>, <span class="hljs-number">15</span>), quot);
+
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">4</span>, <span class="hljs-number">5</span>), f1.multiply(<span class="hljs-number">2</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">5</span>), f1.divide(<span class="hljs-number">2</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">6</span>, <span class="hljs-number">5</span>), f1.multiply(<span class="hljs-number">3L</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">15</span>), f1.divide(<span class="hljs-number">3L</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">8</span>, <span class="hljs-number">5</span>), f1.multiply(BigInteger.valueOf(<span class="hljs-number">4</span>)));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">10</span>), f1.divide(BigInteger.valueOf(<span class="hljs-number">4</span>)));
+    }
+
+    <span class="hljs-meta">@Test(expected = MathArithmeticException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDivideByZeroFractionThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);
+        f.divide(BigFraction.ZERO);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAbsNegateReciprocalReduce</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">neg</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(-<span class="hljs-number">3</span>, <span class="hljs-number">5</span>);
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">5</span>), neg.abs());
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">5</span>), neg.negate());
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(-<span class="hljs-number">5</span>, <span class="hljs-number">3</span>), neg.reciprocal());
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">pos</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">5</span>);
+        Assert.assertSame(pos, pos.abs());
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">5</span>), pos.reduce());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPowOperations</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">base</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">4</span>, <span class="hljs-number">9</span>), base.pow(<span class="hljs-number">2</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">9</span>, <span class="hljs-number">4</span>), base.pow(-<span class="hljs-number">2</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">8</span>, <span class="hljs-number">27</span>), base.pow(<span class="hljs-number">3L</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">27</span>, <span class="hljs-number">8</span>), base.pow(-<span class="hljs-number">3L</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">16</span>, <span class="hljs-number">81</span>), base.pow(BigInteger.valueOf(<span class="hljs-number">4</span>)));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">81</span>, <span class="hljs-number">16</span>), base.pow(BigInteger.valueOf(-<span class="hljs-number">4</span>)));
+        Assert.assertEquals(<span class="hljs-number">1.5</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">9</span>, <span class="hljs-number">4</span>).pow(<span class="hljs-number">0.5</span>), <span class="hljs-number">1e-10</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConversions</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>);
+        Assert.assertEquals(<span class="hljs-number">0.75</span>, f.doubleValue(), <span class="hljs-number">1e-10</span>);
+        Assert.assertEquals(<span class="hljs-number">0.75f</span>, f.floatValue(), <span class="hljs-number">1e-5f</span>);
+        Assert.assertEquals(<span class="hljs-number">0</span>, f.intValue());
+        Assert.assertEquals(<span class="hljs-number">0L</span>, f.longValue());
+        Assert.assertEquals(<span class="hljs-number">75.0</span>, f.percentageValue(), <span class="hljs-number">1e-10</span>);
+
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">whole</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">7</span>, <span class="hljs-number">2</span>);
+        Assert.assertEquals(<span class="hljs-number">3</span>, whole.intValue());
+        Assert.assertEquals(<span class="hljs-number">3L</span>, whole.longValue());
+
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-string">"0.75"</span>), f.bigDecimalValue());
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigDecimal</span>(<span class="hljs-string">"0.8"</span>), f.bigDecimalValue(<span class="hljs-number">1</span>, BigDecimal.ROUND_HALF_UP));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCompareToEqualsAndHashCode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">4</span>);
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f3</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
+        <span class="hljs-type">BigFraction</span> <span class="hljs-variable">f4</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>);
+
+        Assert.assertEquals(<span class="hljs-number">0</span>, f1.compareTo(f2));
+        Assert.assertTrue(f1.compareTo(f3) &lt; <span class="hljs-number">0</span>);
+        Assert.assertTrue(f1.compareTo(f4) &gt; <span class="hljs-number">0</span>);
+
+        Assert.assertTrue(f1.equals(f2));
+        Assert.assertFalse(f1.equals(f3));
+        Assert.assertFalse(f1.equals(<span class="hljs-literal">null</span>));
+        Assert.assertFalse(f1.equals(<span class="hljs-string">"1/2"</span>));
+
+        Assert.assertEquals(f1.hashCode(), f2.hashCode());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToStringAndField</span><span class="hljs-params">()</span> {
+        Assert.assertEquals(<span class="hljs-string">"0"</span>, BigFraction.ZERO.toString());
+        Assert.assertEquals(<span class="hljs-string">"5"</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">5</span>).toString());
+        Assert.assertEquals(<span class="hljs-string">"3 / 4"</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>).toString());
+        Assert.assertNotNull(<span class="hljs-keyword">new</span> <span class="hljs-title class_">BigFraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>).getField());
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<hr>
+<h3><code>org/apache/commons/math3/fraction/FractionRegressionTest.java</code></h3>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.math3.fraction;
+
+<span class="hljs-keyword">import</span> org.apache.commons.math3.exception.MathArithmeticException;
+<span class="hljs-keyword">import</span> org.apache.commons.math3.exception.NullArgumentException;
+<span class="hljs-keyword">import</span> org.junit.Assert;
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">FractionRegressionTest</span> {
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIntegerConstructorAndReductions</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">6</span>, -<span class="hljs-number">8</span>);
+        Assert.assertEquals(-<span class="hljs-number">3</span>, f1.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">4</span>, f1.getDenominator());
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">7</span>);
+        Assert.assertEquals(<span class="hljs-number">7</span>, f2.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">1</span>, f2.getDenominator());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDoubleConstructor</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">0.25</span>);
+        Assert.assertEquals(<span class="hljs-number">1</span>, f.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">4</span>, f.getDenominator());
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">fWithEpsilon</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">0.3333333333</span>, <span class="hljs-number">1e-4</span>, <span class="hljs-number">10</span>);
+        Assert.assertEquals(<span class="hljs-number">1</span>, fWithEpsilon.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">3</span>, fWithEpsilon.getDenominator());
+    }
+
+    <span class="hljs-meta">@Test(expected = MathArithmeticException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testZeroDenominatorThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+    }
+
+    <span class="hljs-meta">@Test(expected = MathArithmeticException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDenominatorOverflowThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">1</span>, Integer.MIN_VALUE);
+    }
+
+    <span class="hljs-meta">@Test(expected = MathArithmeticException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNumeratorOverflowOnNegativeDenominatorThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(Integer.MIN_VALUE, -<span class="hljs-number">1</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetReducedFraction</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">zero</span> <span class="hljs-operator">=</span> Fraction.getReducedFraction(<span class="hljs-number">0</span>, <span class="hljs-number">5</span>);
+        Assert.assertSame(Fraction.ZERO, zero);
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">reduced</span> <span class="hljs-operator">=</span> Fraction.getReducedFraction(<span class="hljs-number">6</span>, -<span class="hljs-number">9</span>);
+        Assert.assertEquals(-<span class="hljs-number">2</span>, reduced.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">3</span>, reduced.getDenominator());
+    }
+
+    <span class="hljs-meta">@Test(expected = MathArithmeticException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetReducedFractionZeroDenominatorThrows</span><span class="hljs-params">()</span> {
+        Fraction.getReducedFraction(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddAndSubtract</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">4</span>);
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">sum</span> <span class="hljs-operator">=</span> f1.add(f2);
+        Assert.assertEquals(<span class="hljs-number">3</span>, sum.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">4</span>, sum.getDenominator());
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">diff</span> <span class="hljs-operator">=</span> f1.subtract(f2);
+        Assert.assertEquals(-<span class="hljs-number">1</span>, diff.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">4</span>, diff.getDenominator());
+
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">5</span>, <span class="hljs-number">4</span>), f1.add(<span class="hljs-number">1</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(-<span class="hljs-number">3</span>, <span class="hljs-number">4</span>), f1.subtract(<span class="hljs-number">1</span>));
+    }
+
+    <span class="hljs-meta">@Test(expected = NullArgumentException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddNullThrows</span><span class="hljs-params">()</span> {
+        Fraction.ONE.add((Fraction) <span class="hljs-literal">null</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMultiplyAndDivide</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">5</span>);
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">prod</span> <span class="hljs-operator">=</span> f1.multiply(f2);
+        Assert.assertEquals(<span class="hljs-number">2</span>, prod.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">5</span>, prod.getDenominator());
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">quot</span> <span class="hljs-operator">=</span> f1.divide(f2);
+        Assert.assertEquals(<span class="hljs-number">10</span>, quot.getNumerator());
+        Assert.assertEquals(<span class="hljs-number">9</span>, quot.getDenominator());
+
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">4</span>, <span class="hljs-number">3</span>), f1.multiply(<span class="hljs-number">2</span>));
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">3</span>), f1.divide(<span class="hljs-number">2</span>));
+        Assert.assertSame(Fraction.ZERO, f1.multiply(Fraction.ZERO));
+    }
+
+    <span class="hljs-meta">@Test(expected = MathArithmeticException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDivideByZeroFractionThrows</span><span class="hljs-params">()</span> {
+        Fraction.ONE.divide(Fraction.ZERO);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAbsNegateReciprocal</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(-<span class="hljs-number">2</span>, <span class="hljs-number">5</span>);
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">5</span>), f.abs());
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">5</span>), f.negate());
+        Assert.assertEquals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(-<span class="hljs-number">5</span>, <span class="hljs-number">2</span>), f.reciprocal());
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">pos</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">5</span>);
+        Assert.assertSame(pos, pos.abs());
+    }
+
+    <span class="hljs-meta">@Test(expected = MathArithmeticException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNegateOverflowThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">minNumerator</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(Integer.MIN_VALUE, <span class="hljs-number">1</span>);
+        minNumerator.negate();
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConversionsAndPercentage</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">8</span>);
+        Assert.assertEquals(<span class="hljs-number">0.125</span>, f.doubleValue(), <span class="hljs-number">1e-10</span>);
+        Assert.assertEquals(<span class="hljs-number">0.125f</span>, f.floatValue(), <span class="hljs-number">1e-5f</span>);
+        Assert.assertEquals(<span class="hljs-number">0</span>, f.intValue());
+        Assert.assertEquals(<span class="hljs-number">0L</span>, f.longValue());
+        Assert.assertEquals(<span class="hljs-number">12.5</span>, f.percentageValue(), <span class="hljs-number">1e-10</span>);
+
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">mixed</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">11</span>, <span class="hljs-number">4</span>);
+        Assert.assertEquals(<span class="hljs-number">2</span>, mixed.intValue());
+        Assert.assertEquals(<span class="hljs-number">2L</span>, mixed.longValue());
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCompareToEqualsHashCodeAndString</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>);
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">2</span>, <span class="hljs-number">4</span>);
+        <span class="hljs-type">Fraction</span> <span class="hljs-variable">f3</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Fraction</span>(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>);
+
+        Assert.assertEquals(<span class="hljs-number">0</span>, f1.compareTo(f2));
+        Assert.assertTrue(f1.compareTo(f3) &lt; <span class="hljs-number">0</span>);
+        Assert.assertTrue(f3.compareTo(f1) &gt; <span class="hljs-number">0</span>);
+
+        Assert.assertTrue(f1.equals(f2));
+        Assert.assertFalse(f1.equals(f3));
+        Assert.assertFalse(f1.equals(<span class="hljs-literal">null</span>));
+        Assert.assertFalse(f1.equals(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Object</span>()));
+
+        Assert.assertEquals(f1.hashCode(), f2.hashCode());
+        Assert.assertEquals(<span class="hljs-string">"0"</span>, Fraction.ZERO.toString());
+        Assert.assertEquals(<span class="hljs-string">"1"</span>, Fraction.ONE.toString());
+        Assert.assertEquals(<span class="hljs-string">"1 / 2"</span>, f1.toString());
+        Assert.assertNotNull(f1.getField());
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<hr>
+<h3>References</h3>
+<ul>
+<li>Apache Commons Math <code>BigFraction</code> Documentation and Source (Commons Math 3.x / Defects4J Math-1f reference)</li>
+<li>Apache Commons Math <code>Fraction</code> Documentation and Source (Commons Math 3.x / Defects4J Math-1f reference)</li>
+<li>Knuth, D. E. <em>The Art of Computer Programming, Volume 2: Seminumerical Algorithms</em>, Section 4.5.1: Rational Arithmetic.</li>
+</ul>

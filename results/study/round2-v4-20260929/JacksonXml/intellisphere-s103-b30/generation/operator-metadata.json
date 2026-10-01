@@ -1,0 +1,67 @@
+{
+  "tool": "intellisphere",
+  "model": "deepseek-v4-pro",
+  "generated_at": "2026-09-28T23:49:05.849Z",
+  "submitted_at": "2026-09-28T23:46:48.350Z",
+  "generation_seconds": 145.44600242700005,
+  "parameters": {
+    "routing_mode": "Auto Router",
+    "resolved_model_label": "Deepseek - deepseek-v4-pro",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "manual_edits": [
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "before_sha256": "6bcd05a2c789fbdc4da441a7270a99077123cc7988508f58615e2182d1256af0",
+      "after_sha256": "47ada861e8c4697d7ba2584eb6b6fe39f2c0d1bf3a2fc56cf9e8ae2c6747c5d0",
+      "local_compatibility_repairs": [
+        {
+          "old": ".currentToken()",
+          "new": ".getCurrentToken()",
+          "occurrences": 6,
+          "reason": "Use the older JsonParser token accessor for the fixed dependency version."
+        }
+      ],
+      "selection": "Selected from fixed compilation diagnostics and fixed API source only; no buggy feedback."
+    },
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "before_sha256": "47ada861e8c4697d7ba2584eb6b6fe39f2c0d1bf3a2fc56cf9e8ae2c6747c5d0",
+      "after_sha256": "618c0bf1ff844af4c0bb9107063976ca8042c87fde3a20ae603713c7dbf8b56d",
+      "local_compatibility_repairs": [
+        {
+          "old": "new ObjectCodec() {\n            // minimal implementation for test\n        }",
+          "new": "new com.fasterxml.jackson.dataformat.xml.XmlMapper()",
+          "occurrences": 1,
+          "reason": "The empty anonymous abstract ObjectCodec cannot compile; use the existing concrete XML codec to test unchanged set/get identity assertion."
+        }
+      ],
+      "selection": "Fixed compilation diagnostics and fixed API only; no buggy feedback or expected-value changes."
+    },
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "before_sha256": "618c0bf1ff844af4c0bb9107063976ca8042c87fde3a20ae603713c7dbf8b56d",
+      "after_sha256": "46acc4e5f6496614f3f6ed3b6904ead69804e59daf284e84e549c98229637a0f",
+      "fixed_failed_methods_removed": [
+        "com.fasterxml.jackson.dataformat.xml.deser.FromXmlParserTest::testVersion",
+        "com.fasterxml.jackson.dataformat.xml.deser.FromXmlParserTest::testIsExpectedStartArrayToken"
+      ],
+      "selection": "Only assertion failures on fixed revision; no buggy outcomes used."
+    }
+  ],
+  "notes": [
+    "Input: exact prepared prompt.",
+    "Verbatim visible Java blocks exported with Markdown fences added; rendered HTML/text retained.",
+    "UI export is not a verified original API response; renderer may introduce (undefined) after array indices.",
+    "Duration is a UI observation upper bound.",
+    "Local processing v22 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/JacksonXml/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v22-fixed-recovery",
+  "raw_test_method_count": 24,
+  "retained_test_method_count": 22
+}

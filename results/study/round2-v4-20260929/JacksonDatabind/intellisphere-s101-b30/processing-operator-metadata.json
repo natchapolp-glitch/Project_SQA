@@ -1,0 +1,52 @@
+{
+  "tool": "intellisphere",
+  "model": "gemini-pro",
+  "generated_at": "2026-10-01T06:26:15.516Z",
+  "generation_seconds": 100.626720845,
+  "prompt_iteration": 1,
+  "parameters": {
+    "selected_agent": "Gemini",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "manual_edits": [
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "fa956f42110c4870eef053a6861992801771903f7ab56dd101578876cb88977f",
+      "after_sha256": "6bef8111d7789dcde939a0cbb92c9b97246f879c08468b53f8c7f70c2e136a67",
+      "local_compatibility_repairs": [
+        {
+          "old": "new StringSerializer()",
+          "new": "(JsonSerializer<Object>) (JsonSerializer<?>) new StringSerializer()",
+          "occurrences": 4,
+          "reason": "Fixed StringSerializer is JsonSerializer<String>; explicit generic bridge retains serializer instance and assertions for Object-typed writer API."
+        }
+      ],
+      "selection": "Preserved fixed logs and fixed API source only; no buggy outcome, production or assertion changes."
+    },
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "6bef8111d7789dcde939a0cbb92c9b97246f879c08468b53f8c7f70c2e136a67",
+      "after_sha256": "edd852448e325aac832fa98a0b5b6116846b8c831b179d3a2c26cad642439b93",
+      "local_compatibility_repairs": [
+        {
+          "old": "mapper.getSerializerProviderInstance()",
+          "new": "((com.fasterxml.jackson.databind.ser.DefaultSerializerProvider) mapper.getSerializerProvider()).createInstance(mapper.getSerializationConfig(), mapper.getSerializerFactory())",
+          "reason": "Fixed ObjectMapper exposes provider blueprint/config/factory; DefaultSerializerProvider.createInstance produces configured provider."
+        }
+      ],
+      "selection": "Fixed compiler diagnostics and fixed ObjectMapper/DefaultSerializerProvider implementations; assertions unchanged."
+    }
+  ],
+  "notes": [
+    "Exact original JacksonDatabind prompt only, no logs sent. Complete code preserved from rendered DOM; observed generation upper bound.",
+    "Local processing v19 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/JacksonDatabind/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v19-fixed-recovery",
+  "raw_test_method_count": 25,
+  "retained_test_method_count": 25
+}

@@ -1,0 +1,54 @@
+{
+  "tool": "intellisphere",
+  "model": "gemini-pro",
+  "selected_agent": "Gemini",
+  "generated_at": "2026-10-01T06:50:50.047Z",
+  "generation_seconds": 137.04014872600004,
+  "prompt_iteration": 1,
+  "parameters": {
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "manual_edits": [
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "2a4eeb4bae45a91429bb7ee807da34d39d57bf9bd4de55e22233b339ef380c7a",
+      "after_sha256": "8f4e8147baec4b18728c64a08f64dcc86cf67006a5c5237ee6bf7428c53cc1cd",
+      "local_compatibility_repairs": [
+        {
+          "old": "prop.getPrimaryType()",
+          "new": "_mapper.constructType(prop.getAccessor().getGenericType())",
+          "occurrences": 5,
+          "reason": "Fixed BeanPropertyDefinition exposes accessor/member generic type; construct same declared property type through mapper."
+        },
+        {
+          "old": "_mapper.getSerializerProviderInstance()",
+          "new": "((com.fasterxml.jackson.databind.ser.DefaultSerializerProvider) _mapper.getSerializerProvider()).createInstance(_mapper.getSerializationConfig(), _mapper.getSerializerFactory())",
+          "occurrences": 9,
+          "reason": "Construct configured serializer provider through fixed API, as disclosed in v19."
+        }
+      ],
+      "selection": "Fixed API/compilation only; original assertion values unchanged, fixed-only pruning retained."
+    },
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "8f4e8147baec4b18728c64a08f64dcc86cf67006a5c5237ee6bf7428c53cc1cd",
+      "after_sha256": "081d6feb95b14768077d3a0108769dd33bbe3de5358b482cad77f6a45ec483e6",
+      "fixed_failed_methods_removed": [
+        "com.fasterxml.jackson.databind.ser.BeanPropertyWriterTest::testConstructorWithInvalidMemberThrowsException"
+      ],
+      "selection": "Only assertion failures on fixed revision; no buggy outcomes used."
+    }
+  ],
+  "notes": [
+    "Original approved prompt only; complete rendered code. Observed duration upper bound includes observation delay.",
+    "Local processing v23 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/JacksonDatabind/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v23-fixed-recovery",
+  "raw_test_method_count": 21,
+  "retained_test_method_count": 20
+}

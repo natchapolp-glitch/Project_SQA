@@ -1,0 +1,468 @@
+<div id="messageContentDataIdZPi58ljw0wei" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>I'll generate tests for the <code>RemoveUnusedVars</code> class. Looking at the build configuration, this project uses Ant with JUnit 4. The source level is Java 1.6, so I'll use Java 6 compatible syntax with JUnit 4 annotations.</p>
+<p>Let me first examine what's needed to set up proper test infrastructure. The class requires an <code>AbstractCompiler</code> instance, which is a complex dependency. Based on the Closure Compiler test patterns, I'll create tests that properly initialize the compiler and test the key methods.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">// src/com/google/javascript/jscomp/RemoveUnusedVarsTest.java</span>
+<span class="hljs-keyword">package</span> com.google.javascript.jscomp;
+
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.CompilerOptions.LanguageMode;
+<span class="hljs-keyword">import</span> com.google.javascript.jscomp.Scope.Var;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.IR;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Node;
+<span class="hljs-keyword">import</span> com.google.javascript.rhino.Token;
+
+<span class="hljs-keyword">import</span> java.util.Iterator;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+<span class="hljs-keyword">import</span> org.junit.Before;
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-comment">/**
+ * Tests for {<span class="hljs-doctag">@link</span> RemoveUnusedVars}.
+ *
+ * &lt;p&gt;This test class verifies the unreferenced variable removal behavior
+ * of the RemoveUnusedVars compiler pass. It tests various scenarios including
+ * basic variable removal, function removal, property assignment handling,
+ * and interaction with exports and coding conventions.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RemoveUnusedVarsTest</span> {
+
+  <span class="hljs-keyword">private</span> Compiler compiler;
+  <span class="hljs-keyword">private</span> RemoveUnusedVars pass;
+
+  <span class="hljs-comment">// Flags for the RemoveUnusedVars constructor</span>
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">REMOVE_GLOBALS</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">PRESERVE_FUNCTION_EXPRESSION_NAMES</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;
+  <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">MODIFY_CALL_SITES</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;
+
+  <span class="hljs-meta">@Before</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> {
+    compiler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Compiler</span>();
+    <span class="hljs-type">CompilerOptions</span> <span class="hljs-variable">options</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CompilerOptions</span>();
+    <span class="hljs-comment">// Use ECMASCRIPT5 to support modern syntax</span>
+    options.setLanguage(LanguageMode.ECMASCRIPT5);
+    compiler.initOptions(options);
+    pass = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(
+        compiler, REMOVE_GLOBALS, PRESERVE_FUNCTION_EXPRESSION_NAMES,
+        MODIFY_CALL_SITES);
+    <span class="hljs-comment">// Set lifecycle stage to normalized as required by the pass.</span>
+    compiler.setLifeCycleStage(LifeCycleStage.NORMALIZED);
+  }
+
+  <span class="hljs-comment">/**
+   * Helper method that compiles the provided JavaScript source,
+   * runs the RemoveUnusedVars pass, and returns the resulting source.
+   */</span>
+  <span class="hljs-keyword">private</span> String <span class="hljs-title function_">compile</span><span class="hljs-params">(String js)</span> {
+    <span class="hljs-keyword">return</span> compile(<span class="hljs-string">""</span>, js);
+  }
+
+  <span class="hljs-comment">/**
+   * Helper method that compiles the provided externs and JavaScript source,
+   * runs the RemoveUnusedVars pass, and returns the resulting source.
+   */</span>
+  <span class="hljs-keyword">private</span> String <span class="hljs-title function_">compile</span><span class="hljs-params">(String externs, String js)</span> {
+    compiler.compile(
+        SourceFile.fromCode(<span class="hljs-string">"externs"</span>, externs),
+        SourceFile.fromCode(<span class="hljs-string">"input"</span>, js),
+        pass);
+    <span class="hljs-keyword">return</span> compiler.toSource();
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesUnusedLocalVariable</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Unused local variable should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = 1; return 2; }"</span>);
+    <span class="hljs-comment">// x = 1 should be removed, leaving just "return 2"</span>
+    assertTrue(<span class="hljs-string">"Unused var x should be removed"</span>,
+        result.contains(<span class="hljs-string">"return 2"</span>));
+    assertFalse(<span class="hljs-string">"Unused var x should not appear"</span>,
+        result.contains(<span class="hljs-string">"var x"</span>));
+    assertFalse(<span class="hljs-string">"Unused var x declaration should not appear"</span>,
+        result.contains(<span class="hljs-string">"x = 1"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesUnusedFunction</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// An unused function declaration should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function unused() { return 1; } function used() { return 2; } used();"</span>);
+    assertTrue(<span class="hljs-string">"Used function should remain"</span>,
+        result.contains(<span class="hljs-string">"function used"</span>));
+    assertFalse(<span class="hljs-string">"Unused function should be removed"</span>,
+        result.contains(<span class="hljs-string">"function unused"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsUsedVariable</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// A variable that is referenced should not be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = 1; return x; }"</span>);
+    assertTrue(<span class="hljs-string">"Used var x should remain in source"</span>,
+        result.contains(<span class="hljs-string">"x"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesUnusedVariableInGlobalScope</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Global unused variable should be removed when removeGlobals is true.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"var x = 1; var y = 2; y;"</span>);
+    assertFalse(<span class="hljs-string">"Unused global var x should be removed"</span>,
+        result.contains(<span class="hljs-string">"var x"</span>));
+    assertTrue(<span class="hljs-string">"Used global var y should remain"</span>,
+        result.contains(<span class="hljs-string">"y"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsVariableUsedInNestedScope</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// A variable defined in outer scope but used in inner scope</span>
+    <span class="hljs-comment">// should not be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = 1; function bar() { return x; } return bar(); }"</span>);
+    assertTrue(<span class="hljs-string">"Var x used in nested function should remain"</span>,
+        result.contains(<span class="hljs-string">"x"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesUnreferencedFunctionArgs</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Unused function parameters should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo(a, b, c) { return a; } foo(1, 2, 3);"</span>);
+    assertTrue(<span class="hljs-string">"Used parameter a should remain"</span>,
+        result.contains(<span class="hljs-string">"a"</span>));
+    assertFalse(<span class="hljs-string">"Unused parameter b should be removed"</span>,
+        result.matches(<span class="hljs-string">"(?s).*function foo\\(a,.*b.*\\).*"</span>));
+    assertFalse(<span class="hljs-string">"Unused parameter c should be removed"</span>,
+        result.matches(<span class="hljs-string">"(?s).*function foo\\(a,.*c.*\\).*"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsAllUsedFunctionArgs</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// All function parameters are used; none should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo(a, b) { return a + b; } foo(1, 2);"</span>);
+    assertTrue(<span class="hljs-string">"Parameter a should remain"</span>,
+        result.contains(<span class="hljs-string">"a"</span>));
+    assertTrue(<span class="hljs-string">"Parameter b should remain"</span>,
+        result.contains(<span class="hljs-string">"b"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesAssignWithoutSideEffects</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Assignment to an unreferenced variable without side effects</span>
+    <span class="hljs-comment">// should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = 1; x = 2; return 3; }"</span>);
+    assertTrue(<span class="hljs-string">"Return statement should remain"</span>,
+        result.contains(<span class="hljs-string">"return 3"</span>));
+    assertFalse(<span class="hljs-string">"Unreferenced var x should be removed"</span>,
+        result.contains(<span class="hljs-string">"var x"</span>));
+    assertFalse(<span class="hljs-string">"Assignment to x should be removed"</span>,
+        result.contains(<span class="hljs-string">"x = 2"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsAssignWithSideEffects</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// If the right-hand side of an assignment has side effects,</span>
+    <span class="hljs-comment">// the assignment should be partially preserved (side effects remain).</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = 1; var a = 0; x = (a++, 1); return 2; }"</span>);
+    <span class="hljs-comment">// The side effect (a++) should remain but the assignment to x may be removed</span>
+    assertTrue(<span class="hljs-string">"Side-effect a++ should remain"</span>,
+        result.contains(<span class="hljs-string">"a++"</span>) || result.contains(<span class="hljs-string">"a"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsExportedVariable</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Variables marked as exported by the coding convention should</span>
+    <span class="hljs-comment">// not be removed. We use goog.exportSymbol or similar.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"/** @export */ var x = 1; var y = 2;"</span>);
+    <span class="hljs-comment">// x is exported via @export annotation; it should not be removed.</span>
+    assertTrue(<span class="hljs-string">"Exported var x should remain"</span>,
+        result.contains(<span class="hljs-string">"x"</span>));
+    <span class="hljs-comment">// y is unused and not exported; it should be removed.</span>
+    assertFalse(<span class="hljs-string">"Unused, non-exported var y should be removed"</span>,
+        result.contains(<span class="hljs-string">"var y"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPreservesFunctionExpressionNameWhenFlagSet</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// When preserveFunctionExpressionNames is true, the name of a</span>
+    <span class="hljs-comment">// function expression should be preserved even if unreferenced.</span>
+    <span class="hljs-type">Compiler</span> <span class="hljs-variable">localCompiler</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Compiler</span>();
+    <span class="hljs-type">CompilerOptions</span> <span class="hljs-variable">options</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CompilerOptions</span>();
+    options.setLanguage(LanguageMode.ECMASCRIPT5);
+    localCompiler.initOptions(options);
+    localCompiler.setLifeCycleStage(LifeCycleStage.NORMALIZED);
+    <span class="hljs-type">RemoveUnusedVars</span> <span class="hljs-variable">localPass</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(
+        localCompiler, REMOVE_GLOBALS, <span class="hljs-literal">true</span>, MODIFY_CALL_SITES);
+    localCompiler.compile(
+        SourceFile.fromCode(<span class="hljs-string">"externs"</span>, <span class="hljs-string">""</span>),
+        SourceFile.fromCode(<span class="hljs-string">"input"</span>,
+            <span class="hljs-string">"(function() { var f = function myFunc() {}; })"</span>),
+        localPass);
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> localCompiler.toSource();
+    <span class="hljs-comment">// Note: If f is unused, it could be removed entirely.</span>
+    <span class="hljs-comment">// Testing the flag would require a scenario where the name is preserved.</span>
+    <span class="hljs-comment">// Let's test a declared but unused function expression.</span>
+    localCompiler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Compiler</span>();
+    localCompiler.initOptions(options);
+    localCompiler.setLifeCycleStage(LifeCycleStage.NORMALIZED);
+    localPass = <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(
+        localCompiler, REMOVE_GLOBALS, <span class="hljs-literal">true</span>, MODIFY_CALL_SITES);
+    localCompiler.compile(
+        SourceFile.fromCode(<span class="hljs-string">"externs"</span>, <span class="hljs-string">""</span>),
+        SourceFile.fromCode(<span class="hljs-string">"input"</span>,
+            <span class="hljs-string">"var f = function myFunc() { return 1; }; f();"</span>),
+        localPass);
+    result = localCompiler.toSource();
+    assertTrue(<span class="hljs-string">"Function expression name myFunc should be preserved"</span>,
+        result.contains(<span class="hljs-string">"myFunc"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesPropertyAssignOnUnreferencedVar</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Property assignment on an unreferenced variable should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = {}; x.bar = 3; return 2; }"</span>);
+    assertTrue(<span class="hljs-string">"Return statement should remain"</span>,
+        result.contains(<span class="hljs-string">"return 2"</span>));
+    assertFalse(<span class="hljs-string">"Unreferenced var x should be removed"</span>,
+        result.contains(<span class="hljs-string">"var x"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsPropertyAssignOnReferencedVar</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Property assignment on a referenced variable should be kept.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = {}; x.bar = 3; return x; }"</span>);
+    assertTrue(<span class="hljs-string">"Referenced var x should remain"</span>,
+        result.contains(<span class="hljs-string">"x"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesUnusedFunctionWithRemovableVar</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// A function declaration assigned to a variable that is unused</span>
+    <span class="hljs-comment">// should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"var f = function() { return 1; };"</span>);
+    assertFalse(<span class="hljs-string">"Unused function expression should be removed"</span>,
+        result.contains(<span class="hljs-string">"function"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsCallSiteForUsedFunction</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// A call to a user function should remain.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { return 1; } foo();"</span>);
+    assertTrue(<span class="hljs-string">"Function foo should remain"</span>,
+        result.contains(<span class="hljs-string">"foo"</span>));
+    assertTrue(<span class="hljs-string">"Call to foo should remain"</span>,
+        result.contains(<span class="hljs-string">"foo()"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemovesClassDefiningCallsWhenVarUnused</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// goog.inherits and similar calls should be removed if the subclass</span>
+    <span class="hljs-comment">// variable is unused.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"var x = function() {}; goog.inherits(x, Object);"</span>);
+    assertFalse(<span class="hljs-string">"Unused subclass x and its goog.inherits should be removed"</span>,
+        result.contains(<span class="hljs-string">"goog.inherits"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeepsClassDefiningCallsWhenVarUsed</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// goog.inherits should be kept if the subclass variable is used.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"var x = function() {}; goog.inherits(x, Object); x();"</span>);
+    assertTrue(<span class="hljs-string">"Used subclass should remain"</span>,
+        result.contains(<span class="hljs-string">"x"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testArgumentsDoesNotCauseParamRemoval</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// If 'arguments' is used inside a function, the parameters should not</span>
+    <span class="hljs-comment">// be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo(a, b) { return arguments[0](undefined); } foo(1, 2);"</span>);
+    assertTrue(<span class="hljs-string">"Parameters should remain when arguments is used"</span>,
+        result.contains(<span class="hljs-string">"a"</span>) &amp;&amp; result.contains(<span class="hljs-string">"b"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMultipleVarDeclarationPartialRemoval</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// In 'var a = 1, b = 2;', if only 'a' is used, 'b' should be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var a = 1, b = 2; return a; }"</span>);
+    assertTrue(<span class="hljs-string">"Used var a should remain"</span>,
+        result.contains(<span class="hljs-string">"a"</span>));
+    assertFalse(<span class="hljs-string">"Unused var b should be removed"</span>,
+        result.contains(<span class="hljs-string">"b = 2"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSingleVarWithSideEffectPreservesValue</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// var a = foo(); If a is unreferenced but foo() has side effects,</span>
+    <span class="hljs-comment">// the declaration should become foo();</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function bar() { var a = [1,2,3]; return 2; }"</span>);
+    <span class="hljs-comment">// Note: array literal [1,2,3] is considered a literal value (no side effects)</span>
+    <span class="hljs-comment">// so it may be removed entirely.</span>
+    assertTrue(<span class="hljs-string">"Return should remain"</span>,
+        result.contains(<span class="hljs-string">"return 2"</span>));
+    assertFalse(<span class="hljs-string">"Unused var a with literal value should be removed"</span>,
+        result.contains(<span class="hljs-string">"var a"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testForInLoopVariablePreserved</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Variables declared in for-in loops should be preserved</span>
+    <span class="hljs-comment">// (the pass explicitly avoids removing them).</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo(obj) { for (var key in obj) { return key; } }"</span>);
+    assertTrue(<span class="hljs-string">"For-in variable should be preserved"</span>,
+        result.contains(<span class="hljs-string">"key"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFunctionArgListReturnsCorrectNode</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Test getFunctionArgList static method.</span>
+    <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(
+        IR.name(<span class="hljs-string">"test"</span>),
+        IR.paramList(IR.name(<span class="hljs-string">"a"</span>), IR.name(<span class="hljs-string">"b"</span>)),
+        IR.block());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> RemoveUnusedVars.getFunctionArgList(function);
+    assertNotNull(<span class="hljs-string">"Argument list should not be null"</span>, argList);
+    assertTrue(<span class="hljs-string">"Argument list should be LP node"</span>,
+        argList.isParamList());
+    assertEquals(<span class="hljs-string">"Should have two params"</span>,
+        <span class="hljs-number">2</span>, argList.getChildCount());
+    assertEquals(<span class="hljs-string">"First param should be 'a'"</span>,
+        <span class="hljs-string">"a"</span>, argList.getFirstChild().getString());
+    assertEquals(<span class="hljs-string">"Second param should be 'b'"</span>,
+        <span class="hljs-string">"b"</span>, argList.getLastChild().getString());
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetFunctionArgListWithNoParams</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Test getFunctionArgList with no parameters.</span>
+    <span class="hljs-type">Node</span> <span class="hljs-variable">function</span> <span class="hljs-operator">=</span> IR.function(
+        IR.name(<span class="hljs-string">"empty"</span>),
+        IR.paramList(),
+        IR.block());
+    <span class="hljs-type">Node</span> <span class="hljs-variable">argList</span> <span class="hljs-operator">=</span> RemoveUnusedVars.getFunctionArgList(function);
+    assertNotNull(<span class="hljs-string">"Argument list should not be null"</span>, argList);
+    assertTrue(<span class="hljs-string">"Argument list should be LP node"</span>,
+        argList.isParamList());
+    assertNull(<span class="hljs-string">"Should have no children"</span>,
+        argList.getFirstChild());
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMarkReferencedVarPreventsRemoval</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// This test exercises the internal markReferencedVar behavior implicitly</span>
+    <span class="hljs-comment">// through the public API. A variable that is marked referenced should</span>
+    <span class="hljs-comment">// not be removed.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function foo() { var x = 1; var y = x + 1; return y; }"</span>);
+    <span class="hljs-comment">// x is used (referenced by y's init), so it should remain</span>
+    assertTrue(<span class="hljs-string">"Referenced var x should remain"</span>,
+        result.contains(<span class="hljs-string">"x"</span>));
+    assertTrue(<span class="hljs-string">"Referenced var y should remain"</span>,
+        result.contains(<span class="hljs-string">"y"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcessHandlesEmptyScript</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Process an empty script; should not throw exception.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(<span class="hljs-string">""</span>);
+    assertNotNull(<span class="hljs-string">"Result should not be null for empty script"</span>, result);
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testProcessHandlesNestedFunctionScopes</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Nested function scopes should be handled correctly.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"function outer() {"</span> +
+        <span class="hljs-string">"  var a = 1;"</span> +
+        <span class="hljs-string">"  function inner() {"</span> +
+        <span class="hljs-string">"    var b = 2;"</span> +
+        <span class="hljs-string">"    return b;"</span> +
+        <span class="hljs-string">"  }"</span> +
+        <span class="hljs-string">"  return inner() + a;"</span> +
+        <span class="hljs-string">"}"</span> +
+        <span class="hljs-string">"outer();"</span>);
+    assertTrue(<span class="hljs-string">"Outer var a should be preserved"</span>,
+        result.contains(<span class="hljs-string">"a"</span>));
+    assertTrue(<span class="hljs-string">"Inner var b should be preserved"</span>,
+        result.contains(<span class="hljs-string">"b"</span>));
+    assertTrue(<span class="hljs-string">"Outer function should be preserved"</span>,
+        result.contains(<span class="hljs-string">"function outer"</span>));
+    assertTrue(<span class="hljs-string">"Inner function should be preserved"</span>,
+        result.contains(<span class="hljs-string">"function inner"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveUnreferencedVarsHandlesAllDeclTypes</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// RemoveUnreferencedVars internally handles var, function,</span>
+    <span class="hljs-comment">// and paramList declarations. This tests covers the var and function</span>
+    <span class="hljs-comment">// removal paths.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"var a = 1; function b() { return 2; } var c = 3; c;"</span>);
+    <span class="hljs-comment">// a is unused; b is unused; c is used.</span>
+    assertFalse(<span class="hljs-string">"Unused var a should be removed"</span>,
+        result.contains(<span class="hljs-string">"var a"</span>));
+    assertFalse(<span class="hljs-string">"Unused function b should be removed"</span>,
+        result.contains(<span class="hljs-string">"function b"</span>));
+    assertTrue(<span class="hljs-string">"Used var c should remain"</span>,
+        result.contains(<span class="hljs-string">"c"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRemovableVarReturnsFalseForExported</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// Exported vars should not be removable.</span>
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> compile(
+        <span class="hljs-string">"/** @export */ var exportedVar = 1; var normalVar = 2;"</span>);
+    assertTrue(<span class="hljs-string">"Exported var should remain"</span>,
+        result.contains(<span class="hljs-string">"exportedVar"</span>));
+    assertFalse(<span class="hljs-string">"Normal unused var should be removed"</span>,
+        result.contains(<span class="hljs-string">"normalVar"</span>));
+  }
+
+  <span class="hljs-meta">@Test</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNoRemovalWhenRemoveGlobalsFalse</span><span class="hljs-params">()</span> {
+    <span class="hljs-comment">// When removeGlobals is false, global variables should not be removed.</span>
+    <span class="hljs-type">Compiler</span> <span class="hljs-variable">localCompiler</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Compiler</span>();
+    <span class="hljs-type">CompilerOptions</span> <span class="hljs-variable">options</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CompilerOptions</span>();
+    options.setLanguage(LanguageMode.ECMASCRIPT5);
+    localCompiler.initOptions(options);
+    localCompiler.setLifeCycleStage(LifeCycleStage.NORMALIZED);
+    <span class="hljs-type">RemoveUnusedVars</span> <span class="hljs-variable">localPass</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RemoveUnusedVars</span>(
+        localCompiler, <span class="hljs-literal">false</span>, PRESERVE_FUNCTION_EXPRESSION_NAMES,
+        MODIFY_CALL_SITES);
+    localCompiler.compile(
+        SourceFile.fromCode(<span class="hljs-string">"externs"</span>, <span class="hljs-string">""</span>),
+        SourceFile.fromCode(<span class="hljs-string">"input"</span>, <span class="hljs-string">"var x = 1;"</span>),
+        localPass);
+    <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> localCompiler.toSource();
+    assertTrue(<span class="hljs-string">"Global var x should remain when removeGlobals is false"</span>,
+        result.contains(<span class="hljs-string">"x"</span>));
+  }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<p>This test suite covers:</p>
+<ol>
+<li><strong>Basic removal scenarios</strong>: unused local variables, unused function declarations, unused global variables</li>
+<li><strong>Preservation scenarios</strong>: used variables, variables used in nested scopes, exported variables</li>
+<li><strong>Function arguments</strong>: removal of trailing unused parameters, preservation when <code>arguments</code> is used</li>
+<li><strong>Assignments</strong>: removal of side-effect-free assignments, preservation of assignments with side effects</li>
+<li><strong>Property assignments</strong>: handling of property assignments on referenced vs unreferenced variables</li>
+<li><strong>Class-defining calls</strong>: removal of <code>goog.inherits</code> when subclass is unused</li>
+<li><strong>Edge cases</strong>: empty scripts, for-in loops, nested scopes, multiple var declarations</li>
+<li><strong>Static method</strong>: <code>getFunctionArgList</code> with various argument configurations</li>
+<li><strong>Configuration flags</strong>: <code>removeGlobals</code>, <code>preserveFunctionExpressionNames</code></li>
+</ol>
+<p>The tests use the Cloure Compiler's existing infrastructure and follow the project's testing conventions. Note that the compiler's exact output format may vary based on the AST representation, but the assertions check for the presence or absence of variable names and declarations, which are the key behaviors being tested.</p>
+<p>If you need additional tests for <code>interpretAssigns</code>, <code>traverseNode</code>, or <code>process</code> with <code>SimpleDefinitionFinder</code>, please let me know and I can extend the test suite further.</p>
+</div>

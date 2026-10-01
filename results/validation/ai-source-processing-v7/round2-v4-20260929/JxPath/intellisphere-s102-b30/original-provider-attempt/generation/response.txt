@@ -1,0 +1,336 @@
+Rendered KKU IntelSphere response. Model label: Deepseek - deepseek-v4-pro
+
+```java
+// org/apache/commons/jxpath/ri/model/dom/DOMNodePointerTest.java
+package org.apache.commons.jxpath.ri.model.dom;
+
+import java.util.Locale;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.jxpath.JXPathException;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
+
+import junit.framework.TestCase;
+
+public class DOMNodePointerTest extends TestCase {
+
+    private Document doc;
+    private Element root;
+    private Element child;
+    private Text textNode;
+    private ProcessingInstruction pi;
+    private Element langElem;
+    private DOMNodePointer rootPtr;
+
+    public void setUp() throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        doc = db.newDocument();
+        // root element with namespace
+        root = doc.createElementNS("http://example.com", "root");
+        root.setPrefix("ex");
+        doc.appendChild(root);
+        // child element with same namespace
+        child = doc.createElementNS("http://example.com", "child");
+        child.setPrefix("ex");
+        root.appendChild(child);
+        // text node inside child
+        textNode = doc.createTextNode("text content");
+        child.appendChild(textNode);
+        // processing instruction
+        pi = doc.createProcessingInstruction("target", "data");
+        root.appendChild(pi);
+        // element with xml:lang
+        langElem = doc.createElement("langElem");
+        langElem.setAttribute("xml:lang", "en-US");
+        root.appendChild(langElem);
+        // set default namespace on root (xmlns)
+        root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", "http://default.example.com");
+        // set a namespace prefix
+        root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:ns", "http://ns.example.com");
+
+        rootPtr = new DOMNodePointer(root, Locale.US);
+    }
+
+    // 1.
+    public void testGetBaseValue() {
+        assertSame(root, rootPtr.getBaseValue());
+    }
+
+    // 2.
+    public void testGetImmediateNode() {
+        assertSame(root, rootPtr.getImmediateNode());
+    }
+
+    // 3.
+    public void testGetNamespaceURI_element() {
+        assertEquals("http://example.com", rootPtr.getNamespaceURI());
+    }
+
+    // 4.
+    public void testGetDefaultNamespaceURI() {
+        // root has xmlns attribute default namespace
+        assertEquals("http://default.example.com", rootPtr.getDefaultNamespaceURI());
+    }
+
+    // 5.
+    public void testGetNamespaceURI_withPrefix() {
+        // ns prefix defined on root
+        assertEquals("http://ns.example.com", rootPtr.getNamespaceURI("ns"));
+    }
+
+    // 6.
+    public void testGetName_elementAndPI() {
+        // element
+        QName name = rootPtr.getName();
+        assertEquals("ex", name.getPrefix());
+        assertEquals("root", name.getName());
+        // PI
+        DOMNodePointer piPtr = new DOMNodePointer(pi, Locale.US);
+        QName piName = piPtr.getName();
+        assertEquals("target", piName.getName());
+        assertNull(piName.getPrefix());
+    }
+
+    // 7.
+    public void testAsPath_element() {
+        // root element with namespace, prefix not default -> should use prefix
+        String path = rootPtr.asPath();
+        assertTrue(path.contains("ex:root["));
+    }
+
+    // 8.
+    public void testAsPath_textNode() {
+        DOMNodePointer textPtr = new DOMNodePointer(textNode, Locale.US);
+        String path = textPtr.asPath();
+        assertTrue(path.startsWith("/text()["));
+    }
+
+    // 9.
+    public void testAsPath_withId_escape() {
+        DOMNodePointer idPtr = new DOMNodePointer(root, Locale.US, "id'\"value");
+        String path = idPtr.asPath();
+        assertTrue(path.startsWith("id('"));
+        assertTrue(path.contains("&apos;"));
+        assertTrue(path.contains("&quot;"));
+    }
+
+    // 10.
+    public void testSetValue_textNode_replace() {
+        DOMNodePointer textPtr = new DOMNodePointer(textNode, Locale.US);
+        textPtr.setValue("new text");
+        assertEquals("new text", textPtr.getValue());
+    }
+
+    // 11.
+    public void testSetValue_emptyRemove() {
+        DOMNodePointer textPtr = new DOMNodePointer(textNode, Locale.US);
+        Node parent = textNode.getParentNode();
+        assertNotNull(parent);
+        textPtr.setValue("");
+        // verify node removed
+        assertNull(textNode.getParentNode());
+    }
+
+    // 12.
+    public void testRemove() {
+        DOMNodePointer childPtr = new DOMNodePointer(child, Locale.US);
+        childPtr.remove();
+        assertNull(child.getParentNode());
+    }
+
+    // 13.
+    public void testRemoveRootException() {
+        // root has no parent
+        try {
+            rootPtr.remove();
+            fail("Should throw JXPathException");
+        } catch (JXPathException e) {
+            // expected
+        }
+    }
+
+    // 14.
+    public void testCompareChildNodePointers() {
+        DOMNodePointer childPtr = new DOMNodePointer(child, Locale.US);
+        DOMNodePointer piPtr = new DOMNodePointer(pi, Locale.US);
+        // child comes before pi in document order
+        assertTrue(rootPtr.compareChildNodePointers(childPtr, piPtr) < 0);
+        assertTrue(rootPtr.compareChildNodePointers(piPtr, childPtr) > 0);
+        // same node
+        assertEquals(0, rootPtr.compareChildNodePointers(childPtr, childPtr));
+    }
+
+    // 15.
+    public void testTestNode_static() {
+        // NodeNameTest with wildcard true and no prefix -> true
+        NodeTest wildcardNameTest = new NodeNameTest(new QName(null, "any"), null, true);
+        assertTrue(DOMNodePointer.testNode(root, wildcardNameTest));
+        // NodeNameTest with matching local name and namespace
+        NodeTest nameTest = new NodeNameTest(new QName("ex", "root"), "http://example.com");
+        assertTrue(DOMNodePointer.testNode(root, nameTest));
+        // NodeTypeTest NODE_TYPE_NODE: element -> true
+        NodeTypeTest nodeTest = new NodeTypeTest(Compiler.NODE_TYPE_NODE);
+        assertTrue(DOMNodePointer.testNode(root, nodeTest));
+        // NodeTypeTest NODE_TYPE_COMMENT: element -> false
+        assertFalse(DOMNodePointer.testNode(root, new NodeTypeTest(Compiler.NODE_TYPE_COMMENT)));
+        // ProcessingInstructionTest
+        ProcessingInstructionTest piTest = new ProcessingInstructionTest("target");
+        assertTrue(DOMNodePointer.testNode(pi, piTest));
+        piTest = new ProcessingInstructionTest("other");
+        assertFalse(DOMNodePointer.testNode(pi, piTest));
+    }
+}
+
+```
+
+```java
+// org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointerTest.java
+package org.apache.commons.jxpath.ri.model.jdom;
+
+import java.util.Locale;
+
+import org.apache.commons.jxpath.JXPathException;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest;
+import org.jdom.CDATA;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.ProcessingInstruction;
+import org.jdom.Text;
+
+import junit.framework.TestCase;
+
+public class JDOMNodePointerTest extends TestCase {
+
+    private Document doc;
+    private Element root;
+    private Element child;
+    private Text textNode;
+    private CDATA cdata;
+    private ProcessingInstruction pi;
+    private Element langElem;
+    private JDOMNodePointer rootPtr;
+
+    public void setUp() throws Exception {
+        Namespace ns = Namespace.getNamespace("ex", "http://example.com");
+        root = new Element("root", ns);
+        // set default namespace via xmlns attribute
+        root.addNamespaceDeclaration(Namespace.getNamespace("", "http://default.example.com"));
+        // namespace prefix
+        root.addNamespaceDeclaration(Namespace.getNamespace("ns", "http://ns.example.com"));
+
+        child = new Element("child", ns);
+        root.addContent(child);
+        // text node
+        textNode = new Text("text content");
+        child.addContent(textNode);
+        // CDATA
+        cdata = new CDATA("cdata content");
+        root.addContent(cdata);
+        // processing instruction
+        pi = new ProcessingInstruction("target", "data");
+        root.addContent(pi);
+        // lang element
+        langElem = new Element("langElem");
+        langElem.setAttribute("lang", "en-US", Namespace.XML_NAMESPACE);
+        root.addContent(langElem);
+
+        doc = new Document(root);
+
+        rootPtr = new JDOMNodePointer(root, Locale.US);
+    }
+
+    // 1.
+    public void testGetBaseValue() {
+        assertSame(root, rootPtr.getBaseValue());
+    }
+
+    // 2.
+    public void testGetImmediateNode() {
+        assertSame(root, rootPtr.getImmediateNode());
+    }
+
+    // 3.
+    public void testGetNamespaceURI_element() {
+        assertEquals("http://example.com", rootPtr.getNamespaceURI());
+    }
+
+    // 4.
+    public void testGetNamespaceURI_withPrefix() {
+        assertEquals("http://ns.example.com", rootPtr.getNamespaceURI("ns"));
+    }
+
+    // 5.
+    public void testGetName_element() {
+        QName name = rootPtr.getName();
+        assertEquals("ex", name.getPrefix());
+        assertEquals("root", name.getName());
+    }
+
+    // 6.
+    public void testGetName_pi() {
+        JDOMNodePointer piPtr = new JDOMNodePointer(pi, Locale.US);
+        QName piName = piPtr.getName();
+        assertEquals("target", piName.getName());
+        assertNull(piName.getPrefix());
+    }
+
+    // 7.
+    public void testAsPath_element() {
+        String path = rootPtr.asPath();
+        assertTrue(path.contains("ex:root["));
+    }
+
+    // 8.
+    public void testAsPath_textNode() {
+        JDOMNodePointer textPtr = new JDOMNodePointer(textNode, Locale.US);
+        String path = textPtr.asPath();
+        assertTrue(path.startsWith("/text()["));
+    }
+
+    // 9.
+    public void testAsPath_pi() {
+        JDOMNodePointer piPtr = new JDOMNodePointer(pi, Locale.US);
+        String path = piPtr.asPath();
+        assertTrue(path.contains("processing-instruction('target')"));
+    }
+
+    // 10.
+    public void testSetValue_text_replace() {
+        JDOMNodePointer textPtr = new JDOMNodePointer(textNode, Locale.US);
+        textPtr.setValue("new text");
+        assertEquals("new text", textPtr.getValue());
+    }
+
+    // 11.
+    public void testSetValue_empty_remove() {
+        JDOMNodePointer textPtr = new JDOMNodePointer(textNode, Locale.US);
+        textPtr.setValue("");
+        assertNull(textNode.getParent());
+    }
+
+    // 12.
+    public void testRemove() {
+        JDOMNodePointer childPtr = new JDOMNodePointer(child,
+```

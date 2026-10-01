@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "intellisphere",
+  "provider": "KKU AI Sphere / IntelliSphere",
+  "model": "gemini-flash",
+  "project": "Lang",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 101,
+  "prompt_iteration": 1,
+  "generated_at": "2026-10-01T08:09:14.423Z",
+  "ingested_at": "2026-10-01T08:12:51.347498+00:00",
+  "parameters": {
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "org/apache/commons/lang3/math/NumberUtilsTest.java",
+      "before_sha256": "74130c370490d89f5a77796fee3c8e0361fc4a2247c4795b29125c56eb910752",
+      "after_sha256": "9fe5e60d70a5d5673ce47b56b3804b2b841d9e16aa080a654f9f13f116f279a1",
+      "local_syntax_recovery": [
+        {
+          "kind": "drop_incomplete_trailing_method",
+          "method": "testMinMaxInt",
+          "discarded_characters": 216,
+          "reason": "Visible final Java ends mid-assertion; keep preceding complete methods and close class."
+        }
+      ],
+      "selection": "Exact observed tail and parser EOF, before any fixed/buggy outcome. No assertions rewritten."
+    }
+  ],
+  "notes": [
+    "Original prompt only; no evaluation feedback sent.",
+    "Copy Text returned an empty clipboard. response.md serializes rendered DOM blocks; rendered-response.html/text and exact code text retained. No source characters were repaired during capture.",
+    "Final UI is complete but Java ends inside testMinMaxInt, without closing method/class braces.",
+    "Duration is an observed UI upper bound; model label gemini-flash is recorded exactly, resolved version unknown.",
+    "Local processing v30: exact-tail, hash-identified Gemini Lang complete-prefix recovery before evaluation; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "ecfb1b076cf0a2092cd9dcab4bdbd2034476399b34617ffb5962e5c24ee4bb11",
+  "response_sha256": "5f4248ae354b8c6ff052e4fb93575e35279fe7c0d4848d2d535c9327aa704655",
+  "context_manifest_sha256": "27a28b8b7919d07b597407396413d1a9d3de26a32b48b60b9ff974362ddb5dcc",
+  "source_files": [
+    {
+      "path": "src/main/java/org/apache/commons/lang3/math/NumberUtils.java",
+      "class": "org.apache.commons.lang3.math.NumberUtils",
+      "sha256": "0374c7b486626927217ad42677e1a57fc60fc551218660316a0e7f4f8ea79477",
+      "bytes": 49478
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.xml",
+      "sha256": "371c4e41a37cdfc862f8aaeabc69283525a5c84e364c510de4cdbb48f9dbe8ad",
+      "bytes": 11775
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "0110b202c1c966cb65064541136102bab8642ac9d7464e43a326716b26d96be9",
+      "bytes": 19643
+    }
+  ],
+  "java_files": [
+    {
+      "path": "org/apache/commons/lang3/math/NumberUtilsTest.java",
+      "sha256": "9fe5e60d70a5d5673ce47b56b3804b2b841d9e16aa080a654f9f13f116f279a1",
+      "bytes": 3976
+    }
+  ],
+  "external_suite": "Lang-1f-intellisphere.101.tar.bz2",
+  "external_suite_sha256": "c0b809da33e43c256c427917d6635f0ccac2f8e360cf8fb3954d21ee255036c3",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

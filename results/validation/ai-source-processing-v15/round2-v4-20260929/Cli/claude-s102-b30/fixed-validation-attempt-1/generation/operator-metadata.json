@@ -1,0 +1,61 @@
+{
+  "tool": "claude",
+  "model": "Sonnet 5.5 Medium",
+  "generated_at": "2026-10-01T06:07:03.963Z",
+  "generation_seconds": 117.342429717,
+  "prompt_iteration": 1,
+  "parameters": {
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://claude.ai/chat/1706610b-4649-488b-8ca8-1bc201102088",
+  "manual_edits": [
+    {
+      "path": "org/apache/commons/cli/CommandLineGeneratedTest.java",
+      "before_sha256": "56e4478038c3bb0349c9a57df145a34c29bfe85e79129e8db57fecf2075cf8ab",
+      "after_sha256": "261a7251c9790e3455147ace99522033386e5ed2759672eeafb9daab52d04002",
+      "local_compatibility_repairs": [
+        {
+          "old": "o.addValueForProcessing(value);",
+          "new": "o.addValue(value);",
+          "reason": "Fixed Option.java declares package-visible addValue(String), routing to processValue; same-package test helper."
+        }
+      ],
+      "selection": "Preceding fixed compiler error and fixed API source only; assertions unchanged."
+    },
+    {
+      "path": "org/apache/commons/cli/CommandLineGeneratedTest.java",
+      "before_sha256": "261a7251c9790e3455147ace99522033386e5ed2759672eeafb9daab52d04002",
+      "after_sha256": "a023f89cdf1a65732745d41ad86e5a7055f07e0199df3ad7dcf1f7aa7d47f80c",
+      "local_compatibility_repairs": [
+        {
+          "old": ".addValueForProcessing(",
+          "new": ".addValue(",
+          "occurrences": 6,
+          "reason": "All Option receiver calls use the package-visible fixed-version API; arguments and assertions unchanged."
+        }
+      ],
+      "selection": "Both helper and direct call sites identified by fixed compiler diagnostics and original test source."
+    },
+    {
+      "path": "org/apache/commons/cli/CommandLineGeneratedTest.java",
+      "before_sha256": "a023f89cdf1a65732745d41ad86e5a7055f07e0199df3ad7dcf1f7aa7d47f80c",
+      "after_sha256": "594cc6a3ad252a3e7075665236284dfe8109fdc30c4007c52602cdb7429f82b2",
+      "renderer_suffixes_removed": 0,
+      "budget_removed_methods": [
+        "org.apache.commons.cli.CommandLineGeneratedTest::testAddSameOptionTwiceStoredOnce"
+      ],
+      "selection": "First 30 methods in sorted file/source order; no execution outcomes used."
+    }
+  ],
+  "notes": [
+    "Exact original Cli prompt only, no logs sent. Complete code from rendered DOM; generation duration is observed upper bound.",
+    "Local processing v15 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/Cli/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v15-fixed-recovery",
+  "raw_test_method_count": 31,
+  "retained_test_method_count": 30
+}

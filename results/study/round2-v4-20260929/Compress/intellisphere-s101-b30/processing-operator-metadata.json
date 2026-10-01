@@ -1,0 +1,53 @@
+{
+  "tool": "intellisphere",
+  "model": "gemini-pro",
+  "generated_at": "2026-10-01T06:17:42.304Z",
+  "generation_seconds": 148.015494187,
+  "prompt_iteration": 1,
+  "parameters": {
+    "selected_agent": "Gemini",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "manual_edits": [
+    {
+      "path": "org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStreamTest.java",
+      "before_sha256": "de396cc2eaa6d25e6575e40adf69a10d052b7804317a52dbf34ade6400ff2a1b",
+      "after_sha256": "73be7ad84423f8b2158dee5f7f7e727dd43c585030976e19982b9c53a9a37d54",
+      "local_compatibility_repairs": [
+        {
+          "old": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_NEW_CRC, \"crc.txt\");",
+          "new": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_NEW_CRC);\n        entry.setName(\"crc.txt\");",
+          "reason": "Fixed class provides CpioArchiveEntry(short) and public setName(String), not the combined constructor; values preserved."
+        },
+        {
+          "old": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_NEW_CRC, \"badcrc.txt\");",
+          "new": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_NEW_CRC);\n        entry.setName(\"badcrc.txt\");",
+          "reason": "Fixed class provides CpioArchiveEntry(short) and public setName(String), not the combined constructor; values preserved."
+        },
+        {
+          "old": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_OLD_ASCII, \"oldascii.txt\");",
+          "new": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_OLD_ASCII);\n        entry.setName(\"oldascii.txt\");",
+          "reason": "Fixed class provides CpioArchiveEntry(short) and public setName(String), not the combined constructor; values preserved."
+        },
+        {
+          "old": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_OLD_BINARY, \"oldbin.txt\");",
+          "new": "CpioArchiveEntry entry = new CpioArchiveEntry(CpioConstants.FORMAT_OLD_BINARY);\n        entry.setName(\"oldbin.txt\");",
+          "reason": "Fixed class provides CpioArchiveEntry(short) and public setName(String), not the combined constructor; values preserved."
+        }
+      ],
+      "selection": "Fixed compiler diagnostics and fixed constructor/setName implementation only; assertions unchanged."
+    }
+  ],
+  "notes": [
+    "Exact original Compress prompt only, no logs sent. Complete code preserved from rendered DOM; observed generation upper bound.",
+    "Local processing v16 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/Compress/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v16-fixed-recovery",
+  "raw_test_method_count": 18,
+  "retained_test_method_count": 18
+}

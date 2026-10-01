@@ -1,0 +1,265 @@
+// org/jsoup/nodes/DocumentTest.java
+package org.jsoup.nodes;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+/**
+ * Unit tests for the {@link Document} class.
+ * Tests deterministic behavior of the fixed-reference revision.
+ */
+public class DocumentTest {
+
+    // ---------- Constructor ----------
+    
+    @Test
+    public void testConstructorStoresBaseUri() {
+        Document doc = new Document("http://example.com");
+        assertEquals("http://example.com", doc.baseUri());
+    }
+
+    @Test
+    public void testConstructorEmptyBaseUri() {
+        Document doc = new Document("");
+        assertEquals("", doc.baseUri());
+    }
+
+    // ---------- nodeName ----------
+    
+    @Test
+    public void testNodeName() {
+        Document doc = new Document("");
+        assertEquals("#document", doc.nodeName());
+    }
+
+    // ---------- outerHtml ----------
+    
+    @Test
+    public void testOuterHtmlEmptyDocument() {
+        Document doc = new Document("");
+        // Document has no wrapper tag; outerHtml() returns its inner HTML.
+        assertEquals("", doc.outerHtml());
+    }
+
+    @Test
+    public void testOuterHtmlWithContent() {
+        Document doc = new Document("http://example.com");
+        doc.appendElement("div").text("Hello");
+        assertTrue(doc.outerHtml().contains("Hello"));
+    }
+
+    // ---------- head / body ----------
+    
+    @Test
+    public void testHeadAndBodyOnEmptyDocumentReturnNull() {
+        Document doc = new Document("http://example.com");
+        assertNull(doc.head());
+        assertNull(doc.body());
+    }
+
+    @Test
+    public void testHeadAndBodyAfterNormalise() {
+        Document doc = new Document("http://example.com");
+        doc.normalise();
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+    }
+
+    @Test
+    public void testHeadAndBodyOnCreateShell() {
+        Document doc = Document.createShell("http://example.com");
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+    }
+
+    // ---------- title getter ----------
+    
+    @Test
+    public void testTitleOnEmptyDocumentReturnsEmptyString() {
+        Document doc = new Document("http://example.com");
+        assertEquals("", doc.title());
+    }
+
+    @Test
+    public void testTitleAfterSetting() {
+        Document doc = Document.createShell("http://example.com");
+        doc.title("My Title");
+        assertEquals("My Title", doc.title());
+    }
+
+    @Test
+    public void testTitleTrimsReturnedValue() {
+        Document doc = Document.createShell("http://example.com");
+        doc.title("  Spaced Title  ");
+        assertEquals("Spaced Title", doc.title());
+    }
+
+    @Test
+    public void testTitleWhenTitleElementIsPresent() {
+        Document doc = Document.createShell("http://example.com");
+        doc.head().appendElement("title").text("Existing");
+        assertEquals("Existing", doc.title());
+    }
+
+    // ---------- title setter ----------
+    
+    @Test
+    public void testSetTitleAddsTitleElementToHead() {
+        Document doc = Document.createShell("http://example.com");
+        doc.title("New Title");
+        Element titleEl = doc.head().select("title").first();
+        assertNotNull(titleEl);
+        assertEquals("New Title", titleEl.text());
+    }
+
+    @Test
+    public void testSetTitleUpdatesExistingTitle() {
+        Document doc = Document.createShell("http://example.com");
+        doc.title("First");
+        doc.title("Second");
+        assertEquals("Second", doc.title());
+        // there should be only one title element
+        assertEquals(1, doc.head().select("title").size());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetTitleWithNullThrowsIllegalArgumentException() {
+        Document doc = Document.createShell("http://example.com");
+        doc.title(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testSetTitleOnDocumentWithoutHeadThrowsNPE() {
+        Document doc = new Document("http://example.com");
+        // head() returns null – calling appendElement on null throws NPE
+        doc.title("any");
+    }
+
+    // ---------- createElement ----------
+    
+    @Test
+    public void testCreateElementReturnsDetachedElement() {
+        Document doc = new Document("http://example.com");
+        Element a = doc.createElement("a");
+        assertEquals("a", a.tagName());
+        assertEquals("http://example.com", a.baseUri());
+        // verify it is not a child of the document
+        assertEquals(0, doc.children().size());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testCreateElementNullTagName() {
+        Document doc = new Document("http://example.com");
+        doc.createElement(null); // Tag.valueOf(null) throws NPE
+    }
+
+    @Test
+    public void testCreateElementEmptyTagName() {
+        Document doc = new Document("http://example.com");
+        // Tag.valueOf("") creates a tag named ""? It is accepted.
+        Element el = doc.createElement("");
+        assertEquals("", el.tagName());
+    }
+
+    // ---------- createShell ----------
+    
+    @Test
+    public void testCreateShellBuildsEmptyTemplate() {
+        Document doc = Document.createShell("http://example.com");
+        assertNotNull(doc.select("html").first());
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        assertEquals("http://example.com", doc.baseUri());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateShellNullBaseUriThrowsIllegalArgumentException() {
+        Document.createShell(null);
+    }
+
+    // ---------- normalise() public ----------
+    
+    @Test
+    public void testNormaliseEnsuresHtmlHeadBodyExist() {
+        Document doc = new Document("http://example.com");
+        assertNull(doc.head());
+        assertNull(doc.body());
+        doc.normalise();
+        assertNotNull(doc.select("html").first());
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+    }
+
+    @Test
+    public void testNormaliseReturnsThis() {
+        Document doc = new Document("http://example.com");
+        assertSame(doc, doc.normalise());
+    }
+
+    @Test
+    public void testNormaliseMovesNonBlankTextIntoBody() {
+        Document doc = Document.createShell("http://example.com");
+        // Manually add text nodes outside body
+        doc.appendChild(new TextNode("Root text", ""));
+        doc.select("html").first().appendChild(new TextNode("Html text", ""));
+        doc.head().appendChild(new TextNode("Head text", ""));
+        doc.body().appendChild(new TextNode("Body text", ""));
+
+        doc.normalise();
+
+        String bodyHtml = doc.body().html();
+        // All non-blank texts should be moved into body, prepended in inverse order.
+        assertTrue(bodyHtml.contains("Head text"));
+        assertTrue(bodyHtml.contains("Html text"));
+        assertTrue(bodyHtml.contains("Root text"));
+        assertTrue(bodyHtml.contains("Body text"));
+    }
+
+    @Test
+    public void testNormaliseDoesNotMoveBlankTextNodes() {
+        Document doc = Document.createShell("http://example.com");
+        doc.head().appendChild(new TextNode("   ", "")); // blank
+        doc.normalise();
+        // Body should not contain the blank text; it stays in head
+        assertFalse(doc.body().html().contains("   "));
+    }
+
+    @Test
+    public void testNormaliseDoesNotMoveElements() {
+        Document doc = Document.createShell("http://example.com");
+        Element div = doc.createElement("div");
+        doc.head().appendChild(div);
+        int headSize = doc.head().children().size();
+        doc.normalise();
+        // The div should not be moved; only text nodes are relocated.
+        assertEquals(headSize, doc.head().children().size());
+        assertTrue(doc.head().children().contains(div));
+    }
+
+    
+
+    // ---------- text(String) setter ----------
+    
+    @Test
+    public void testTextSetsBodyTextAndClearsExisting() {
+        Document doc = Document.createShell("http://example.com");
+        doc.body().appendElement("p").text("Old");
+        doc.text("New text");
+        assertEquals("New text", doc.body().text());
+        // all previous body content is removed
+        assertEquals(0, doc.body().children().size());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testTextOnDocumentWithoutBodyThrowsNPE() {
+        Document doc = new Document("http://example.com");
+        doc.text("any");
+    }
+
+    @Test
+    public void testTextReturnsDocument() {
+        Document doc = Document.createShell("http://example.com");
+        assertSame(doc, doc.text("something"));
+    }
+}

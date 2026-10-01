@@ -1,0 +1,88 @@
+{
+  "tool": "intellisphere",
+  "model": "deepseek-v4-pro",
+  "generated_at": "2026-09-28T23:32:45.087Z",
+  "submitted_at": "2026-09-28T23:31:06.314Z",
+  "generation_seconds": 102.700869932,
+  "parameters": {
+    "routing_mode": "Auto Router",
+    "resolved_model_label": "Deepseek - deepseek-v4-pro",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "manual_edits": [
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "cdb90e4408c3c3497cfa425b93e11000a0f1870dc20954e3f6bbfa5320439ab2",
+      "after_sha256": "8d03956fca376ce9da08fa8c48176ee65961985dc2ca6b97f6ab665204273db7",
+      "local_compatibility_repairs": [
+        {
+          "old": "ac.findProperty( new PropertyName(\"name\") )",
+          "new": "com.fasterxml.jackson.databind.util.SimpleBeanPropertyDefinition.construct(null, getNameMethod, \"name\")",
+          "occurrences": 1,
+          "reason": "Fixed AnnotatedClass has no findProperty; fixed SimpleBeanPropertyDefinition constructs metadata for the same member and property name."
+        },
+        {
+          "old": "ac.findProperty( new PropertyName(\"value\") )",
+          "new": "com.fasterxml.jackson.databind.util.SimpleBeanPropertyDefinition.construct(null, valueField, \"value\")",
+          "occurrences": 1,
+          "reason": "Construct fixed metadata for the same field and property name."
+        }
+      ],
+      "selection": "Fixed compilation diagnostics and fixed API only; no buggy feedback or expected-value changes."
+    },
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "8d03956fca376ce9da08fa8c48176ee65961985dc2ca6b97f6ab665204273db7",
+      "after_sha256": "1a098fb0f9e158a5407338dcb9f05fd7198beb035d1b21444acc80efdf926427",
+      "local_compatibility_repairs": [
+        {
+          "old": "TypeFactory.defaultInstance()",
+          "new": "com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance()",
+          "occurrences": 3,
+          "reason": "Qualify existing fixed type factory absent from provider imports."
+        }
+      ],
+      "selection": "Fixed API/compilation only; original assertion values unchanged, fixed-only pruning retained."
+    },
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "1a098fb0f9e158a5407338dcb9f05fd7198beb035d1b21444acc80efdf926427",
+      "after_sha256": "00104e136c4fa1b79849ec691c60c4d0e16fab010f4fe97005772ceeee90b4f5",
+      "local_compatibility_repairs": [
+        {
+          "old": "ac.findField( new PropertyName(\"value\") )",
+          "new": "findOriginalField(ac, \"value\")",
+          "reason": "Fixed AnnotatedClass exposes fields() iteration, not findField(PropertyName); select same original named field."
+        }
+      ],
+      "selection": "Fixed compilation diagnostics and fixed API only; raw response and previous attempt preserved."
+    },
+    {
+      "path": "com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java",
+      "before_sha256": "00104e136c4fa1b79849ec691c60c4d0e16fab010f4fe97005772ceeee90b4f5",
+      "after_sha256": "73d71dda691830829a9d42bbc16bf2a63e9184f94cd18103dc2b9277c97d8380",
+      "renderer_suffixes_removed": 1,
+      "budget_removed_methods": [
+        "com.fasterxml.jackson.databind.ser.BeanPropertyWriterTest::testUnwrappingWriter",
+        "com.fasterxml.jackson.databind.ser.BeanPropertyWriterTest::testDepositSchemaPropertyWithNullVisitor",
+        "com.fasterxml.jackson.databind.ser.BeanPropertyWriterTest::testIsRequiredDeprecatedMethod"
+      ],
+      "selection": "First 30 methods in sorted file/source order; no execution outcomes used."
+    }
+  ],
+  "notes": [
+    "Input: exact prepared prompt.",
+    "Verbatim visible Java blocks exported with Markdown fences added; rendered HTML/text retained.",
+    "UI export is not a verified original API response; renderer may introduce (undefined) after array indices.",
+    "Duration is a UI observation upper bound.",
+    "Local processing v24 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/JacksonDatabind/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v24-fixed-recovery",
+  "raw_test_method_count": 33,
+  "retained_test_method_count": 30
+}

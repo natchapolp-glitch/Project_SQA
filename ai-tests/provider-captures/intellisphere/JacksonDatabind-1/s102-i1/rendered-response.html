@@ -1,0 +1,383 @@
+<div id="messageContentDataIdnMbudaTlMPXU" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">// src/test/java/com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java</span>
+<span class="hljs-keyword">package</span> com.fasterxml.jackson.databind.ser;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.*;
+
+<span class="hljs-keyword">import</span> java.lang.annotation.Annotation;
+<span class="hljs-keyword">import</span> java.lang.reflect.Field;
+<span class="hljs-keyword">import</span> java.lang.reflect.Method;
+<span class="hljs-keyword">import</span> java.lang.reflect.Type;
+<span class="hljs-keyword">import</span> java.util.HashMap;
+<span class="hljs-keyword">import</span> java.util.Map;
+
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.JsonGenerator;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.core.io.SerializedString;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.*;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.introspect.*;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.node.ObjectNode;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.ser.impl.UnwrappingBeanPropertyWriter;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.util.Annotations;
+<span class="hljs-keyword">import</span> com.fasterxml.jackson.databind.util.NameTransformer;
+
+<span class="hljs-keyword">import</span> org.junit.Before;
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-comment">// Helper classes for testing</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TestBean</span> {
+    <span class="hljs-keyword">public</span> String name;
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> value;
+    
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getName</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> name; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setName</span><span class="hljs-params">(String name)</span> { <span class="hljs-built_in">this</span>.name = name; }
+    
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">getValue</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> value; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setValue</span><span class="hljs-params">(<span class="hljs-type">int</span> value)</span> { <span class="hljs-built_in">this</span>.value = value; }
+    
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getReadOnly</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> <span class="hljs-string">"readonly"</span>; }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SelfReferenceBean</span> {
+    <span class="hljs-keyword">public</span> SelfReferenceBean self;
+    
+    <span class="hljs-keyword">public</span> SelfReferenceBean <span class="hljs-title function_">getSelf</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> self; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setSelf</span><span class="hljs-params">(SelfReferenceBean self)</span> { <span class="hljs-built_in">this</span>.self = self; }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SuppressBean</span> {
+    <span class="hljs-keyword">private</span> String text;
+    <span class="hljs-keyword">private</span> <span class="hljs-type">String</span> <span class="hljs-variable">defaultValue</span> <span class="hljs-operator">=</span> <span class="hljs-string">"default"</span>;
+    
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getText</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> text; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setText</span><span class="hljs-params">(String text)</span> { <span class="hljs-built_in">this</span>.text = text; }
+    
+    <span class="hljs-keyword">public</span> String <span class="hljs-title function_">getDefaultValue</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> defaultValue; }
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setDefaultValue</span><span class="hljs-params">(String defaultValue)</span> { <span class="hljs-built_in">this</span>.defaultValue = defaultValue; }
+}
+
+<span class="hljs-comment">// Null serializer for testing assignNullSerializer</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NullTestSerializer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">com</span>.fasterxml.jackson.databind.JsonSerializer&lt;Object&gt; {
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">serialize</span><span class="hljs-params">(Object value, JsonGenerator gen, SerializerProvider provider)</span> {
+        <span class="hljs-comment">// no-op for testing</span>
+    }
+}
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TestAnnotations</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Annotations</span> {
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> &lt;A <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Annotation</span>&gt; A <span class="hljs-title function_">get</span><span class="hljs-params">(Class&lt;A&gt; cls)</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">size</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+}
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BeanPropertyWriterTest</span> {
+
+    <span class="hljs-keyword">private</span> BeanPropertyWriter fieldWriter;
+    <span class="hljs-keyword">private</span> BeanPropertyWriter methodWriter;
+    <span class="hljs-keyword">private</span> TestBean testBean;
+    
+    <span class="hljs-meta">@Before</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        testBean = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TestBean</span>();
+        testBean.name = <span class="hljs-string">"testName"</span>;
+        testBean.value = <span class="hljs-number">42</span>;
+        
+        <span class="hljs-comment">// Create BeanPropertyWriter instances for testing</span>
+        <span class="hljs-comment">// Using reflection to create necessary objects</span>
+        <span class="hljs-type">AnnotatedClass</span> <span class="hljs-variable">ac</span> <span class="hljs-operator">=</span> AnnotatedClass.construct(TestBean.class, 
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">AnnotationIntrospectorPair</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">JacksonAnnotationIntrospector</span>(), 
+                                         <span class="hljs-keyword">new</span> <span class="hljs-title class_">JacksonAnnotationIntrospector</span>()), <span class="hljs-literal">null</span>);
+        
+        <span class="hljs-comment">// Method-based property</span>
+        <span class="hljs-type">AnnotatedMethod</span> <span class="hljs-variable">getNameMethod</span> <span class="hljs-operator">=</span> ac.findMethod(<span class="hljs-string">"getName"</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>[<span class="hljs-number">0</span>](undefined));
+        <span class="hljs-type">BeanPropertyDefinition</span> <span class="hljs-variable">methodPropDef</span> <span class="hljs-operator">=</span> ac.findProperty( <span class="hljs-keyword">new</span> <span class="hljs-title class_">PropertyName</span>(<span class="hljs-string">"name"</span>) );
+        methodWriter = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanPropertyWriter</span>(methodPropDef, getNameMethod, 
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">TestAnnotations</span>(), TypeFactory.defaultInstance().constructType(String.class),
+            <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+            
+        <span class="hljs-comment">// Field-based property  </span>
+        <span class="hljs-type">AnnotatedField</span> <span class="hljs-variable">valueField</span> <span class="hljs-operator">=</span> ac.findField( <span class="hljs-keyword">new</span> <span class="hljs-title class_">PropertyName</span>(<span class="hljs-string">"value"</span>) );
+        <span class="hljs-type">BeanPropertyDefinition</span> <span class="hljs-variable">fieldPropDef</span> <span class="hljs-operator">=</span> ac.findProperty( <span class="hljs-keyword">new</span> <span class="hljs-title class_">PropertyName</span>(<span class="hljs-string">"value"</span>) );
+        fieldWriter = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BeanPropertyWriter</span>(fieldPropDef, valueField,
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">TestAnnotations</span>(), TypeFactory.defaultInstance().constructType(<span class="hljs-type">int</span>.class),
+            <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>, <span class="hljs-literal">null</span>);
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasSerializerInitiallyFalse</span><span class="hljs-params">()</span> {
+        assertFalse(<span class="hljs-string">"Serializer should be null by default"</span>, methodWriter.hasSerializer());
+        assertFalse(<span class="hljs-string">"Serializer should be null by default"</span>, fieldWriter.hasSerializer());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasNullSerializerInitiallyFalse</span><span class="hljs-params">()</span> {
+        assertFalse(<span class="hljs-string">"Null serializer should be null by default"</span>, methodWriter.hasNullSerializer());
+        assertFalse(<span class="hljs-string">"Null serializer should be null by default"</span>, fieldWriter.hasNullSerializer());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWillSuppressNullsFalse</span><span class="hljs-params">()</span> {
+        assertFalse(<span class="hljs-string">"Should not suppress nulls by default"</span>, methodWriter.willSuppressNulls());
+        assertFalse(<span class="hljs-string">"Should not suppress nulls by default"</span>, fieldWriter.willSuppressNulls());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetSerializedName</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"name"</span>, methodWriter.getSerializedName().getValue());
+        assertEquals(<span class="hljs-string">"name"</span>, methodWriter.getName());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetType</span><span class="hljs-params">()</span> {
+        assertNotNull(<span class="hljs-string">"Type should not be null"</span>, methodWriter.getType());
+        assertEquals(String.class, methodWriter.getType().getRawClass());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetWrapperName</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Wrapper name should be null by default</span>
+        assertNull(<span class="hljs-string">"Wrapper name should be null by default"</span>, methodWriter.getWrapperName());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRequired</span><span class="hljs-params">()</span> {
+        assertFalse(<span class="hljs-string">"Should not be required by default"</span>, methodWriter.isRequired());
+        assertFalse(<span class="hljs-string">"Should not be required by default"</span>, fieldWriter.isRequired());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetAnnotation</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Without annotations, should return null</span>
+        assertNull(<span class="hljs-string">"Should return null for non-existent annotation"</span>, 
+            methodWriter.getAnnotation(Deprecated.class));
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetContextAnnotation</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// TestAnnotations returns null for all annotations</span>
+        assertNull(<span class="hljs-string">"Should return null for non-existent context annotation"</span>,
+            methodWriter.getContextAnnotation(Deprecated.class));
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetMember</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AnnotatedMember</span> <span class="hljs-variable">member</span> <span class="hljs-operator">=</span> methodWriter.getMember();
+        assertNotNull(<span class="hljs-string">"Member should not be null"</span>, member);
+        assertTrue(<span class="hljs-string">"Should be AnnotatedMethod"</span>, member <span class="hljs-keyword">instanceof</span> AnnotatedMethod);
+        
+        <span class="hljs-type">AnnotatedMember</span> <span class="hljs-variable">fieldMember</span> <span class="hljs-operator">=</span> fieldWriter.getMember();
+        assertNotNull(<span class="hljs-string">"Field member should not be null"</span>, fieldMember);
+        assertTrue(<span class="hljs-string">"Should be AnnotatedField"</span>, fieldMember <span class="hljs-keyword">instanceof</span> AnnotatedField);
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetPropertyType</span><span class="hljs-params">()</span> {
+        assertEquals(String.class, methodWriter.getPropertyType());
+        assertEquals(<span class="hljs-type">int</span>.class, fieldWriter.getPropertyType());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetGenericPropertyType</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Type</span> <span class="hljs-variable">genericType</span> <span class="hljs-operator">=</span> methodWriter.getGenericPropertyType();
+        assertNotNull(<span class="hljs-string">"Generic type should not be null"</span>, genericType);
+        assertEquals(String.class, genericType);
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetRawSerializationTypeNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// When cfgSerializationType is null, raw type should be null</span>
+        assertNull(<span class="hljs-string">"Raw serialization type should be null"</span>, methodWriter.getRawSerializationType());
+        assertNull(<span class="hljs-string">"Raw serialization type should be null"</span>, fieldWriter.getRawSerializationType());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetSerializationTypeNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// When cfgSerializationType is null</span>
+        assertNull(<span class="hljs-string">"Serialization type should be null"</span>, methodWriter.getSerializationType());
+        assertNull(<span class="hljs-string">"Serialization type should be null"</span>, fieldWriter.getSerializationType());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetSerializerNull</span><span class="hljs-params">()</span> {
+        assertNull(<span class="hljs-string">"Serializer should be null"</span>, methodWriter.getSerializer());
+        assertNull(<span class="hljs-string">"Serializer should be null"</span>, fieldWriter.getSerializer());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetViews</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Views should be null by default</span>
+        assertNull(<span class="hljs-string">"Views should be null"</span>, methodWriter.getViews());
+        assertNull(<span class="hljs-string">"Views should be null"</span>, fieldWriter.getViews());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAccessViaGetter</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> methodWriter.get(testBean);
+        assertEquals(<span class="hljs-string">"testName"</span>, value);
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAccessViaField</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> fieldWriter.get(testBean);
+        assertEquals(<span class="hljs-number">42</span>, value);
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInternalSettingsInitiallyNull</span><span class="hljs-params">()</span> {
+        assertNull(<span class="hljs-string">"Internal settings should be null initially"</span>, 
+            methodWriter.getInternalSetting(<span class="hljs-string">"key"</span>));
+        assertNull(<span class="hljs-string">"Internal settings should be null initially"</span>,
+            fieldWriter.getInternalSetting(<span class="hljs-string">"key"</span>));
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetAndGetInternalSetting</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Object</span> <span class="hljs-variable">oldValue</span> <span class="hljs-operator">=</span> methodWriter.setInternalSetting(<span class="hljs-string">"key1"</span>, <span class="hljs-string">"value1"</span>);
+        assertNull(<span class="hljs-string">"Old value should be null"</span>, oldValue);
+        
+        assertEquals(<span class="hljs-string">"value1"</span>, methodWriter.getInternalSetting(<span class="hljs-string">"key1"</span>));
+        
+        <span class="hljs-comment">// Update existing key</span>
+        oldValue = methodWriter.setInternalSetting(<span class="hljs-string">"key1"</span>, <span class="hljs-string">"value2"</span>);
+        assertEquals(<span class="hljs-string">"value1"</span>, oldValue);
+        assertEquals(<span class="hljs-string">"value2"</span>, methodWriter.getInternalSetting(<span class="hljs-string">"key1"</span>));
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveInternalSetting</span><span class="hljs-params">()</span> {
+        methodWriter.setInternalSetting(<span class="hljs-string">"key1"</span>, <span class="hljs-string">"value1"</span>);
+        methodWriter.setInternalSetting(<span class="hljs-string">"key2"</span>, <span class="hljs-string">"value2"</span>);
+        
+        <span class="hljs-type">Object</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> methodWriter.removeInternalSetting(<span class="hljs-string">"key1"</span>);
+        assertEquals(<span class="hljs-string">"value1"</span>, removed);
+        assertNull(<span class="hljs-string">"Should be null after removal"</span>, methodWriter.getInternalSetting(<span class="hljs-string">"key1"</span>));
+        assertNotNull(<span class="hljs-string">"Other key should remain"</span>, methodWriter.getInternalSetting(<span class="hljs-string">"key2"</span>));
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveAllInternalSettings</span><span class="hljs-params">()</span> {
+        methodWriter.setInternalSetting(<span class="hljs-string">"key1"</span>, <span class="hljs-string">"value1"</span>);
+        
+        <span class="hljs-type">Object</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> methodWriter.removeInternalSetting(<span class="hljs-string">"key1"</span>);
+        assertEquals(<span class="hljs-string">"value1"</span>, removed);
+        
+        <span class="hljs-comment">// Internal settings map should be null now</span>
+        assertNull(<span class="hljs-string">"Should return null for non-existent key"</span>, 
+            methodWriter.getInternalSetting(<span class="hljs-string">"nonexistent"</span>));
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRenameSameName</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">NameTransformer</span> <span class="hljs-variable">transformer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NameTransformer</span>() {
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-keyword">public</span> String <span class="hljs-title function_">transform</span><span class="hljs-params">(String name)</span> {
+                <span class="hljs-keyword">return</span> name;
+            }
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverse</span><span class="hljs-params">(String transformed)</span> {
+                <span class="hljs-keyword">return</span> transformed;
+            }
+        };
+        
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">renamed</span> <span class="hljs-operator">=</span> methodWriter.rename(transformer);
+        assertSame(<span class="hljs-string">"Should return same instance when name unchanged"</span>, methodWriter, renamed);
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRenameDifferentName</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">NameTransformer</span> <span class="hljs-variable">transformer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NameTransformer</span>() {
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-keyword">public</span> String <span class="hljs-title function_">transform</span><span class="hljs-params">(String name)</span> {
+                <span class="hljs-keyword">return</span> <span class="hljs-string">"new_"</span> + name;
+            }
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-keyword">public</span> String <span class="hljs-title function_">reverse</span><span class="hljs-params">(String transformed)</span> {
+                <span class="hljs-keyword">return</span> transformed.substring(<span class="hljs-number">4</span>);
+            }
+        };
+        
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">renamed</span> <span class="hljs-operator">=</span> methodWriter.rename(transformer);
+        assertNotSame(<span class="hljs-string">"Should return different instance when name changed"</span>, methodWriter, renamed);
+        assertEquals(<span class="hljs-string">"new_name"</span>, renamed.getName());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToString</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">String</span> <span class="hljs-variable">str</span> <span class="hljs-operator">=</span> methodWriter.toString();
+        assertNotNull(<span class="hljs-string">"toString should not be null"</span>, str);
+        assertTrue(<span class="hljs-string">"toString should contain property name"</span>, str.contains(<span class="hljs-string">"name"</span>));
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAssignSerializer</span><span class="hljs-params">()</span> {
+        JsonSerializer&lt;Object&gt; ser = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullTestSerializer</span>();
+        methodWriter.assignSerializer(ser);
+        assertTrue(<span class="hljs-string">"Should have serializer after assignment"</span>, methodWriter.hasSerializer());
+        assertSame(ser, methodWriter.getSerializer());
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAssignNullSerializer</span><span class="hljs-params">()</span> {
+        JsonSerializer&lt;Object&gt; nullSer = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullTestSerializer</span>();
+        methodWriter.assignNullSerializer(nullSer);
+        assertTrue(<span class="hljs-string">"Should have null serializer after assignment"</span>, methodWriter.hasNullSerializer());
+    }
+    
+    <span class="hljs-meta">@Test(expected = IllegalStateException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAssignSerializerTwiceThrowsException</span><span class="hljs-params">()</span> {
+        JsonSerializer&lt;Object&gt; ser1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullTestSerializer</span>();
+        JsonSerializer&lt;Object&gt; ser2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullTestSerializer</span>();
+        methodWriter.assignSerializer(ser1);
+        methodWriter.assignSerializer(ser2); <span class="hljs-comment">// Should throw</span>
+    }
+    
+    <span class="hljs-meta">@Test(expected = IllegalStateException.class)</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAssignNullSerializerTwiceThrowsException</span><span class="hljs-params">()</span> {
+        JsonSerializer&lt;Object&gt; nullSer1 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullTestSerializer</span>();
+        JsonSerializer&lt;Object&gt; nullSer2 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">NullTestSerializer</span>();
+        methodWriter.assignNullSerializer(nullSer1);
+        methodWriter.assignNullSerializer(nullSer2); <span class="hljs-comment">// Should throw</span>
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetNonTrivialBaseType</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">JavaType</span> <span class="hljs-variable">type</span> <span class="hljs-operator">=</span> TypeFactory.defaultInstance().constructType(String.class);
+        methodWriter.setNonTrivialBaseType(type);
+        <span class="hljs-comment">// No getter for nonTrivialBaseType, so just verify no exception</span>
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testUnwrappingWriter</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">NameTransformer</span> <span class="hljs-variable">transformer</span> <span class="hljs-operator">=</span> NameTransformer.simpleTransformer(<span class="hljs-string">"prefix."</span>, <span class="hljs-literal">null</span>);
+        <span class="hljs-type">BeanPropertyWriter</span> <span class="hljs-variable">unwrapped</span> <span class="hljs-operator">=</span> methodWriter.unwrappingWriter(transformer);
+        assertNotNull(<span class="hljs-string">"Unwrapped writer should not be null"</span>, unwrapped);
+        assertTrue(<span class="hljs-string">"Should be UnwrappingBeanPropertyWriter"</span>, unwrapped <span class="hljs-keyword">instanceof</span> UnwrappingBeanPropertyWriter);
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDepositSchemaPropertyWithNullVisitor</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            methodWriter.depositSchemaProperty((JsonObjectFormatVisitor) <span class="hljs-literal">null</span>);
+            <span class="hljs-comment">// Should not throw exception</span>
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            fail(<span class="hljs-string">"Should not throw exception with null visitor"</span>);
+        }
+    }
+    
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsRequiredDeprecatedMethod</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Call the deprecated isRequired(AnnotationIntrospector) method</span>
+        <span class="hljs-type">AnnotationIntrospector</span> <span class="hljs-variable">intr</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">JacksonAnnotationIntrospector</span>();
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">required</span> <span class="hljs-operator">=</span> methodWriter.isRequired(intr);
+        assertEquals(<span class="hljs-string">"Deprecated method should return same as non-deprecated"</span>, 
+            methodWriter.isRequired(), required);
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

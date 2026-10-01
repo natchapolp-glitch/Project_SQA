@@ -1,0 +1,58 @@
+--- com.google.javascript.jscomp.GeneratedRemoveUnusedVarsTest::testArgsNotRemovedWhenRemoveGlobalsFalse
+junit.framework.AssertionFailedError: 
+Expected: function f(a,b){}
+Result: function f(){}
+Node tree inequality:
+Tree1:
+BLOCK [synthetic: 1]
+    SCRIPT 1 [synthetic: 1] [source_file: expected0] [input_id: InputId: expected0]
+        FUNCTION f 1 [source_file: expected0]
+            NAME f 1 [source_file: expected0]
+            PARAM_LIST 1 [source_file: expected0]
+                NAME a 1 [source_file: expected0]
+                NAME b 1 [source_file: expected0]
+            BLOCK 1 [source_file: expected0]
+
+
+Tree2:
+BLOCK [synthetic: 1]
+    SCRIPT 1 [synthetic: 1] [source_file: testcode] [input_id: InputId: testcode]
+        FUNCTION f 1 [source_file: testcode]
+            NAME f 1 [source_file: testcode]
+            PARAM_LIST 1 [source_file: testcode]
+            BLOCK 1 [source_file: testcode]
+
+
+Subtree1: PARAM_LIST 1 [source_file: expected0]
+    NAME a 1 [source_file: expected0]
+    NAME b 1 [source_file: expected0]
+
+
+Subtree2: PARAM_LIST 1 [source_file: testcode]
+
+	at junit.framework.Assert.fail(Assert.java:57)
+	at junit.framework.Assert.assertTrue(Assert.java:22)
+	at junit.framework.Assert.assertNull(Assert.java:277)
+	at junit.framework.TestCase.assertNull(TestCase.java:447)
+	at com.google.javascript.jscomp.CompilerTestCase.test(CompilerTestCase.java:905)
+	at com.google.javascript.jscomp.CompilerTestCase.test(CompilerTestCase.java:447)
+	at com.google.javascript.jscomp.CompilerTestCase.test(CompilerTestCase.java:373)
+	at com.google.javascript.jscomp.CompilerTestCase.test(CompilerTestCase.java:342)
+	at com.google.javascript.jscomp.CompilerTestCase.test(CompilerTestCase.java:330)
+	at com.google.javascript.jscomp.CompilerTestCase.testSame(CompilerTestCase.java:569)
+	at com.google.javascript.jscomp.GeneratedRemoveUnusedVarsTest.testArgsNotRemovedWhenRemoveGlobalsFalse(GeneratedRemoveUnusedVarsTest.java:133)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at junit.framework.TestCase.runTest(TestCase.java:176)
+	at junit.framework.TestCase.runBare(TestCase.java:141)
+	at junit.framework.TestResult$1.protect(TestResult.java:122)
+	at junit.framework.TestResult.runProtected(TestResult.java:142)
+	at junit.framework.TestResult.run(TestResult.java:125)
+	at junit.framework.TestCase.run(TestCase.java:129)
+	at junit.framework.TestSuite.runTest(TestSuite.java:252)
+	at junit.framework.TestSuite.run(TestSuite.java:247)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:520)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1060)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:911)

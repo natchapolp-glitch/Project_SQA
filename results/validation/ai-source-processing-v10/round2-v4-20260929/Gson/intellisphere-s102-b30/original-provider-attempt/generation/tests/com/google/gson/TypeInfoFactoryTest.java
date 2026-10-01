@@ -1,0 +1,275 @@
+// com/google/gson/TypeInfoFactoryTest.java
+package com.google.gson;
+
+import junit.framework.TestCase;
+import java.lang.reflect.*;
+import java.util.*;
+
+/**
+ * Regression tests for {@link com.google.gson.TypeInfoFactory}.
+ *
+ * <p>Since {@code TypeInfoFactory} is package-private, reflection is used
+ * to invoke its static methods.
+ *
+ * @author Test Generator
+ */
+public class TypeInfoFactoryTest extends TestCase {
+
+    private static final Class<?> TYPE_INFO_FACTORY_CLASS;
+
+    static {
+        try {
+            TYPE_INFO_FACTORY_CLASS = Class.forName("com.google.gson.TypeInfoFactory");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("TypeInfoFactory class not found", e);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Helper methods to invoke private static methods via reflection
+    // ──────────────────────────────────────────────────────────────────────
+
+    private static Object invokeStatic(String methodName, Class<?>[] paramTypes, Object... args)
+            throws Exception {
+        Method method = TYPE_INFO_FACTORY_CLASS.getDeclaredMethod(methodName, paramTypes);
+        method.setAccessible(true);
+        return method.invoke(null, args);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Tests for getTypeInfoForArray(Type)
+    // ──────────────────────────────────────────────────────────────────────
+
+    public void testGetTypeInfoForArray_ClassArray() throws Exception {
+        TypeInfo result = (TypeInfo) invokeStatic(
+                "getTypeInfoForArray",
+                new Class<?>[] { Type.class },
+                int[].class);
+        assertNotNull(result);
+        assertEquals(int[].class, result.getActualType());
+    }
+
+    public void testGetTypeInfoForArray_GenericArrayType() throws Exception {
+        // Create a GenericArrayType for List<String>[]
+        Type listOfString = new ParameterizedTypeImpl(List.class, new Type[]{String.class}, null);
+        Type arrayType = new GenericArrayTypeImpl(listOfString);
+        TypeInfo result = (TypeInfo) invokeStatic(
+                "getTypeInfoForArray",
+                new Class<?>[] { Type.class },
+                arrayType);
+        assertNotNull(result);
+        assertTrue(result.getActualType() instanceof GenericArrayType);
+    }
+
+    public void testGetTypeInfoForArray_InvalidInput_ThrowsIllegalArgumentException() {
+        try {
+            invokeStatic("getTypeInfoForArray", new Class<?>[] { Type.class }, String.class);
+            fail("Expected an exception for non-array type");
+        } catch (InvocationTargetException e) {
+            assertTrue("Cause should be IllegalArgumentException",
+                    e.getCause() instanceof IllegalArgumentException);
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Tests for getTypeInfoForField(Field, Type)
+    // ──────────────────────────────────────────────────────────────────────
+
+    public void testGetTypeInfoForField_NonGenericClass() throws Exception {
+        @SuppressWarnings("unused")
+        class Container {
+            String name;
+        }
+        Field field = Container.class.getDeclaredField("name");
+        TypeInfo result = (TypeInfo) invokeStatic(
+                "getTypeInfoForField",
+                new Class<?>[] { Field.class, Type.class },
+                field, Container.class);
+        assertNotNull(result);
+        assertEquals(String.class, result.getActualType());
+    }
+
+    public void testGetTypeInfoForField_GenericClass_ParameterizedType() throws Exception {
+        class Container<T> {
+            T data;
+        }
+        Field field = Container.class.getDeclaredField("data");
+
+        Type parameterizedType = new ParameterizedTypeImpl(Container.class,
+                new Type[]{Integer.class}, null);
+        TypeInfo result = (TypeInfo) invokeStatic(
+                "getTypeInfoForField",
+                new Class<?>[] { Field.class, Type.class },
+                field, parameterizedType);
+
+        assertEquals(Integer.class, result.getActualType());
+    }
+
+    public void testGetTypeInfoForField_GenericArrayField() throws Exception {
+        class Container<T> {
+            T[] data;
+        }
+        Field field = Container.class.getDeclaredField("data");
+
+        Type parameterizedType = new ParameterizedTypeImpl(Container.class,
+                new Type[]{String.class}, null);
+        TypeInfo result = (TypeInfo) invokeStatic(
+                "getTypeInfoForField",
+                new Class<?>[] { Field.class, Type.class },
+                field, parameterizedType);
+
+        assertTrue(result.getActualType() instanceof Class<?>);
+        assertEquals(String[].class, result.getActualType());
+    }
+
+    public void testGetTypeInfoForField_UnresolvedTypeVariable_ThrowsUnsupportedOperationException() throws Exception {
+        class Container<T> {
+            T data;
+        }
+        Field field = Container.class.getDeclaredField("data");
+        // Passing the raw class will fail to resolve the type variable.
+        try {
+            invokeStatic("getTypeInfoForField",
+                    new Class<?>[] { Field.class, Type.class },
+                    field, Container.class);
+            fail("Expected UnsupportedOperationException");
+        } catch (InvocationTargetException e) {
+            assertTrue("Cause should be UnsupportedOperationException",
+                    e.getCause() instanceof UnsupportedOperationException);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Tests for getIndex(TypeVariable[], TypeVariable)
+    // ──────────────────────────────────────────────────────────────────────
+    //  Note: getIndex is a private static method, tested indirectly via getTypeInfoForField
+    //  and tested directly via reflection here for completeness.
+
+    public void testGetIndex_Found() throws Exception {
+        class Dummy<T, U> {}
+        TypeVariable<?>[] params = Dummy.class.getTypeParameters();
+        // params[0](undefined) is T, params[1](undefined) is U
+        int index = (Integer) invokeStatic("getIndex",
+                new Class<?>[] { TypeVariable[].class, TypeVariable.class },
+                params, params[1]);
+        assertEquals(1, index);
+    }
+
+    public void testGetIndex_NotFound_ThrowsIllegalStateException() throws Exception {
+        // Create an independent TypeVariable that doesn't belong to the array.
+        class A<T> {}
+        class B<U> {}
+        TypeVariable<?>[] paramsOfA = A.class.getTypeParameters();
+        TypeVariable<?> paramB = B.class.getTypeParameters()[0];
+        try {
+            invokeStatic("getIndex",
+                    new Class<?>[] { TypeVariable[].class, TypeVariable.class },
+                    paramsOfA, paramB);
+            fail("Expected IllegalStateException");
+        } catch (InvocationTargetException e) {
+            assertTrue("Cause should be IllegalStateException", e.getCause() instanceof IllegalStateException);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Tests for extractRealTypes(Type[], Type, Class)
+    // ──────────────────────────────────────────────────────────────────────
+
+    public void testExtractRealTypes_AllConcreteTypes() throws Exception {
+        Type[] typeArgs = new Type[] { String.class, Integer.class };
+        Type parentType = new ParameterizedTypeImpl(Map.class, typeArgs, null);
+        Type[] result = (Type[]) invokeStatic("extractRealTypes",
+                new Class<?>[] { Type[].class, Type.class, Class.class },
+                typeArgs, parentType, Map.class);
+        assertNotNull(result);
+        assertEquals(2, result.length);
+        assertEquals(String.class, result[0]);
+        assertEquals(Integer.class, result[1]);
+    }
+
+    public void testExtractRealTypes_WithWildcard() throws Exception {
+        // WildcardType <? extends Number>
+        Type wildcardUpper = Number.class;
+        WildcardType wildcardType = new WildcardTypeImpl(new Type[]{wildcardUpper}, new Type[0]);
+        Type[] typeArgs = new Type[]{wildcardType};
+        Type parentType = new ParameterizedTypeImpl(List.class, typeArgs, null);
+        Type[] result = (Type[]) invokeStatic("extractRealTypes",
+                new Class<?>[] { Type[].class, Type.class, Class.class },
+                typeArgs, parentType, List.class);
+        assertEquals(1, result.length);
+        assertEquals(Number.class, result[0]);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Tests for getActualType(Type, Type, Class)
+    //  (private method, tested mainly through getTypeInfoForField)
+    // ──────────────────────────────────────────────────────────────────────
+
+    public void testGetActualType_ClassInput() throws Exception {
+        Type result = (Type) invokeStatic("getActualType",
+                new Class<?>[] { Type.class, Type.class, Class.class },
+                String.class, null, null);
+        assertEquals(String.class, result);
+    }
+
+    public void testGetActualType_WildcardType() throws Exception {
+        WildcardType wildcard = new WildcardTypeImpl(new Type[]{Number.class}, new Type[0]);
+        Type result = (Type) invokeStatic("getActualType",
+                new Class<?>[] { Type.class, Type.class, Class.class },
+                wildcard, null, null);
+        assertEquals(Number.class, result);
+    }
+
+    public void testGetActualType_UnsupportedType_ThrowsIllegalArgumentException() throws Exception {
+        // Create a custom unsupported Type implementation.
+        Type customType = new Type() {
+            @Override
+            public String toString() { return "CustomType"; }
+        };
+        try {
+            invokeStatic("getActualType",
+                    new Class<?>[] { Type.class, Type.class, Class.class },
+                    customType, null, null);
+            fail("Expected IllegalArgumentException");
+        } catch (InvocationTargetException e) {
+            assertTrue("Cause should be IllegalArgumentException",
+                    e.getCause() instanceof IllegalArgumentException);
+        }
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  Additional integration/robustness tests
+    // ──────────────────────────────────────────────────────────────────────
+
+    public void testGetTypeInfoForField_WildcardField() throws Exception {
+        class Container<T> {
+            List<? extends T> items;
+        }
+        Field field = Container.class.getDeclaredField("items");
+        Type parameterizedType = new ParameterizedTypeImpl(Container.class,
+                new Type[]{Number.class}, null);
+        TypeInfo result = (TypeInfo) invokeStatic(
+                "getTypeInfoForField",
+                new Class<?>[] { Field.class, Type.class },
+                field, parameterizedType);
+
+        Type actual = result.getActualType();
+        assertTrue(actual instanceof ParameterizedType);
+        ParameterizedType pt = (ParameterizedType) actual;
+        assertEquals(List.class, pt.getRawType());
+        assertEquals(Number.class, pt.getActualTypeArguments()[0]);
+    }
+
+    public void testGetTypeInfoForArray_PrimitiveByteArray() throws Exception {
+        // Additional check for correct handling of non-array type: this should throw.
+        // But byte[] IS an array, so it should succeed.
+        TypeInfo result = (TypeInfo) invokeStatic(
+                "getTypeInfoForArray",
+                new Class<?>[] { Type.class },
+                byte[].class);
+        assertNotNull(result);
+        assertEquals(byte[].class, result.getActualType());
+    }
+}

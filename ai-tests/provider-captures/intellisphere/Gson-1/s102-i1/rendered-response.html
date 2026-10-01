@@ -1,0 +1,287 @@
+<div id="messageContentDataIdQXT0mHE0yrp2" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Based on the provided instructions and source code, I will generate the test file for <code>TypeInfoFactory</code>.</p>
+<p>Please note: The class <code>TypeInfoFactory</code> is package-private (<code>final class TypeInfoFactory</code>). Java access control rules prevent test classes in the standard test directory (which typically has the same package name but is a different runtime package in terms of access control for package-private members) from directly accessing package-private classes and their static methods without utilizing reflection. To provide meaningful tests, I will use Java reflection to access and invoke these methods. This approach complies with the constraint of not modifying production code.</p>
+<p>The build configuration <code>gson/pom.xml</code> specifies JUnit 3.8.2 as the test dependency. Therefore, the test class will extend <code>junit.framework.TestCase</code> and use JUnit 3-style conventions.</p>
+<p>The generated test file includes tests for the declared target methods, exercising normal cases, boundaries, and exception paths.</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">// com/google/gson/TypeInfoFactoryTest.java</span>
+<span class="hljs-keyword">package</span> com.google.gson;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> java.lang.reflect.*;
+<span class="hljs-keyword">import</span> java.util.*;
+
+<span class="hljs-comment">/**
+ * Regression tests for {<span class="hljs-doctag">@link</span> com.google.gson.TypeInfoFactory}.
+ *
+ * &lt;p&gt;Since {<span class="hljs-doctag">@code</span> TypeInfoFactory} is package-private, reflection is used
+ * to invoke its static methods.
+ *
+ * <span class="hljs-doctag">@author</span> Test Generator
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TypeInfoFactoryTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Class&lt;?&gt; TYPE_INFO_FACTORY_CLASS;
+
+    <span class="hljs-keyword">static</span> {
+        <span class="hljs-keyword">try</span> {
+            TYPE_INFO_FACTORY_CLASS = Class.forName(<span class="hljs-string">"com.google.gson.TypeInfoFactory"</span>);
+        } <span class="hljs-keyword">catch</span> (ClassNotFoundException e) {
+            <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">RuntimeException</span>(<span class="hljs-string">"TypeInfoFactory class not found"</span>, e);
+        }
+    }
+
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Helper methods to invoke private static methods via reflection</span>
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Object <span class="hljs-title function_">invokeStatic</span><span class="hljs-params">(String methodName, Class&lt;?&gt;[] paramTypes, Object... args)</span>
+            <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Method</span> <span class="hljs-variable">method</span> <span class="hljs-operator">=</span> TYPE_INFO_FACTORY_CLASS.getDeclaredMethod(methodName, paramTypes);
+        method.setAccessible(<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">return</span> method.invoke(<span class="hljs-literal">null</span>, args);
+    }
+
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Tests for getTypeInfoForArray(Type)</span>
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForArray_ClassArray</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (TypeInfo) invokeStatic(
+                <span class="hljs-string">"getTypeInfoForArray"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type.class },
+                <span class="hljs-type">int</span>[].class);
+        assertNotNull(result);
+        assertEquals(<span class="hljs-type">int</span>[].class, result.getActualType());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForArray_GenericArrayType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-comment">// Create a GenericArrayType for List&lt;String&gt;[]</span>
+        <span class="hljs-type">Type</span> <span class="hljs-variable">listOfString</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParameterizedTypeImpl</span>(List.class, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[]{String.class}, <span class="hljs-literal">null</span>);
+        <span class="hljs-type">Type</span> <span class="hljs-variable">arrayType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">GenericArrayTypeImpl</span>(listOfString);
+        <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (TypeInfo) invokeStatic(
+                <span class="hljs-string">"getTypeInfoForArray"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type.class },
+                arrayType);
+        assertNotNull(result);
+        assertTrue(result.getActualType() <span class="hljs-keyword">instanceof</span> GenericArrayType);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForArray_InvalidInput_ThrowsIllegalArgumentException</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            invokeStatic(<span class="hljs-string">"getTypeInfoForArray"</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type.class }, String.class);
+            fail(<span class="hljs-string">"Expected an exception for non-array type"</span>);
+        } <span class="hljs-keyword">catch</span> (InvocationTargetException e) {
+            assertTrue(<span class="hljs-string">"Cause should be IllegalArgumentException"</span>,
+                    e.getCause() <span class="hljs-keyword">instanceof</span> IllegalArgumentException);
+        } <span class="hljs-keyword">catch</span> (Exception e) {
+            fail(<span class="hljs-string">"Unexpected exception: "</span> + e);
+        }
+    }
+
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Tests for getTypeInfoForField(Field, Type)</span>
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForField_NonGenericClass</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-meta">@SuppressWarnings("unused")</span>
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">Container</span> {
+            String name;
+        }
+        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> Container.class.getDeclaredField(<span class="hljs-string">"name"</span>);
+        <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (TypeInfo) invokeStatic(
+                <span class="hljs-string">"getTypeInfoForField"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Field.class, Type.class },
+                field, Container.class);
+        assertNotNull(result);
+        assertEquals(String.class, result.getActualType());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForField_GenericClass_ParameterizedType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">Container</span>&lt;T&gt; {
+            T data;
+        }
+        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> Container.class.getDeclaredField(<span class="hljs-string">"data"</span>);
+
+        <span class="hljs-type">Type</span> <span class="hljs-variable">parameterizedType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParameterizedTypeImpl</span>(Container.class,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[]{Integer.class}, <span class="hljs-literal">null</span>);
+        <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (TypeInfo) invokeStatic(
+                <span class="hljs-string">"getTypeInfoForField"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Field.class, Type.class },
+                field, parameterizedType);
+
+        assertEquals(Integer.class, result.getActualType());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForField_GenericArrayField</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">Container</span>&lt;T&gt; {
+            T[] data;
+        }
+        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> Container.class.getDeclaredField(<span class="hljs-string">"data"</span>);
+
+        <span class="hljs-type">Type</span> <span class="hljs-variable">parameterizedType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParameterizedTypeImpl</span>(Container.class,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[]{String.class}, <span class="hljs-literal">null</span>);
+        <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (TypeInfo) invokeStatic(
+                <span class="hljs-string">"getTypeInfoForField"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Field.class, Type.class },
+                field, parameterizedType);
+
+        assertTrue(result.getActualType() <span class="hljs-keyword">instanceof</span> Class&lt;?&gt;);
+        assertEquals(String[].class, result.getActualType());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForField_UnresolvedTypeVariable_ThrowsUnsupportedOperationException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">Container</span>&lt;T&gt; {
+            T data;
+        }
+        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> Container.class.getDeclaredField(<span class="hljs-string">"data"</span>);
+        <span class="hljs-comment">// Passing the raw class will fail to resolve the type variable.</span>
+        <span class="hljs-keyword">try</span> {
+            invokeStatic(<span class="hljs-string">"getTypeInfoForField"</span>,
+                    <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Field.class, Type.class },
+                    field, Container.class);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (InvocationTargetException e) {
+            assertTrue(<span class="hljs-string">"Cause should be UnsupportedOperationException"</span>,
+                    e.getCause() <span class="hljs-keyword">instanceof</span> UnsupportedOperationException);
+        }
+    }
+
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Tests for getIndex(TypeVariable[], TypeVariable)</span>
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Note: getIndex is a private static method, tested indirectly via getTypeInfoForField</span>
+    <span class="hljs-comment">//  and tested directly via reflection here for completeness.</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetIndex_Found</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">Dummy</span>&lt;T, U&gt; {}
+        TypeVariable&lt;?&gt;[] params = Dummy.class.getTypeParameters();
+        <span class="hljs-comment">// params[0](undefined) is T, params[1](undefined) is U</span>
+        <span class="hljs-type">int</span> <span class="hljs-variable">index</span> <span class="hljs-operator">=</span> (Integer) invokeStatic(<span class="hljs-string">"getIndex"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { TypeVariable[].class, TypeVariable.class },
+                params, params[<span class="hljs-number">1</span>](undefined));
+        assertEquals(<span class="hljs-number">1</span>, index);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetIndex_NotFound_ThrowsIllegalStateException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-comment">// Create an independent TypeVariable that doesn't belong to the array.</span>
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">A</span>&lt;T&gt; {}
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span>&lt;U&gt; {}
+        TypeVariable&lt;?&gt;[] paramsOfA = A.class.getTypeParameters();
+        TypeVariable&lt;?&gt; paramB = B.class.getTypeParameters()[<span class="hljs-number">0</span>](undefined);
+        <span class="hljs-keyword">try</span> {
+            invokeStatic(<span class="hljs-string">"getIndex"</span>,
+                    <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { TypeVariable[].class, TypeVariable.class },
+                    paramsOfA, paramB);
+            fail(<span class="hljs-string">"Expected IllegalStateException"</span>);
+        } <span class="hljs-keyword">catch</span> (InvocationTargetException e) {
+            assertTrue(<span class="hljs-string">"Cause should be IllegalStateException"</span>, e.getCause() <span class="hljs-keyword">instanceof</span> IllegalStateException);
+        }
+    }
+
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Tests for extractRealTypes(Type[], Type, Class)</span>
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testExtractRealTypes_AllConcreteTypes</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        Type[] typeArgs = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[] { String.class, Integer.class };
+        <span class="hljs-type">Type</span> <span class="hljs-variable">parentType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParameterizedTypeImpl</span>(Map.class, typeArgs, <span class="hljs-literal">null</span>);
+        Type[] result = (Type[]) invokeStatic(<span class="hljs-string">"extractRealTypes"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type[].class, Type.class, Class.class },
+                typeArgs, parentType, Map.class);
+        assertNotNull(result);
+        assertEquals(<span class="hljs-number">2</span>, result.length);
+        assertEquals(String.class, result[<span class="hljs-number">0</span>](undefined));
+        assertEquals(Integer.class, result[<span class="hljs-number">1</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testExtractRealTypes_WithWildcard</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-comment">// WildcardType &lt;? extends Number&gt;</span>
+        <span class="hljs-type">Type</span> <span class="hljs-variable">wildcardUpper</span> <span class="hljs-operator">=</span> Number.class;
+        <span class="hljs-type">WildcardType</span> <span class="hljs-variable">wildcardType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">WildcardTypeImpl</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[]{wildcardUpper}, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[<span class="hljs-number">0</span>](undefined));
+        Type[] typeArgs = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[]{wildcardType};
+        <span class="hljs-type">Type</span> <span class="hljs-variable">parentType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParameterizedTypeImpl</span>(List.class, typeArgs, <span class="hljs-literal">null</span>);
+        Type[] result = (Type[]) invokeStatic(<span class="hljs-string">"extractRealTypes"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type[].class, Type.class, Class.class },
+                typeArgs, parentType, List.class);
+        assertEquals(<span class="hljs-number">1</span>, result.length);
+        assertEquals(Number.class, result[<span class="hljs-number">0</span>](undefined));
+    }
+
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Tests for getActualType(Type, Type, Class)</span>
+    <span class="hljs-comment">//  (private method, tested mainly through getTypeInfoForField)</span>
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetActualType_ClassInput</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">Type</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (Type) invokeStatic(<span class="hljs-string">"getActualType"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type.class, Type.class, Class.class },
+                String.class, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+        assertEquals(String.class, result);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetActualType_WildcardType</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">WildcardType</span> <span class="hljs-variable">wildcard</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">WildcardTypeImpl</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[]{Number.class}, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[<span class="hljs-number">0</span>](undefined));
+        <span class="hljs-type">Type</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (Type) invokeStatic(<span class="hljs-string">"getActualType"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type.class, Type.class, Class.class },
+                wildcard, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+        assertEquals(Number.class, result);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetActualType_UnsupportedType_ThrowsIllegalArgumentException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-comment">// Create a custom unsupported Type implementation.</span>
+        <span class="hljs-type">Type</span> <span class="hljs-variable">customType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>() {
+            <span class="hljs-meta">@Override</span>
+            <span class="hljs-keyword">public</span> String <span class="hljs-title function_">toString</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> <span class="hljs-string">"CustomType"</span>; }
+        };
+        <span class="hljs-keyword">try</span> {
+            invokeStatic(<span class="hljs-string">"getActualType"</span>,
+                    <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type.class, Type.class, Class.class },
+                    customType, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException"</span>);
+        } <span class="hljs-keyword">catch</span> (InvocationTargetException e) {
+            assertTrue(<span class="hljs-string">"Cause should be IllegalArgumentException"</span>,
+                    e.getCause() <span class="hljs-keyword">instanceof</span> IllegalArgumentException);
+        }
+    }
+
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+    <span class="hljs-comment">//  Additional integration/robustness tests</span>
+    <span class="hljs-comment">// ──────────────────────────────────────────────────────────────────────</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForField_WildcardField</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-keyword">class</span> <span class="hljs-title class_">Container</span>&lt;T&gt; {
+            List&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">T</span>&gt; items;
+        }
+        <span class="hljs-type">Field</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> Container.class.getDeclaredField(<span class="hljs-string">"items"</span>);
+        <span class="hljs-type">Type</span> <span class="hljs-variable">parameterizedType</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParameterizedTypeImpl</span>(Container.class,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Type</span>[]{Number.class}, <span class="hljs-literal">null</span>);
+        <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (TypeInfo) invokeStatic(
+                <span class="hljs-string">"getTypeInfoForField"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Field.class, Type.class },
+                field, parameterizedType);
+
+        <span class="hljs-type">Type</span> <span class="hljs-variable">actual</span> <span class="hljs-operator">=</span> result.getActualType();
+        assertTrue(actual <span class="hljs-keyword">instanceof</span> ParameterizedType);
+        <span class="hljs-type">ParameterizedType</span> <span class="hljs-variable">pt</span> <span class="hljs-operator">=</span> (ParameterizedType) actual;
+        assertEquals(List.class, pt.getRawType());
+        assertEquals(Number.class, pt.getActualTypeArguments()[<span class="hljs-number">0</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetTypeInfoForArray_PrimitiveByteArray</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-comment">// Additional check for correct handling of non-array type: this should throw.</span>
+        <span class="hljs-comment">// But byte[] IS an array, so it should succeed.</span>
+        <span class="hljs-type">TypeInfo</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> (TypeInfo) invokeStatic(
+                <span class="hljs-string">"getTypeInfoForArray"</span>,
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[] { Type.class },
+                <span class="hljs-type">byte</span>[].class);
+        assertNotNull(result);
+        assertEquals(<span class="hljs-type">byte</span>[].class, result.getActualType());
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<p><strong>Important Note for Compilation and Execution:</strong></p>
+<ol>
+<li><strong>Test placement:</strong> The file must be saved at <code>gson/src/test/java/com/google/gson/TypeInfoFactoryTest.java</code>.</li>
+<li><strong>Non-public classes used:</strong> The test relies on classes that are visible within the <code>com.google.gson</code> package but might not be public (like <code>WildcardTypeImpl</code>, <code>GenericArrayTypeImpl</code>, <code>ParameterizedTypeImpl</code>, <code>TypeInfo</code>, <code>TypeInfoArray</code>, <code>TypeUtils</code>). Placing the test in the same package (<code>com.google.gson</code>) grants it package-private access to these classes.</li>
+<li><strong>Reflection usage:</strong> The <code>TypeInfoFactory</code> class itself is package-private (<code>final class TypeInfoFactory</code>). While classes in the same package can access it directly, JUnit test classes loaded from a different source root sometimes face access restrictions depending on the classloader setup. If direct access fails, the reflection-based approach in the provided test code will work regardless of the classloader strategy, as it uses <code>Class.forName</code> and <code>setAccessible(true)</code>. The provided code uses reflection to ensure broad compatibility with various build environments. If you find that direct access works in your IDE, you can simplify the tests, but the reflection approach is safe and respects the constraint of not modifying production code.</li>
+</ol>
+</div>

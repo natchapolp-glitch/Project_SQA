@@ -1,0 +1,52 @@
+{
+  "tool": "intellisphere",
+  "model": "gemini-pro",
+  "generated_at": "2026-10-01T06:23:14.633Z",
+  "generation_seconds": 102.470930398,
+  "prompt_iteration": 1,
+  "parameters": {
+    "selected_agent": "Gemini",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "manual_edits": [
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "before_sha256": "1a8168f1bc41fa2ea76da13bec0df906e71f3360338e352f2cbf5466b66311ff",
+      "after_sha256": "2931651a77418ed18edbf9f16ca158774889e69ca7afb93af0ae5d59126c1e93",
+      "local_compatibility_repairs": [
+        {
+          "old": ".currentToken()",
+          "new": ".getCurrentToken()",
+          "reason": "Legacy fixed JsonParser dependency exposes getCurrentToken; preserved token assertions."
+        }
+      ],
+      "selection": "Fixed compiler error and fixed API compatibility already established in v4/v5."
+    },
+    {
+      "path": "com/fasterxml/jackson/dataformat/xml/deser/FromXmlParserTest.java",
+      "before_sha256": "2931651a77418ed18edbf9f16ca158774889e69ca7afb93af0ae5d59126c1e93",
+      "after_sha256": "27e23fbdfd44f3ce7915a43fa495cbce27c901d15e28722939862217ac416531",
+      "local_compatibility_repairs": [
+        {
+          "old": "return new FromXmlParser(ctxt, genericFeatures, xmlFeatures, codec, sr);",
+          "new": "sr.nextTag();\n        return new FromXmlParser(ctxt, genericFeatures, xmlFeatures, codec, sr);",
+          "occurrences": 1,
+          "reason": "Fixed XmlTokenStream constructor requires START_ELEMENT; fresh StAX reader starts on START_DOCUMENT. Advance fixture to first tag before constructing parser."
+        }
+      ],
+      "selection": "Preserved fixed logs and fixed API source only; no buggy outcome, production or assertion changes."
+    }
+  ],
+  "notes": [
+    "Exact original JacksonXml prompt only, no logs sent. Complete rendered DOM code; observed generation upper bound.",
+    "Local processing v18 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "context_manifest": "/mnt/c/Users/ACER/Documents/ChatGPT/SQAProj/Project_SQA/results/study/round2-v4-20260929/JacksonXml/ai-context/context-manifest.json",
+  "local_processing_policy": "provider-source-processing-v18-fixed-recovery",
+  "raw_test_method_count": 28,
+  "retained_test_method_count": 28
+}

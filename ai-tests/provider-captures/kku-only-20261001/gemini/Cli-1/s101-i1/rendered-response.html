@@ -1,0 +1,46 @@
+<p>An academic regression test suite for <code>org.apache.commons.cli.CommandLine</code> is provided below.</p>
+<p>The test suite is written using JUnit 3.8.1 (extending <code>junit.framework.TestCase</code>), consistent with the project's Ant build configuration and Java 1.6+ compatibility constraints. It thoroughly tests option resolution (canonical, short, long, and hyphen-prefixed forms), default fallbacks, value conversions, and leftover argument tracking without relying on external dependencies.</p>
+<p><code>src/test/org/apache/commons/cli/CommandLineRegressionTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.cli;
+
+<span class="hljs-keyword">import</span> java.util.Iterator;
+<span class="hljs-keyword">import</span> java.util.List;
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-comment">/**
+ * Deterministic regression tests for {<span class="hljs-doctag">@link</span> CommandLine}.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CommandLineRegressionTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-comment">/**
+     * Subclass of Option allowing deterministic configuration of values and type
+     * without relying on internal parsing state.
+     */</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">StubOption</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Option</span> {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> String[] values;
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Object type;
+
+        <span class="hljs-keyword">public</span> <span class="hljs-title function_">StubOption</span><span class="hljs-params">(String opt, String longOpt)</span> {
+            <span class="hljs-built_in">this</span>(opt, longOpt, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-title function_">StubOption</span><span class="hljs-params">(String opt, String longOpt, String[] values)</span> {
+            <span class="hljs-built_in">this</span>(opt, longOpt, values, <span class="hljs-literal">null</span>);
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-title function_">StubOption</span><span class="hljs-params">(String opt, String longOpt, String[] values, Object type)</span> {
+            <span class="hljs-built_in">super</span>(opt, longOpt, values != <span class="hljs-literal">null</span>, <span class="hljs-string">"Stub Option"</span>);
+            <span class="hljs-built_in">this</span>.values = values;
+            <span class="hljs-built_in">this</span>.type = type;
+        }
+
+        <span class="hljs-keyword">public</span> String[] getValues() {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.values;
+        }
+
+        <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">getType</span><span class="hljs-params">()</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.type;
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEmptyCommandLineState</span><span class="hljs-params">()</span> {</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

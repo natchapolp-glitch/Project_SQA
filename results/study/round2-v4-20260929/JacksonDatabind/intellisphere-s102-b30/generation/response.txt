@@ -1,0 +1,386 @@
+Rendered KKU IntelSphere response. Model label: Deepseek - deepseek-v4-pro
+
+```java
+// src/test/java/com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java
+package com.fasterxml.jackson.databind.ser;
+
+import static org.junit.Assert.*;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.io.SerializedString;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.introspect.*;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+import com.fasterxml.jackson.databind.ser.impl.UnwrappingBeanPropertyWriter;
+import com.fasterxml.jackson.databind.util.Annotations;
+import com.fasterxml.jackson.databind.util.NameTransformer;
+
+import org.junit.Before;
+import org.junit.Test;
+
+// Helper classes for testing
+class TestBean {
+    public String name;
+    public int value;
+    
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    
+    public int getValue() { return value; }
+    public void setValue(int value) { this.value = value; }
+    
+    public String getReadOnly() { return "readonly"; }
+}
+
+class SelfReferenceBean {
+    public SelfReferenceBean self;
+    
+    public SelfReferenceBean getSelf() { return self; }
+    public void setSelf(SelfReferenceBean self) { this.self = self; }
+}
+
+class SuppressBean {
+    private String text;
+    private String defaultValue = "default";
+    
+    public String getText() { return text; }
+    public void setText(String text) { this.text = text; }
+    
+    public String getDefaultValue() { return defaultValue; }
+    public void setDefaultValue(String defaultValue) { this.defaultValue = defaultValue; }
+}
+
+// Null serializer for testing assignNullSerializer
+class NullTestSerializer extends com.fasterxml.jackson.databind.JsonSerializer<Object> {
+    @Override
+    public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) {
+        // no-op for testing
+    }
+}
+
+class TestAnnotations implements Annotations {
+    @Override
+    public <A extends Annotation> A get(Class<A> cls) {
+        return null;
+    }
+    @Override
+    public int size() {
+        return 0;
+    }
+}
+
+public class BeanPropertyWriterTest {
+
+    private BeanPropertyWriter fieldWriter;
+    private BeanPropertyWriter methodWriter;
+    private TestBean testBean;
+    
+    @Before
+    public void setUp() throws Exception {
+        testBean = new TestBean();
+        testBean.name = "testName";
+        testBean.value = 42;
+        
+        // Create BeanPropertyWriter instances for testing
+        // Using reflection to create necessary objects
+        AnnotatedClass ac = AnnotatedClass.construct(TestBean.class, 
+            new AnnotationIntrospectorPair(new JacksonAnnotationIntrospector(), 
+                                         new JacksonAnnotationIntrospector()), null);
+        
+        // Method-based property
+        AnnotatedMethod getNameMethod = ac.findMethod("getName", new Class[0](undefined));
+        BeanPropertyDefinition methodPropDef = ac.findProperty( new PropertyName("name") );
+        methodWriter = new BeanPropertyWriter(methodPropDef, getNameMethod, 
+            new TestAnnotations(), TypeFactory.defaultInstance().constructType(String.class),
+            null, null, null, false, null);
+            
+        // Field-based property  
+        AnnotatedField valueField = ac.findField( new PropertyName("value") );
+        BeanPropertyDefinition fieldPropDef = ac.findProperty( new PropertyName("value") );
+        fieldWriter = new BeanPropertyWriter(fieldPropDef, valueField,
+            new TestAnnotations(), TypeFactory.defaultInstance().constructType(int.class),
+            null, null, null, false, null);
+    }
+    
+    @Test
+    public void testHasSerializerInitiallyFalse() {
+        assertFalse("Serializer should be null by default", methodWriter.hasSerializer());
+        assertFalse("Serializer should be null by default", fieldWriter.hasSerializer());
+    }
+    
+    @Test
+    public void testHasNullSerializerInitiallyFalse() {
+        assertFalse("Null serializer should be null by default", methodWriter.hasNullSerializer());
+        assertFalse("Null serializer should be null by default", fieldWriter.hasNullSerializer());
+    }
+    
+    @Test
+    public void testWillSuppressNullsFalse() {
+        assertFalse("Should not suppress nulls by default", methodWriter.willSuppressNulls());
+        assertFalse("Should not suppress nulls by default", fieldWriter.willSuppressNulls());
+    }
+    
+    @Test
+    public void testGetSerializedName() {
+        assertEquals("name", methodWriter.getSerializedName().getValue());
+        assertEquals("name", methodWriter.getName());
+    }
+    
+    @Test
+    public void testGetType() {
+        assertNotNull("Type should not be null", methodWriter.getType());
+        assertEquals(String.class, methodWriter.getType().getRawClass());
+    }
+    
+    @Test
+    public void testGetWrapperName() {
+        // Wrapper name should be null by default
+        assertNull("Wrapper name should be null by default", methodWriter.getWrapperName());
+    }
+    
+    @Test
+    public void testIsRequired() {
+        assertFalse("Should not be required by default", methodWriter.isRequired());
+        assertFalse("Should not be required by default", fieldWriter.isRequired());
+    }
+    
+    @Test
+    public void testGetAnnotation() {
+        // Without annotations, should return null
+        assertNull("Should return null for non-existent annotation", 
+            methodWriter.getAnnotation(Deprecated.class));
+    }
+    
+    @Test
+    public void testGetContextAnnotation() {
+        // TestAnnotations returns null for all annotations
+        assertNull("Should return null for non-existent context annotation",
+            methodWriter.getContextAnnotation(Deprecated.class));
+    }
+    
+    @Test
+    public void testGetMember() {
+        AnnotatedMember member = methodWriter.getMember();
+        assertNotNull("Member should not be null", member);
+        assertTrue("Should be AnnotatedMethod", member instanceof AnnotatedMethod);
+        
+        AnnotatedMember fieldMember = fieldWriter.getMember();
+        assertNotNull("Field member should not be null", fieldMember);
+        assertTrue("Should be AnnotatedField", fieldMember instanceof AnnotatedField);
+    }
+    
+    @Test
+    public void testGetPropertyType() {
+        assertEquals(String.class, methodWriter.getPropertyType());
+        assertEquals(int.class, fieldWriter.getPropertyType());
+    }
+    
+    @Test
+    public void testGetGenericPropertyType() {
+        Type genericType = methodWriter.getGenericPropertyType();
+        assertNotNull("Generic type should not be null", genericType);
+        assertEquals(String.class, genericType);
+    }
+    
+    @Test
+    public void testGetRawSerializationTypeNull() {
+        // When cfgSerializationType is null, raw type should be null
+        assertNull("Raw serialization type should be null", methodWriter.getRawSerializationType());
+        assertNull("Raw serialization type should be null", fieldWriter.getRawSerializationType());
+    }
+    
+    @Test
+    public void testGetSerializationTypeNull() {
+        // When cfgSerializationType is null
+        assertNull("Serialization type should be null", methodWriter.getSerializationType());
+        assertNull("Serialization type should be null", fieldWriter.getSerializationType());
+    }
+    
+    @Test
+    public void testGetSerializerNull() {
+        assertNull("Serializer should be null", methodWriter.getSerializer());
+        assertNull("Serializer should be null", fieldWriter.getSerializer());
+    }
+    
+    @Test
+    public void testGetViews() {
+        // Views should be null by default
+        assertNull("Views should be null", methodWriter.getViews());
+        assertNull("Views should be null", fieldWriter.getViews());
+    }
+    
+    @Test
+    public void testAccessViaGetter() throws Exception {
+        Object value = methodWriter.get(testBean);
+        assertEquals("testName", value);
+    }
+    
+    @Test
+    public void testAccessViaField() throws Exception {
+        Object value = fieldWriter.get(testBean);
+        assertEquals(42, value);
+    }
+    
+    @Test
+    public void testInternalSettingsInitiallyNull() {
+        assertNull("Internal settings should be null initially", 
+            methodWriter.getInternalSetting("key"));
+        assertNull("Internal settings should be null initially",
+            fieldWriter.getInternalSetting("key"));
+    }
+    
+    @Test
+    public void testSetAndGetInternalSetting() {
+        Object oldValue = methodWriter.setInternalSetting("key1", "value1");
+        assertNull("Old value should be null", oldValue);
+        
+        assertEquals("value1", methodWriter.getInternalSetting("key1"));
+        
+        // Update existing key
+        oldValue = methodWriter.setInternalSetting("key1", "value2");
+        assertEquals("value1", oldValue);
+        assertEquals("value2", methodWriter.getInternalSetting("key1"));
+    }
+    
+    @Test
+    public void testRemoveInternalSetting() {
+        methodWriter.setInternalSetting("key1", "value1");
+        methodWriter.setInternalSetting("key2", "value2");
+        
+        Object removed = methodWriter.removeInternalSetting("key1");
+        assertEquals("value1", removed);
+        assertNull("Should be null after removal", methodWriter.getInternalSetting("key1"));
+        assertNotNull("Other key should remain", methodWriter.getInternalSetting("key2"));
+    }
+    
+    @Test
+    public void testRemoveAllInternalSettings() {
+        methodWriter.setInternalSetting("key1", "value1");
+        
+        Object removed = methodWriter.removeInternalSetting("key1");
+        assertEquals("value1", removed);
+        
+        // Internal settings map should be null now
+        assertNull("Should return null for non-existent key", 
+            methodWriter.getInternalSetting("nonexistent"));
+    }
+    
+    @Test
+    public void testRenameSameName() {
+        NameTransformer transformer = new NameTransformer() {
+            @Override
+            public String transform(String name) {
+                return name;
+            }
+            @Override
+            public String reverse(String transformed) {
+                return transformed;
+            }
+        };
+        
+        BeanPropertyWriter renamed = methodWriter.rename(transformer);
+        assertSame("Should return same instance when name unchanged", methodWriter, renamed);
+    }
+    
+    @Test
+    public void testRenameDifferentName() {
+        NameTransformer transformer = new NameTransformer() {
+            @Override
+            public String transform(String name) {
+                return "new_" + name;
+            }
+            @Override
+            public String reverse(String transformed) {
+                return transformed.substring(4);
+            }
+        };
+        
+        BeanPropertyWriter renamed = methodWriter.rename(transformer);
+        assertNotSame("Should return different instance when name changed", methodWriter, renamed);
+        assertEquals("new_name", renamed.getName());
+    }
+    
+    @Test
+    public void testToString() {
+        String str = methodWriter.toString();
+        assertNotNull("toString should not be null", str);
+        assertTrue("toString should contain property name", str.contains("name"));
+    }
+    
+    @Test
+    public void testAssignSerializer() {
+        JsonSerializer<Object> ser = new NullTestSerializer();
+        methodWriter.assignSerializer(ser);
+        assertTrue("Should have serializer after assignment", methodWriter.hasSerializer());
+        assertSame(ser, methodWriter.getSerializer());
+    }
+    
+    @Test
+    public void testAssignNullSerializer() {
+        JsonSerializer<Object> nullSer = new NullTestSerializer();
+        methodWriter.assignNullSerializer(nullSer);
+        assertTrue("Should have null serializer after assignment", methodWriter.hasNullSerializer());
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void testAssignSerializerTwiceThrowsException() {
+        JsonSerializer<Object> ser1 = new NullTestSerializer();
+        JsonSerializer<Object> ser2 = new NullTestSerializer();
+        methodWriter.assignSerializer(ser1);
+        methodWriter.assignSerializer(ser2); // Should throw
+    }
+    
+    @Test(expected = IllegalStateException.class)
+    public void testAssignNullSerializerTwiceThrowsException() {
+        JsonSerializer<Object> nullSer1 = new NullTestSerializer();
+        JsonSerializer<Object> nullSer2 = new NullTestSerializer();
+        methodWriter.assignNullSerializer(nullSer1);
+        methodWriter.assignNullSerializer(nullSer2); // Should throw
+    }
+    
+    @Test
+    public void testSetNonTrivialBaseType() {
+        JavaType type = TypeFactory.defaultInstance().constructType(String.class);
+        methodWriter.setNonTrivialBaseType(type);
+        // No getter for nonTrivialBaseType, so just verify no exception
+    }
+    
+    @Test
+    public void testUnwrappingWriter() {
+        NameTransformer transformer = NameTransformer.simpleTransformer("prefix.", null);
+        BeanPropertyWriter unwrapped = methodWriter.unwrappingWriter(transformer);
+        assertNotNull("Unwrapped writer should not be null", unwrapped);
+        assertTrue("Should be UnwrappingBeanPropertyWriter", unwrapped instanceof UnwrappingBeanPropertyWriter);
+    }
+    
+    @Test
+    public void testDepositSchemaPropertyWithNullVisitor() {
+        try {
+            methodWriter.depositSchemaProperty((JsonObjectFormatVisitor) null);
+            // Should not throw exception
+        } catch (Exception e) {
+            fail("Should not throw exception with null visitor");
+        }
+    }
+    
+    @Test
+    public void testIsRequiredDeprecatedMethod() {
+        // Call the deprecated isRequired(AnnotationIntrospector) method
+        AnnotationIntrospector intr = new JacksonAnnotationIntrospector();
+        boolean required = methodWriter.isRequired(intr);
+        assertEquals("Deprecated method should return same as non-deprecated", 
+            methodWriter.isRequired(), required);
+    }
+}
+
+```

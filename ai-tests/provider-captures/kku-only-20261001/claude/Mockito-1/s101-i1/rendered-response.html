@@ -1,0 +1,90 @@
+<p>I treated this as a research test-generation task, not graded coursework, so I wrote the tests.</p>
+<p><strong>Assumptions to check, because the context only included <code>InvocationMatcher.java</code>:</strong></p>
+<ul>
+<li><code>Invocation</code> is mocked with Mockito rather than built with a project helper. I used only the methods that <code>InvocationMatcher</code> itself calls.</li>
+<li><code>CapturesArguments</code> is assumed to declare <code>captureFrom(Object)</code>.</li>
+<li><code>MatcherDecorator</code> is assumed to declare only <code>Matcher getActualMatcher()</code>.</li>
+<li><code>VarargMatcher</code> is assumed to be a marker interface.</li>
+<li>The private methods <code>isVarargMatcher</code>, <code>isVariableArgument</code> and <code>safelyArgumentsMatch</code> are tested by reflection.</li>
+<li>The build uses JUnit 4.10, hamcrest-core 1.1 and source level 1.6, so there are no lambdas, diamonds or JUnit 5 APIs.</li>
+<li>In <code>captureArgumentsFrom</code>, the varargs branch indexes <code>getRawArguments()[position - indexOfVararg]</code>. I only assert the case where the vararg is the sole parameter (<code>indexOfVararg == 0</code>), which the source clearly defines.</li>
+<li><code>toString</code> is checked loosely (it contains the method name), because <code>PrintSettings</code> and <code>MockUtil</code> are not supplied.</li>
+</ul>
+<p><code>org/mockito/internal/invocation/InvocationMatcherGeneratedTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.mockito.internal.invocation;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertEquals;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertFalse;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNotNull;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertSame;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertTrue;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.fail;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.mockito.Mockito.mock;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.mockito.Mockito.<span class="hljs-keyword">when</span>;
+
+<span class="hljs-keyword">import</span> java.lang.reflect.InvocationTargetException;
+<span class="hljs-keyword">import</span> java.lang.reflect.Method;
+<span class="hljs-keyword">import</span> java.util.ArrayList;
+<span class="hljs-keyword">import</span> java.util.Arrays;
+<span class="hljs-keyword">import</span> java.util.Collections;
+<span class="hljs-keyword">import</span> java.util.List;
+
+<span class="hljs-keyword">import</span> org.hamcrest.BaseMatcher;
+<span class="hljs-keyword">import</span> org.hamcrest.Description;
+<span class="hljs-keyword">import</span> org.hamcrest.Matcher;
+<span class="hljs-keyword">import</span> org.junit.Test;
+<span class="hljs-keyword">import</span> org.mockito.internal.matchers.CapturesArguments;
+<span class="hljs-keyword">import</span> org.mockito.internal.matchers.MatcherDecorator;
+<span class="hljs-keyword">import</span> org.mockito.internal.matchers.VarargMatcher;
+<span class="hljs-keyword">import</span> org.mockito.invocation.Invocation;
+<span class="hljs-keyword">import</span> org.mockito.invocation.Location;
+
+<span class="hljs-meta">@SuppressWarnings({ "unchecked", "rawtypes" })</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">InvocationMatcherGeneratedTest</span> {
+
+    <span class="hljs-comment">// ---------- fixtures ----------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Methods</span> {
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(String s)</span> {}
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(Integer i)</span> {}
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">bar</span><span class="hljs-params">(String s)</span> {}
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">noArgs</span><span class="hljs-params">()</span> {}
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">varargs</span><span class="hljs-params">(Object... a)</span> {}
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">arrayParam</span><span class="hljs-params">(Object[] a)</span> {}
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">OtherClassWithFoo</span> {
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">foo</span><span class="hljs-params">(String s)</span> {}
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AnyMatcher</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseMatcher</span>&lt;Object&gt; {
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">matches</span><span class="hljs-params">(Object item)</span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; }
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">describeTo</span><span class="hljs-params">(Description d)</span> { d.appendText(<span class="hljs-string">"any"</span>); }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ThrowingMatcher</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseMatcher</span>&lt;Object&gt; {
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">matches</span><span class="hljs-params">(Object item)</span> { <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalStateException</span>(<span class="hljs-string">"boom"</span>); }
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">describeTo</span><span class="hljs-params">(Description d)</span> { d.appendText(<span class="hljs-string">"throwing"</span>); }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">RecordingMatcher</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseMatcher</span>&lt;Object&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CapturesArguments</span> {
+        <span class="hljs-keyword">final</span> List&lt;Object&gt; captured = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;Object&gt;();
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">matches</span><span class="hljs-params">(Object item)</span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; }
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">describeTo</span><span class="hljs-params">(Description d)</span> { d.appendText(<span class="hljs-string">"recording"</span>); }
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">captureFrom</span><span class="hljs-params">(Object argument)</span> { captured.add(argument); }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MarkerVarargMatcher</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseMatcher</span>&lt;Object&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title class_">VarargMatcher</span> {
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">matches</span><span class="hljs-params">(Object item)</span> { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; }
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">describeTo</span><span class="hljs-params">(Description d)</span> { d.appendText(<span class="hljs-string">"vararg"</span>); }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DecoratorMatcher</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">BaseMatcher</span>&lt;Object&gt; <span class="hljs-keyword">implements</span> <span class="hljs-title class_">MatcherDecorator</span> {
+        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> Matcher actual;
+        DecoratorMatcher(Matcher actual) { <span class="hljs-built_in">this</span>.actual = actual; }
+        <span class="hljs-keyword">public</span> Matcher <span class="hljs-title function_">getActualMatcher</span><span class="hljs-params">()</span> { <span class="hljs-keyword">return</span> actual; }
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">matches</span><span class="hljs-params">(Object item)</span> { <span class="hljs-keyword">return</span> actual.matches(item); }
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">describeTo</span><span class="hljs-params">(Description d)</span> { actual.describeTo(d); }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> Method <span class="hljs-title function_">method</span><span class="hljs-params">(Class&lt;?&gt; c, String name, Class&lt;?&gt;</span></code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

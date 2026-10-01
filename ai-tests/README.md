@@ -1,9 +1,24 @@
 # AI-generated-test evidence layout
 
-The repository does not contain credentials for Claude or IntelliSphere, so no
-AI-generated test is fabricated here.  When an authorised operator runs either
-tool, retain the exact prompt, tool/model version, date, raw response, generated
-source, and b/f test logs under:
+The current all-project workflow is `docs/ai-workflow.md`, implemented by
+`scripts/ai/evidence.py`. Prepared prompt/source/target bundles are in each
+project's `results/study/round2-v4-20260929/<project>/ai-context/`. Use that
+workflow for Round 2; the Lang-only example below is historical.
+
+A valid evaluated suite must pass fixed validation twice. It may detect zero
+faults; that is a completed negative outcome. A detected regression additionally
+fails on buggy without a harness/linkage/timeout error. Do not discard valid
+non-detecting suites or label missing provider responses as completed runs.
+
+Actual authorised browser responses are now stored in
+`provider-captures/<tool>/<project>-1/s<run-index>-i1/`, with model metadata,
+screenshots, and original/processed Java source. Final evaluation evidence is
+in the corresponding `results/study/round2-v4-20260929/<project>/<tool>-s<index>-b30/`.
+Failed and superseded attempts remain under `results/validation`. No credentials
+are stored. See `docs/ai-workflow.md` for original-prompt-only transmission,
+local processing, Auto Router model variation and timing limitations.
+
+The historical Lang evidence layout was:
 
 ```text
 ai-tests/<tool>/Lang-1/<run-id>/

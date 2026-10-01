@@ -1,0 +1,21 @@
+{
+  "policy": "provider-source-processing-v1",
+  "documented_at_utc": "2026-09-28T21:15:29.515826+00:00",
+  "introduced_during_ai_integration": true,
+  "not_preregistered": true,
+  "reason": "Original AI responses exceeded the test-method cap, and KKU displayed invalid renderer suffixes. User chose original prompts only, without sending compile/fixed logs to providers.",
+  "provider_prompt_policy": "Original prepared prompt only. Original responses preserved.",
+  "evaluated_scope": "AI-assisted suites with disclosed local source processing, not unedited model output.",
+  "rules": [
+    "Retain first 30 AST-declared test methods in sorted file/source order; no evaluation outcomes for this cap.",
+    "Remove KKU UI (undefined) suffix only after a numeric array index outside strings/comments; preserve raw rendered source. This is a UI source repair, not verified reconstruction of original API text.",
+    "Up to two follow-ups may remove only methods that fail on fixed revision; never use buggy outcomes or rewrite expected assertion values.",
+    "Keep compiler failures and all original/superseded attempts as evidence.",
+    "Measure local processing and prior fixed evaluation costs. Provider UI timing is an observation upper bound."
+  ],
+  "source_sha256": {
+    "scripts/study/evaluate_provider_normalized.py": "75842b3634ad4f1a1e1344dbded07e41c02e822401be946deb645cbbe9fb921b",
+    "scripts/study/normalize_provider_source.py": "2da95ead535567f5d0283b7beb98675d1a85828869b0427f3acc435cd3c4b192",
+    "scripts/study/java/TestMethodPositions.java": "30b68e2045dbe3b34e58be1b6c226ecdfd525e8f4865a1a7d4dd00e7dcde8fc4"
+  }
+}

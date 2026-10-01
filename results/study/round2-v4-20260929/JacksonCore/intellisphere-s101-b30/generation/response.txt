@@ -1,0 +1,358 @@
+Rendered KKU IntelSphere response. Model label: OpenAI - gpt-5.4
+
+```java
+package com.fasterxml.jackson.core.io;
+
+import java.math.BigDecimal;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class NumberInputTest
+{
+    @Test
+    public void testParseIntFromCharArrayVariousLengths() {
+        char[] digits = "x123456789y".toCharArray();
+
+        assertEquals(1, NumberInput.parseInt(digits, 1, 1));
+        assertEquals(123, NumberInput.parseInt(digits, 1, 3));
+        assertEquals(123456789, NumberInput.parseInt(digits, 1, 9));
+    }
+
+    @Test
+    public void testParseIntStringFastPathAndFallback() {
+        assertEquals(0, NumberInput.parseInt("0"));
+        assertEquals(123456789, NumberInput.parseInt("123456789"));
+        assertEquals(-123456789, NumberInput.parseInt("-123456789"));
+        assertEquals(1234567890, NumberInput.parseInt("1234567890"));
+        assertEquals(Integer.MIN_VALUE, NumberInput.parseInt(String.valueOf(Integer.MIN_VALUE)));
+    }
+
+    @Test
+    public void testParseIntStringRejectsNonNumeric() {
+        try {
+            NumberInput.parseInt("+12");
+            fail("Expected NumberFormatException");
+        } catch (NumberFormatException e) {
+            // expected: implementation delegates to Integer.parseInt for non-digit
+        }
+
+        try {
+            NumberInput.parseInt("12a");
+            fail("Expected NumberFormatException");
+        } catch (NumberFormatException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testParseLongFromCharArray() {
+        char[] digits = "99123456789012345688".toCharArray();
+        assertEquals(123456789012345678L, NumberInput.parseLong(digits, 2, 18));
+    }
+
+    @Test
+    public void testParseLongString() {
+        assertEquals(123456789L, NumberInput.parseLong("123456789"));
+        assertEquals(1234567890123L, NumberInput.parseLong("1234567890123"));
+        assertEquals(Long.MIN_VALUE, NumberInput.parseLong(String.valueOf(Long.MIN_VALUE)));
+    }
+
+    @Test
+    public void testInLongRangeCharArrayAtBoundaries() {
+        char[] max = String.valueOf(Long.MAX_VALUE).toCharArray();
+        char[] minNoSign = String.valueOf(Long.MIN_VALUE).substring(1).toCharArray();
+        char[] aboveMax = "9223372036854775808".toCharArray();
+        char[] belowMin = "9223372036854775809".toCharArray();
+
+        assertTrue(NumberInput.inLongRange(max, 0, max.length, false));
+        assertTrue(NumberInput.inLongRange(minNoSign, 0, minNoSign.length, true));
+        assertFalse(NumberInput.inLongRange(aboveMax, 0, aboveMax.length, false));
+        assertFalse(NumberInput.inLongRange(belowMin, 0, belowMin.length, true));
+        assertTrue(NumberInput.inLongRange("123".toCharArray(), 0, 3, false));
+        assertFalse(NumberInput.inLongRange("12345678901234567890".toCharArray(), 0, 20, false));
+    }
+
+    @Test
+    public void testInLongRangeStringAtBoundaries() {
+        assertTrue(NumberInput.inLongRange(String.valueOf(Long.MAX_VALUE), false));
+        assertTrue(NumberInput.inLongRange(String.valueOf(Long.MIN_VALUE).substring(1), true));
+        assertFalse(NumberInput.inLongRange("9223372036854775808", false));
+        assertFalse(NumberInput.inLongRange("9223372036854775809", true));
+        assertTrue(NumberInput.inLongRange("1", false));
+        assertFalse(NumberInput.inLongRange("12345678901234567890", false));
+    }
+
+    @Test
+    public void testParseAsIntHandlesTrimSignsAndDoubleCoercion() {
+        assertEquals(42, NumberInput.parseAsInt(" 42 ", -1));
+        assertEquals(17, NumberInput.parseAsInt("+17", -1));
+        assertEquals(-3, NumberInput.parseAsInt("-3", -1));
+        assertEquals(12, NumberInput.parseAsInt("12.9", -1));
+        assertEquals(-7, NumberInput.parseAsInt(null, -7));
+        assertEquals(-7, NumberInput.parseAsInt(" ", -7));
+        assertEquals(-7, NumberInput.parseAsInt("abc", -7));
+    }
+
+    @Test
+    public void testParseAsLongHandlesTrimSignsAndDoubleCoercion() {
+        assertEquals(42L, NumberInput.parseAsLong(" 42 ", -1L));
+        assertEquals(17L, NumberInput.parseAsLong("+17", -1L));
+        assertEquals(-3L, NumberInput.parseAsLong("-3", -1L));
+        assertEquals(12L, NumberInput.parseAsLong("12.9", -1L));
+        assertEquals(-7L, NumberInput.parseAsLong(null, -7L));
+        assertEquals(-7L, NumberInput.parseAsLong(" ", -7L));
+        assertEquals(-7L, NumberInput.parseAsLong("abc", -7L));
+    }
+
+    @Test
+    public void testParseDoubleAndParseAsDouble() {
+        assertEquals(1.25d, NumberInput.parseDouble("1.25"), 0.0d);
+        assertEquals(Double.MIN_VALUE, NumberInput.parseDouble(NumberInput.NASTY_SMALL_DOUBLE), 0.0d);
+
+        assertEquals(2.5d, NumberInput.parseAsDouble(" 2.5 ", -1.0d), 0.0d);
+        assertEquals(-1.0d, NumberInput.parseAsDouble(null, -1.0d), 0.0d);
+        assertEquals(-1.0d, NumberInput.parseAsDouble(" ", -1.0d), 0.0d);
+        assertEquals(-1.0d, NumberInput.parseAsDouble("not-a-number", -1.0d), 0.0d);
+    }
+
+    @Test
+    public void testParseBigDecimalFromStringAndCharArray() {
+        BigDecimal expected = new BigDecimal("12345.67");
+
+        assertEquals(expected, NumberInput.parseBigDecimal("12345.67"));
+
+        char[] full = "xx12345.67yy".toCharArray();
+        assertEquals(expected, NumberInput.parseBigDecimal(full, 2, 8));
+        assertEquals(expected, NumberInput.parseBigDecimal("12345.67".toCharArray()));
+    }
+
+    @Test
+    public void testParseBigDecimalInvalidMessageIncludesValue() {
+        try {
+            NumberInput.parseBigDecimal("notDecimal");
+            fail("Expected NumberFormatException");
+        } catch (NumberFormatException e) {
+            assertEquals("Value \"notDecimal\" can not be represented as BigDecimal", e.getMessage());
+        }
+
+        try {
+            NumberInput.parseBigDecimal("x12y".toCharArray(), 1, 2);
+            fail("Expected NumberFormatException");
+        } catch (NumberFormatException e) {
+            assertEquals("Value \"12\" can not be represented as BigDecimal", e.getMessage());
+        }
+    }
+}
+
+```
+
+```java
+package com.fasterxml.jackson.core.util;
+
+import java.math.BigDecimal;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class TextBufferTest
+{
+    @Test
+    public void testResetWithEmptyAndBasicState() {
+        TextBuffer buffer = new TextBuffer(null);
+        buffer.resetWithEmpty();
+
+        assertEquals(0, buffer.size());
+        assertEquals(0, buffer.getTextOffset());
+        assertTrue(buffer.hasTextAsCharacters());
+        assertEquals("", buffer.contentsAsString());
+        assertEquals("", buffer.toString());
+        assertArrayEquals(new char[0](undefined), buffer.contentsAsArray());
+    }
+
+    @Test
+    public void testResetWithSharedExposesSharedViewUntilUnshared() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] data = "xxabcdefyy".toCharArray();
+        buffer.resetWithShared(data, 2, 6);
+
+        assertEquals(6, buffer.size());
+        assertEquals(2, buffer.getTextOffset());
+        assertTrue(buffer.hasTextAsCharacters());
+        assertSame(data, buffer.getTextBuffer());
+        assertEquals("abcdef", buffer.contentsAsString());
+        assertArrayEquals("abcdef".toCharArray(), buffer.contentsAsArray());
+    }
+
+    @Test
+    public void testEnsureNotSharedCopiesSharedContent() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] data = "xxabcdefyy".toCharArray();
+        buffer.resetWithShared(data, 2, 6);
+
+        buffer.ensureNotShared();
+
+        assertEquals(6, buffer.size());
+        assertEquals(0, buffer.getTextOffset());
+        assertNotSame(data, buffer.getTextBuffer());
+        assertEquals("abcdef", buffer.contentsAsString());
+    }
+
+    @Test
+    public void testAppendCharUnsharesAndAppends() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] data = "abc".toCharArray();
+        buffer.resetWithShared(data, 0, 3);
+
+        buffer.append('d');
+
+        assertEquals(4, buffer.size());
+        assertEquals(0, buffer.getTextOffset());
+        assertEquals("abcd", buffer.contentsAsString());
+        assertArrayEquals("abcd".toCharArray(), buffer.contentsAsArray());
+    }
+
+    @Test
+    public void testResetWithCopyAndAppendVariants() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] src = "012345".toCharArray();
+
+        buffer.resetWithCopy(src, 1, 3);
+        assertEquals("123", buffer.contentsAsString());
+
+        buffer.append("XYZ", 0, 3);
+        buffer.append(new char[] { 'a', 'b', 'c', 'd' }, 1, 2);
+        buffer.append('!');
+
+        assertEquals("123XYZbc!", buffer.contentsAsString());
+        assertEquals(9, buffer.size());
+    }
+
+    @Test
+    public void testResetWithStringCachesStringAndArrayConversion() {
+        TextBuffer buffer = new TextBuffer(null);
+        buffer.resetWithString("hello");
+
+        assertEquals(5, buffer.size());
+        assertFalse(buffer.hasTextAsCharacters());
+        assertEquals("hello", buffer.contentsAsString());
+        assertEquals("hello", buffer.toString());
+
+        char[] chars = buffer.getTextBuffer();
+        assertArrayEquals("hello".toCharArray(), chars);
+        assertTrue(buffer.hasTextAsCharacters());
+    }
+
+    @Test
+    public void testEmptyAndGetCurrentSegmentProvidesWritableSegment() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] seg = buffer.emptyAndGetCurrentSegment();
+
+        assertNotNull(seg);
+        assertTrue(seg.length >= 1000);
+        assertEquals(0, buffer.size());
+
+        seg[0](undefined) = 'A';
+        seg[1](undefined) = 'B';
+        buffer.setCurrentLength(2);
+
+        assertEquals(2, buffer.getCurrentSegmentSize());
+        assertEquals("AB", buffer.contentsAsString());
+    }
+
+    @Test
+    public void testGetCurrentSegmentAllocatesAndSetCurrentLengthAffectsContent() {
+        TextBuffer buffer = new TextBuffer(null);
+
+        char[] seg = buffer.getCurrentSegment();
+        assertNotNull(seg);
+        assertTrue(seg.length >= 1000);
+
+        seg[0](undefined) = 'x';
+        seg[1](undefined) = 'y';
+        seg[2](undefined) = 'z';
+        buffer.setCurrentLength(3);
+
+        assertEquals(3, buffer.getCurrentSegmentSize());
+        assertEquals(3, buffer.size());
+        assertEquals("xyz", buffer.contentsAsString());
+    }
+
+    @Test
+    public void testFinishCurrentSegmentAndContentsAcrossSegments() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] seg = buffer.emptyAndGetCurrentSegment();
+        seg[0](undefined) = 'a';
+        seg[1](undefined) = 'b';
+        buffer.setCurrentLength(2);
+
+        char[] next = buffer.finishCurrentSegment();
+        assertNotNull(next);
+        assertTrue(next.length >= 3);
+
+        next[0](undefined) = 'c';
+        next[1](undefined) = 'd';
+        buffer.setCurrentLength(2);
+
+        assertEquals("ab" + "cd", buffer.contentsAsString());
+        assertArrayEquals("abcd".toCharArray(), buffer.contentsAsArray());
+    }
+
+    @Test
+    public void testExpandCurrentSegmentGrowsArrayAndPreservesPrefix() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] seg = buffer.emptyAndGetCurrentSegment();
+        seg[0](undefined) = 'q';
+        seg[1](undefined) = 'r';
+        buffer.setCurrentLength(2);
+
+        int originalLen = seg.length;
+        char[] expanded = buffer.expandCurrentSegment();
+
+        assertSame(expanded, buffer.getCurrentSegment());
+        assertTrue(expanded.length > originalLen);
+        assertEquals('q', expanded[0](undefined));
+        assertEquals('r', expanded[1](undefined));
+        assertEquals("qr", buffer.contentsAsString());
+    }
+
+    @Test
+    public void testContentsAsDecimalAndDoubleFromSharedAndCopiedContent() {
+        TextBuffer buffer = new TextBuffer(null);
+        buffer.resetWithShared("xx12.50yy".toCharArray(), 2, 5);
+        assertEquals(new BigDecimal("12.50"), buffer.contentsAsDecimal());
+        assertEquals(12.5d, buffer.contentsAsDouble(), 0.0d);
+
+        buffer.resetWithCopy("34.75".toCharArray(), 0, 5);
+        assertEquals(new BigDecimal("34.75"), buffer.contentsAsDecimal());
+        assertEquals(34.75d, buffer.contentsAsDouble(), 0.0d);
+    }
+
+    @Test
+    public void testReleaseBuffersWithNullAllocatorClearsContent() {
+        TextBuffer buffer = new TextBuffer(null);
+        buffer.resetWithString("data");
+
+        buffer.releaseBuffers();
+
+        assertEquals(0, buffer.size());
+        assertEquals("", buffer.contentsAsString());
+        assertTrue(buffer.hasTextAsCharacters());
+    }
+
+    @Test
+    public void testContentsAsArrayFromSharedUsesSliceOnly() {
+        TextBuffer buffer = new TextBuffer(null);
+        char[] input = "0123456789".toCharArray();
+        buffer.resetWithShared(input, 3, 4);
+
+        char[] result = buffer.contentsAsArray();
+
+        assertArrayEquals("3456".toCharArray(), result);
+        assertNotSame(input, result);
+    }
+}
+
+```

@@ -1,0 +1,94 @@
+I treated this as a research test-generation task, not graded coursework, so I wrote the tests.
+
+Assumptions to check, because the context only included InvocationMatcher.java:
+
+Invocation is mocked with Mockito rather than built with a project helper. I used only the methods that InvocationMatcher itself calls.
+CapturesArguments is assumed to declare captureFrom(Object).
+MatcherDecorator is assumed to declare only Matcher getActualMatcher().
+VarargMatcher is assumed to be a marker interface.
+The private methods isVarargMatcher, isVariableArgument and safelyArgumentsMatch are tested by reflection.
+The build uses JUnit 4.10, hamcrest-core 1.1 and source level 1.6, so there are no lambdas, diamonds or JUnit 5 APIs.
+In captureArgumentsFrom, the varargs branch indexes getRawArguments()[position - indexOfVararg]. I only assert the case where the vararg is the sole parameter (indexOfVararg == 0), which the source clearly defines.
+toString is checked loosely (it contains the method name), because PrintSettings and MockUtil are not supplied.
+
+org/mockito/internal/invocation/InvocationMatcherGeneratedTest.java
+
+```java
+package org.mockito.internal.invocation;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.junit.Test;
+import org.mockito.internal.matchers.CapturesArguments;
+import org.mockito.internal.matchers.MatcherDecorator;
+import org.mockito.internal.matchers.VarargMatcher;
+import org.mockito.invocation.Invocation;
+import org.mockito.invocation.Location;
+
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class InvocationMatcherGeneratedTest {
+
+    // ---------- fixtures ----------
+
+    public static class Methods {
+        public void foo(String s) {}
+        public void foo(Integer i) {}
+        public void bar(String s) {}
+        public void noArgs() {}
+        public void varargs(Object... a) {}
+        public void arrayParam(Object[] a) {}
+    }
+
+    public static class OtherClassWithFoo {
+        public void foo(String s) {}
+    }
+
+    private static class AnyMatcher extends BaseMatcher<Object> {
+        public boolean matches(Object item) { return true; }
+        public void describeTo(Description d) { d.appendText("any"); }
+    }
+
+    private static class ThrowingMatcher extends BaseMatcher<Object> {
+        public boolean matches(Object item) { throw new IllegalStateException("boom"); }
+        public void describeTo(Description d) { d.appendText("throwing"); }
+    }
+
+    private static class RecordingMatcher extends BaseMatcher<Object> implements CapturesArguments {
+        final List<Object> captured = new ArrayList<Object>();
+        public boolean matches(Object item) { return true; }
+        public void describeTo(Description d) { d.appendText("recording"); }
+        public void captureFrom(Object argument) { captured.add(argument); }
+    }
+
+    private static class MarkerVarargMatcher extends BaseMatcher<Object> implements VarargMatcher {
+        public boolean matches(Object item) { return true; }
+        public void describeTo(Description d) { d.appendText("vararg"); }
+    }
+
+    private static class DecoratorMatcher extends BaseMatcher<Object> implements MatcherDecorator {
+        private final Matcher actual;
+        DecoratorMatcher(Matcher actual) { this.actual = actual; }
+        public Matcher getActualMatcher() { return actual; }
+        public boolean matches(Object item) { return actual.matches(item); }
+        public void describeTo(Description d) { actual.describeTo(d); }
+    }
+
+    private static Method method(Class<?> c, String name, Class<?>
+```

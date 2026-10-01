@@ -1,0 +1,293 @@
+<div id="messageContentDataIdiI37VBexqTzq" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>org/apache/commons/cli/CommandLineRegressionTest.java</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.cli;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> java.util.Iterator;
+<span class="hljs-keyword">import</span> java.util.List;
+
+<span class="hljs-comment">/**
+ * Regression tests for {<span class="hljs-doctag">@link</span> CommandLine} based on fixed-reference behavior.
+ * Uses JUnit 3.8.1, following the project’s build configuration.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CommandLineRegressionTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> CommandLine cmd;
+    <span class="hljs-keyword">private</span> Option optFoo;
+    <span class="hljs-keyword">private</span> Option optBarLong;
+    <span class="hljs-keyword">private</span> Option optBazInt;
+
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-built_in">super</span>.setUp();
+        cmd = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CommandLine</span>();
+
+        <span class="hljs-comment">// short option only, no argument</span>
+        optFoo = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"f"</span>, <span class="hljs-literal">false</span>, <span class="hljs-string">"Foo option"</span>);
+        <span class="hljs-comment">// short and long option, requires argument</span>
+        optBarLong = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"b"</span>, <span class="hljs-string">"bar"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Bar option with value"</span>);
+        <span class="hljs-comment">// short option with type conversion, requires argument</span>
+        optBazInt = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Option</span>(<span class="hljs-string">"z"</span>, <span class="hljs-literal">true</span>, <span class="hljs-string">"Baz integer option"</span>);
+        optBazInt.setType(Integer.class);
+    }
+
+    <span class="hljs-comment">// ---- hasOption(String) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionShort</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        assertTrue(cmd.hasOption(<span class="hljs-string">"f"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionLong</span><span class="hljs-params">()</span> {
+        cmd.addOption(optBarLong);
+        assertTrue(cmd.hasOption(<span class="hljs-string">"bar"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionShortViaLong</span><span class="hljs-params">()</span> {
+        cmd.addOption(optBarLong);
+        assertTrue(cmd.hasOption(<span class="hljs-string">"b"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionNotPresent</span><span class="hljs-params">()</span> {
+        assertFalse(cmd.hasOption(<span class="hljs-string">"x"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionWithLeadingHyphens</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        assertTrue(cmd.hasOption(<span class="hljs-string">"--f"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionEmptyString</span><span class="hljs-params">()</span> {
+        assertFalse(cmd.hasOption(<span class="hljs-string">""</span>));
+    }
+
+    <span class="hljs-comment">// ---- hasOption(char) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionCharMatch</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        assertTrue(cmd.hasOption(<span class="hljs-string">'f'</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionCharNoMatch</span><span class="hljs-params">()</span> {
+        assertFalse(cmd.hasOption(<span class="hljs-string">'x'</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHasOptionCharLongNameOptionViaShort</span><span class="hljs-params">()</span> {
+        cmd.addOption(optBarLong);
+        assertTrue(cmd.hasOption(<span class="hljs-string">'b'</span>));
+        assertFalse(cmd.hasOption(<span class="hljs-string">'a'</span>)); <span class="hljs-comment">// 'b' only, not any char</span>
+    }
+
+    <span class="hljs-comment">// ---- getOptionValue(String) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuePresentNoArg</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo); <span class="hljs-comment">// no argument</span>
+        assertNull(cmd.getOptionValue(<span class="hljs-string">"f"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuePresentWithArg</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"hello"</span>);
+        cmd.addOption(optBarLong);
+        assertEquals(<span class="hljs-string">"hello"</span>, cmd.getOptionValue(<span class="hljs-string">"b"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueLongWithArg</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"world"</span>);
+        cmd.addOption(optBarLong);
+        assertEquals(<span class="hljs-string">"world"</span>, cmd.getOptionValue(<span class="hljs-string">"bar"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueNotPresent</span><span class="hljs-params">()</span> {
+        assertNull(cmd.getOptionValue(<span class="hljs-string">"x"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueMultipleValuesReturnsFirst</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"first"</span>);
+        optBarLong.addValue(<span class="hljs-string">"second"</span>);
+        cmd.addOption(optBarLong);
+        assertEquals(<span class="hljs-string">"first"</span>, cmd.getOptionValue(<span class="hljs-string">"b"</span>));
+    }
+
+    <span class="hljs-comment">// ---- getOptionValue(String, String) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueWithDefaultNotPresent</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"default"</span>, cmd.getOptionValue(<span class="hljs-string">"x"</span>, <span class="hljs-string">"default"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueWithDefaultPresentNoArg</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        assertEquals(<span class="hljs-string">"default"</span>, cmd.getOptionValue(<span class="hljs-string">"f"</span>, <span class="hljs-string">"default"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueWithDefaultPresentWithArg</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"explicit"</span>);
+        cmd.addOption(optBarLong);
+        assertEquals(<span class="hljs-string">"explicit"</span>, cmd.getOptionValue(<span class="hljs-string">"b"</span>, <span class="hljs-string">"default"</span>));
+    }
+
+    <span class="hljs-comment">// ---- getOptionValue(char) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueCharPresentWithArg</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"data"</span>);
+        cmd.addOption(optBarLong);
+        assertEquals(<span class="hljs-string">"data"</span>, cmd.getOptionValue(<span class="hljs-string">'b'</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueCharNotPresent</span><span class="hljs-params">()</span> {
+        assertNull(cmd.getOptionValue(<span class="hljs-string">'x'</span>));
+    }
+
+    <span class="hljs-comment">// ---- getOptionValue(char, String) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueCharWithDefaultNotPresent</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-string">"fallback"</span>, cmd.getOptionValue(<span class="hljs-string">'x'</span>, <span class="hljs-string">"fallback"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValueCharWithDefaultPresentNoArg</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        assertEquals(<span class="hljs-string">"fallback"</span>, cmd.getOptionValue(<span class="hljs-string">'f'</span>, <span class="hljs-string">"fallback"</span>));
+    }
+
+    <span class="hljs-comment">// ---- getOptionValues(String) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesPresentMultipleArg</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"one"</span>);
+        optBarLong.addValue(<span class="hljs-string">"two"</span>);
+        cmd.addOption(optBarLong);
+        String[] values = cmd.getOptionValues(<span class="hljs-string">"b"</span>);
+        assertNotNull(values);
+        assertEquals(<span class="hljs-number">2</span>, values.length);
+        assertEquals(<span class="hljs-string">"one"</span>, values[<span class="hljs-number">0</span>](undefined));
+        assertEquals(<span class="hljs-string">"two"</span>, values[<span class="hljs-number">1</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesPresentSingleArg</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"only"</span>);
+        cmd.addOption(optBarLong);
+        String[] values = cmd.getOptionValues(<span class="hljs-string">"b"</span>);
+        assertNotNull(values);
+        assertEquals(<span class="hljs-number">1</span>, values.length);
+        assertEquals(<span class="hljs-string">"only"</span>, values[<span class="hljs-number">0</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesNotPresent</span><span class="hljs-params">()</span> {
+        assertNull(cmd.getOptionValues(<span class="hljs-string">"x"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesPresentNoArgReturnsNull</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        assertNull(cmd.getOptionValues(<span class="hljs-string">"f"</span>));
+    }
+
+    <span class="hljs-comment">// ---- getOptionValues(char) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesCharPresent</span><span class="hljs-params">()</span> {
+        optBarLong.addValue(<span class="hljs-string">"a1"</span>);
+        cmd.addOption(optBarLong);
+        String[] values = cmd.getOptionValues(<span class="hljs-string">'b'</span>);
+        assertNotNull(values);
+        assertEquals(<span class="hljs-string">"a1"</span>, values[<span class="hljs-number">0</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionValuesCharNotPresent</span><span class="hljs-params">()</span> {
+        assertNull(cmd.getOptionValues(<span class="hljs-string">'x'</span>));
+    }
+
+    <span class="hljs-comment">// ---- getOptionObject(String) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectWithType</span><span class="hljs-params">()</span> {
+        optBazInt.addValue(<span class="hljs-string">"123"</span>);
+        cmd.addOption(optBazInt);
+        <span class="hljs-type">Object</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> cmd.getOptionObject(<span class="hljs-string">"z"</span>);
+        assertNotNull(obj);
+        assertTrue(obj <span class="hljs-keyword">instanceof</span> Integer);
+        assertEquals(Integer.valueOf(<span class="hljs-number">123</span>), obj);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectNotPresent</span><span class="hljs-params">()</span> {
+        assertNull(cmd.getOptionObject(<span class="hljs-string">"z"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectPresentNoValue</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Option has type but no value, getOptionValue returns null =&gt; result null</span>
+        cmd.addOption(optBazInt);
+        assertNull(cmd.getOptionObject(<span class="hljs-string">"z"</span>));
+    }
+
+    <span class="hljs-comment">// ---- getOptionObject(char) ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionObjectChar</span><span class="hljs-params">()</span> {
+        optBazInt.addValue(<span class="hljs-string">"456"</span>);
+        cmd.addOption(optBazInt);
+        <span class="hljs-type">Object</span> <span class="hljs-variable">obj</span> <span class="hljs-operator">=</span> cmd.getOptionObject(<span class="hljs-string">'z'</span>);
+        assertEquals(Integer.valueOf(<span class="hljs-number">456</span>), obj);
+    }
+
+    <span class="hljs-comment">// ---- getArgs / getArgList ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetArgsInitiallyEmpty</span><span class="hljs-params">()</span> {
+        String[] args = cmd.getArgs();
+        assertNotNull(args);
+        assertEquals(<span class="hljs-number">0</span>, args.length);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetArgsAfterAddArg</span><span class="hljs-params">()</span> {
+        cmd.addArg(<span class="hljs-string">"unrecognized1"</span>);
+        cmd.addArg(<span class="hljs-string">"unrecognized2"</span>);
+        String[] args = cmd.getArgs();
+        assertEquals(<span class="hljs-number">2</span>, args.length);
+        assertEquals(<span class="hljs-string">"unrecognized1"</span>, args[<span class="hljs-number">0</span>](undefined));
+        assertEquals(<span class="hljs-string">"unrecognized2"</span>, args[<span class="hljs-number">1</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetArgListReturnsLiveList</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">List</span> <span class="hljs-variable">list</span> <span class="hljs-operator">=</span> cmd.getArgList();
+        assertNotNull(list);
+        assertEquals(<span class="hljs-number">0</span>, list.size());
+        cmd.addArg(<span class="hljs-string">"extra"</span>);
+        assertEquals(<span class="hljs-number">1</span>, list.size());
+        assertEquals(<span class="hljs-string">"extra"</span>, list.get(<span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-comment">// ---- iterator / getOptions ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIteratorEmpty</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Iterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> cmd.iterator();
+        assertFalse(it.hasNext());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIteratorWithOptions</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        cmd.addOption(optBarLong);
+        <span class="hljs-type">Iterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> cmd.iterator();
+        assertTrue(it.hasNext());
+        <span class="hljs-type">Object</span> <span class="hljs-variable">first</span> <span class="hljs-operator">=</span> it.next();
+        assertTrue(first <span class="hljs-keyword">instanceof</span> Option);
+        assertTrue(it.hasNext());
+        <span class="hljs-type">Object</span> <span class="hljs-variable">second</span> <span class="hljs-operator">=</span> it.next();
+        assertTrue(second <span class="hljs-keyword">instanceof</span> Option);
+        assertFalse(it.hasNext());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionsEmpty</span><span class="hljs-params">()</span> {
+        Option[] opts = cmd.getOptions();
+        assertNotNull(opts);
+        assertEquals(<span class="hljs-number">0</span>, opts.length);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetOptionsWithOptions</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        cmd.addOption(optBarLong);
+        Option[] opts = cmd.getOptions();
+        assertEquals(<span class="hljs-number">2</span>, opts.length);
+    }
+
+    <span class="hljs-comment">// ---- behavior on duplicate options ----</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddDuplicateOptionIgnored</span><span class="hljs-params">()</span> {
+        cmd.addOption(optFoo);
+        cmd.addOption(optFoo); <span class="hljs-comment">// same instance</span>
+        Option[] opts = cmd.getOptions();
+        assertEquals(<span class="hljs-number">1</span>, opts.length);
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

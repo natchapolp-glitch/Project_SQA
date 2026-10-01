@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "intellisphere",
+  "provider": "KKU AI Sphere / IntelliSphere",
+  "model": "deepseek-v4-pro",
+  "project": "Closure",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 101,
+  "prompt_iteration": 1,
+  "generated_at": "2026-09-28T23:28:28.699Z",
+  "ingested_at": "2026-10-01T06:46:27.608064+00:00",
+  "parameters": {
+    "routing_mode": "Auto Router",
+    "resolved_model_label": "Deepseek - deepseek-v4-pro",
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "com/google/javascript/jscomp/RemoveUnusedVarsTest.java",
+      "before_sha256": "5d5baf8def0a2e197b51fcdb7f044c2efa38292b7440a6012dc002566fd29c8f",
+      "after_sha256": "99487c7b9d577b5a7407562a205562f5b601a4ec9b90fa38dcf7542bca66ecc6",
+      "local_compatibility_repairs": [
+        {
+          "old": "options.setLanguage(LanguageMode.ECMASCRIPT5);",
+          "new": "options.setLanguageIn(LanguageMode.ECMASCRIPT5);",
+          "occurrences": 3,
+          "reason": "Fixed CompilerOptions.java exposes setLanguageIn(LanguageMode)."
+        },
+        {
+          "old": "LifeCycleStage.NORMALIZED",
+          "new": "AbstractCompiler.LifeCycleStage.NORMALIZED",
+          "occurrences": 4,
+          "reason": "Qualify nested enum declared in fixed AbstractCompiler.java."
+        }
+      ],
+      "selection": "Selected from fixed compilation diagnostics and fixed API source only; no buggy feedback."
+    },
+    {
+      "path": "com/google/javascript/jscomp/RemoveUnusedVarsTest.java",
+      "before_sha256": "99487c7b9d577b5a7407562a205562f5b601a4ec9b90fa38dcf7542bca66ecc6",
+      "after_sha256": "36e61faa55caba4a3a92317b4198f0c0ccb1565cf75a64839aa6ee252e23fc16",
+      "local_compatibility_repairs": [
+        {
+          "occurrences": 4,
+          "reason": "Fixed Compiler.compile accepts CompilerOptions, not a CompilerPass. Use fixed init/parseInputs/Normalize/process APIs to run the original selected pass."
+        }
+      ],
+      "selection": "Fixed production API and prior fixed compiler diagnostics only; original inputs, pass constructor flags, assertions and expected values unchanged."
+    },
+    {
+      "path": "com/google/javascript/jscomp/RemoveUnusedVarsTest.java",
+      "before_sha256": "36e61faa55caba4a3a92317b4198f0c0ccb1565cf75a64839aa6ee252e23fc16",
+      "after_sha256": "cf6458e6c41e379088984e9945fbe44b4ac28730554b8507f02de8b7fe116c43",
+      "local_compatibility_repairs": [
+        {
+          "old": "RemoveUnusedVars.getFunctionArgList(function)",
+          "new": "invokeOriginalFunctionArgList(function)",
+          "occurrences": 2,
+          "reason": "Fixed getFunctionArgList is private static; reflection invokes the same method with the same input and preserves all assertions."
+        }
+      ],
+      "selection": "Fixed compiler diagnostic and fixed production visibility only; no buggy feedback."
+    }
+  ],
+  "notes": [
+    "Input: exact prepared prompt.",
+    "Verbatim visible Java blocks exported with Markdown fences added; rendered HTML/text retained.",
+    "UI export is not a verified original API response; renderer may introduce (undefined) after array indices.",
+    "Duration is a UI observation upper bound.",
+    "Local processing v21 excludes methods containing fixed-diagnosed unsupported API calls, completes BaseMatcher adaptation, and records empty suites accurately; earlier v6-v9 repairs remain; duplicate class names keep first source block in response order; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "9d4b68136ef2049cffc95a961e096dff5b144e6fa6cd28767c9e4555103fef24",
+  "response_sha256": "33e45d1f02ed5a020056cb97ca1945f51e2068291409bbb27ffb348ce61e0e56",
+  "context_manifest_sha256": "c84da105327833820b8838a6107e1f30150731f1c7d71311680023eda042df8b",
+  "source_files": [
+    {
+      "path": "src/com/google/javascript/jscomp/RemoveUnusedVars.java",
+      "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "sha256": "44bd2549d04080c856a63d8f5258e4235c6692c820ecd9937a33be0528448a86",
+      "bytes": 34838
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.xml",
+      "sha256": "7955b4bd4b35cbc24b8429639a30633a7a18343bf207c67c36dcc7d403108045",
+      "bytes": 19411
+    },
+    {
+      "path": "lib/rhino/build.xml",
+      "sha256": "7c67b8c1def98ed3fcc51bc1beb4a2bb8e2915b1cddc1c778255975104815fcb",
+      "bytes": 13088
+    },
+    {
+      "path": "lib/rhino/deprecatedsrc/build.xml",
+      "sha256": "f80693f64f2996788a94759e4e8597903d6cf971f90206c9b1a7a9ec9b77e6d9",
+      "bytes": 934
+    },
+    {
+      "path": "lib/rhino/src/build.xml",
+      "sha256": "70637bb6c47324ab67b1a9883dc6a5ff1ce7b3037da0fef6843f7a342fe6ed30",
+      "bytes": 2156
+    },
+    {
+      "path": "lib/rhino/testsrc/build.xml",
+      "sha256": "c349e55a334e82851b382920888c66bd04b82dd2ed766b4d7b9330ecf12415ba",
+      "bytes": 8049
+    },
+    {
+      "path": "lib/rhino/toolsrc/build.xml",
+      "sha256": "2a76c69b8bf76dfd872d925e84252fea905b39bff2b01dc5bb66f23cbfeaade0",
+      "bytes": 1406
+    },
+    {
+      "path": "lib/rhino/toolsrc/org/mozilla/javascript/tools/debugger/build.xml",
+      "sha256": "13233eaab9244e9ba930991112fdf26d46f112c9a0cc9e878ad44200343b714d",
+      "bytes": 3747
+    },
+    {
+      "path": "lib/rhino/xmlimplsrc/build.xml",
+      "sha256": "77a7071b58275f3c589485bfcc3ba0468fe8a8b064481264d190e37dc4dede07",
+      "bytes": 4246
+    }
+  ],
+  "java_files": [
+    {
+      "path": "com/google/javascript/jscomp/RemoveUnusedVarsTest.java",
+      "sha256": "cf6458e6c41e379088984e9945fbe44b4ac28730554b8507f02de8b7fe116c43",
+      "bytes": 18204
+    }
+  ],
+  "external_suite": "Closure-1f-intellisphere.101.tar.bz2",
+  "external_suite_sha256": "bc69c30cbc45764161f04b9535e65ac3167a80057bd13370de53a85eb8253e8e",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

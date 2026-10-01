@@ -1,0 +1,231 @@
+package org.apache.commons.csv;
+
+import org.junit.Test;
+
+import java.io.IOException;
+import java.io.StringReader;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+/**
+ * Deterministic unit tests for {@link ExtendedBufferedReader}.
+ */
+public class ExtendedBufferedReaderTest {
+
+    private ExtendedBufferedReader createReader(String input) {
+        return new ExtendedBufferedReader(new StringReader(input));
+    }
+
+    @Test
+    public void testInitialState() {
+        ExtendedBufferedReader reader = createReader("abc");
+        assertEquals(ExtendedBufferedReader.UNDEFINED, reader.readAgain());
+        assertEquals(0, reader.getLineNumber());
+    }
+
+    @Test
+    public void testLookAheadOnEmptyStream() throws IOException {
+        ExtendedBufferedReader reader = createReader("");
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.lookAhead());
+        // lookAhead should not consume or alter readAgain() state
+        assertEquals(ExtendedBufferedReader.UNDEFINED, reader.readAgain());
+    }
+
+    @Test
+    public void testLookAheadDoesNotConsumeCharacter() throws IOException {
+        ExtendedBufferedReader reader = createReader("xyz");
+        assertEquals('x', reader.lookAhead());
+        assertEquals('x', reader.lookAhead());
+        assertEquals(ExtendedBufferedReader.UNDEFINED, reader.readAgain());
+
+        assertEquals('x', reader.read());
+        assertEquals('x', reader.readAgain());
+        assertEquals('y', reader.lookAhead());
+    }
+
+    @Test
+    public void testReadSingleCharactersUntilEof() throws IOException {
+        ExtendedBufferedReader reader = createReader("ab");
+
+        assertEquals('a', reader.read());
+        assertEquals('a', reader.readAgain());
+        assertEquals(0, reader.getLineNumber());
+
+        assertEquals('b', reader.read());
+        assertEquals('b', reader.readAgain());
+        assertEquals(0, reader.getLineNumber());
+
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.read());
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.readAgain());
+        assertEquals(0, reader.getLineNumber());
+    }
+
+    @Test
+    public void testLineCountingWithCarriageReturn() throws IOException {
+        ExtendedBufferedReader reader = createReader("a\rb\r");
+        assertEquals('a', reader.read());
+        assertEquals(0, reader.getLineNumber());
+
+        assertEquals('\r', reader.read());
+        assertEquals(1, reader.getLineNumber());
+
+        assertEquals('b', reader.read());
+        assertEquals(1, reader.getLineNumber());
+
+        assertEquals('\r', reader.read());
+        assertEquals(2, reader.getLineNumber());
+    }
+
+    @Test
+    public void testLineCountingWithNewline() throws IOException {
+        ExtendedBufferedReader reader = createReader("a\nb\n");
+        assertEquals('a', reader.read());
+        assertEquals(0, reader.getLineNumber());
+
+        assertEquals('\n', reader.read());
+        assertEquals(1, reader.getLineNumber());
+
+        assertEquals('b', reader.read());
+        assertEquals(1, reader.getLineNumber());
+
+        assertEquals('\n', reader.read());
+        assertEquals(2, reader.getLineNumber());
+    }
+
+    @Test
+    public void testLineCountingWithCrLfSingleReads() throws IOException {
+        ExtendedBufferedReader reader = createReader("a\r\nb");
+        assertEquals('a', reader.read());
+        assertEquals(0, reader.getLineNumber());
+
+        assertEquals('\r', reader.read());
+        assertEquals(1, reader.getLineNumber());
+
+        // CRLF sequence should only count as one line break
+        assertEquals('\n', reader.read());
+        assertEquals(1, reader.getLineNumber());
+
+        assertEquals('b', reader.read());
+        assertEquals(1, reader.getLineNumber());
+    }
+
+    @Test
+    public void testReadCharArrayZeroLength() throws IOException {
+        ExtendedBufferedReader reader = createReader("abc");
+        char[] buf = new char[5];
+        int readCount = reader.read(buf, 0, 0);
+
+        assertEquals(0, readCount);
+        assertEquals(ExtendedBufferedReader.UNDEFINED, reader.readAgain());
+        assertEquals(0, reader.getLineNumber());
+    }
+
+    @Test
+    public void testReadCharArrayPartialAndEof() throws IOException {
+        ExtendedBufferedReader reader = createReader("hello");
+        char[] buf = new char[8];
+
+        int readCount = reader.read(buf, 1, 3);
+        assertEquals(3, readCount);
+        assertEquals('h', buf[1]);
+        assertEquals('e', buf[2]);
+        assertEquals('l', buf[3]);
+        assertEquals('l', reader.readAgain());
+
+        readCount = reader.read(buf, 0, 5);
+        assertEquals(2, readCount);
+        assertEquals('l', buf[0]);
+        assertEquals('o', buf[1]);
+        assertEquals('o', reader.readAgain());
+
+        readCount = reader.read(buf, 0, 5);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, readCount);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.readAgain());
+    }
+
+    @Test
+    public void testReadCharArrayLineCounting() throws IOException {
+        ExtendedBufferedReader reader = createReader("a\r\nb\nc\rd");
+        char[] buf = new char[10];
+
+        int readCount = reader.read(buf, 0, buf.length);
+        assertEquals(8, readCount);
+        assertEquals(3, reader.getLineNumber());
+        assertEquals('d', reader.readAgain());
+    }
+
+    @Test
+    public void testReadCharArrayCrLfAcrossChunkBoundary() throws IOException {
+        ExtendedBufferedReader reader = createReader("a\r\nb");
+        char[] buf1 = new char[2];
+        char[] buf2 = new char[2];
+
+        int read1 = reader.read(buf1, 0, 2); // reads "a\r"
+        assertEquals(2, read1);
+        assertEquals(1, reader.getLineNumber());
+        assertEquals('\r', reader.readAgain());
+
+        int read2 = reader.read(buf2, 0, 2); // reads "\nb"
+        assertEquals(2, read2);
+        // \n immediately following \r in previous read should not increment lineCounter
+        assertEquals(1, reader.getLineNumber());
+        assertEquals('b', reader.readAgain());
+    }
+
+    @Test
+    public void testReadLineSingleAndMultiLine() throws IOException {
+        ExtendedBufferedReader reader = createReader("first line\r\nsecond line");
+
+        String line1 = reader.readLine();
+        assertEquals("first line", line1);
+        assertEquals('e', reader.readAgain());
+        assertEquals(1, reader.getLineNumber());
+
+        String line2 = reader.readLine();
+        assertEquals("second line", line2);
+        assertEquals('e', reader.readAgain());
+        assertEquals(2, reader.getLineNumber());
+
+        String line3 = reader.readLine();
+        assertNull(line3);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.readAgain());
+        assertEquals(2, reader.getLineNumber());
+    }
+
+    @Test
+    public void testReadLineEmptyLinePreservesLastChar() throws IOException {
+        ExtendedBufferedReader reader = createReader("\nnext");
+
+        String emptyLine = reader.readLine();
+        assertEquals("", emptyLine);
+        // For empty line, lastChar is not modified because line.length() == 0
+        assertEquals(ExtendedBufferedReader.UNDEFINED, reader.readAgain());
+        assertEquals(1, reader.getLineNumber());
+
+        String nextLine = reader.readLine();
+        assertEquals("next", nextLine);
+        assertEquals('t', reader.readAgain());
+        assertEquals(2, reader.getLineNumber());
+    }
+
+    @Test
+    public void testMixedReadLookAheadAndReadLine() throws IOException {
+        ExtendedBufferedReader reader = createReader("ab\ncd");
+
+        assertEquals('a', reader.lookAhead());
+        assertEquals('a', reader.read());
+        assertEquals('b', reader.lookAhead());
+
+        String restOfLine = reader.readLine();
+        assertEquals("b", restOfLine);
+        assertEquals('b', reader.readAgain());
+        assertEquals(1, reader.getLineNumber());
+
+        assertEquals('c', reader.lookAhead());
+        assertEquals('c', reader.read());
+        assertEquals('d', reader.read());
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.lookAhead());
+    }
+}

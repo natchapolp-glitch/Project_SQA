@@ -1,0 +1,102 @@
+<p>An independent regression test suite for <code>org.apache.commons.lang3.math.NumberUtils</code> targeting the specified API surface is provided below.</p>
+<p><code>org/apache/commons/lang3/math/NumberUtilsTest.java</code></p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-comment">/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+<span class="hljs-keyword">package</span> org.apache.commons.lang3.math;
+
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertEquals;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertFalse;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNotNull;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertNull;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.assertTrue;
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">static</span> org.junit.Assert.fail;
+
+<span class="hljs-keyword">import</span> java.math.BigDecimal;
+<span class="hljs-keyword">import</span> java.math.BigInteger;
+
+<span class="hljs-keyword">import</span> org.junit.Test;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NumberUtilsTest</span> {
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToInt</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0</span>, NumberUtils.toInt(<span class="hljs-literal">null</span>));
+        assertEquals(<span class="hljs-number">0</span>, NumberUtils.toInt(<span class="hljs-string">""</span>));
+        assertEquals(<span class="hljs-number">12</span>, NumberUtils.toInt(<span class="hljs-string">"12"</span>));
+        assertEquals(-<span class="hljs-number">1</span>, NumberUtils.toInt(<span class="hljs-literal">null</span>, -<span class="hljs-number">1</span>));
+        assertEquals(<span class="hljs-number">5</span>, NumberUtils.toInt(<span class="hljs-string">"invalid"</span>, <span class="hljs-number">5</span>));
+        assertEquals(<span class="hljs-number">1</span>, NumberUtils.toInt(<span class="hljs-string">"2147483648"</span>, <span class="hljs-number">1</span>)); <span class="hljs-comment">// overflow defaults</span>
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToLong</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0L</span>, NumberUtils.toLong(<span class="hljs-literal">null</span>));
+        assertEquals(<span class="hljs-number">0L</span>, NumberUtils.toLong(<span class="hljs-string">""</span>));
+        assertEquals(<span class="hljs-number">123456789012L</span>, NumberUtils.toLong(<span class="hljs-string">"123456789012"</span>));
+        assertEquals(-<span class="hljs-number">1L</span>, NumberUtils.toLong(<span class="hljs-literal">null</span>, -<span class="hljs-number">1L</span>));
+        assertEquals(<span class="hljs-number">99L</span>, NumberUtils.toLong(<span class="hljs-string">"invalid"</span>, <span class="hljs-number">99L</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToByteAndShort</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">0</span>, NumberUtils.toByte(<span class="hljs-literal">null</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">10</span>, NumberUtils.toByte(<span class="hljs-string">"10"</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">5</span>, NumberUtils.toByte(<span class="hljs-string">"invalid"</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">5</span>));
+
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">0</span>, NumberUtils.toShort(<span class="hljs-literal">null</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">20</span>, NumberUtils.toShort(<span class="hljs-string">"20"</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">5</span>, NumberUtils.toShort(<span class="hljs-string">"invalid"</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">5</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToFloatAndDouble</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">0.0f</span>, NumberUtils.toFloat(<span class="hljs-literal">null</span>), <span class="hljs-number">0.0001f</span>);
+        assertEquals(<span class="hljs-number">1.5f</span>, NumberUtils.toFloat(<span class="hljs-string">"1.5"</span>), <span class="hljs-number">0.0001f</span>);
+        assertEquals(<span class="hljs-number">2.5f</span>, NumberUtils.toFloat(<span class="hljs-string">"invalid"</span>, <span class="hljs-number">2.5f</span>), <span class="hljs-number">0.0001f</span>);
+
+        assertEquals(<span class="hljs-number">0.0d</span>, NumberUtils.toDouble(<span class="hljs-literal">null</span>), <span class="hljs-number">0.0001d</span>);
+        assertEquals(<span class="hljs-number">1.25d</span>, NumberUtils.toDouble(<span class="hljs-string">"1.25"</span>), <span class="hljs-number">0.0001d</span>);
+        assertEquals(<span class="hljs-number">3.75d</span>, NumberUtils.toDouble(<span class="hljs-string">"invalid"</span>, <span class="hljs-number">3.75d</span>), <span class="hljs-number">0.0001d</span>);
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinMaxByte</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, NumberUtils.min((<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">2</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, NumberUtils.min((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">2</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, NumberUtils.min((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">2</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>));
+
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, NumberUtils.max((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">2</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, NumberUtils.max((<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">2</span>));
+        assertEquals((<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>, NumberUtils.max((<span class="hljs-type">byte</span>) <span class="hljs-number">1</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">2</span>, (<span class="hljs-type">byte</span>) <span class="hljs-number">3</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinMaxShort</span><span class="hljs-params">()</span> {
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">10</span>, NumberUtils.min((<span class="hljs-type">short</span>) <span class="hljs-number">10</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">20</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">30</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">10</span>, NumberUtils.min((<span class="hljs-type">short</span>) <span class="hljs-number">30</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">10</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">20</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">10</span>, NumberUtils.min((<span class="hljs-type">short</span>) <span class="hljs-number">30</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">20</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">10</span>));
+
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">30</span>, NumberUtils.max((<span class="hljs-type">short</span>) <span class="hljs-number">30</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">20</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">10</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">30</span>, NumberUtils.max((<span class="hljs-type">short</span>) <span class="hljs-number">10</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">30</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">20</span>));
+        assertEquals((<span class="hljs-type">short</span>) <span class="hljs-number">30</span>, NumberUtils.max((<span class="hljs-type">short</span>) <span class="hljs-number">10</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">20</span>, (<span class="hljs-type">short</span>) <span class="hljs-number">30</span>));
+    }
+
+    <span class="hljs-meta">@Test</span>
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMinMaxInt</span><span class="hljs-params">()</span> {
+        assertEquals(<span class="hljs-number">100</span>, NumberUtils.min(<span class="hljs-number">100</span>, <span class="hljs-number">200</span>, <span class="hljs-number">300</span>));
+        assertEquals(<span class="hljs-number">100</span>, NumberUtils.min(<span class="hljs-number">300</span>, <span class="hljs-number">100</span>, <span class="hljs-number">200</span>));
+        assertEquals(<span class="hljs-number">100</span>, NumberUtils.min(<span class="hljs-number">300</span>, <span class="hljs-number">200</span>,</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

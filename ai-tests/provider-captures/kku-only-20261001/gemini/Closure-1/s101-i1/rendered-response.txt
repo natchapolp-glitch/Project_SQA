@@ -1,0 +1,236 @@
+An independent regression test suite for com.google.javascript.jscomp.RemoveUnusedVars has been created below. It verifies unreferenced variable and function collection, continuation handling, parameter stripping, side-effect preservation, call-site modifications, and lifecycle preconditions under the fixed reference behavior.
+
+com/google/javascript/jscomp/RemoveUnusedVarsRegressionTest.java
+
+java
+/*
+ * Copyright 2011 The Closure Compiler Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.Token;
+
+/**
+ * Regression tests for {@link RemoveUnusedVars}.
+ */
+public class RemoveUnusedVarsRegressionTest extends TestCase {
+
+  private Node processCode(
+      String js,
+      boolean removeGlobals,
+      boolean preserveFunctionExpressionNames,
+      boolean modifyCallSites) {
+    Compiler compiler = new Compiler();
+    compiler.initCompilerOptionsIfTesting();
+    compiler.setLifeCycleStage(AbstractCompiler.LifeCycleStage.NORMALIZED);
+
+    Node root = compiler.parseTestCode(js);
+    Node externs = compiler.parseTestCode("");
+
+    RemoveUnusedVars pass = new RemoveUnusedVars(
+        compiler,
+        removeGlobals,
+        preserveFunctionExpressionNames,
+        modifyCallSites);
+    pass.process(externs, root);
+    return root;
+  }
+
+  public void testUnnormalizedStageThrowsException() {
+    Compiler compiler = new Compiler();
+    compiler.initCompilerOptionsIfTesting();
+    // Do not set NORMALIZED lifecycle stage
+
+    Node root = compiler.parseTestCode("var a = 1;");
+    Node externs = compiler.parseTestCode("");
+
+    RemoveUnusedVars pass = new RemoveUnusedVars(compiler, true, false, false);
+    try {
+      pass.process(externs, root);
+      fail("Expected IllegalStateException when compiler stage is not normalized");
+    } catch (IllegalStateException expected) {
+      // Expected exception
+    }
+  }
+
+  public void testRemoveUnusedGlobalVar() {
+    Node root = processCode("var a = 1;", true, false, false);
+    assertFalse(root.hasChildren());
+  }
+
+  public void testPreserveUnusedGlobalVarWhenRemoveGlobalsFalse() {
+    Node root = processCode("var a = 1;", false, false, false);
+    assertTrue(root.hasChildren());
+    assertTrue(root.getFirstChild().isVar());
+    assertEquals("a", root.getFirstChild().getFirstChild().getString());
+  }
+
+  public void testRemoveUnusedLocalVarEvenWhenRemoveGlobalsFalse() {
+    Node root = processCode("function f() { var a = 1; } f();", false, false, false);
+    assertTrue(root.hasChildren());
+    Node fn = root.getFirstChild();
+    assertTrue(fn.isFunction());
+    Node body = fn.getLastChild();
+    // Body should now be empty because 'a' was removed
+    assertFalse(body.hasChildren());
+  }
+
+  public void testPreserveReferencedVar() {
+    Node root = processCode("var a = 1; a;", true, false, false);
+    assertTrue(root.hasChildren());
+    assertTrue(root.getFirstChild().isVar());
+    assertEquals("a", root.getFirstChild().getFirstChild().getString());
+  }
+
+  public void testRemoveUnusedVarWithSideEffectsPreservesRhs() {
+    Node root = processCode("var a = foo();", true, false, false);
+    assertTrue(root.hasChildren());
+    // "var a = foo();" must be replaced with "foo();" (an EXPR_RESULT node)
+    Node first = root.getFirstChild();
+    assertTrue(first.isExprResult());
+    assertTrue(first.getFirstChild().isCall());
+    assertEquals("foo", first.getFirstChild().getFirstChild().getString());
+  }
+
+  public void testRemoveOneOfMultipleDeclarations() {
+    Node root = processCode("var a = 1, b = 2; b;", true, false, false);
+    assertTrue(root.hasChildren());
+    Node varNode = root.getFirstChild();
+    assertTrue(varNode.isVar());
+    // Only 'b' should remain in the var declaration
+    assertEquals(1, varNode.getChildCount());
+    assertEquals("b", varNode.getFirstChild().getString());
+  }
+
+  public void testRemoveUnreferencedFunctionDeclaration() {
+    Node root = processCode("function unused() {}", true, false, false);
+    assertFalse(root.hasChildren());
+  }
+
+  public void testPreserveReferencedFunctionDeclaration() {
+    Node root = processCode("function used() {} used();", true, false, false);
+    assertTrue(root.hasChildren());
+    Node first = root.getFirstChild();
+    assertTrue(first.isFunction());
+    assertEquals("used", first.getFirstChild().getString());
+  }
+
+  public void testRemoveUnreferencedTrailingFunctionArgs() {
+    Node root = processCode("function f(a, b) { return a; } f(1, 2);", true, false, false);
+    Node fn = root.getFirstChild();
+    assertTrue(fn.isFunction());
+    Node paramList = fn.getFirstChild().getNext();
+    // 'b' is trailing and unreferenced, so it should be stripped
+    assertEquals(1, paramList.getChildCount());
+    assertEquals("a", paramList.getFirstChild().getString());
+  }
+
+  public void testPreserveFunctionArgsWhenArgumentsEscaped() {
+    Node root = processCode("function f(a, b) { return arguments; } f(1, 2);", true, false, false);
+    Node fn = root.getFirstChild();
+    assertTrue(fn.isFunction());
+    Node paramList = fn.getFirstChild().getNext();
+    // When arguments is referenced, all parameters should be retained
+    assertEquals(2, paramList.getChildCount());
+    assertEquals("a", paramList.getFirstChild().getString());
+    assertEquals("b", paramList.getFirstChild().getNext().getString());
+  }
+
+  public void testDoNotRemoveFunctionArgsWhenRemoveGlobalsFalse() {
+    Node root = processCode("function f(a, b) { return a; } f(1, 2);", false, false, false);
+    Node fn = root.getFirstChild();
+    assertTrue(fn.isFunction());
+    Node paramList = fn.getFirstChild().getNext();
+    assertEquals(2, paramList.getChildCount());
+  }
+
+  public void testPreserveFunctionExpressionNameWhenRequested() {
+    Node root = processCode("var f = function myName() {}; f();", true, true, false);
+    Node varNode = root.getFirstChild();
+    Node fnNode = varNode.getFirstChild().getFirstChild();
+    assertTrue(fnNode.isFunction());
+    assertEquals("myName", fnNode.getFirstChild().getString());
+  }
+
+  public void testRemoveFunctionExpressionNameWhenNotPreserved() {
+    Node root = processCode("var f = function myName() {}; f();", true, false, false);
+    Node varNode = root.getFirstChild();
+    Node fnNode = varNode.getFirstChild().getFirstChild();
+    assertTrue(fnNode.isFunction());
+    assertEquals("", fnNode.getFirstChild().getString());
+  }
+
+  public void testRemoveUnreferencedPropertyAssignToLiteral() {
+    Node root = processCode("var x = {}; x.prop = 1;", true, false, false);
+    // Neither 'x' nor the property assignment externalizes state, so both are removed
+    assertFalse(root.hasChildren());
+  }
+
+  public void testPreservePropertyAssignToUnknownValue() {
+    Node root = processCode("var x = getUnknown(); x.prop = 1;", true, false, false);
+    // Initializer may escape or have external state, so 'x' should be preserved
+    assertTrue(root.hasChildren());
+    assertTrue(root.getFirstChild().isVar());
+    assertEquals("x", root.getFirstChild().getFirstChild().getString());
+  }
+
+  public void testPreserveForInVariable() {
+    Node root = processCode("for (var key in obj) {}", true, false, false);
+    assertTrue(root.hasChildren());
+    Node forNode = root.getFirstChild();
+    assertTrue(forNode.isFor());
+    assertTrue(forNode.getFirstChild().isVar());
+  }
+
+  public void testRemoveUnreferencedSimpleAssign() {
+    Node root = processCode("var x; x = 1;", true, false, false);
+    assertFalse(root.hasChildren());
+  }
+
+  public void testRemoveUnreferencedAssignWithSideEffects() {
+    Node root = processCode("var x; x = foo();", true, false, false);
+    assertTrue(root.hasChildren());
+    Node expr = root.getFirstChild();
+    assertTrue(expr.isExprResult());
+    assertTrue(expr.getFirstChild().isCall());
+    assertEquals("foo", expr.getFirstChild().getFirstChild().getString());
+  }
+
+  public void testModifyCallSitesRemovesUnusedArgument() {
+    String js = "function f(a, b) { return a; } f(1, 2);";
+    Node root = processCode(js, true, false, true);
+
+    // Function definition signature updated
+    Node fn = root.getFirstChild();
+    assertEquals(1, fn.getFirstChild().getNext().getChildCount());
+
+    // Call site argument '2' removed
+    Node callExpr = root.getLastChild();
+    Node callNode = callExpr.getFirstChild();
+    assertTrue(callNode.isCall());
+    // Children: CALLEE ('f') and first arg ('1')
+    assertEquals(2, callNode.getChildCount());
+  }
+}
+
+
+Copy
+
+References
+Closure Compiler com.google.javascript.jscomp.RemoveUnusedVars source implementation and algorithmic documentation.
+Defects4J Closure revision 1f API configuration and test environment specifications.

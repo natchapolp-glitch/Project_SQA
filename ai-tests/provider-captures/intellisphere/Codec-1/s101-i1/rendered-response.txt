@@ -1,0 +1,913 @@
+Looking at the production code, I need to understand the behaviors and write tests. Note that SoundexUtils is package-private (no public modifier on the class), so tests must be in the same package. The build uses JUnit 3.8.1 (based on pom.xml), so tests should extend junit.framework.TestCase or use JUnit 3-style methods.
+
+Let me analyze the methods:
+
+Caverphone.caverphone(String) - has null/empty handling, many regex replacements
+Caverphone.encode(Object) - throws EncoderException for non-String
+Caverphone.encode(String) - delegates to caverphone
+Caverphone.isCaverphoneEqual(String, String) - compares two encodings
+Metaphone.metaphone(String) - complex algorithm with many special cases
+Metaphone.encode(Object) - throws EncoderException for non-String
+Metaphone.encode(String) - delegates to metaphone
+Metaphone.isMetaphoneEqual(String, String) - compares two encodings
+Metaphone.getMaxCodeLen() / setMaxCodeLen(int) - configurable max length
+SoundexUtils.clean(String) - package-private, removes non-letters and uppercases
+SoundexUtils.difference(StringEncoder, String, String) - package-private
+SoundexUtils.differenceEncoded(String, String) - package-private
+
+Since SoundexUtils is package-private, I'll put the test in the same package org.apache.commons.codec.language.
+
+The JUnit version is 3.8.1, so I'll use junit.framework.TestCase with test-prefixed methods.
+
+java
+org/apache/commons/codec/language/CaverphoneTest.java
+
+
+Copy
+
+java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+
+public class CaverphoneTest extends TestCase {
+
+    private Caverphone caverphone;
+
+    protected void setUp() {
+        caverphone = new Caverphone();
+    }
+
+    public void testCaverphoneNull() {
+        assertEquals("1111111111", caverphone.caverphone(null));
+    }
+
+    public void testCaverphoneEmptyString() {
+        assertEquals("1111111111", caverphone.caverphone(""));
+    }
+
+    public void testCaverphoneSimple() {
+        assertEquals("STFN111111", caverphone.caverphone("Stevenson"));
+    }
+
+    public void testCaverphonePeter() {
+        assertEquals("PTA1111111", caverphone.caverphone("Peter"));
+    }
+
+    public void testCaverphoneDavid() {
+        assertEquals("TFT1111111", caverphone.caverphone("David"));
+    }
+
+    public void testCaverphoneWithDigitsAndPunctuation() {
+        assertEquals("STFN111111", caverphone.caverphone("Stevenson!@#123"));
+    }
+
+    public void testCaverphoneCaseInsensitive() {
+        assertEquals(caverphone.caverphone("hello"), caverphone.caverphone("HELLO"));
+    }
+
+    public void testEncodeObjectString() throws EncoderException {
+        Object result = caverphone.encode("Stevenson");
+        assertTrue(result instanceof String);
+        assertEquals("STFN111111", (String) result);
+    }
+
+    public void testEncodeObjectNonString() {
+        try {
+            caverphone.encode(new Integer(42));
+            fail("Expected EncoderException");
+        } catch (EncoderException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    public void testEncodeString() {
+        assertEquals("STFN111111", caverphone.encode("Stevenson"));
+    }
+
+    public void testIsCaverphoneEqualTrue() {
+        assertTrue(caverphone.isCaverphoneEqual("Stevenson", "Stevenson"));
+    }
+
+    public void testIsCaverphoneEqualFalse() {
+        assertFalse(caverphone.isCaverphoneEqual("Stevenson", "David"));
+    }
+
+    public void testIsCaverphoneEqualBothNull() {
+        assertTrue(caverphone.isCaverphoneEqual(null, null));
+    }
+
+    public void testIsCaverphoneEqualOneNull() {
+        assertFalse(caverphone.isCaverphoneEqual(null, "David"));
+    }
+
+    public void testCaverphoneFinalE() {
+        assertEquals("BRN1111111", caverphone.caverphone("brown"));
+    }
+
+    public void testCaverphonePrefixCough() {
+        assertEquals("KF11111111", caverphone.caverphone("cough"));
+    }
+
+    public void testCaverphonePrefixGn() {
+        assertEquals("N111111111", caverphone.caverphone("gnome"));
+    }
+
+    public void testCaverphonePrefixMb() {
+        assertEquals("M111111111", caverphone.caverphone("mb"));
+    }
+
+    public void testCaverphoneCq() {
+        assertEquals("K111111111", caverphone.caverphone("acquit"));
+    }
+}
+
+
+Copy
+
+java
+org/apache/commons/codec/language/MetaphoneTest.java
+
+
+Copy
+
+java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+
+public class MetaphoneTest extends TestCase {
+
+    private Metaphone metaphone;
+
+    protected void setUp() {
+        metaphone = new Metaphone();
+    }
+
+    public void testMetaphoneNull() {
+        assertEquals("", metaphone.metaphone(null));
+    }
+
+    public void testMetaphoneEmptyString() {
+        assertEquals("", metaphone.metaphone(""));
+    }
+
+    public void testMetaphoneSingleChar() {
+        assertEquals("A", metaphone.metaphone("a"));
+        assertEquals("B", metaphone.metaphone("B"));
+        assertEquals("Z", metaphone.metaphone("z"));
+    }
+
+    public void testMetaphoneKN() {
+        assertEquals("N", metaphone.metaphone("Knight"));
+    }
+
+    public void testMetaphoneGN() {
+        assertEquals("N", metaphone.metaphone("Gnome"));
+    }
+
+    public void testMetaphonePN() {
+        assertEquals("N", metaphone.metaphone("Pneumatic"));
+    }
+
+    public void testMetaphoneAE() {
+        assertEquals("E", metaphone.metaphone("Aerial"));
+    }
+
+    public void testMetaphoneWR() {
+        assertEquals("R", metaphone.metaphone("Write"));
+    }
+
+    public void testMetaphoneWH() {
+        assertEquals("W", metaphone.metaphone("When"));
+    }
+
+    public void testMetaphoneInitialX() {
+        assertEquals("S", metaphone.metaphone("Xylophone"));
+    }
+
+    public void testMetaphoneMaxCodeLenDefault() {
+        assertEquals(4, metaphone.getMaxCodeLen());
+    }
+
+    public void testMetaphoneSetMaxCodeLen() {
+        metaphone.setMaxCodeLen(6);
+        assertEquals(6, metaphone.getMaxCodeLen());
+    }
+
+    public void testMetaphoneSetMaxCodeLenNegative() {
+        metaphone.setMaxCodeLen(-1);
+        assertEquals(-1, metaphone.getMaxCodeLen());
+        // With negative max, while condition fails immediately
+        assertEquals("", metaphone.metaphone("hello"));
+    }
+
+    public void testMetaphoneMaxCodeLenZero() {
+        metaphone.setMaxCodeLen(0);
+        assertEquals(0, metaphone.getMaxCodeLen());
+        assertEquals("", metaphone.metaphone("hello"));
+    }
+
+    public void testEncodeObjectString() throws EncoderException {
+        Object result = metaphone.encode("Knight");
+        assertTrue(result instanceof String);
+        assertEquals("N", (String) result);
+    }
+
+    public void testEncodeObjectNonString() {
+        try {
+            metaphone.encode(new Integer(42));
+            fail("Expected EncoderException");
+        } catch (EncoderException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    public void testEncodeString() {
+        assertEquals("N", metaphone.encode("Knight"));
+    }
+
+    public void testIsMetaphoneEqualTrue() {
+        assertTrue(metaphone.isMetaphoneEqual("Knight", "Night"));
+    }
+
+    public void testIsMetaphoneEqualFalse() {
+        assertFalse(metaphone.isMetaphoneEqual("Knight", "Day"));
+    }
+
+    public void testIsMetaphoneEqualBothNull() {
+        assertTrue(metaphone.isMetaphoneEqual(null, null));
+    }
+
+    public void testIsMetaphoneEqualOneNull() {
+        assertFalse(metaphone.isMetaphoneEqual(null, "Day"));
+    }
+
+    public void testMetaphoneBAtEndAfterM() {
+        assertEquals("TM", metaphone.metaphone("tomb"));
+    }
+
+    public void testMetaphoneCIA() {
+        assertEquals("X", metaphone.metaphone("special"));
+    }
+
+    public void testMetaphoneSCH() {
+        assertEquals("SK", metaphone.metaphone("school"));
+    }
+
+    public void testMetaphoneCH() {
+        assertEquals("K", metaphone.metaphone("character"));
+    }
+
+    public void testMetaphoneDGE() {
+        assertEquals("J", metaphone.metaphone("edge"));
+    }
+
+    public void testMetaphonePH() {
+        assertEquals("F", metaphone.metaphone("phone"));
+    }
+
+    public void testMetaphoneTH() {
+        assertEquals("0", metaphone.metaphone("thin"));
+    }
+
+    public void testMetaphoneX() {
+        assertEquals("KS", metaphone.metaphone("box"));
+    }
+
+    public void testMetaphoneZ() {
+        assertEquals("S", metaphone.metaphone("zebra"));
+    }
+}
+
+
+Copy
+
+java
+org/apache/commons/codec/language/SoundexUtilsTest.java
+
+
+Copy
+
+java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.StringEncoder;
+
+public class SoundexUtilsTest extends TestCase {
+
+    public void testCleanNull() {
+        assertNull(SoundexUtils.clean(null));
+    }
+
+    public void testCleanEmptyString() {
+        assertEquals("", SoundexUtils.clean(""));
+    }
+
+    public void testCleanAllLetters() {
+        assertEquals("HELLO", SoundexUtils.clean("Hello"));
+    }
+
+    public void testCleanLowerCase() {
+        assertEquals("HELLO", SoundexUtils.clean("hello"));
+    }
+
+    public void testCleanWithNonLetters() {
+        assertEquals("HELLO", SoundexUtils.clean("He1llo2!@#"));
+    }
+
+    public void testCleanOnlyNonLetters() {
+        assertEquals("", SoundexUtils.clean("123!@#"));
+    }
+
+    public void testCleanMixedCase() {
+        assertEquals("ABC", SoundexUtils.clean("aBc"));
+    }
+
+    public void testCleanPreservesLetterOrder() {
+        assertEquals("AC", SoundexUtils.clean("a1b2c"));
+    }
+
+    public void testDifferenceEncodedBothNull() {
+        assertEquals(0, SoundexUtils.differenceEncoded(null, null));
+    }
+
+    public void testDifferenceEncodedFirstNull() {
+        assertEquals(0, SoundexUtils.differenceEncoded(null, "ABC"));
+    }
+
+    public void testDifferenceEncodedSecondNull() {
+        assertEquals(0, SoundexUtils.differenceEncoded("ABC", null));
+    }
+
+    public void testDifferenceEncodedIdentical() {
+        assertEquals(20, SoundexUtils.differenceEncoded("ABCDEFGHIJKLMNOPQRST", "ABCDEFGHIJKLMNOPQRST"));
+    }
+
+    public void testDifferenceEncodedNoMatch() {
+        assertEquals(0, SoundexUtils.differenceEncoded("ABC", "XYZ"));
+    }
+
+    public void testDifferenceEncodedLengthMismatch() {
+        assertEquals(3, SoundexUtils.differenceEncoded("ABCD", "ABC"));
+    }
+
+    public void testDifferenceEncodedLongerFirst() {
+        assertEquals(2, SoundexUtils.differenceEncoded("AB", "ABCD"));
+    }
+
+    public void testDifferenceEncodedEmptyStrings() {
+        assertEquals(0, SoundexUtils.differenceEncoded("", ""));
+    }
+
+    public void testDifferenceEncodedWithEmptyString() {
+        assertEquals(0, SoundexUtils.differenceEncoded("ABC", ""));
+    }
+
+    public void testDifferenceWithCaVerphoneEncoder() throws EncoderException {
+        stringEncoder = new Caverphone();
+        assertEquals(5, SoundexUtils.difference(stringEncoder, "hello", "hello"));
+    }
+
+    public void testDifferenceWithMetaphoneEncoder() throws EncoderException {
+        StringEncoder encoder = new Metaphone();
+        // "Knight" and "Night" both encode to "N"
+        assertEquals(1, SoundexUtils.difference(encoder, "Knight", "Night"));
+    }
+
+    private StringEncoder stringEncoder;
+
+    public void testDifferenceWithEncoderException() {
+        StringEncoder throwingEncoder = new StringEncoder() {
+            public String encode(String s) throws EncoderException {
+                throw new EncoderException("Test exception");
+            }
+
+            public Object encode(Object obj) throws EncoderException {
+                throw new EncoderException("Test exception");
+            }
+        };
+        try {
+            SoundexUtils.difference(throwingEncoder, "hello", "world");
+            fail("Expected EncoderException");
+        } catch (EncoderException e) {
+            assertEquals("Test exception", e.getMessage());
+        }
+    }
+
+    public void testCleanWithSpaceOnly() {
+        assertEquals("", SoundexUtils.clean("   "));
+    }
+
+    public void testCleanWithUnicodeLetter() {
+        assertEquals("AE", SoundexUtils.clean("a\u00e9"));
+    }
+}
+
+
+Copy
+
+I noticed an issue in my SoundexUtilsTest - I have a field stringEncoder that I referenced before declaration. Let me fix the test file:
+
+java
+org/apache/commons/codec/language/SoundexUtilsTest.java
+
+
+Copy
+
+java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.StringEncoder;
+
+public class SoundexUtilsTest extends TestCase {
+
+    public void testCleanNull() {
+        assertNull(SoundexUtils.clean(null));
+    }
+
+    public void testCleanEmptyString() {
+        assertEquals("", SoundexUtils.clean(""));
+    }
+
+    public void testCleanAllLetters() {
+        assertEquals("HELLO", SoundexUtils.clean("Hello"));
+    }
+
+    public void testCleanLowerCase() {
+        assertEquals("HELLO", SoundexUtils.clean("hello"));
+    }
+
+    public void testCleanWithNonLetters() {
+        assertEquals("HELLO", SoundexUtils.clean("He1llo2!@#"));
+    }
+
+    public void testCleanOnlyNonLetters() {
+        assertEquals("", SoundexUtils.clean("123!@#"));
+    }
+
+    public void testCleanMixedCase() {
+        assertEquals("ABC", SoundexUtils.clean("aBc"));
+    }
+
+    public void testCleanPreservesLetterOrder() {
+        assertEquals("AC", SoundexUtils.clean("a1b2c"));
+    }
+
+    public void testCleanWithSpaceOnly() {
+        assertEquals("", SoundexUtils.clean("   "));
+    }
+
+    public void testCleanWithUnicodeLetter() {
+        assertEquals("AE", SoundexUtils.clean("a\u00e9"));
+    }
+
+    public void testDifferenceEncodedBothNull() {
+        assertEquals(0, SoundexUtils.differenceEncoded(null, null));
+    }
+
+    public void testDifferenceEncodedFirstNull() {
+        assertEquals(0, SoundexUtils.differenceEncoded(null, "ABC"));
+    }
+
+    public void testDifferenceEncodedSecondNull() {
+        assertEquals(0, SoundexUtils.differenceEncoded("ABC", null));
+    }
+
+    public void testDifferenceEncodedIdentical() {
+        assertEquals(3, SoundexUtils.differenceEncoded("ABC", "ABC"));
+    }
+
+    public void testDifferenceEncodedNoMatch() {
+        assertEquals(0, SoundexUtils.differenceEncoded("ABC", "XYZ"));
+    }
+
+    public void testDifferenceEncodedLengthMismatch() {
+        assertEquals(3, SoundexUtils.differenceEncoded("ABCD", "ABC"));
+    }
+
+    public void testDifferenceEncodedLongerFirst() {
+        assertEquals(2, SoundexUtils.differenceEncoded("AB", "ABCD"));
+    }
+
+    public void testDifferenceEncodedEmptyStrings() {
+        assertEquals(0, SoundexUtils.differenceEncoded("", ""));
+    }
+
+    public void testDifferenceEncodedWithEmptyString() {
+        assertEquals(0, SoundexUtils.differenceEncoded("ABC", ""));
+    }
+
+    public void testDifferenceWithCaVerphoneEncoder() throws EncoderException {
+        StringEncoder encoder = new Caverphone();
+        // Caverphone encoding of "hello" is identical to itself
+        assertEquals(10, SoundexUtils.difference(encoder, "hello", "hello"));
+    }
+
+    public void testDifferenceWithMetaphoneEncoder() throws EncoderException {
+        StringEncoder encoder = new Metaphone();
+        // "Knight" and "Night" both encode to "N"
+        assertEquals(1, SoundexUtils.difference(encoder, "Knight", "Night"));
+    }
+
+    public void testDifferenceWithEncoderThrowsException() {
+        StringEncoder throwingEncoder = new StringEncoder() {
+            public String encode(String s) throws EncoderException {
+                throw new EncoderException("Test exception");
+            }
+
+            public Object encode(Object obj) throws EncoderException {
+                throw new EncoderException("Test exception");
+            }
+        };
+        try {
+            SoundexUtils.difference(throwingEncoder, "hello", "world");
+            fail("Expected EncoderException");
+        } catch (EncoderException e) {
+            assertEquals("Test exception", e.getMessage());
+        }
+    }
+}
+
+
+Copy
+
+Wait, I need to verify the Caverphone encoding of "hello". Let me trace through:
+
+"hello" - lowercase, no changes
+No final 'e'
+No prefix matches
+Replacements:
+No cq, ci, ce, cy
+No tch
+No c
+No q
+No x
+No v
+No dg
+No tio, tia
+No d
+No ph
+No b
+No sh
+No z
+"hello" starts with 'h', not vowel, so no ^[aeiou] match
+No [aeiou] replacement (no vowels)
+No j
+No y
+"h" not matched by ^y
+No 3gh3, gh
+No g
+No s+, t+, p+, k+, f+, m+, n+ (no consecutive)
+No w
+"^h" -> "A": "Aello"
+"h" -> "2": already replaced
+No r, l
+Removals:
+"2" -> "" (no 2)
+No "3$"
+No "3"
+Append "1111111111"
+Take first 10 chars
+
+So "hello" -> "Aello" -> "AELLO" -> "AELLO1111111111" -> first 10: "AELLO11111"
+
+Wait, let me re-trace. After step 4:
+
+"hello"
+No cq, ci, ce, cy
+"c" → "k" (no c)
+"q" → "k" (no q)
+"x" → "k" (no x)
+"v" → "f" (no v)
+"dg" → "2g" (no dg)
+"tio" → "sio" (no)
+"tia" → "sia" (no)
+"d" → "t" (no d)
+"ph" → "fh" (no ph)
+"b" → "p" (no b)
+"sh" → "s2" (no sh)
+"z" → "s" (no z)
+"^[aeiou]" → "A" (starts with 'h', no)
+"[aeiou]" → "3" (no vowels except... "hello" has 'e' and 'o' as vowels)
+
+Wait, "hello" has 'e' and 'o' which are vowels. So "[aeiou]" → "3" replaces them: "h3ll3"
+
+"j" → "y" (no j)
+"^y3" → "Y3" (no)
+"^y" → "A" (no)
+"y" → "3" (no y)
+"3gh3" → "3kh3" (no)
+"gh" → "22" (no gh)
+"g" → "k" (no g)
+"s+" → "S" (no consecutive s)
+"t+" → "T" (no)
+"p+" → "P" (no)
+"k+" → "K" (no)
+"f+" → "F" (no)
+"m+" → "M" (no)
+"n+" → "N" (no)
+"w3" → "W3" (no w)
+"wh3" → "Wh3" (no)
+"w$" → "3" (no)
+"w" → "2" (no w)
+"^h" → "A": "A3ll3"
+"h" → "2" (no h)
+"r3" → "R3" (no r)
+"r$" → "3" (no)
+"r" → "2" (no r)
+"l3" → "L3" (no l3)
+"l$" → "3" (doesn't end with l)
+"l" → "2": "A3223" → wait, "A3ll3" has "ll", so it becomes "A3223"? Let me be careful.
+
+Actually: "h3ll3" → "^h" → "A3ll3" Then "l" → "2" applied to each 'l': "A3223"
+
+Removals:
+"2" → "": "A33"
+"3$" → "A": ends with '3', so "A3A"
+"3" → "": "AA"
+Append "1111111111": "AA1111111111"
+First 10: "AA11111111"
+
+So "hello" encodes to "AA11111111" (10 chars).
+
+For difference, "hello" and "hello" would both encode to "AA11111111", so difference is 10.
+
+But wait - I need to double check "h3ll3":
+
+After "[aeiou]" → "3": "hello" → "h3ll3" (e becomes 3, o becomes 3)
+
+Then "^h" → "A": "h3ll3" → "A3ll3"
+
+Then "l" → "2": "A3ll3" → "A3223" (two l's become two 2's)
+
+Then "2" → "" (remove all 2): "A3223" → "A33"
+
+Then "3$" → "A": "A33" → "A3A" (the last 3 becomes A)
+
+Then "3" → "": "A3A" → "AA"
+
+So "hello" → "AA" → "AA1111111111" → "AA11111111" (10 chars)
+
+Yes, difference should be 10.
+
+But wait - I need to double-check my assertion in testDifferenceWithCaVerphoneEncoder. The difference should be 10 because both encode to the same 10-character string.
+
+Actually, let me reconsider - the Caverphone always returns 10 characters (unless null/empty). So difference of identical strings would be 10 since the encodings are identical and 10 chars long.
+
+My assertion of 10 is correct.
+
+However, there's an issue - the difference test with Metaphone. "Knight" → "N" (after removing silent K), "Night" → "N". Both are 1 character, so difference is 1. Correct.
+
+Let me also reconsider the Caverphone test values more carefully. Let me trace through a few:
+
+"Stevenson":
+
+"stevenson" (lowercase)
+No non-A-Z chars
+No final 'e' (doesn't end in e)
+Prefix: no cough, rough, tough, enough, trough, gn, mb
+Replacements:
+cq → no
+ci → no
+ce → no
+cy → no
+tch → no
+c → k: no c
+q → k: no
+x → k: no
+v → f: "stefenson"
+dg → no
+tio → no
+tia → no
+d → t: no d
+ph → no
+b → p: no b
+sh → s2: no
+z → s: no
+^[aeiou] → A: starts with 's', no
+[aeiou] → 3: "st3f3ns3n" (e becomes 3, e becomes 3, o becomes 3)
+j → y: no
+^y3 → no
+^y → no
+y → 3: no
+3gh3 → no
+gh → no
+g → k: no
+s+ → S: no consecutive s (only one s at start)
+t+ → T: no
+p+ → no
+k+ → no
+f+ → F: no
+m+ → M: no
+n+ → N: no (only one n)
+w3 → no
+wh3 → no
+w$ → no
+w → 2: no w
+^h → no
+h → 2: no h
+r3 → no
+r$ → no
+r → 2: no r
+l3 → no
+l$ → no
+l → 2: no l
+
+So far: "st3f3ns3n"
+
+Removals:
+
+"2" → "": no change
+"3$" → "A": ends with 'n', no
+"3" → "": "stfnsn"
+
+Append: "stfnsn1111111111"
+
+First 10: "stfnsn1111"
+
+Wait - uppercase? The code uses replaceAll("^[aeiou]", "A") which produces uppercase 'A'. But there's no explicit uppercase conversion of the whole string. Let me re-check...
+
+Actually, txt.toLowerCase(java.util.Locale.ENGLISH) only converts to lowercase. There's no uppercase conversion for the entire string. So the output should be lowercase "stfnsn1111".
+
+But wait, that doesn't match my expected "STFN111111". Let me re-trace...
+
+Actually hmm, the "v" → "f" conversion: "stevenson" → "stefenson" (the v becomes f).
+
+Then "[aeiou]" → "3": "stefenson" → "st3f3ns3n" (e at position 2 becomes 3, e at position 4 becomes 3, o at position 7 becomes 3)
+
+Then "3" → "": "stfnsn"
+
+Then append "1111111111": "stfnsn1111111111" First 10 chars: "stfnsn1111"
+
+So "Stevenson" → "stfnsn1111", not "STFN111111".
+
+Hmm, that's confusing. Let me look at the actual code more carefully...
+
+The code doesn't uppercase the result. It starts with txt.toLowerCase(), and then various replacements add uppercase 'A', 'S', 'T', 'P', 'K', 'F', 'M', 'N', 'W', 'R', 'L', 'Y' for specific patterns.
+
+Wait, I see:
+
+txt.replaceAll("^[aeiou]", "A") - uppercase A for initial vowel
+txt.replaceAll("s+", "S") - uppercase S for repeated s
+txt.replaceAll("t+", "T") - uppercase T
+txt.replaceAll("p+", "P") - uppercase P
+txt.replaceAll("k+", "K") - uppercase K
+txt.replaceAll("f+", "F") - uppercase F
+txt.replaceAll("m+", "M") - uppercase M
+txt.replaceAll("n+", "N") - uppercase N
+txt.replaceAll("w3", "W3") - uppercase W
+txt.replaceAll("wh3", "Wh3") - uppercase W
+txt.replaceAll("^h", "A") - uppercase A
+txt.replaceAll("r3", "R3") - uppercase R
+txt.replaceAll("l3", "L3") - uppercase L
+txt.replaceAll("^y3", "Y3") - uppercase Y
+
+So "Stevenson" → "st3f3ns3n" → remove 3's → "stfnsn"
+
+Actually, wait. "stevenson" has "n" at position 6 and "n" at position 8, but they're not adjacent. So n+ doesn't match.
+
+Let me re-trace "stevenson" more carefully:
+
+"stevenson" (after lowercase)
+
+Remove non-A-Z: "stevenson"
+Remove final e: doesn't end in e
+Prefix replacements: none match
+Replacements (in order):
+cq: no
+ci: no
+ce: no
+cy: no
+tch: no
+c → k: no c
+q → k: no q
+x → k: no x
+v → f: "stefenson"
+dg: no
+tio: no
+tia: no
+d → t: no d
+ph: no
+b → p: no b
+sh: no
+z → s: no z
+^[aeiou] → A: starts with 's', no
+[aeiou] → 3: "st3f3ns3n" (e at index 2 → 3, e at index 4 → 3, o at index 7 → 3)
+j → y: no
+^y3: no
+^y: no
+y → 3: no
+3gh3: no
+gh: no
+g → k: no
+s+ → S: no (only one s)
+t+ → T: no
+p+ → P: no
+k+ → K: no
+f+ → F: no (one f)
+m+ → M: no
+n+ → N: no (single n's)
+w3: no
+wh3: no
+w$: no
+w → 2: no w
+^h: no
+h → 2: no h
+r3: no
+r$: no
+r → 2: no
+l3: no
+l$: no
+l → 2: no
+
+Result: "st3f3ns3n"
+
+Removals:
+
+"2" → "": no change
+"3$" → "A": ends with 'n', not 3, so no change
+"3" → "": "stfnsn"
+
+Append "1111111111": "stfnsn1111111111"
+
+First 10: "stfnsn1111"
+
+So the expected value should be "stfnsn1111", not "STFN111111". I need to update my tests.
+
+Actually, let me reconsider. The s+ pattern matches one or more 's' characters. But there's only one 's' in "st3f3ns3n" (the initial 's'). A single 's' matches s+. Wait, s+ means one or more. So a single 's' DOES match s+, and it gets replaced with 'S'.
+
+Let me re-trace with this understanding:
+
+"s" → "S" (from s+ → "S")
+
+But wait, the timing matters. The string at that point is "st3f3ns3n". The pattern s+ matches one or more 's'. There's an 's' at position 0 and another 's' at position 6.
+
+At position 0: 's' - this matches s+ since it's one 's'. It becomes 'S'. At position 6: 's' - wait, the string is "st3f3ns3n". Position 6 is... let me count:
+
+s(0), t(1), 3(2), f(3), 3(4), n(5), s(6), 3(7), n(8)
+
+So there's an 's' at position 0 and 's' at position 6. Neither is adjacent to another 's'. So s+ would match each individually, meaning both become 'S'.
+
+But wait, replaceAll processes left to right. After replacing the first 's' with 'S', the string becomes "St3f3ns3n". Then the second 's' at position 6 becomes 'S': "St3f3nS3n".
+
+Similarly for t+: one 't' at position 1 becomes 'T': "ST3f3nS3n". f+: one 'f' at position 3 becomes 'F': "ST3F3nS3n". n+: one 'n' at position 5 and 'n' at position 8. Both individually match. First 'n' becomes 'N': "ST3F3NS3n". Second 'n' becomes 'N': "ST3F3NS3N".
+
+Then removals:
+
+"2" → "": no change
+"3$" → "A": ends with 'N', no change
+"3" → "": "STFNSN"
+
+Append: "STFNSN1111111111" First 10: "STFNSN1111"
+
+Hmm, still not my original "STFN111111". Let me count again:
+
+STFNSN - that's 6 characters
+Plus 4 ones = "STFNSN1111"
+
+But maybe I'm overcomplicating this. The actual Caverphone test values depend on the specific implementation. Since I'm being asked to write deterministic regression tests based on the fixed reference behavior, I should trace through the code carefully.
+
+Actually, I think I'm overthinking this. The s+ pattern matches one or more 's' characters as a group, but when there are non-adjacent 's' characters, each is a separate match. However, replaceAll replaces each match individually. So:
+
+"s" in "st3f3ns3n":
+
+First match: 's' at position 0 → 'S': "St3f3ns3n"
+Second match: 's' at position 6 → 'S': "St3f3nS3n"
+
+Then "t+" → 't' at position 1 → 'T': "ST3f3nS3n"
+
+Actually, wait. Let me look at the code flow again:
+
+java
+txt = txt.replaceAll("s+", "S");
+txt = txt.replaceAll("t+", "T");
+
+
+Copy
+
+The string at this point after all previous replacements:
+
+Starting: "stevenson"
+v→f: "stefenson"
+[aeiou]→3: "st3f3ns3n"
+
+Now "s+" → "S":
+
+First 's' at position 0: matches s+ (one s). Becomes 'S'.
+Between position 0 and 6, no more 's'.
+'s' at position 6: matches s+ (one s). Becomes 'S'.
+
+Result: "St3f3nS3n"
+
+"t+" → "T":
+
+'t' at position 1: matches t+. Becomes 'T'.
+
+Result: "ST3f3nS3n"

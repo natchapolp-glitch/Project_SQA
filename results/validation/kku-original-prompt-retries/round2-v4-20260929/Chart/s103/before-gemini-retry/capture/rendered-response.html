@@ -1,0 +1,550 @@
+<div id="messageContentDataIdJYEBngquF8Ni" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>tests/org/jfree/chart/renderer/category/AbstractCategoryItemRendererTest.java</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.jfree.chart.renderer.category;
+
+<span class="hljs-keyword">import</span> java.awt.BasicStroke;
+<span class="hljs-keyword">import</span> java.awt.Graphics2D;
+<span class="hljs-keyword">import</span> java.awt.Shape;
+<span class="hljs-keyword">import</span> java.awt.geom.Rectangle2D;
+<span class="hljs-keyword">import</span> java.awt.image.BufferedImage;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-keyword">import</span> org.jfree.chart.LegendItem;
+<span class="hljs-keyword">import</span> org.jfree.chart.LegendItemCollection;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.CategoryAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.axis.NumberAxis;
+<span class="hljs-keyword">import</span> org.jfree.chart.entity.StandardEntityCollection;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategoryItemLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategorySeriesLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.CategoryToolTipGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.CategoryMarker;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.CategoryPlot;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.Marker;
+<span class="hljs-keyword">import</span> org.jfree.chart.plot.PlotOrientation;
+<span class="hljs-keyword">import</span> org.jfree.chart.urls.CategoryURLGenerator;
+<span class="hljs-keyword">import</span> org.jfree.chart.util.Layer;
+<span class="hljs-keyword">import</span> org.jfree.chart.util.PublicCloneable;
+<span class="hljs-keyword">import</span> org.jfree.chart.util.SortOrder;
+<span class="hljs-keyword">import</span> org.jfree.data.Range;
+<span class="hljs-keyword">import</span> org.jfree.data.category.CategoryDataset;
+<span class="hljs-keyword">import</span> org.jfree.data.category.DefaultCategoryDataset;
+
+<span class="hljs-comment">/**
+ * Regression tests for {<span class="hljs-doctag">@link</span> AbstractCategoryItemRenderer} behavior exercised
+ * through {<span class="hljs-doctag">@link</span> AreaRenderer}, using only supported shared API.
+ *
+ * References:
+ * - source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java
+ * - ant/build.xml (JUnit 3 style tests, Java 1.4 source level)
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">AbstractCategoryItemRendererTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PublicCloneableLabelGenerator</span>
+            <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CategoryItemLabelGenerator</span>, PublicCloneable {
+
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">generateLabel</span><span class="hljs-params">(CategoryDataset dataset, <span class="hljs-type">int</span> row, <span class="hljs-type">int</span> column)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"L"</span> + row + <span class="hljs-string">"-"</span> + column;
+        }
+
+        <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">clone</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> CloneNotSupportedException {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.clone();
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">equals</span><span class="hljs-params">(Object obj)</span> {
+            <span class="hljs-keyword">return</span> obj <span class="hljs-keyword">instanceof</span> PublicCloneableLabelGenerator;
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PublicCloneableToolTipGenerator</span>
+            <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CategoryToolTipGenerator</span>, PublicCloneable {
+
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">generateToolTip</span><span class="hljs-params">(CategoryDataset dataset, <span class="hljs-type">int</span> row, <span class="hljs-type">int</span> column)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"T"</span> + row + <span class="hljs-string">"-"</span> + column;
+        }
+
+        <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">clone</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> CloneNotSupportedException {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.clone();
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">equals</span><span class="hljs-params">(Object obj)</span> {
+            <span class="hljs-keyword">return</span> obj <span class="hljs-keyword">instanceof</span> PublicCloneableToolTipGenerator;
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>
+            <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CategoryURLGenerator</span>, PublicCloneable {
+
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">generateURL</span><span class="hljs-params">(CategoryDataset dataset, <span class="hljs-type">int</span> row, <span class="hljs-type">int</span> column)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"U"</span> + row + <span class="hljs-string">"-"</span> + column;
+        }
+
+        <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">clone</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> CloneNotSupportedException {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.clone();
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">equals</span><span class="hljs-params">(Object obj)</span> {
+            <span class="hljs-keyword">return</span> obj <span class="hljs-keyword">instanceof</span> PublicCloneableURLGenerator;
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>
+            <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CategorySeriesLabelGenerator</span>, PublicCloneable {
+
+        <span class="hljs-keyword">private</span> String prefix;
+
+        <span class="hljs-keyword">public</span> <span class="hljs-title function_">PublicCloneableSeriesLabelGenerator</span><span class="hljs-params">(String prefix)</span> {
+            <span class="hljs-built_in">this</span>.prefix = prefix;
+        }
+
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">generateLabel</span><span class="hljs-params">(CategoryDataset dataset, <span class="hljs-type">int</span> series)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.prefix + series;
+        }
+
+        <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">clone</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> CloneNotSupportedException {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-built_in">this</span>.prefix);
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">equals</span><span class="hljs-params">(Object obj)</span> {
+            <span class="hljs-keyword">if</span> (!(obj <span class="hljs-keyword">instanceof</span> PublicCloneableSeriesLabelGenerator)) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            }
+            <span class="hljs-type">PublicCloneableSeriesLabelGenerator</span> <span class="hljs-variable">that</span>
+                    <span class="hljs-operator">=</span> (PublicCloneableSeriesLabelGenerator) obj;
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.prefix.equals(that.prefix);
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NonCloneableLabelGenerator</span>
+            <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CategoryItemLabelGenerator</span> {
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">generateLabel</span><span class="hljs-params">(CategoryDataset dataset, <span class="hljs-type">int</span> row, <span class="hljs-type">int</span> column)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"N"</span>;
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NonCloneableToolTipGenerator</span>
+            <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CategoryToolTipGenerator</span> {
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">generateToolTip</span><span class="hljs-params">(CategoryDataset dataset, <span class="hljs-type">int</span> row, <span class="hljs-type">int</span> column)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"N"</span>;
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">NonCloneableURLGenerator</span>
+            <span class="hljs-keyword">implements</span> <span class="hljs-title class_">CategoryURLGenerator</span> {
+        <span class="hljs-keyword">public</span> String <span class="hljs-title function_">generateURL</span><span class="hljs-params">(CategoryDataset dataset, <span class="hljs-type">int</span> row, <span class="hljs-type">int</span> column)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">"N"</span>;
+        }
+    }
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ExposedAreaRenderer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">AreaRenderer</span> {
+        <span class="hljs-keyword">public</span> Range <span class="hljs-title function_">findRangeBoundsPublic</span><span class="hljs-params">(CategoryDataset dataset,
+                <span class="hljs-type">boolean</span> includeInterval)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.findRangeBounds(dataset, includeInterval);
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">addEntityPublic</span><span class="hljs-params">(StandardEntityCollection entities,
+                Shape hotspot, CategoryDataset dataset, <span class="hljs-type">int</span> row, <span class="hljs-type">int</span> column,
+                <span class="hljs-type">boolean</span> selected)</span> {
+            <span class="hljs-built_in">super</span>.addEntity(entities, hotspot, dataset, row, column, selected);
+        }
+
+        <span class="hljs-keyword">public</span> CategoryAxis <span class="hljs-title function_">getDomainAxisPublic</span><span class="hljs-params">(CategoryPlot plot,
+                CategoryDataset dataset)</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.getDomainAxis(plot, dataset);
+        }
+
+        <span class="hljs-keyword">public</span> NumberAxis <span class="hljs-title function_">getRangeAxisPublic</span><span class="hljs-params">(CategoryPlot plot, <span class="hljs-type">int</span> index)</span> {
+            <span class="hljs-keyword">return</span> (NumberAxis) <span class="hljs-built_in">super</span>.getRangeAxis(plot, index);
+        }
+    }
+
+    <span class="hljs-keyword">private</span> DefaultCategoryDataset <span class="hljs-title function_">createDataset</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultCategoryDataset</span>();
+        d.addValue(<span class="hljs-number">1.0</span>, <span class="hljs-string">"S1"</span>, <span class="hljs-string">"C1"</span>);
+        d.addValue(<span class="hljs-number">2.0</span>, <span class="hljs-string">"S1"</span>, <span class="hljs-string">"C2"</span>);
+        d.addValue(<span class="hljs-number">3.0</span>, <span class="hljs-string">"S2"</span>, <span class="hljs-string">"C1"</span>);
+        d.addValue(<span class="hljs-number">4.0</span>, <span class="hljs-string">"S2"</span>, <span class="hljs-string">"C2"</span>);
+        <span class="hljs-keyword">return</span> d;
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetPlotRejectsNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-keyword">try</span> {
+            r.setPlot(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            assertEquals(<span class="hljs-string">"Null 'plot' argument."</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInitialiseWithNullDatasetResetsRowAndColumnCounts</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>();
+        <span class="hljs-type">Graphics2D</span> <span class="hljs-variable">g2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedImage</span>(<span class="hljs-number">10</span>, <span class="hljs-number">10</span>,
+                BufferedImage.TYPE_INT_ARGB).createGraphics();
+        <span class="hljs-keyword">try</span> {
+            r.initialise(g2, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>),
+                    plot, <span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>);
+            assertEquals(<span class="hljs-number">0</span>, r.getRowCount());
+            assertEquals(<span class="hljs-number">0</span>, r.getColumnCount());
+            assertSame(plot, r.getPlot());
+        }
+        <span class="hljs-keyword">finally</span> {
+            g2.dispose();
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testInitialiseWithDatasetUpdatesRowAndColumnCounts</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>();
+        <span class="hljs-type">Graphics2D</span> <span class="hljs-variable">g2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedImage</span>(<span class="hljs-number">10</span>, <span class="hljs-number">10</span>,
+                BufferedImage.TYPE_INT_ARGB).createGraphics();
+        <span class="hljs-keyword">try</span> {
+            r.initialise(g2, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">1.0</span>, <span class="hljs-number">1.0</span>),
+                    plot, d, <span class="hljs-literal">null</span>);
+            assertEquals(<span class="hljs-number">2</span>, r.getRowCount());
+            assertEquals(<span class="hljs-number">2</span>, r.getColumnCount());
+        }
+        <span class="hljs-keyword">finally</span> {
+            g2.dispose();
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testItemLabelGeneratorFallsBackToBaseGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">g</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableLabelGenerator</span>();
+        r.setBaseItemLabelGenerator(g);
+        assertSame(g, r.getItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSeriesItemLabelGeneratorOverridesBaseGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">base</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableLabelGenerator</span>();
+        <span class="hljs-type">CategoryItemLabelGenerator</span> <span class="hljs-variable">series</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableLabelGenerator</span>();
+        r.setBaseItemLabelGenerator(base);
+        r.setSeriesItemLabelGenerator(<span class="hljs-number">1</span>, series);
+        assertSame(series, r.getItemLabelGenerator(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+        assertSame(base, r.getItemLabelGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToolTipGeneratorFallsBackToBaseGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryToolTipGenerator</span> <span class="hljs-variable">g</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableToolTipGenerator</span>();
+        r.setBaseToolTipGenerator(g);
+        assertSame(g, r.getToolTipGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSeriesToolTipGeneratorOverridesBaseGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryToolTipGenerator</span> <span class="hljs-variable">base</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableToolTipGenerator</span>();
+        <span class="hljs-type">CategoryToolTipGenerator</span> <span class="hljs-variable">series</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableToolTipGenerator</span>();
+        r.setBaseToolTipGenerator(base);
+        r.setSeriesToolTipGenerator(<span class="hljs-number">1</span>, series);
+        assertSame(series, r.getToolTipGenerator(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+        assertSame(base, r.getToolTipGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testURLGeneratorFallsBackToBaseGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryURLGenerator</span> <span class="hljs-variable">g</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>();
+        r.setBaseURLGenerator(g);
+        assertSame(g, r.getURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSeriesURLGeneratorOverridesBaseGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryURLGenerator</span> <span class="hljs-variable">base</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>();
+        <span class="hljs-type">CategoryURLGenerator</span> <span class="hljs-variable">series</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>();
+        r.setBaseURLGenerator(base);
+        r.setSeriesURLGenerator(<span class="hljs-number">1</span>, series);
+        assertSame(series, r.getURLGenerator(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+        assertSame(base, r.getURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddAnnotationRejectsNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-keyword">try</span> {
+            r.addAnnotation(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            assertEquals(<span class="hljs-string">"Null 'annotation' argument."</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSetLegendItemLabelGeneratorRejectsNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-keyword">try</span> {
+            r.setLegendItemLabelGenerator(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            assertEquals(<span class="hljs-string">"Null 'generator' argument."</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testFindRangeBoundsReturnsNullForNullDataset</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">ExposedAreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExposedAreaRenderer</span>();
+        assertNull(r.findRangeBounds((CategoryDataset) <span class="hljs-literal">null</span>));
+        assertNull(r.findRangeBoundsPublic(<span class="hljs-literal">null</span>, <span class="hljs-literal">false</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testFindRangeBoundsReturnsDatasetRange</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">ExposedAreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExposedAreaRenderer</span>();
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">Range</span> <span class="hljs-variable">range</span> <span class="hljs-operator">=</span> r.findRangeBounds(d);
+        assertEquals(<span class="hljs-number">1.0</span>, range.getLowerBound(), <span class="hljs-number">0.0000001</span>);
+        assertEquals(<span class="hljs-number">4.0</span>, range.getUpperBound(), <span class="hljs-number">0.0000001</span>);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetItemMiddleDelegatesToAxis</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">CategoryAxis</span> <span class="hljs-variable">axis</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>();
+        <span class="hljs-type">Rectangle2D</span> <span class="hljs-variable">area</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">200.0</span>, <span class="hljs-number">100.0</span>);
+        <span class="hljs-type">double</span> <span class="hljs-variable">m1</span> <span class="hljs-operator">=</span> r.getItemMiddle(<span class="hljs-string">"S1"</span>, <span class="hljs-string">"C1"</span>, d, axis, area,
+                org.jfree.chart.util.RectangleEdge.BOTTOM);
+        <span class="hljs-type">double</span> <span class="hljs-variable">m2</span> <span class="hljs-operator">=</span> axis.getCategoryMiddle(<span class="hljs-string">"C1"</span>, d.getColumnKeys(), area,
+                org.jfree.chart.util.RectangleEdge.BOTTOM);
+        assertEquals(m2, m1, <span class="hljs-number">0.0000001</span>);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDrawDomainLineRejectsNullPaint</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>();
+        plot.setOrientation(PlotOrientation.VERTICAL);
+        <span class="hljs-type">Graphics2D</span> <span class="hljs-variable">g2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedImage</span>(<span class="hljs-number">20</span>, <span class="hljs-number">20</span>,
+                BufferedImage.TYPE_INT_ARGB).createGraphics();
+        <span class="hljs-keyword">try</span> {
+            r.drawDomainLine(g2, plot, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">10.0</span>, <span class="hljs-number">10.0</span>),
+                    <span class="hljs-number">5.0</span>, <span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">BasicStroke</span>(<span class="hljs-number">1.0f</span>));
+            fail(<span class="hljs-string">"Expected IllegalArgumentException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            assertEquals(<span class="hljs-string">"Null 'paint' argument."</span>, e.getMessage());
+        }
+        <span class="hljs-keyword">finally</span> {
+            g2.dispose();
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDrawDomainLineRejectsNullStroke</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>();
+        plot.setOrientation(PlotOrientation.VERTICAL);
+        <span class="hljs-type">Graphics2D</span> <span class="hljs-variable">g2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BufferedImage</span>(<span class="hljs-number">20</span>, <span class="hljs-number">20</span>,
+                BufferedImage.TYPE_INT_ARGB).createGraphics();
+        <span class="hljs-keyword">try</span> {
+            r.drawDomainLine(g2, plot, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">0.0</span>, <span class="hljs-number">0.0</span>, <span class="hljs-number">10.0</span>, <span class="hljs-number">10.0</span>),
+                    <span class="hljs-number">5.0</span>, java.awt.Color.black, <span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            assertEquals(<span class="hljs-string">"Null 'stroke' argument."</span>, e.getMessage());
+        }
+        <span class="hljs-keyword">finally</span> {
+            g2.dispose();
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetLegendItemReturnsNullWhenRendererHasNoPlot</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(r.getLegendItem(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetLegendItemPopulatesDatasetSeriesAndLabel</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(d, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(), r);
+
+        <span class="hljs-type">LegendItem</span> <span class="hljs-variable">item</span> <span class="hljs-operator">=</span> r.getLegendItem(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+        assertNotNull(item);
+        assertEquals(<span class="hljs-string">"S2"</span>, item.getLabel());
+        assertEquals(<span class="hljs-string">"S2"</span>, item.getSeriesKey());
+        assertEquals(<span class="hljs-number">1</span>, item.getSeriesIndex());
+        assertSame(d, item.getDataset());
+        assertEquals(<span class="hljs-number">0</span>, item.getDatasetIndex());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testLegendItemUsesCustomGeneratorsForTooltipAndURL</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        r.setLegendItemLabelGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardCategorySeriesLabelGenerator</span>(<span class="hljs-string">"L{0}"</span>));
+        r.setLegendItemToolTipGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-string">"TT"</span>));
+        r.setLegendItemURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-string">"UU"</span>));
+        <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(d, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(), <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(), r);
+
+        <span class="hljs-type">LegendItem</span> <span class="hljs-variable">item</span> <span class="hljs-operator">=</span> r.getLegendItem(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>);
+        assertNotNull(item);
+        assertEquals(<span class="hljs-string">"LS1"</span>, item.getLabel());
+        assertEquals(<span class="hljs-string">"TT0"</span>, item.getToolTipText());
+        assertEquals(<span class="hljs-string">"UU0"</span>, item.getURLText());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetLegendItemsReturnsAscendingOrderByDefault</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(d, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(), r);
+
+        <span class="hljs-type">LegendItemCollection</span> <span class="hljs-variable">items</span> <span class="hljs-operator">=</span> r.getLegendItems();
+        assertEquals(<span class="hljs-number">2</span>, items.getItemCount());
+        assertEquals(<span class="hljs-string">"S1"</span>, items.get(<span class="hljs-number">0</span>).getSeriesKey());
+        assertEquals(<span class="hljs-string">"S2"</span>, items.get(<span class="hljs-number">1</span>).getSeriesKey());
+        assertSame(plot, r.getPlot());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetLegendItemsRespectsDescendingRowRenderingOrder</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(d, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(), r);
+        plot.setRowRenderingOrder(SortOrder.DESCENDING);
+
+        <span class="hljs-type">LegendItemCollection</span> <span class="hljs-variable">items</span> <span class="hljs-operator">=</span> r.getLegendItems();
+        assertEquals(<span class="hljs-number">2</span>, items.getItemCount());
+        assertEquals(<span class="hljs-string">"S2"</span>, items.get(<span class="hljs-number">0</span>).getSeriesKey());
+        assertEquals(<span class="hljs-string">"S1"</span>, items.get(<span class="hljs-number">1</span>).getSeriesKey());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEqualsReflectsConfiguredGenerators</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertTrue(r1.equals(r2));
+
+        r1.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>());
+        assertFalse(r1.equals(r2));
+
+        r2.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>());
+        assertTrue(r1.equals(r2));
+
+        r1.setLegendItemToolTipGenerator(
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-string">"A"</span>));
+        assertFalse(r1.equals(r2));
+
+        r2.setLegendItemToolTipGenerator(
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-string">"A"</span>));
+        assertTrue(r1.equals(r2));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloneCreatesIndependentCopyForCloneableGenerators</span><span class="hljs-params">()</span>
+            <span class="hljs-keyword">throws</span> CloneNotSupportedException {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        r1.setBaseItemLabelGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableLabelGenerator</span>());
+        r1.setBaseToolTipGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableToolTipGenerator</span>());
+        r1.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>());
+        r1.setLegendItemLabelGenerator(
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-string">"L"</span>));
+        r1.setLegendItemToolTipGenerator(
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-string">"T"</span>));
+        r1.setLegendItemURLGenerator(
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableSeriesLabelGenerator</span>(<span class="hljs-string">"U"</span>));
+
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r2</span> <span class="hljs-operator">=</span> (AreaRenderer) r1.clone();
+        assertNotSame(r1, r2);
+        assertTrue(r1.equals(r2));
+
+        r1.setSeriesURLGenerator(<span class="hljs-number">0</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>());
+        assertFalse(r1.equals(r2));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloneFailsForNonCloneableBaseItemLabelGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        r.setBaseItemLabelGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NonCloneableLabelGenerator</span>());
+        <span class="hljs-keyword">try</span> {
+            r.clone();
+            fail(<span class="hljs-string">"Expected CloneNotSupportedException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (CloneNotSupportedException e) {
+            assertEquals(<span class="hljs-string">"ItemLabelGenerator not cloneable."</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloneFailsForNonCloneableBaseToolTipGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        r.setBaseToolTipGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NonCloneableToolTipGenerator</span>());
+        <span class="hljs-keyword">try</span> {
+            r.clone();
+            fail(<span class="hljs-string">"Expected CloneNotSupportedException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (CloneNotSupportedException e) {
+            assertEquals(<span class="hljs-string">"Base tool tip generator not cloneable."</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloneFailsForNonCloneableBaseURLGenerator</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        r.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">NonCloneableURLGenerator</span>());
+        <span class="hljs-keyword">try</span> {
+            r.clone();
+            fail(<span class="hljs-string">"Expected CloneNotSupportedException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (CloneNotSupportedException e) {
+            assertEquals(<span class="hljs-string">"Base item URL generator not cloneable."</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetDrawingSupplierReturnsNullWithoutPlot</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">AreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">AreaRenderer</span>();
+        assertNull(r.getDrawingSupplier());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetDomainAxisAndRangeAxisSelectionFromPlot</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">ExposedAreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExposedAreaRenderer</span>();
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">CategoryAxis</span> <span class="hljs-variable">domainAxis</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(<span class="hljs-string">"D0"</span>);
+        <span class="hljs-type">NumberAxis</span> <span class="hljs-variable">rangeAxis0</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"R0"</span>);
+        <span class="hljs-type">NumberAxis</span> <span class="hljs-variable">rangeAxis1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(<span class="hljs-string">"R1"</span>);
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(d, domainAxis, rangeAxis0, r);
+        plot.setRangeAxis(<span class="hljs-number">1</span>, rangeAxis1);
+
+        assertSame(domainAxis, r.getDomainAxisPublic(plot, d));
+        assertSame(rangeAxis1, r.getRangeAxisPublic(plot, <span class="hljs-number">1</span>));
+        assertSame(rangeAxis0, r.getRangeAxisPublic(plot, <span class="hljs-number">2</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddEntityRejectsNullHotspot</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">ExposedAreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExposedAreaRenderer</span>();
+        <span class="hljs-keyword">try</span> {
+            r.addEntityPublic(<span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardEntityCollection</span>(), <span class="hljs-literal">null</span>,
+                    createDataset(), <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-literal">false</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException."</span>);
+        }
+        <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            assertEquals(<span class="hljs-string">"Null 'hotspot' argument."</span>, e.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testAddEntityCreatesCategoryItemEntityWithTooltipAndURL</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">ExposedAreaRenderer</span> <span class="hljs-variable">r</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExposedAreaRenderer</span>();
+        r.setBaseToolTipGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableToolTipGenerator</span>());
+        r.setBaseURLGenerator(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PublicCloneableURLGenerator</span>());
+        <span class="hljs-type">DefaultCategoryDataset</span> <span class="hljs-variable">d</span> <span class="hljs-operator">=</span> createDataset();
+        <span class="hljs-type">CategoryPlot</span> <span class="hljs-variable">plot</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryPlot</span>(d, <span class="hljs-keyword">new</span> <span class="hljs-title class_">CategoryAxis</span>(),
+                <span class="hljs-keyword">new</span> <span class="hljs-title class_">NumberAxis</span>(), r);
+
+        <span class="hljs-type">StandardEntityCollection</span> <span class="hljs-variable">entities</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">StandardEntityCollection</span>();
+        r.addEntityPublic(entities, <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rectangle2D</span>.Double(<span class="hljs-number">1.0</span>, <span class="hljs-number">2.0</span>, <span class="hljs-number">3.0</span>, <span class="hljs-number">4.0</span>),
+                d, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-literal">false</span>);
+
+        assertEquals(<span class="hljs-number">1</span>, entities.getEntityCount());
+        org.jfree.chart.entity.<span class="hljs-type">CategoryItemEntity</span> <span class="hljs-variable">e</span>
+                <span class="hljs-operator">=</span> (org.jfree.chart.entity.CategoryItemEntity) entities.getEntity(<span class="hljs-number">0</span>);
+        assertEquals(<span class="hljs-string">"T0-1"</span>, e.getToolTipText());
+        assertEquals(<span class="hljs-string">"U0-1"</span>, e.getURLText());
+        assertEquals(<span class="hljs-string">"S1"</span>, e.getRowKey());
+        assertEquals(<span class="hljs-string">"C2"</span>, e.getColumnKey());
+        assertSame(d, e.getDataset());
+        assertSame(plot, r.getPlot());
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<p>References:</p>
+<ul>
+<li><code>source/org/jfree/chart/renderer/category/AbstractCategoryItemRenderer.java</code></li>
+<li><code>ant/build.xml</code></li>
+</ul>
+</div>

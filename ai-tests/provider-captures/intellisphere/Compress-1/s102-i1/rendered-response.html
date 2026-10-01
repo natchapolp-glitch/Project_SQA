@@ -1,0 +1,364 @@
+<div id="messageContentDataIdsyHL8W6J6iZb" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><p>Based on the provided production code and build configuration, I will generate JUnit 3.8.2 test cases for <code>CpioArchiveOutputStream</code>. The project uses JUnit 3, so tests will extend <code>junit.framework.TestCase</code>.</p>
+<p>Here are the test files:</p>
+<p>org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStreamTest.java</p>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.compress.archivers.cpio;
+
+<span class="hljs-keyword">import</span> java.io.ByteArrayOutputStream;
+<span class="hljs-keyword">import</span> java.io.IOException;
+<span class="hljs-keyword">import</span> java.io.OutputStream;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-comment">/**
+ * Tests for {<span class="hljs-doctag">@link</span> CpioArchiveOutputStream}.
+ * Based on the fixed-reference revision 1f.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CpioArchiveOutputStreamTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">private</span> ByteArrayOutputStream byteOut;
+    <span class="hljs-keyword">private</span> CpioArchiveOutputStream cpioOut;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">setUp</span><span class="hljs-params">()</span> {
+        byteOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ByteArrayOutputStream</span>();
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">tearDown</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">if</span> (cpioOut != <span class="hljs-literal">null</span>) {
+            <span class="hljs-keyword">try</span> {
+                cpioOut.close();
+            } <span class="hljs-keyword">catch</span> (IOException e) {
+                <span class="hljs-comment">// ignore</span>
+            }
+        }
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// Constructor tests</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorWithNoFormatSpecifiedShouldDefaultToNewFormat</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-comment">// The default format is FORMAT_NEW.</span>
+        <span class="hljs-comment">// If we put an entry without specifying a format, it should use the default.</span>
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"test.txt"</span>);
+        entry.setSize(<span class="hljs-number">0</span>);
+        
+        <span class="hljs-comment">// This should not throw an exception and should write using the NEW format magic.</span>
+        cpioOut.putNextEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        <span class="hljs-comment">// Verify that the output starts with the magic for FORMAT_NEW: "070701"</span>
+        <span class="hljs-type">byte</span>[] bytes = byteOut.toByteArray();
+        assertEquals(<span class="hljs-string">"Magic should be for new format"</span>,
+                <span class="hljs-string">'0'</span>, bytes[<span class="hljs-number">0</span>](undefined));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorWithFormatOldBinary</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut, CpioConstants.FORMAT_OLD_BINARY);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"test.bin"</span>);
+        entry.setSize(<span class="hljs-number">0</span>);
+        
+        <span class="hljs-comment">// Should succeed</span>
+        cpioOut.putNextEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        assertTrue(<span class="hljs-string">"Should write at least magic bytes"</span>, byteOut.toByteArray().length &gt; <span class="hljs-number">0</span>);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorWithInvalidFormatShouldThrowException</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut, (<span class="hljs-type">short</span>) <span class="hljs-number">999</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for invalid format"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// close / finish / ensureOpen tests</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloseShouldFinishStream</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        cpioOut.close();
+        assertTrue(<span class="hljs-string">"Stream should be closed"</span>, <span class="hljs-literal">true</span>); <span class="hljs-comment">// no exception</span>
+        <span class="hljs-comment">// Subsequent operation should throw IOException</span>
+        <span class="hljs-keyword">try</span> {
+            cpioOut.putNextEntry(<span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"test"</span>));
+            fail(<span class="hljs-string">"Should have thrown IOException because stream is closed"</span>);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testFinishTwiceShouldNotThrowException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        cpioOut.finish();
+        cpioOut.finish(); <span class="hljs-comment">// second call should be a no-op</span>
+        <span class="hljs-comment">// Should not throw</span>
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloseAfterFinish</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        cpioOut.finish();
+        cpioOut.close();
+        
+        <span class="hljs-keyword">try</span> {
+            cpioOut.ensureOpen(); <span class="hljs-comment">// private, but we can infer from other methods</span>
+            <span class="hljs-comment">// we use write to trigger ensureOpen</span>
+            cpioOut.write(<span class="hljs-number">0</span>);
+            fail(<span class="hljs-string">"Should have thrown IOException"</span>);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// putNextEntry / putArchiveEntry tests</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutNextEntryDuplicateNameShouldThrowIOException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry1</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"duplicate"</span>);
+        entry1.setSize(<span class="hljs-number">0</span>);
+        cpioOut.putNextEntry(entry1);
+        cpioOut.closeArchiveEntry();
+        
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry2</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"duplicate"</span>);
+        entry2.setSize(<span class="hljs-number">0</span>);
+        <span class="hljs-keyword">try</span> {
+            cpioOut.putNextEntry(entry2);
+            fail(<span class="hljs-string">"Should have thrown IOException for duplicate entry"</span>);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            assertTrue(e.getMessage().contains(<span class="hljs-string">"duplicate"</span>));
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutArchiveEntryDelegatesToPutNextEntry</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"archiveEntryTest"</span>);
+        entry.setSize(<span class="hljs-number">0</span>);
+        <span class="hljs-comment">// putArchiveEntry accepts ArchiveEntry</span>
+        cpioOut.putArchiveEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        <span class="hljs-comment">// Should succeed without ClassCastException</span>
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// write tests</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWriteByteArray</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"byteArrayTest"</span>);
+        <span class="hljs-type">byte</span>[] data = <span class="hljs-string">"Hello CPIO!"</span>.getBytes();
+        entry.setSize(data.length);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(data, <span class="hljs-number">0</span>, data.length);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        <span class="hljs-comment">// The output should contain the data; we can only test that no exception is thrown.</span>
+        <span class="hljs-type">byte</span>[] bytes = byteOut.toByteArray();
+        assertTrue(bytes.length &gt; data.length);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWritePastEndOfEntryShouldThrowIOException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"pastEnd"</span>);
+        entry.setSize(<span class="hljs-number">5</span>);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[]{<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>}, <span class="hljs-number">0</span>, <span class="hljs-number">5</span>);
+        <span class="hljs-keyword">try</span> {
+            cpioOut.write(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[]{<span class="hljs-number">6</span>}, <span class="hljs-number">0</span>, <span class="hljs-number">1</span>);
+            fail(<span class="hljs-string">"Should have thrown IOException for writing past end"</span>);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWriteWithNoCurrentEntryShouldThrowIOException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-keyword">try</span> {
+            cpioOut.write(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[]{<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>}, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>);
+            fail(<span class="hljs-string">"Should have thrown IOException for no current entry"</span>);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWriteSingleByte</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"singleByte"</span>);
+        entry.setSize(<span class="hljs-number">1</span>);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(<span class="hljs-number">65</span>); <span class="hljs-comment">// 'A'</span>
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        <span class="hljs-comment">// Should succeed</span>
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWriteInvalidOffsetOrLength</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"invalidBounds"</span>);
+        entry.setSize(<span class="hljs-number">10</span>);
+        cpioOut.putNextEntry(entry);
+        
+        <span class="hljs-keyword">try</span> {
+            cpioOut.write(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">5</span>](undefined), -<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+            fail(<span class="hljs-string">"Should have thrown IndexOutOfBoundsException for negative offset"</span>);
+        } <span class="hljs-keyword">catch</span> (IndexOutOfBoundsException e) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// closeArchiveEntry tests</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloseArchiveEntrySizeMismatchShouldThrowIOException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"sizeMismatch"</span>);
+        entry.setSize(<span class="hljs-number">10</span>);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(<span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[]{<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>}, <span class="hljs-number">0</span>, <span class="hljs-number">3</span>);
+        <span class="hljs-keyword">try</span> {
+            cpioOut.closeArchiveEntry();
+            fail(<span class="hljs-string">"Should have thrown IOException for size mismatch"</span>);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            assertTrue(e.getMessage().contains(<span class="hljs-string">"invalid entry size"</span>));
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloseArchiveEntryWithCorrectSize</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"correctSize"</span>);
+        <span class="hljs-type">byte</span>[] data = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">10</span>](undefined);
+        entry.setSize(data.length);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(data, <span class="hljs-number">0</span>, data.length);
+        cpioOut.closeArchiveEntry();
+        <span class="hljs-comment">// Should succeed</span>
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// CRC tests (FORMAT_NEW_CRC)</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCrcMismatchShouldThrowIOException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut, CpioConstants.FORMAT_NEW_CRC);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"crcTest"</span>);
+        <span class="hljs-type">byte</span>[] data = <span class="hljs-string">"CRC TEST"</span>.getBytes();
+        entry.setSize(data.length);
+        entry.setChksum(<span class="hljs-number">9999</span>); <span class="hljs-comment">// incorrect CRC</span>
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(data, <span class="hljs-number">0</span>, data.length);
+        <span class="hljs-keyword">try</span> {
+            cpioOut.closeArchiveEntry();
+            fail(<span class="hljs-string">"Should have thrown IOException for CRC Error"</span>);
+        } <span class="hljs-keyword">catch</span> (IOException e) {
+            assertTrue(e.getMessage().contains(<span class="hljs-string">"CRC Error"</span>));
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCrcMatchShouldNotThrowException</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-comment">// Compute expected CRC manually: sum of bytes &amp; 0xFF</span>
+        <span class="hljs-type">byte</span>[] data = <span class="hljs-string">"CRC MATCH"</span>.getBytes();
+        <span class="hljs-type">long</span> <span class="hljs-variable">crc</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">byte</span> b : data) {
+            crc += b &amp; <span class="hljs-number">0xFF</span>;
+        }
+        
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut, CpioConstants.FORMAT_NEW_CRC);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"crcMatch"</span>);
+        entry.setSize(data.length);
+        entry.setChksum(crc);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(data, <span class="hljs-number">0</span>, data.length);
+        cpioOut.closeArchiveEntry(); <span class="hljs-comment">// Should not throw</span>
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// format-specific tests</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testOldAsciiFormatWritesCorrectMagic</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut, CpioConstants.FORMAT_OLD_ASCII);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"oldAscii"</span>);
+        entry.setSize(<span class="hljs-number">0</span>);
+        cpioOut.putNextEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        <span class="hljs-type">byte</span>[] bytes = byteOut.toByteArray();
+        <span class="hljs-comment">// MAGIC_OLD_ASCII = "070707"</span>
+        <span class="hljs-type">String</span> <span class="hljs-variable">magic</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(bytes, <span class="hljs-number">0</span>, <span class="hljs-number">6</span>);
+        assertEquals(<span class="hljs-string">"070707"</span>, magic);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testNewFormatWritesCorrectMagic</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"newFormat"</span>);
+        entry.setSize(<span class="hljs-number">0</span>);
+        cpioOut.putNextEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        <span class="hljs-type">byte</span>[] bytes = byteOut.toByteArray();
+        <span class="hljs-comment">// MAGIC_NEW = "070701"</span>
+        <span class="hljs-type">String</span> <span class="hljs-variable">magic</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(bytes, <span class="hljs-number">0</span>, <span class="hljs-number">6</span>);
+        assertEquals(<span class="hljs-string">"070701"</span>, magic);
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// Trailer entry tests</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testTrailerEntryIsWrittenOnFinish</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        cpioOut.finish();
+        
+        <span class="hljs-type">byte</span>[] bytes = byteOut.toByteArray();
+        <span class="hljs-comment">// The trailer entry has name "TRAILER!!!" and should be in the output</span>
+        <span class="hljs-type">String</span> <span class="hljs-variable">output</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">String</span>(bytes);
+        assertTrue(<span class="hljs-string">"Output should contain TRAILER!!!"</span>, output.contains(<span class="hljs-string">"TRAILER!!!"</span>));
+    }
+
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+    <span class="hljs-comment">// Helper methods (indirectly tested via public API)</span>
+    <span class="hljs-comment">// ---------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPadFunctionCalledIndirectly</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-comment">// Padding is applied when entry size is not a multiple of 4 for new format.</span>
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"paddingTest"</span>);
+        <span class="hljs-type">byte</span>[] data = <span class="hljs-keyword">new</span> <span class="hljs-title class_">byte</span>[<span class="hljs-number">3</span>](undefined); <span class="hljs-comment">// size not multiple of 4</span>
+        entry.setSize(data.length);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(data, <span class="hljs-number">0</span>, data.length);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        
+        <span class="hljs-comment">// Just ensure no exception; padding adds zero bytes</span>
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWriteAsciiLongTruncation</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> IOException {
+        <span class="hljs-comment">// writeAsciiLong with number larger than length truncates from left; </span>
+        <span class="hljs-comment">// test indirectly by forcing a large inode value</span>
+        cpioOut = <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveOutputStream</span>(byteOut);
+        <span class="hljs-type">CpioArchiveEntry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CpioArchiveEntry</span>(<span class="hljs-string">"truncTest"</span>);
+        entry.setSize(<span class="hljs-number">0</span>);
+        entry.setInode(<span class="hljs-number">0x123456789ABCL</span>); <span class="hljs-comment">// &gt; 16 hex digits</span>
+        cpioOut.putNextEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        <span class="hljs-comment">// Should not throw</span>
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>

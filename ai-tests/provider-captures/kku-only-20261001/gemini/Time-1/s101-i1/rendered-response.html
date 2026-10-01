@@ -1,0 +1,455 @@
+<p>An extensive regression test suite for <code>UnsupportedDurationField</code> and <code>Partial</code> is provided below, designed for compatibility with the project's build setup (JUnit 3.8.2 / Java 11 compatible).</p>
+<h3><code>org/joda/time/field/UnsupportedDurationFieldTest.java</code></h3>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.joda.time.field;
+
+<span class="hljs-keyword">import</span> java.io.ByteArrayInputStream;
+<span class="hljs-keyword">import</span> java.io.ByteArrayOutputStream;
+<span class="hljs-keyword">import</span> java.io.ObjectInputStream;
+<span class="hljs-keyword">import</span> java.io.ObjectOutputStream;
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> org.joda.time.DurationFieldType;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">UnsupportedDurationFieldTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">UnsupportedDurationFieldTest</span><span class="hljs-params">(String name)</span> {
+        <span class="hljs-built_in">super</span>(name);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testBasicProperties</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.years());
+        assertEquals(DurationFieldType.years(), field.getType());
+        assertEquals(<span class="hljs-string">"years"</span>, field.getName());
+        assertFalse(field.isSupported());
+        assertTrue(field.isPrecise());
+        assertEquals(<span class="hljs-number">0L</span>, field.getUnitMillis());
+        assertEquals(<span class="hljs-number">0</span>, field.compareTo(field));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSingletonAndEqualsHashCode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">field1</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.years());
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">field2</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.years());
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">field3</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.months());
+
+        assertSame(field1, field2);
+        assertTrue(field1.equals(field2));
+        assertFalse(field1.equals(field3));
+        assertFalse(field1.equals(<span class="hljs-literal">null</span>));
+        assertFalse(field1.equals(<span class="hljs-string">"years"</span>));
+
+        assertEquals(field1.hashCode(), field2.hashCode());
+        assertEquals(<span class="hljs-string">"UnsupportedDurationField[years]"</span>, field1.toString());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testSerialization</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception {
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">original</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.days());
+
+        <span class="hljs-type">ByteArrayOutputStream</span> <span class="hljs-variable">baos</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ByteArrayOutputStream</span>();
+        <span class="hljs-type">ObjectOutputStream</span> <span class="hljs-variable">oos</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectOutputStream</span>(baos);
+        oos.writeObject(original);
+        oos.close();
+
+        <span class="hljs-type">ByteArrayInputStream</span> <span class="hljs-variable">bais</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ByteArrayInputStream</span>(baos.toByteArray());
+        <span class="hljs-type">ObjectInputStream</span> <span class="hljs-variable">ois</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ObjectInputStream</span>(bais);
+        <span class="hljs-type">Object</span> <span class="hljs-variable">deserialized</span> <span class="hljs-operator">=</span> ois.readObject();
+        ois.close();
+
+        assertSame(original, deserialized);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testUnsupportedOperations_getValue</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.seconds());
+
+        <span class="hljs-keyword">try</span> {
+            field.getValue(<span class="hljs-number">1000L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"seconds field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getValue(<span class="hljs-number">1000L</span>, <span class="hljs-number">500L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"seconds field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getValueAsLong(<span class="hljs-number">1000L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"seconds field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getValueAsLong(<span class="hljs-number">1000L</span>, <span class="hljs-number">500L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"seconds field is unsupported"</span>, expected.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testUnsupportedOperations_getMillis</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.hours());
+
+        <span class="hljs-keyword">try</span> {
+            field.getMillis(<span class="hljs-number">5</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"hours field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getMillis(<span class="hljs-number">5L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"hours field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getMillis(<span class="hljs-number">5</span>, <span class="hljs-number">100L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"hours field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getMillis(<span class="hljs-number">5L</span>, <span class="hljs-number">100L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"hours field is unsupported"</span>, expected.getMessage());
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testUnsupportedOperations_addAndDifference</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">UnsupportedDurationField</span> <span class="hljs-variable">field</span> <span class="hljs-operator">=</span> UnsupportedDurationField.getInstance(DurationFieldType.minutes());
+
+        <span class="hljs-keyword">try</span> {
+            field.add(<span class="hljs-number">100L</span>, <span class="hljs-number">10</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"minutes field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.add(<span class="hljs-number">100L</span>, <span class="hljs-number">10L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"minutes field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getDifference(<span class="hljs-number">200L</span>, <span class="hljs-number">100L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"minutes field is unsupported"</span>, expected.getMessage());
+        }
+
+        <span class="hljs-keyword">try</span> {
+            field.getDifferenceAsLong(<span class="hljs-number">200L</span>, <span class="hljs-number">100L</span>);
+            fail(<span class="hljs-string">"Expected UnsupportedOperationException"</span>);
+        } <span class="hljs-keyword">catch</span> (UnsupportedOperationException expected) {
+            assertEquals(<span class="hljs-string">"minutes field is unsupported"</span>, expected.getMessage());
+        }
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+<h3><code>org/joda/time/PartialTest.java</code></h3>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.joda.time;
+
+<span class="hljs-keyword">import</span> java.util.Locale;
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+<span class="hljs-keyword">import</span> org.joda.time.chrono.GregorianChronology;
+<span class="hljs-keyword">import</span> org.joda.time.chrono.ISOChronology;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">PartialTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">PartialTest</span><span class="hljs-params">(String name)</span> {
+        <span class="hljs-built_in">super</span>(name);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDefaultConstructor</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>();
+        assertEquals(<span class="hljs-number">0</span>, p.size());
+        assertEquals(<span class="hljs-number">0</span>, p.getFieldTypes().length);
+        assertEquals(<span class="hljs-number">0</span>, p.getValues().length);
+        assertEquals(ISOChronology.getInstanceUTC(), p.getChronology());
+        assertNull(p.getFormatter());
+        assertEquals(<span class="hljs-string">"[]"</span>, p.toString());
+        assertEquals(<span class="hljs-string">"[]"</span>, p.toStringList());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorSingleField</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.year(), <span class="hljs-number">2024</span>);
+        assertEquals(<span class="hljs-number">1</span>, p.size());
+        assertEquals(DateTimeFieldType.year(), p.getFieldType(<span class="hljs-number">0</span>));
+        assertEquals(<span class="hljs-number">2024</span>, p.getValue(<span class="hljs-number">0</span>));
+        assertEquals(ISOChronology.getInstanceUTC(), p.getChronology());
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(<span class="hljs-literal">null</span>, <span class="hljs-number">2024</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for null field type"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorArrayValidation_nullsAndMismatchedLengths</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>((DateTimeFieldType[]) <span class="hljs-literal">null</span>, <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">1</span>});
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for null types"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year()}, <span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for null values"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year()}, <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">1</span>});
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for mismatched array length"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year(), <span class="hljs-literal">null</span>}, <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">1</span>});
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for null array element"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorArrayValidation_orderAndDuplicates</span><span class="hljs-params">()</span> {
+        <span class="hljs-comment">// Correct order is largest to smallest</span>
+        DateTimeFieldType[] validTypes = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {
+            DateTimeFieldType.year(),
+            DateTimeFieldType.monthOfYear()
+        };
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(validTypes, <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">6</span>});
+        assertEquals(<span class="hljs-number">2</span>, p.size());
+
+        <span class="hljs-comment">// Incorrect order: month before year</span>
+        DateTimeFieldType[] invalidOrder = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {
+            DateTimeFieldType.monthOfYear(),
+            DateTimeFieldType.year()
+        };
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(invalidOrder, <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">6</span>, <span class="hljs-number">2024</span>});
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for invalid field order"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+
+        <span class="hljs-comment">// Duplicate fields</span>
+        DateTimeFieldType[] duplicates = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {
+            DateTimeFieldType.year(),
+            DateTimeFieldType.year()
+        };
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(duplicates, <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">2025</span>});
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for duplicate fields"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testConstructorFromReadablePartial</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">original</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.dayOfMonth(), <span class="hljs-number">15</span>);
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">copy</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(original);
+        assertEquals(<span class="hljs-number">1</span>, copy.size());
+        assertEquals(DateTimeFieldType.dayOfMonth(), copy.getFieldType(<span class="hljs-number">0</span>));
+        assertEquals(<span class="hljs-number">15</span>, copy.getValue(<span class="hljs-number">0</span>));
+
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>((ReadablePartial) <span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for null partial"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWithChronologyRetainFields</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.year(), <span class="hljs-number">2024</span>);
+        assertSame(p, p.withChronologyRetainFields(ISOChronology.getInstanceUTC()));
+
+        <span class="hljs-type">Chronology</span> <span class="hljs-variable">gj</span> <span class="hljs-operator">=</span> GregorianChronology.getInstanceUTC();
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p2</span> <span class="hljs-operator">=</span> p.withChronologyRetainFields(gj);
+        assertEquals(gj, p2.getChronology());
+        assertEquals(<span class="hljs-number">2024</span>, p2.getValue(<span class="hljs-number">0</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p3</span> <span class="hljs-operator">=</span> p2.withChronologyRetainFields(<span class="hljs-literal">null</span>);
+        assertEquals(ISOChronology.getInstanceUTC(), p3.getChronology());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWith_addAndModify</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>();
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p1</span> <span class="hljs-operator">=</span> p.with(DateTimeFieldType.year(), <span class="hljs-number">2024</span>);
+        assertEquals(<span class="hljs-number">1</span>, p1.size());
+        assertEquals(<span class="hljs-number">2024</span>, p1.getValue(<span class="hljs-number">0</span>));
+
+        <span class="hljs-comment">// Add smaller field, maintain order</span>
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p2</span> <span class="hljs-operator">=</span> p1.with(DateTimeFieldType.monthOfYear(), <span class="hljs-number">12</span>);
+        assertEquals(<span class="hljs-number">2</span>, p2.size());
+        assertEquals(DateTimeFieldType.year(), p2.getFieldType(<span class="hljs-number">0</span>));
+        assertEquals(DateTimeFieldType.monthOfYear(), p2.getFieldType(<span class="hljs-number">1</span>));
+
+        <span class="hljs-comment">// Setting same value returns same instance</span>
+        assertSame(p2, p2.with(DateTimeFieldType.monthOfYear(), <span class="hljs-number">12</span>));
+
+        <span class="hljs-comment">// Setting new value on existing field</span>
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p3</span> <span class="hljs-operator">=</span> p2.with(DateTimeFieldType.monthOfYear(), <span class="hljs-number">5</span>);
+        assertEquals(<span class="hljs-number">5</span>, p3.getValue(<span class="hljs-number">1</span>));
+        assertEquals(<span class="hljs-number">2024</span>, p3.getValue(<span class="hljs-number">0</span>));
+
+        <span class="hljs-keyword">try</span> {
+            p.with(<span class="hljs-literal">null</span>, <span class="hljs-number">1</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for null field type"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWithout</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year(), DateTimeFieldType.monthOfYear()},
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">6</span>}
+        );
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">withoutMonth</span> <span class="hljs-operator">=</span> p.without(DateTimeFieldType.monthOfYear());
+        assertEquals(<span class="hljs-number">1</span>, withoutMonth.size());
+        assertEquals(DateTimeFieldType.year(), withoutMonth.getFieldType(<span class="hljs-number">0</span>));
+
+        <span class="hljs-comment">// Removing non-existent field returns this</span>
+        assertSame(withoutMonth, withoutMonth.without(DateTimeFieldType.dayOfMonth()));
+        assertSame(withoutMonth, withoutMonth.without(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWithField</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.minuteOfHour(), <span class="hljs-number">10</span>);
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">modified</span> <span class="hljs-operator">=</span> p.withField(DateTimeFieldType.minuteOfHour(), <span class="hljs-number">45</span>);
+        assertEquals(<span class="hljs-number">45</span>, modified.getValue(<span class="hljs-number">0</span>));
+        assertSame(p, p.withField(DateTimeFieldType.minuteOfHour(), <span class="hljs-number">10</span>));
+
+        <span class="hljs-keyword">try</span> {
+            p.withField(DateTimeFieldType.hourOfDay(), <span class="hljs-number">5</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for unsupported field"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testWithFieldAddedAndAddWrapped</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.minuteOfHour(), <span class="hljs-number">50</span>);
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">added</span> <span class="hljs-operator">=</span> p.withFieldAdded(DurationFieldType.minutes(), <span class="hljs-number">5</span>);
+        assertEquals(<span class="hljs-number">55</span>, added.getValue(<span class="hljs-number">0</span>));
+        assertSame(p, p.withFieldAdded(DurationFieldType.minutes(), <span class="hljs-number">0</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">wrapped</span> <span class="hljs-operator">=</span> p.withFieldAddWrapped(DurationFieldType.minutes(), <span class="hljs-number">15</span>);
+        assertEquals(<span class="hljs-number">5</span>, wrapped.getValue(<span class="hljs-number">0</span>));
+        assertSame(p, p.withFieldAddWrapped(DurationFieldType.minutes(), <span class="hljs-number">0</span>));
+
+        <span class="hljs-keyword">try</span> {
+            p.withFieldAdded(DurationFieldType.hours(), <span class="hljs-number">1</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for unsupported field"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPlusMinusPeriod</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.hourOfDay(), <span class="hljs-number">10</span>);
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">plus</span> <span class="hljs-operator">=</span> p.plus(Period.hours(<span class="hljs-number">3</span>));
+        assertEquals(<span class="hljs-number">13</span>, plus.getValue(<span class="hljs-number">0</span>));
+        assertSame(p, p.plus(<span class="hljs-literal">null</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">minus</span> <span class="hljs-operator">=</span> p.minus(Period.hours(<span class="hljs-number">4</span>));
+        assertEquals(<span class="hljs-number">6</span>, minus.getValue(<span class="hljs-number">0</span>));
+        assertSame(p, p.minus(<span class="hljs-literal">null</span>));
+
+        <span class="hljs-comment">// Adding a period containing fields not present in partial has no effect on those fields</span>
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">plusDays</span> <span class="hljs-operator">=</span> p.plus(Period.days(<span class="hljs-number">2</span>));
+        assertEquals(<span class="hljs-number">10</span>, plusDays.getValue(<span class="hljs-number">0</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsMatchInstant</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year(), DateTimeFieldType.monthOfYear()},
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">6</span>}
+        );
+
+        <span class="hljs-type">DateTime</span> <span class="hljs-variable">matching</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTime</span>(<span class="hljs-number">2024</span>, <span class="hljs-number">6</span>, <span class="hljs-number">15</span>, <span class="hljs-number">12</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, ISOChronology.getInstanceUTC());
+        <span class="hljs-type">DateTime</span> <span class="hljs-variable">nonMatching</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTime</span>(<span class="hljs-number">2023</span>, <span class="hljs-number">6</span>, <span class="hljs-number">15</span>, <span class="hljs-number">12</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, ISOChronology.getInstanceUTC());
+
+        assertTrue(p.isMatch(matching));
+        assertFalse(p.isMatch(nonMatching));
+
+        <span class="hljs-comment">// Empty partial matches any instant</span>
+        assertTrue(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>().isMatch(matching));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testIsMatchPartial</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">full</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year(), DateTimeFieldType.monthOfYear()},
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">6</span>}
+        );
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">subset</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.year(), <span class="hljs-number">2024</span>);
+        <span class="hljs-comment">// subset matches full since all fields of subset (year=2024) match full</span>
+        assertTrue(subset.isMatch(full));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">differentYear</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(DateTimeFieldType.year(), <span class="hljs-number">2023</span>);
+        assertFalse(differentYear.isMatch(full));
+
+        <span class="hljs-keyword">try</span> {
+            subset.isMatch((ReadablePartial) <span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for null partial"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToStringAndFormatting</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year(), DateTimeFieldType.monthOfYear()},
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">6</span>}
+        );
+
+        assertEquals(<span class="hljs-string">"2024-06"</span>, p.toString());
+        assertEquals(<span class="hljs-string">"[year=2024, monthOfYear=6]"</span>, p.toStringList());
+        assertEquals(<span class="hljs-string">"2024/06"</span>, p.toString(<span class="hljs-string">"yyyy/MM"</span>));
+        assertEquals(<span class="hljs-string">"2024/06"</span>, p.toString(<span class="hljs-string">"yyyy/MM"</span>, Locale.US));
+        assertEquals(p.toString(), p.toString(<span class="hljs-literal">null</span>));
+        assertEquals(p.toString(), p.toString(<span class="hljs-literal">null</span>, Locale.US));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPropertyMethods</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">p</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Partial</span>(
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">DateTimeFieldType</span>[] {DateTimeFieldType.year(), DateTimeFieldType.monthOfYear()},
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[] {<span class="hljs-number">2024</span>, <span class="hljs-number">6</span>}
+        );
+
+        Partial.<span class="hljs-type">Property</span> <span class="hljs-variable">prop</span> <span class="hljs-operator">=</span> p.property(DateTimeFieldType.monthOfYear());
+        assertNotNull(prop);
+        assertEquals(<span class="hljs-number">6</span>, prop.get());
+        assertSame(p, prop.getPartial());
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">modifiedAdd</span> <span class="hljs-operator">=</span> prop.addToCopy(<span class="hljs-number">3</span>);
+        assertEquals(<span class="hljs-number">9</span>, modifiedAdd.getValue(<span class="hljs-number">1</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">modifiedWrap</span> <span class="hljs-operator">=</span> prop.addWrapFieldToCopy(<span class="hljs-number">8</span>);
+        assertEquals(<span class="hljs-number">2</span>, modifiedWrap.getValue(<span class="hljs-number">1</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">modifiedSet</span> <span class="hljs-operator">=</span> prop.setCopy(<span class="hljs-number">11</span>);
+        assertEquals(<span class="hljs-number">11</span>, modifiedSet.getValue(<span class="hljs-number">1</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">modifiedSetText</span> <span class="hljs-operator">=</span> prop.setCopy(<span class="hljs-string">"December"</span>, Locale.ENGLISH);
+        assertEquals(<span class="hljs-number">12</span>, modifiedSetText.getValue(<span class="hljs-number">1</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">max</span> <span class="hljs-operator">=</span> prop.withMaximumValue();
+        assertEquals(<span class="hljs-number">12</span>, max.getValue(<span class="hljs-number">1</span>));
+
+        <span class="hljs-type">Partial</span> <span class="hljs-variable">min</span> <span class="hljs-operator">=</span> prop.withMinimumValue();
+        assertEquals(<span class="hljs-number">1</span>, min.getValue(<span class="hljs-number">1</span>));
+
+        <span class="hljs-keyword">try</span> {
+            p.property(DateTimeFieldType.dayOfMonth());
+            fail(<span class="hljs-string">"Expected IllegalArgumentException for unsupported field property"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException expected) {
+        }
+    }
+}
+</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>

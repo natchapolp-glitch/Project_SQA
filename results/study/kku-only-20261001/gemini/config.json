@@ -1,0 +1,39 @@
+{
+  "study": "prospective-shared-api-fixed-reference-v2",
+  "defects4j_version": "3.0.1",
+  "timezone": "America/Los_Angeles",
+  "generators": [
+    "cmaes",
+    "fscs-art",
+    "claude",
+    "intellisphere"
+  ],
+  "seeds": [
+    101,
+    102,
+    103
+  ],
+  "budgets": [
+    30
+  ],
+  "selection": "lowest active bug ID per project; unsupported targets retained as blocked",
+  "scope_limit": "one active bug per project, not every active bug; no instructor approval inferred",
+  "input_domain": "declared methods, scalar/array inputs, bounded recursive fixtures, null boundaries and concrete subclasses for abstract targets",
+  "cmaes_fitness": "fixed outcome frequency minimization; no buggy observations or patch feedback",
+  "coverage_scope": "all classes modified by the selected fix",
+  "api_eligibility": "intersection of fixed and buggy declaration signatures, with common fixture class names; no buggy behavior used in generation",
+  "long_observations": "SHA-256 and UTF-8 byte length for exact serialized outcomes longer than 16000 characters",
+  "command_timeout_seconds": 900,
+  "observation_timeout_seconds": 10,
+  "source_sha256": {
+    "scripts/study/run.py": "10a72bbbde358001598b033edb00f1274bc8a57488ad4e7adfc50331977c0de0",
+    "scripts/study/generate.py": "5e0246c548ab8c51b48b6f08b6ad96c45ad73ef6a25a88019ed76fc784920b96",
+    "scripts/study/evaluate.py": "9c58feb8d569c1f2d518d11500b2cc2aded5b878840918cdbf2ba04b54bd7a85",
+    "algorithms/java/SqaProbe.java": "6295d8b653d38adb96e071f9229527d6e0b06eba8db8824d318e77c977a5be76",
+    "scripts/ai/evidence.py": "34ad65a8729924c3459d924c66c10c565e851e7072b8fd4b3403d06b5f0e3eb8",
+    "prompts/round2-unit-test.md": "2e2e0a45049f3c2a9733b60d4354f3a418d09b4b9c7216bed61f2d1943b61194",
+    "algorithms/python/atcg/__init__.py": "1294b41a8603f959eb955c3d3f9fccc4190bc08082f0f8e7dd5c8317cb20aa86",
+    "algorithms/python/atcg/cmaes.py": "0dd7f69d73021602c214f6c57757f19513a5b1d77d6705e815e1856cc1c335e8",
+    "algorithms/python/atcg/fscs_art.py": "7e1a1fa2f05dd46de7af3225a9e2917e146ed174a8fcade6a6029591666bdc60"
+  }
+}

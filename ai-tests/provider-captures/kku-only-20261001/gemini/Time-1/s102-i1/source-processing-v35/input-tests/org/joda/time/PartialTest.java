@@ -1,0 +1,238 @@
+package org.joda.time;
+
+import java.util.Locale;
+
+import junit.framework.TestCase;
+import org.joda.time.chrono.BuddhistChronology;
+import org.joda.time.chrono.ISOChronology;
+
+public class PartialTest extends TestCase {
+
+    public PartialTest(String name) {
+        super(name);
+    }
+
+    public void testConstructorEmpty() {
+        Partial partial = new Partial();
+        assertEquals(0, partial.size());
+        assertEquals(ISOChronology.getInstanceUTC(), partial.getChronology());
+        assertEquals(0, partial.getFieldTypes().length);
+        assertEquals(0, partial.getValues().length);
+    }
+
+    public void testConstructorSingleField() {
+        Partial partial = new Partial(DateTimeFieldType.year(), 2024);
+        assertEquals(1, partial.size());
+        assertEquals(DateTimeFieldType.year(), partial.getFieldType(0));
+        assertEquals(2024, partial.getValue(0));
+        assertEquals(2024, partial.get(DateTimeFieldType.year()));
+
+        try {
+            new Partial(null, 2024);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void testConstructorArrays() {
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(),
+            DateTimeFieldType.monthOfYear(),
+            DateTimeFieldType.dayOfMonth()
+        };
+        int[] values = new int[] {2024, 6, 15};
+
+        Partial partial = new Partial(types, values);
+        assertEquals(3, partial.size());
+        assertEquals(2024, partial.getValue(0));
+        assertEquals(6, partial.getValue(1));
+        assertEquals(15, partial.getValue(2));
+    }
+
+    public void testConstructorArrays_invalidOrder() {
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.dayOfMonth(),
+            DateTimeFieldType.monthOfYear()
+        };
+        int[] values = new int[] {15, 6};
+
+        try {
+            new Partial(types, values);
+            fail("Expected IllegalArgumentException for improper order");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void testConstructorCopyPartial() {
+        Partial base = new Partial(DateTimeFieldType.hourOfDay(), 14);
+        Partial copy = new Partial(base);
+        assertEquals(1, copy.size());
+        assertEquals(DateTimeFieldType.hourOfDay(), copy.getFieldType(0));
+        assertEquals(14, copy.getValue(0));
+
+        try {
+            new Partial((ReadablePartial) null);
+            fail("Expected IllegalArgumentException for null partial");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void testGettersAndArrays() {
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.hourOfDay(),
+            DateTimeFieldType.minuteOfHour()
+        };
+        int[] values = new int[] {10, 30};
+
+        Partial partial = new Partial(types, values);
+        DateTimeFieldType[] returnedTypes = partial.getFieldTypes();
+        int[] returnedValues = partial.getValues();
+
+        assertEquals(2, returnedTypes.length);
+        assertEquals(2, returnedValues.length);
+        // Ensure defensive cloning
+        returnedValues[0] = 99;
+        assertEquals(10, partial.getValue(0));
+    }
+
+    public void testWith_addNewFieldAndModifyExisting() {
+        Partial partial = new Partial(DateTimeFieldType.year(), 2024);
+        Partial updated = partial.with(DateTimeFieldType.monthOfYear(), 12);
+
+        assertEquals(2, updated.size());
+        assertEquals(DateTimeFieldType.year(), updated.getFieldType(0));
+        assertEquals(DateTimeFieldType.monthOfYear(), updated.getFieldType(1));
+        assertEquals(2024, updated.getValue(0));
+        assertEquals(12, updated.getValue(1));
+
+        Partial modified = updated.with(DateTimeFieldType.monthOfYear(), 1);
+        assertEquals(1, modified.get(DateTimeFieldType.monthOfYear()));
+        assertSame(modified, modified.with(DateTimeFieldType.monthOfYear(), 1));
+    }
+
+    public void testWithout() {
+        Partial partial = new Partial(DateTimeFieldType.year(), 2024)
+                .with(DateTimeFieldType.monthOfYear(), 6);
+        Partial removed = partial.without(DateTimeFieldType.year());
+
+        assertEquals(1, removed.size());
+        assertEquals(DateTimeFieldType.monthOfYear(), removed.getFieldType(0));
+        assertEquals(6, removed.getValue(0));
+
+        assertSame(removed, removed.without(DateTimeFieldType.year()));
+    }
+
+    public void testWithField() {
+        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 10);
+        Partial updated = partial.withField(DateTimeFieldType.hourOfDay(), 15);
+        assertEquals(15, updated.get(DateTimeFieldType.hourOfDay()));
+
+        try {
+            partial.withField(DateTimeFieldType.minuteOfHour(), 30);
+            fail("Expected IllegalArgumentException for unsupported field");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void testWithFieldAdded() {
+        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 10);
+        Partial result = partial.withFieldAdded(DurationFieldType.hours(), 4);
+        assertEquals(14, result.get(DateTimeFieldType.hourOfDay()));
+        assertSame(partial, partial.withFieldAdded(DurationFieldType.hours(), 0));
+    }
+
+    public void testWithFieldAddWrapped() {
+        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 23);
+        Partial result = partial.withFieldAddWrapped(DurationFieldType.hours(), 2);
+        assertEquals(1, result.get(DateTimeFieldType.hourOfDay()));
+        assertSame(partial, partial.withFieldAddWrapped(DurationFieldType.hours(), 0));
+    }
+
+    public void testPlusAndMinusPeriod() {
+        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 10)
+                .with(DateTimeFieldType.minuteOfHour(), 15);
+
+        Period period = Period.hours(2).withMinutes(10);
+        Partial plus = partial.plus(period);
+        assertEquals(12, plus.get(DateTimeFieldType.hourOfDay()));
+        assertEquals(25, plus.get(DateTimeFieldType.minuteOfHour()));
+
+        Partial minus = plus.minus(period);
+        assertEquals(10, minus.get(DateTimeFieldType.hourOfDay()));
+        assertEquals(15, minus.get(DateTimeFieldType.minuteOfHour()));
+
+        assertSame(partial, partial.plus(null));
+        assertSame(partial, partial.minus(null));
+    }
+
+    public void testWithChronologyRetainFields() {
+        Partial partial = new Partial(DateTimeFieldType.year(), 2024);
+        Chronology bst = BuddhistChronology.getInstance();
+        Partial bstPartial = partial.withChronologyRetainFields(bst);
+
+        assertEquals(BuddhistChronology.getInstanceUTC(), bstPartial.getChronology());
+        assertEquals(2024, bstPartial.get(DateTimeFieldType.year()));
+        assertSame(partial, partial.withChronologyRetainFields(ISOChronology.getInstance()));
+    }
+
+    public void testProperty() {
+        Partial partial = new Partial(DateTimeFieldType.monthOfYear(), 6);
+        Partial.Property prop = partial.property(DateTimeFieldType.monthOfYear());
+
+        assertNotNull(prop);
+        assertEquals(6, prop.get());
+        assertSame(partial, prop.getPartial());
+
+        Partial updated = prop.addToCopy(2);
+        assertEquals(8, updated.get(DateTimeFieldType.monthOfYear()));
+
+        Partial wrapped = prop.addWrapFieldToCopy(8);
+        assertEquals(2, wrapped.get(DateTimeFieldType.monthOfYear()));
+
+        Partial set = prop.setCopy(11);
+        assertEquals(11, set.get(DateTimeFieldType.monthOfYear()));
+
+        assertEquals(12, prop.withMaximumValue().get(DateTimeFieldType.monthOfYear()));
+        assertEquals(1, prop.withMinimumValue().get(DateTimeFieldType.monthOfYear()));
+    }
+
+    public void testIsMatchInstant() {
+        DateTime instant = new DateTime(2024, 6, 15, 12, 0, 0, 0, ISOChronology.getInstanceUTC());
+        Partial matchPartial = new Partial(DateTimeFieldType.year(), 2024)
+                .with(DateTimeFieldType.monthOfYear(), 6);
+        Partial noMatchPartial = new Partial(DateTimeFieldType.year(), 2023);
+
+        assertTrue(matchPartial.isMatch(instant));
+        assertFalse(noMatchPartial.isMatch(instant));
+    }
+
+    public void testIsMatchPartial() {
+        LocalDate date = new LocalDate(2024, 6, 15);
+        Partial matching = new Partial(DateTimeFieldType.monthOfYear(), 6);
+        Partial nonMatching = new Partial(DateTimeFieldType.monthOfYear(), 7);
+
+        assertTrue(matching.isMatch(date));
+        assertFalse(nonMatching.isMatch(date));
+
+        try {
+            matching.isMatch((ReadablePartial) null);
+            fail("Expected IllegalArgumentException for null partial");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void testToStringFormats() {
+        Partial partial = new Partial(DateTimeFieldType.year(), 2024)
+                .with(DateTimeFieldType.monthOfYear(), 6);
+
+        assertEquals("2024-06", partial.toString());
+        assertEquals("[year=2024, monthOfYear=6]", partial.toStringList());
+        assertEquals("06/2024", partial.toString("MM/yyyy"));
+        assertEquals("06/2024", partial.toString("MM/yyyy", Locale.US));
+    }
+}

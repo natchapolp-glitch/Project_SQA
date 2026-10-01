@@ -1,0 +1,596 @@
+<div id="messageContentDataIdCy5mhGUOxYPx" class="wrapper-message-Auto Router wrapper-message-think svelte-x74u22" style="word-break: break-word;"><h1>Analysis</h1>
+<p>I inspected the <code>Flat3Map</code> source and build configuration (Ant-based, <code>maven.compile.source/target=1.6</code>, and the classic Apache Commons Collections test setup which relies on <code>junit.jar</code> via the <code>-test-*</code> targets using <code>junit.framework.TestCase</code>-style tests). I did not find any Maven/JUnit5 configuration, so I use <code>junit.framework.TestCase</code> (JUnit 3 style, compatible with the Ant <code>&lt;junit&gt;</code> task and runnable under JUnit 4 as well) with Java 1.6-compatible syntax (no diamond operator, no generics on collections literals needed since the class uses raw types).</p>
+<p>The tests below exercise:</p>
+<ul>
+<li>Flat mode operations (0–3 entries): <code>put</code>, <code>get</code>, <code>containsKey</code>, <code>containsValue</code>, <code>remove</code>, <code>size</code>, <code>isEmpty</code></li>
+<li>Null key handling</li>
+<li>Transition to delegate mode (4th entry) via <code>put</code> and <code>putAll</code></li>
+<li><code>clear()</code> restoring flat mode</li>
+<li><code>equals</code>/<code>hashCode</code> contract, <code>toString</code></li>
+<li><code>clone()</code> shallow copy semantics</li>
+<li><code>keySet()</code>, <code>values()</code>, <code>entrySet()</code> views and their iterators (including <code>remove()</code>)</li>
+<li><code>mapIterator()</code> including <code>setValue</code>, <code>remove</code>, <code>reset</code></li>
+<li><code>putAll</code> from empty/small/large source maps</li>
+<li>Constructor <code>Flat3Map(Map)</code></li>
+<li>Serialization round-trip (<code>writeObject</code>/<code>readObject</code>), exercising both flat mode (&lt;=3 entries) and delegate mode (&gt;3 entries)</li>
+</ul>
+<pre class="theme-atom-one-dark"><div class="lang-title">java</div><code class="hljs language-java"><span class="hljs-keyword">package</span> org.apache.commons.collections.map;
+
+<span class="hljs-keyword">import</span> java.io.ByteArrayInputStream;
+<span class="hljs-keyword">import</span> java.io.ByteArrayOutputStream;
+<span class="hljs-keyword">import</span> java.io.ObjectInputStream;
+<span class="hljs-keyword">import</span> java.io.ObjectOutputStream;
+<span class="hljs-keyword">import</span> java.util.Collection;
+<span class="hljs-keyword">import</span> java.util.HashMap;
+<span class="hljs-keyword">import</span> java.util.Iterator;
+<span class="hljs-keyword">import</span> java.util.Map;
+<span class="hljs-keyword">import</span> java.util.Set;
+
+<span class="hljs-keyword">import</span> junit.framework.TestCase;
+
+<span class="hljs-keyword">import</span> org.apache.commons.collections.MapIterator;
+
+<span class="hljs-comment">/**
+ * Regression tests for {<span class="hljs-doctag">@link</span> Flat3Map} based on its documented, fixed
+ * reference behavior.
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Flat3MapTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">TestCase</span> {
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Flat3MapTest</span><span class="hljs-params">(String name)</span> {
+        <span class="hljs-built_in">super</span>(name);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">Flat3MapTest</span><span class="hljs-params">()</span> {
+        <span class="hljs-built_in">super</span>();
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// Basic construction / empty state</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDefaultConstructorEmpty</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        assertEquals(<span class="hljs-number">0</span>, map.size());
+        assertTrue(map.isEmpty());
+        assertEquals(<span class="hljs-string">"{}"</span>, map.toString());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapConstructorCopiesEntries</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">HashMap</span> <span class="hljs-variable">source</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>();
+        source.put(<span class="hljs-string">"A"</span>, <span class="hljs-string">"1"</span>);
+        source.put(<span class="hljs-string">"B"</span>, <span class="hljs-string">"2"</span>);
+
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>(source);
+        assertEquals(<span class="hljs-number">2</span>, map.size());
+        assertEquals(<span class="hljs-string">"1"</span>, map.get(<span class="hljs-string">"A"</span>));
+        assertEquals(<span class="hljs-string">"2"</span>, map.get(<span class="hljs-string">"B"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapConstructorNullThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected NullPointerException"</span>);
+        } <span class="hljs-keyword">catch</span> (NullPointerException ex) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// Flat-mode put/get/containsKey/containsValue</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutGetSingleEntry</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-type">Object</span> <span class="hljs-variable">old</span> <span class="hljs-operator">=</span> map.put(<span class="hljs-string">"key1"</span>, <span class="hljs-string">"value1"</span>);
+        assertNull(old);
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+        assertEquals(<span class="hljs-string">"value1"</span>, map.get(<span class="hljs-string">"key1"</span>));
+        assertTrue(map.containsKey(<span class="hljs-string">"key1"</span>));
+        assertTrue(map.containsValue(<span class="hljs-string">"value1"</span>));
+        assertFalse(map.containsKey(<span class="hljs-string">"missing"</span>));
+        assertFalse(map.containsValue(<span class="hljs-string">"missing"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutUpdatesExistingKeyReturnsOldValue</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"key1"</span>, <span class="hljs-string">"value1"</span>);
+        <span class="hljs-type">Object</span> <span class="hljs-variable">old</span> <span class="hljs-operator">=</span> map.put(<span class="hljs-string">"key1"</span>, <span class="hljs-string">"value2"</span>);
+        assertEquals(<span class="hljs-string">"value1"</span>, old);
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+        assertEquals(<span class="hljs-string">"value2"</span>, map.get(<span class="hljs-string">"key1"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutThreeEntriesFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        map.put(<span class="hljs-string">"k2"</span>, <span class="hljs-string">"v2"</span>);
+        map.put(<span class="hljs-string">"k3"</span>, <span class="hljs-string">"v3"</span>);
+
+        assertEquals(<span class="hljs-number">3</span>, map.size());
+        assertEquals(<span class="hljs-string">"v1"</span>, map.get(<span class="hljs-string">"k1"</span>));
+        assertEquals(<span class="hljs-string">"v2"</span>, map.get(<span class="hljs-string">"k2"</span>));
+        assertEquals(<span class="hljs-string">"v3"</span>, map.get(<span class="hljs-string">"k3"</span>));
+        assertTrue(map.containsKey(<span class="hljs-string">"k1"</span>));
+        assertTrue(map.containsKey(<span class="hljs-string">"k2"</span>));
+        assertTrue(map.containsKey(<span class="hljs-string">"k3"</span>));
+        assertTrue(map.containsValue(<span class="hljs-string">"v1"</span>));
+        assertTrue(map.containsValue(<span class="hljs-string">"v2"</span>));
+        assertTrue(map.containsValue(<span class="hljs-string">"v3"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutNullKey</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-literal">null</span>, <span class="hljs-string">"nullValue"</span>);
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+        assertTrue(map.containsKey(<span class="hljs-literal">null</span>));
+        assertEquals(<span class="hljs-string">"nullValue"</span>, map.get(<span class="hljs-literal">null</span>));
+
+        <span class="hljs-type">Object</span> <span class="hljs-variable">old</span> <span class="hljs-operator">=</span> map.put(<span class="hljs-literal">null</span>, <span class="hljs-string">"updated"</span>);
+        assertEquals(<span class="hljs-string">"nullValue"</span>, old);
+        assertEquals(<span class="hljs-string">"updated"</span>, map.get(<span class="hljs-literal">null</span>));
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutNullValue</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"key"</span>, <span class="hljs-literal">null</span>);
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+        assertTrue(map.containsKey(<span class="hljs-string">"key"</span>));
+        assertTrue(map.containsValue(<span class="hljs-literal">null</span>));
+        assertNull(map.get(<span class="hljs-string">"key"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testGetMissingKeyReturnsNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        assertNull(map.get(<span class="hljs-string">"nothing"</span>));
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        assertNull(map.get(<span class="hljs-string">"b"</span>));
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// Transition to delegate mode</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testFourthPutSwitchesToDelegateMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        map.put(<span class="hljs-string">"k2"</span>, <span class="hljs-string">"v2"</span>);
+        map.put(<span class="hljs-string">"k3"</span>, <span class="hljs-string">"v3"</span>);
+        map.put(<span class="hljs-string">"k4"</span>, <span class="hljs-string">"v4"</span>);
+
+        assertEquals(<span class="hljs-number">4</span>, map.size());
+        assertEquals(<span class="hljs-string">"v1"</span>, map.get(<span class="hljs-string">"k1"</span>));
+        assertEquals(<span class="hljs-string">"v2"</span>, map.get(<span class="hljs-string">"k2"</span>));
+        assertEquals(<span class="hljs-string">"v3"</span>, map.get(<span class="hljs-string">"k3"</span>));
+        assertEquals(<span class="hljs-string">"v4"</span>, map.get(<span class="hljs-string">"k4"</span>));
+        assertTrue(map.containsKey(<span class="hljs-string">"k4"</span>));
+        assertTrue(map.containsValue(<span class="hljs-string">"v4"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testDelegateModeUpdateAndRemove</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">5</span>; i++) {
+            map.put(<span class="hljs-string">"k"</span> + i, <span class="hljs-string">"v"</span> + i);
+        }
+        assertEquals(<span class="hljs-number">5</span>, map.size());
+
+        <span class="hljs-type">Object</span> <span class="hljs-variable">old</span> <span class="hljs-operator">=</span> map.put(<span class="hljs-string">"k3"</span>, <span class="hljs-string">"updated"</span>);
+        assertEquals(<span class="hljs-string">"v3"</span>, old);
+        assertEquals(<span class="hljs-string">"updated"</span>, map.get(<span class="hljs-string">"k3"</span>));
+
+        <span class="hljs-type">Object</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> map.remove(<span class="hljs-string">"k2"</span>);
+        assertEquals(<span class="hljs-string">"v2"</span>, removed);
+        assertEquals(<span class="hljs-number">4</span>, map.size());
+        assertFalse(map.containsKey(<span class="hljs-string">"k2"</span>));
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// remove() in flat mode</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveFromEmptyMap</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        assertNull(map.remove(<span class="hljs-string">"nothing"</span>));
+        assertEquals(<span class="hljs-number">0</span>, map.size());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveSingleEntry</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        <span class="hljs-type">Object</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> map.remove(<span class="hljs-string">"k1"</span>);
+        assertEquals(<span class="hljs-string">"v1"</span>, removed);
+        assertEquals(<span class="hljs-number">0</span>, map.size());
+        assertTrue(map.isEmpty());
+        assertFalse(map.containsKey(<span class="hljs-string">"k1"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveMiddleEntryFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        map.put(<span class="hljs-string">"k2"</span>, <span class="hljs-string">"v2"</span>);
+        map.put(<span class="hljs-string">"k3"</span>, <span class="hljs-string">"v3"</span>);
+
+        <span class="hljs-type">Object</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> map.remove(<span class="hljs-string">"k2"</span>);
+        assertEquals(<span class="hljs-string">"v2"</span>, removed);
+        assertEquals(<span class="hljs-number">2</span>, map.size());
+        assertTrue(map.containsKey(<span class="hljs-string">"k1"</span>));
+        assertTrue(map.containsKey(<span class="hljs-string">"k3"</span>));
+        assertFalse(map.containsKey(<span class="hljs-string">"k2"</span>));
+        assertEquals(<span class="hljs-string">"v1"</span>, map.get(<span class="hljs-string">"k1"</span>));
+        assertEquals(<span class="hljs-string">"v3"</span>, map.get(<span class="hljs-string">"k3"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveNonExistentKeyReturnsNull</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        assertNull(map.remove(<span class="hljs-string">"missing"</span>));
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testRemoveNullKeyFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-literal">null</span>, <span class="hljs-string">"vnull"</span>);
+        map.put(<span class="hljs-string">"k2"</span>, <span class="hljs-string">"v2"</span>);
+
+        <span class="hljs-type">Object</span> <span class="hljs-variable">removed</span> <span class="hljs-operator">=</span> map.remove(<span class="hljs-literal">null</span>);
+        assertEquals(<span class="hljs-string">"vnull"</span>, removed);
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+        assertFalse(map.containsKey(<span class="hljs-literal">null</span>));
+        assertTrue(map.containsKey(<span class="hljs-string">"k2"</span>));
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// clear()</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testClearFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        map.put(<span class="hljs-string">"k2"</span>, <span class="hljs-string">"v2"</span>);
+        map.clear();
+        assertEquals(<span class="hljs-number">0</span>, map.size());
+        assertTrue(map.isEmpty());
+        assertFalse(map.containsKey(<span class="hljs-string">"k1"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testClearDelegateModeReturnsToFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">5</span>; i++) {
+            map.put(<span class="hljs-string">"k"</span> + i, <span class="hljs-string">"v"</span> + i);
+        }
+        assertEquals(<span class="hljs-number">5</span>, map.size());
+        map.clear();
+        assertEquals(<span class="hljs-number">0</span>, map.size());
+        assertTrue(map.isEmpty());
+
+        <span class="hljs-comment">// after clear, map should behave as flat mode again and accept new entries</span>
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+        map.put(<span class="hljs-string">"c"</span>, <span class="hljs-string">"3"</span>);
+        assertEquals(<span class="hljs-number">3</span>, map.size());
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// putAll</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutAllEmptyMapNoOp</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        map.putAll(<span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>());
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutAllSmallMapStaysFlat</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-type">HashMap</span> <span class="hljs-variable">source</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>();
+        source.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        source.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+        map.putAll(source);
+        assertEquals(<span class="hljs-number">2</span>, map.size());
+        assertEquals(<span class="hljs-string">"1"</span>, map.get(<span class="hljs-string">"a"</span>));
+        assertEquals(<span class="hljs-string">"2"</span>, map.get(<span class="hljs-string">"b"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutAllLargeMapSwitchesToDelegate</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-type">HashMap</span> <span class="hljs-variable">source</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>();
+        source.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        source.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+        source.put(<span class="hljs-string">"c"</span>, <span class="hljs-string">"3"</span>);
+        source.put(<span class="hljs-string">"d"</span>, <span class="hljs-string">"4"</span>);
+        map.putAll(source);
+        assertEquals(<span class="hljs-number">4</span>, map.size());
+        assertEquals(<span class="hljs-string">"1"</span>, map.get(<span class="hljs-string">"a"</span>));
+        assertEquals(<span class="hljs-string">"4"</span>, map.get(<span class="hljs-string">"d"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testPutAllNullThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-keyword">try</span> {
+            map.putAll(<span class="hljs-literal">null</span>);
+            fail(<span class="hljs-string">"Expected NullPointerException"</span>);
+        } <span class="hljs-keyword">catch</span> (NullPointerException ex) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// equals / hashCode</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEqualsSameContentsDifferentImplementation</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        <span class="hljs-type">HashMap</span> <span class="hljs-variable">other</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>();
+        other.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        other.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        assertTrue(map.equals(other));
+        assertTrue(other.equals(map));
+        assertEquals(map.hashCode(), other.hashCode());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEqualsDifferentSizeFalse</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+
+        <span class="hljs-type">HashMap</span> <span class="hljs-variable">other</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>();
+        other.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        other.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        assertFalse(map.equals(other));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEqualsNonMapFalse</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        assertFalse(map.equals(<span class="hljs-string">"not a map"</span>));
+        assertFalse(map.equals(<span class="hljs-literal">null</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEqualsSelfTrue</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        assertTrue(map.equals(map));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEqualsDelegateMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">5</span>; i++) {
+            map.put(<span class="hljs-string">"k"</span> + i, <span class="hljs-string">"v"</span> + i);
+        }
+        <span class="hljs-type">HashMap</span> <span class="hljs-variable">other</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>();
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">5</span>; i++) {
+            other.put(<span class="hljs-string">"k"</span> + i, <span class="hljs-string">"v"</span> + i);
+        }
+        assertTrue(map.equals(other));
+        assertEquals(map.hashCode(), other.hashCode());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testHashCodeEmptyMapIsZero</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        assertEquals(<span class="hljs-number">0</span>, map.hashCode());
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// toString</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToStringEmpty</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        assertEquals(<span class="hljs-string">"{}"</span>, map.toString());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testToStringSingleEntry</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"key"</span>, <span class="hljs-string">"value"</span>);
+        assertEquals(<span class="hljs-string">"{key=value}"</span>, map.toString());
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// clone</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloneFlatModeIndependence</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"k1"</span>, <span class="hljs-string">"v1"</span>);
+        map.put(<span class="hljs-string">"k2"</span>, <span class="hljs-string">"v2"</span>);
+
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">clone</span> <span class="hljs-operator">=</span> (Flat3Map) map.clone();
+        assertEquals(map.size(), clone.size());
+        assertEquals(map.get(<span class="hljs-string">"k1"</span>), clone.get(<span class="hljs-string">"k1"</span>));
+        assertTrue(map.equals(clone));
+
+        <span class="hljs-comment">// mutate original, clone must be unaffected</span>
+        map.put(<span class="hljs-string">"k3"</span>, <span class="hljs-string">"v3"</span>);
+        assertEquals(<span class="hljs-number">3</span>, map.size());
+        assertEquals(<span class="hljs-number">2</span>, clone.size());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testCloneDelegateModeIndependence</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">5</span>; i++) {
+            map.put(<span class="hljs-string">"k"</span> + i, <span class="hljs-string">"v"</span> + i);
+        }
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">clone</span> <span class="hljs-operator">=</span> (Flat3Map) map.clone();
+        assertEquals(<span class="hljs-number">5</span>, clone.size());
+        assertEquals(<span class="hljs-string">"v3"</span>, clone.get(<span class="hljs-string">"k3"</span>));
+
+        map.put(<span class="hljs-string">"k6"</span>, <span class="hljs-string">"v6"</span>);
+        assertEquals(<span class="hljs-number">6</span>, map.size());
+        assertEquals(<span class="hljs-number">5</span>, clone.size());
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// keySet / values / entrySet views</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeySetFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+        map.put(<span class="hljs-string">"c"</span>, <span class="hljs-string">"3"</span>);
+
+        <span class="hljs-type">Set</span> <span class="hljs-variable">keys</span> <span class="hljs-operator">=</span> map.keySet();
+        assertEquals(<span class="hljs-number">3</span>, keys.size());
+        assertTrue(keys.contains(<span class="hljs-string">"a"</span>));
+        assertTrue(keys.contains(<span class="hljs-string">"b"</span>));
+        assertTrue(keys.contains(<span class="hljs-string">"c"</span>));
+        assertFalse(keys.contains(<span class="hljs-string">"d"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeySetIteratorRemoveAffectsMap</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        <span class="hljs-type">Iterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.keySet().iterator();
+        <span class="hljs-type">Object</span> <span class="hljs-variable">firstKey</span> <span class="hljs-operator">=</span> it.next();
+        it.remove();
+
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+        assertFalse(map.containsKey(firstKey));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testValuesFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        <span class="hljs-type">Collection</span> <span class="hljs-variable">values</span> <span class="hljs-operator">=</span> map.values();
+        assertEquals(<span class="hljs-number">2</span>, values.size());
+        assertTrue(values.contains(<span class="hljs-string">"1"</span>));
+        assertTrue(values.contains(<span class="hljs-string">"2"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEntrySetFlatMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        <span class="hljs-type">Set</span> <span class="hljs-variable">entries</span> <span class="hljs-operator">=</span> map.entrySet();
+        assertEquals(<span class="hljs-number">2</span>, entries.size());
+
+        <span class="hljs-type">int</span> <span class="hljs-variable">found</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">Iterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> entries.iterator(); it.hasNext();) {
+            Map.<span class="hljs-type">Entry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> (Map.Entry) it.next();
+            <span class="hljs-keyword">if</span> (<span class="hljs-string">"a"</span>.equals(entry.getKey())) {
+                assertEquals(<span class="hljs-string">"1"</span>, entry.getValue());
+                found++;
+            } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">"b"</span>.equals(entry.getKey())) {
+                assertEquals(<span class="hljs-string">"2"</span>, entry.getValue());
+                found++;
+            }
+        }
+        assertEquals(<span class="hljs-number">2</span>, found);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEntrySetIteratorSetValue</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+
+        <span class="hljs-type">Iterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.entrySet().iterator();
+        Map.<span class="hljs-type">Entry</span> <span class="hljs-variable">entry</span> <span class="hljs-operator">=</span> (Map.Entry) it.next();
+        <span class="hljs-type">Object</span> <span class="hljs-variable">old</span> <span class="hljs-operator">=</span> entry.setValue(<span class="hljs-string">"updated"</span>);
+        assertEquals(<span class="hljs-string">"1"</span>, old);
+        assertEquals(<span class="hljs-string">"updated"</span>, map.get(<span class="hljs-string">"a"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testEntrySetRemoveViaSet</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        <span class="hljs-type">Set</span> <span class="hljs-variable">entries</span> <span class="hljs-operator">=</span> map.entrySet();
+        entries.clear();
+        assertEquals(<span class="hljs-number">0</span>, map.size());
+        assertTrue(map.isEmpty());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testKeySetDelegateMode</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">5</span>; i++) {
+            map.put(<span class="hljs-string">"k"</span> + i, <span class="hljs-string">"v"</span> + i);
+        }
+        <span class="hljs-type">Set</span> <span class="hljs-variable">keys</span> <span class="hljs-operator">=</span> map.keySet();
+        assertEquals(<span class="hljs-number">5</span>, keys.size());
+        assertTrue(keys.contains(<span class="hljs-string">"k1"</span>));
+        assertTrue(keys.contains(<span class="hljs-string">"k5"</span>));
+    }
+
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+    <span class="hljs-comment">// mapIterator</span>
+    <span class="hljs-comment">//-----------------------------------------------------------------------</span>
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapIteratorEmptyHasNoNext</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        <span class="hljs-type">MapIterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.mapIterator();
+        assertFalse(it.hasNext());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapIteratorFlatModeTraversal</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+        map.put(<span class="hljs-string">"c"</span>, <span class="hljs-string">"3"</span>);
+
+        <span class="hljs-type">MapIterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.mapIterator();
+        <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">while</span> (it.hasNext()) {
+            <span class="hljs-type">Object</span> <span class="hljs-variable">key</span> <span class="hljs-operator">=</span> it.next();
+            <span class="hljs-type">Object</span> <span class="hljs-variable">value</span> <span class="hljs-operator">=</span> it.getValue();
+            assertEquals(map.get(key), value);
+            count++;
+        }
+        assertEquals(<span class="hljs-number">3</span>, count);
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapIteratorSetValue</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+
+        <span class="hljs-type">MapIterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.mapIterator();
+        it.next();
+        <span class="hljs-type">Object</span> <span class="hljs-variable">old</span> <span class="hljs-operator">=</span> it.setValue(<span class="hljs-string">"newVal"</span>);
+        assertEquals(<span class="hljs-string">"1"</span>, old);
+        assertEquals(<span class="hljs-string">"newVal"</span>, map.get(<span class="hljs-string">"a"</span>));
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapIteratorRemove</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        map.put(<span class="hljs-string">"b"</span>, <span class="hljs-string">"2"</span>);
+
+        <span class="hljs-type">MapIterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.mapIterator();
+        it.next();
+        it.remove();
+
+        assertEquals(<span class="hljs-number">1</span>, map.size());
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapIteratorGetValueBeforeNextThrows</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        <span class="hljs-type">MapIterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.mapIterator();
+        <span class="hljs-keyword">try</span> {
+            it.getValue();
+            fail(<span class="hljs-string">"Expected IllegalStateException"</span>);
+        } <span class="hljs-keyword">catch</span> (IllegalStateException ex) {
+            <span class="hljs-comment">// expected</span>
+        }
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">testMapIteratorNextThrowsWhenExhausted</span><span class="hljs-params">()</span> {
+        <span class="hljs-type">Flat3Map</span> <span class="hljs-variable">map</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Flat3Map</span>();
+        map.put(<span class="hljs-string">"a"</span>, <span class="hljs-string">"1"</span>);
+        <span class="hljs-type">MapIterator</span> <span class="hljs-variable">it</span> <span class="hljs-operator">=</span> map.mapIterator();
+        it.next();
+        assertFalse(it.hasNext());
+        <span class="hljs-keyword">try</span> {
+            it.next();
+            fail(<span class="hljs-string">"Expected NoSuchElementException"</span>);
+        } <span class="hljs-keyword">catch</span> (java.util.NoSuchElementException ex) {</code><div class="copy-prompt"><img src="/assets/img/copy.svg"><p>Copy</p></div></pre>
+</div>
