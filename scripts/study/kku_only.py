@@ -134,7 +134,8 @@ def status():
             record = load(path)
             if record['status'] == 'complete' and audited_new.get(relative(path)) != sha(path):
                 record = {**record, 'status': 'complete-awaiting-audit'}
-            capture = CAPTURES / family / f"{record['project']}-{record['bug_id']}" / f"s{record['seed']}-i1"
+            capture = (ROOT / record['ai_capture_path'] if record.get('ai_capture_path') else
+                       CAPTURES / family / f"{record['project']}-{record['bug_id']}" / f"s{record['seed']}-i1")
             operator = load(capture / 'operator-metadata.json')
             if model_family(operator['model']) != family or operator.get('selected_agent', '').lower() != family:
                 raise ValueError('New capture family/selection mismatch: ' + relative(capture))

@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "kind": "operator-supplied-ai-evidence",
+  "tool": "intellisphere",
+  "provider": "KKU AI Sphere / IntelliSphere",
+  "model": "claude-haiku-latest",
+  "project": "Jsoup",
+  "bug_id": 1,
+  "reference_revision": "1f",
+  "run_id": "generation",
+  "archive_run_seed": 102,
+  "prompt_iteration": 1,
+  "generated_at": "2026-10-01T19:47:02.827Z",
+  "ingested_at": "2026-10-01T19:50:12.295327+00:00",
+  "parameters": {
+    "model_seed": null,
+    "temperature": null
+  },
+  "session_url": "https://gen.ai.kku.ac.th/chat",
+  "parent_run": null,
+  "manual_edits": [
+    {
+      "path": "org/jsoup/nodes/DocumentTest.java",
+      "before_sha256": "dba996653abf2f33938db0932168084d73c897e72050100f88bd3ac446b1411a",
+      "after_sha256": "12e53c93d2eaaf58d8fc30e35cfb06797ba9357a46b12457e901d49563344f31",
+      "fixed_api_compatibility": {
+        "kind": "exclude_unsupported_api_methods",
+        "removed_methods": [
+          "org.jsoup.nodes.DocumentTest::testCreateElementNotChildOfDocument",
+          "org.jsoup.nodes.DocumentTest::testNormaliseElement"
+        ],
+        "reason": "Fixed compiler reports Document.getChildNodes unavailable and Document.normalise(Element) private. Exclude the entire method; surviving assertions unchanged."
+      },
+      "selection": "Fixed compiler only; v54 and v58 failed attempts preserved. No buggy or coverage outcomes used."
+    }
+  ],
+  "notes": [
+    "Exact original prepared prompt only; no evaluation feedback sent. Native export unchanged. UI preparation delay included in observed time upper bound. Haiku selected at submission and completion.",
+    "Local processing v59: hash-identified Jsoup method using fixed-compiler unsupported Document.getChildNodes and private normalise(Element) excluded; surviving assertions unchanged. Inherited compatibility chain v39: hash-identified JacksonXml XML reader START_ELEMENT fixture positioning via nextTag; assertions unchanged; prior v38 fully pruned failure retained.  fixed-compiler diagnosed local variable reference correction in hash-identified Haiku Codec/102; assertion expectations unchanged.  hash-identified Claude Cli complete-prefix recovery plus hash-identified Claude Jsoup complete-prefix recovery plus fixed-diagnosed Time String-null overload disambiguation plus exact-tail, hash-identified Gemini Lang complete-prefix recovery before evaluation; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.",
+    "Raw provider response unchanged. No evaluation results were sent to either provider.",
+    "The evaluated cohort is AI-assisted with local processing, not unedited model output."
+  ],
+  "prompt_sha256": "76fbf869f45859606c66d2194ec76c415f1c1e0eb7c973a6b0222c63448c77bd",
+  "response_sha256": "79f69c45621262aa1f03a4f7347026b12b994ccd24d05360b9f9602b9d034680",
+  "context_manifest_sha256": "60c539de78398707f144f85511a2ec04cdecbb1279a4c20e474c842c86a81519",
+  "source_files": [
+    {
+      "path": "src/main/java/org/jsoup/nodes/Document.java",
+      "class": "org.jsoup.nodes.Document",
+      "sha256": "80ad1c53572ff2d2b6435129db05bb21bf708d4c435260a1513aa15d3536c417",
+      "bytes": 4365
+    }
+  ],
+  "build_files": [
+    {
+      "path": "build.xml",
+      "sha256": "4be0b6876e22761aa8206f0c94b4a3741d882967de1a20342a32a9aa242424e5",
+      "bytes": 1121
+    },
+    {
+      "path": "pom.xml",
+      "sha256": "14c6da806406de8ceb4853d398440c02ad32300288d0c97f6161531edc5ebdf6",
+      "bytes": 4466
+    }
+  ],
+  "java_files": [
+    {
+      "path": "org/jsoup/nodes/DocumentTest.java",
+      "sha256": "12e53c93d2eaaf58d8fc30e35cfb06797ba9357a46b12457e901d49563344f31",
+      "bytes": 6932
+    }
+  ],
+  "external_suite": "Jsoup-1f-intellisphere.102.tar.bz2",
+  "external_suite_sha256": "772f595339bed962daf1dea058264e88cffed8985f347a34f81a11fe31a4d4d4",
+  "generation_status": "sources_received",
+  "provenance_status": "recorded",
+  "compile_status": "not_run",
+  "fixed_test_status": "not_run",
+  "buggy_test_status": "not_run",
+  "line_coverage": null,
+  "branch_coverage": null,
+  "fault_detected": null,
+  "warnings": [
+    "Manual source edits are declared; disclose them when comparing raw provider output"
+  ]
+}

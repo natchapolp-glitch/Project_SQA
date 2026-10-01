@@ -1,6 +1,6 @@
-## Latest local test update: 145/204
+## Latest test update: 174/204 — Claude Haiku daily limit reached
 
-Three additional KKU Gemini runs (Codec, Collections, JacksonXml) add to the two earlier Claude runs. The current local summary is 145/204; 59 planned identities remain incomplete. See the current summary and pending-runs manifest under `output/kku-only-20261001/`. Work remains incomplete.
+KKU Claude is 21/51; Gemini and both algorithms are 51/51 each. The natchapol continuation adds five completed runs and 127 retained methods. Cli/102 detects the selected bug. Claude reached 100% daily usage. See `docs/CLAUDE_HAIKU_NATCHAPOL_CHECKPOINT_20261002.md`. 30 Claude identities remain incomplete. Report/slides are earlier checkpoints; latest changes are local and unpushed.
 
 # SQA Project 2.2 — CP353201
 
@@ -20,7 +20,7 @@ do not replace or reinterpret the historical report/deck as KKU-only results.
 
 Run `python3 scripts/study/kku_only.py status` and
 `python3 scripts/reporting/audit_kku_provenance.py` to refresh/check the linked
-manifest. Completed fresh suites also require `audit_kku_only.py --results
+manifest. Completed fresh suites also require `audit_kku_only_v4.py --results
 results/study/kku-only-20261001/<family> --output
 output/kku-only-20261001/<family>-evidence-audit.json`. Reused original records
 retain their actual provider/model labels and hashes. AI results are assisted
