@@ -141,9 +141,9 @@ accounts_G = ceil(854 × mean_tokens_G × retry_factor / (350,000 × 0.8 × usab
 
 ## 9. Branch และเจ้าของไฟล์
 
-- แชมป์ `codex/champ`: API client/quota/generation/context extraction
-- บีม `codex/beam`: target adapters/algorithms/evaluator/environment
-- ออม `codex/aom`: inventory/protocol/queue/analysis/report/package
+- แชมป์ `champ`: API client/quota/generation/context extraction
+- บีม `beam`: target adapters/algorithms/evaluator/environment
+- ออม `aom`: inventory/protocol/queue/analysis/report/package
 - ใช้ directories ในแผน API วันที่ 2026-10-02 เป็น file map ก่อนเพิ่มชื่อใหม่ ต้องตกลง interface ใน schema กลาง ห้ามให้สองคนแก้ queue/protocol เดียวกันพร้อมกัน
 - ถ้าแบ่ง Codex subtasks ให้ใช้ worktree ของ branch เจ้าของแล้วแตก sub-branch แยกตาม blocker ไม่ใช้ worktree Defects4J ร่วมกัน; owner review/merge ก่อน integration
 - ออมเป็นผู้รวมเข้า test หลังตรวจรับ ทั้งสาม branch ต้องใช้ plan revision เดียวกัน เก็บ raw/results ตาม immutable attempts ไม่ merge SQLite runtime/credentials

@@ -87,7 +87,7 @@ Export contract: `results/study/api854-20261002/<project>/<bug_id>/<approach>/at
 
 Metadata ต้องมี run/job/attempt IDs, timestamps UTC, account alias, requested/actual model, prompt/protocol/source/suite hashes, usage และ model_quota, response ID/status/finish reason, repair/exclusion history และ paths ไป artifacts
 
-## 4. แชมป์ — KKU API & Quota Owner / codex/champ
+## 4. แชมป์ — KKU API & Quota Owner / champ
 
 **Files:** `scripts/study/api854/kku_client.py`, `quota.py`, `generate_worker.py`, `docs/api854/API_SETUP_TH.md` และ generation/capture artifacts ของตน
 
@@ -103,7 +103,7 @@ Metadata ต้องมี run/job/attempt IDs, timestamps UTC, account alias, 
 - [ ] หลังเที่ยงคืนสร้าง window ใหม่โดยคง ledger เก่าและตรวจ quota จาก request ปกติครั้งถัดไป; อย่า reset ยอดใน response เองหาก server ยังไม่ reset
 - [ ] ตรวจ client/ledger ด้วย mocked responses: usage mapping, model mapping, 401 ทั้งสามชนิด, restart, quota reservation สอง worker, unknown response และ midnight boundary ก่อน live pilot
 
-## 5. บีม — Algorithms & Defects4J Evaluation Owner / codex/beam
+## 5. บีม — Algorithms & Defects4J Evaluation Owner / beam
 
 **Files:** `scripts/study/api854/context.py`, `algorithm_worker.py`, `evaluate_worker.py`, `docs/api854/REPRODUCE_TH.md` และ evaluation artifacts ของตน
 
@@ -120,7 +120,7 @@ Metadata ต้องมี run/job/attempt IDs, timestamps UTC, account alias, 
 - [ ] compatibility edits ได้เฉพาะนโยบายที่ตรึง เก็บ delta/exclusions ห้ามแก้ assertions เพื่อให้ buggy fail; เก็บคะแนนก่อน/หลัง processing และ fixed-survival counts
 - [ ] pilot evaluation concurrency 2 ปรับตาม CPU/RAM/disk/timeouts; ตรวจ fixtures/hashes/coverage denominator และ repeatability ก่อน batch
 
-## 6. ออม — Protocol, Queue, Analysis & Delivery Owner / codex/aom
+## 6. ออม — Protocol, Queue, Analysis & Delivery Owner / aom
 
 **Files:** `scripts/study/api854/queue.py`, `inventory.py`, `report.py`, protocol/configs, `docs/api854/{PROTOCOL_TH.md,START_HERE.md,REPORT_TH.md,EVIDENCE_INDEX.md}`, `output/api854-20261002/`
 
@@ -150,7 +150,7 @@ Metadata ต้องมี run/job/attempt IDs, timestamps UTC, account alias, 
 
 ## 8. Branches และจุดตรวจรับ
 
-- แชมป์ `codex/champ`, บีม `codex/beam`, ออม `codex/aom` คงชื่อเดิม แต่หน้าที่ปรับตามแผนนี้
+- แชมป์ `champ`, บีม `beam`, ออม `aom` คงชื่อเดิม แต่หน้าที่ปรับตามแผนนี้
 - แชร์ plan commit เดียวกันก่อนเริ่ม implementation; ออมเป็น integrator เข้า test ไม่ให้หลายคนแก้ไฟล์ queue/protocol/report เดียวกัน
 - เกณฑ์ attempted-complete: มี outcome ทุก 3,416 keys โดย terminal failures ยังคงถูกนับเป็น failures
 - เกณฑ์ usable-complete: ทุก 854 bugs มี 4 suites ที่ผ่าน validity/fixed gates และมี buggy/coverage outcomes; หากไม่ได้ต้องรายงานยอดจริง ห้ามรับประกันว่า AI จะสร้างสำเร็จทุก bug
