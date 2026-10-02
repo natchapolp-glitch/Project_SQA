@@ -1,5 +1,8 @@
 # แชมป์ตรวจรับ shared v3 และ Beam fixture runtime
 
+> สถานะล่าสุดหลังรับ `beam 3c7c62b8`: [แผนบีมเครื่องเดียว / local review 5/20 bugs](CHAMP_BEAM_ONE_HOST_ACCEPTANCE_TH.md)
+> เอกสารด้านล่างเป็น checkpoint ของ `champ 64418ca0`; ตัวเลข 2 bugs/18 remaining และ beam-pc1/2/3 เป็นข้อมูลก่อนเปลี่ยนแผน
+
 รวม `aom d147e216` และ `beam 3ff1a6a4` เข้า branch champ แล้ว ตรวจช่วง offline
 ไม่มี KKU API request, paid generation หรือ mutation ของ live queue ในการรับงานนี้
 ข้อมูลเดิมที่รอ inventory ครบ 20 bugs ถูกแทนด้วยสถานะ v3 ด้านล่าง
