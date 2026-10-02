@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
 import com.fasterxml.jackson.databind.util.NameTransformer;
+import com.fasterxml.jackson.databind.util.Annotations;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class BeanPropertyWriterTest {
         contextAnnotations = new SimpleAnnotations(new HashMap<>());
         declaredType = mapper.getTypeFactory().constructType(String.class);
         
-        member = new AnnotatedField(null, testField, null);
+        member = new AnnotatedField(testField, null);
         
         writer = new BeanPropertyWriter(
             propDef, member, contextAnnotations, declaredType,
@@ -368,6 +369,20 @@ public class BeanPropertyWriterTest {
         private final boolean required;
         private final PropertyName wrapperName;
 
+        public BeanPropertyDefinition withName(String newName) { return new SimpleBeanPropertyDefinition(newName, required, wrapperName); }
+        public String getInternalName() { return name; }
+        public boolean isExplicitlyIncluded() { return false; }
+        public boolean hasGetter() { return false; }
+        public boolean hasSetter() { return false; }
+        public boolean hasField() { return false; }
+        public boolean hasConstructorParameter() { return false; }
+        public AnnotatedMethod getGetter() { return null; }
+        public AnnotatedMethod getSetter() { return null; }
+        public AnnotatedField getField() { return null; }
+        public AnnotatedParameter getConstructorParameter() { return null; }
+        public AnnotatedMember getAccessor() { return null; }
+        public AnnotatedMember getMutator() { return null; }
+
         SimpleBeanPropertyDefinition(String name, boolean required, PropertyName wrapperName) {
             this.name = name;
             this.required = required;
@@ -400,8 +415,10 @@ public class BeanPropertyWriterTest {
         }
     }
 
-    static class SimpleAnnotations extends com.fasterxml.jackson.databind.util.Annotations {
+    static class SimpleAnnotations implements com.fasterxml.jackson.databind.util.Annotations {
         private final java.util.Map<Class<?>, Annotation> annotations;
+
+        public int size() { return annotations.size(); }
 
         SimpleAnnotations(java.util.Map<Class<?>, Annotation> annotations) {
             this.annotations = annotations;
@@ -412,12 +429,10 @@ public class BeanPropertyWriterTest {
             return (A) annotations.get(cls);
         }
 
-        @Override
         public boolean has(Class<?> cls) {
             return annotations.containsKey(cls);
         }
 
-        @Override
         public Annotation[] getAllAnnotations() {
             return annotations.values().toArray(new Annotation[0]);
         }

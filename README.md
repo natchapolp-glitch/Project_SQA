@@ -1,3 +1,12 @@
+# Latest submission checkpoint — 17 bugs, 2 October 2026
+
+Use **20261002_DEADLINE** PDF/PPTX and `docs/SUBMISSION_READY_20261002_DEADLINE.md`.
+Original-prompt primary results: **183/204 completed, 21 incomplete**. Both algorithms and KKU Gemini: 51/51 each. KKU Claude: 30/51, comprising 25 Haiku and 5 historical Sonnet results. Strict Haiku primary total: 178/204. One completed Time clarification result is separate and is not added to original-prompt totals. Current Haiku quota: 100%.
+
+The available evidence is checked and packaged for submission; the experiment is still incomplete. Classroom has not been submitted. Private screenshots remain in the local ZIP. All checkpoint statements below describe older versions; consult the current delivery status and verification receipts.
+
+## Historical checkpoints
+
 Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
 
 ## Latest checkpoint: recovered screenshots — 178/204 runs

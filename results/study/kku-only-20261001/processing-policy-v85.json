@@ -1,0 +1,6 @@
+{
+  "version": 85,
+  "basis": "fixed compile/runtime diagnostics only; no provider feedback; retained assertions unchanged",
+  "driver_sha256": "c141fad1360325227412fac680302a8420f1ce2be88a568c0a5405c8f06b165c",
+  "repair_definition": "def repair(tests, project, tool, seed):\n    if (project, tool, seed) != ('JacksonDatabind', 'intellisphere', 101):\n        return []\n    path = tests / 'com/fasterxml/jackson/databind/ser/BeanPropertyWriterTest.java'\n    before = hashlib.sha256(path.read_bytes()).hexdigest()\n    if before != 'abdd4eb8afe57641e49e2dd637348b9f6299a8eee4f3a8f8e03390095c2bba41': raise ValueError('Unexpected original source')\n    source = path.read_text()\n    anchor = 'import com.fasterxml.jackson.databind.util.NameTransformer;'\n    if source.count(anchor) != 1: raise ValueError('Import anchor missing')\n    path.write_text(source.replace(anchor, anchor+'\\nimport com.fasterxml.jackson.databind.util.Annotations;'))\n    return [{'path':path.relative_to(tests).as_posix(), 'before_sha256':before,\n             'after_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),\n             'compatibility_repair':'Add missing Annotations import based on fixed compile error. Assertions unchanged.'}]\n"
+}
