@@ -11,6 +11,10 @@
     ],
     "objective": "minimize frequency of observed fixed behavior, not coverage"
   },
+  "aom_host_evidence": {
+    "aom-pc1": "output/api854-20261003/aom-pc1-environment-v3/environment.json",
+    "aom-pc2": null
+  },
   "approaches": [
     "cmaes",
     "fscs-art",
@@ -32,7 +36,7 @@
   "compatibility_policy": "none",
   "condition": "api854-20261003-primary-v1",
   "context_policy": "Same fixed-source/API/build context and target list for all four methods; fresh KKU request per job; fixed source only; no execution/compile logs sent to AI.",
-  "context_selection": "modified-java-and-root-build-v1",
+  "context_selection": "modified-java-root-build-and-shared-receivers-v3",
   "defects4j_version": "3.0.1",
   "enabled_stages": [],
   "evidence_freeze_at": "2026-10-05T03:00:00+07:00",
@@ -48,7 +52,7 @@
     }
   },
   "generation": {
-    "context_policy_id": "modified-java-and-root-build-v1",
+    "context_policy_id": "modified-java-root-build-and-shared-receivers-v3",
     "handoff_contract": "beam-v1",
     "input_contract": "champ-generation-input-v1",
     "max_tokens": 4096,
@@ -57,8 +61,8 @@
       "beam",
       "aom"
     ],
-    "prepare_contract": "aom-beam-prepare-v2",
-    "prompt_policy_id": "shared-fixed-targets-junit4-v2",
+    "prepare_contract": "aom-beam-prepare-v3",
+    "prompt_policy_id": "shared-fixed-targets-junit4-v3",
     "prompt_token_reserve": null,
     "suite_policy_id": "beam-java-suite-v1",
     "suite_resolver": "scripts.study.api854.champ_bridge:champ_suite_resolver",
@@ -67,7 +71,7 @@
   "generation_cutoff_at": "2026-10-05T01:00:00+07:00",
   "generator_seed": 101,
   "historical_policy": "17-bug historical cohorts remain separate; never imported as API854 primary observations.",
-  "integration_status": "Champ d134cde6 shared-v2 bridge and team runner composition received; all-owner mocked tests checked; Beam 44dd5cb0 receiver supplement/eligibility import and team gates pending",
+  "integration_status": "Champ bridge + Beam receiver partition + Aom shared-v3 CPU/API preparation bound; no live authorization",
   "kku": {
     "claude_family": "Sonnet",
     "exact_model_ids": {
@@ -104,8 +108,16 @@
     }
   },
   "observation_timeout_seconds": 10,
-  "prepare_policy_sha256": "dc63f8f8bb85ffae428d60f300f59c5789e7a2c19da2c91290aff3c70d18c971",
-  "prepare_status": "20 v2 contract-compatible fixed-source proposals; Beam source-matched discovery received for all 20 bugs/691 declarations, 3 fixed-only exclusions; v2 inventories remain unbound pending new policy/context/import; no generation authorization",
+  "preparation_artifacts": "output/api854-20261003/prepare-v3",
+  "preparation_import_evidence": {
+    "beam_commit": "44dd5cb0b44e8f075ed283d0ff4f4ae51c97f4ed",
+    "path": "output/api854-20261003/prepare-v3/index.json",
+    "runtime_import_complete": true,
+    "semantic_review": "pending",
+    "sha256": "c51127147928ef1f0ce6a172893a226f92c66d446cd80284864b2803308aab86"
+  },
+  "prepare_policy_sha256": "821eb9b9d5d448734a5357f84170c1da3de3a3127934d74f9b90d9ec417c7b56",
+  "prepare_status": "20 source-bound v3 inventories / 691 targets and 3 exclusions imported; shared receiver/fixture/context policy composed; semantic/team/provider gates pending",
   "processing_policy": {
     "assertion_edits_allowed": false,
     "compatibility_allowlist": [
@@ -126,6 +138,7 @@
       "operator"
     ],
     "semantic_repairs": "Require new protocol condition and disclosed raw/processed delta; not raw KKU output.",
+    "shared_target_order": "canonical declaration identity order in v3; fresh algorithm discovery must match sealed inventory",
     "source_order_cap": null,
     "test_method_cap": 30
   },
@@ -134,7 +147,7 @@
   "schedule_timezone": "Asia/Bangkok",
   "schema_version": 1,
   "seed": 101,
-  "settings_status": "Temperature 0 and max_tokens 4096 are Champ proposals for both methods, not team-frozen values. Prompt reserve must cover the largest prepared UTF-8 prompt conservatively plus provider framing overhead; inspect pilot context/model limits before freeze.",
+  "settings_status": "temperature 0 / output 4096 remain proposals. Final v3 prompt max 161982 UTF-8 bytes; verified provider framing/reserve/context/output limits and quota missing.",
   "source_sha256": {
     "algorithms/java/SqaProbe.java": "6295d8b653d38adb96e071f9229527d6e0b06eba8db8824d318e77c977a5be76",
     "algorithms/python/atcg/__init__.py": "1294b41a8603f959eb955c3d3f9fccc4190bc08082f0f8e7dd5c8317cb20aa86",
@@ -144,12 +157,12 @@
     "scripts/study/api854/__init__.py": "396d8ae661e26041750ee8178aea2e8bae994d387de1d8a2eccaf4f1af12248f",
     "scripts/study/api854/adapters.py": "6b75e6554368e4ab95c597bceb7ec8330206b5a3788c0fe9f680e2982a36192d",
     "scripts/study/api854/ai_handoff.py": "bd96ca2fef25cafd626347230f3d139f81724340e6ce0236dfd77c6e278bfe63",
-    "scripts/study/api854/algorithm_worker.py": "e6977aa039a37b6565cc7004070b106467307831a5f24f60de61d8540a3999e2",
-    "scripts/study/api854/api_worker.py": "61c425b344100a2aaf25e9652f98a364efe989703f45b31b133c89cd379c1d8a",
-    "scripts/study/api854/beam_queue.py": "147e507426910f9480b57cc07c186d1d2ec96e4d50f3938e7a4ae4647668bebd",
-    "scripts/study/api854/champ_bridge.py": "a8e35aeb87e790a02c25a72c10d59fc36006e00989c89d42561c1e10670ee7cc",
+    "scripts/study/api854/algorithm_worker.py": "f5ac777b0cfab772ba889c5b7f11403f02aa8f20b85f0e438a4ed4d616689894",
+    "scripts/study/api854/api_worker.py": "69016507afacaf4bc4b6180e472a03433da9ad743a428ebfe9810b48be002d4e",
+    "scripts/study/api854/beam_queue.py": "59aaf788d60bcfcc365a31e5330f4cb88625cf99f5646772d1e3e263a7c08276",
+    "scripts/study/api854/champ_bridge.py": "101b92b671d867a18e38878383edb6457c8b89c57aa703c60a94dd3bfa1fde00",
     "scripts/study/api854/champ_queue.py": "8286dd8a2739c5ff97e436f5714847ff3b2e4d94130c0119230f2d965f884a84",
-    "scripts/study/api854/common.py": "4a1b2b958d3e728cc84987284e3b5105b298ebf3e08fdfa124ab516e1dbd54ca",
+    "scripts/study/api854/common.py": "037855b9670829fc4e6858bee249c4c29f675b45843321c51007c5ee1b290207",
     "scripts/study/api854/configuration.py": "b083270d8add58665bdfa0d7765af20c1e251799b1b211d1c5c378504c2ab896",
     "scripts/study/api854/context_export.py": "1a5dffe992dbb96592b17a80f635b610bb5b35718883fc36aa71c2b898204149",
     "scripts/study/api854/core_preflight.py": "bdc097e35e8512668fa7b5365ea1572cd27f6bb3e3ca274c76ea17b06e75b51a",
@@ -161,11 +174,12 @@
     "scripts/study/api854/make_job.py": "f6e09f642b227103547572adb44d61336b824e89824f01ff1d10745423adfd77",
     "scripts/study/api854/models.py": "f2f55f63c10c1aaab0ffd3089ef18a4dfb8a012642a87a726ea5eaa8ea576901",
     "scripts/study/api854/pack_suite.py": "c4341f218c93a42b135a5a80772ffcbe6625bc8cc8143bcd31136baa4deba62c",
-    "scripts/study/api854/preparation.py": "12ba356cbe6c0eee2bc7501772f1e5294401e9aa4a598493e160c8b936940014",
-    "scripts/study/api854/prepare_worker.py": "070a0f52f467b284935d3be04e3a01d66004f87b44cace5cbfb8a77f036d2b0c",
+    "scripts/study/api854/preparation.py": "03de9cb8478f8a0a3ed2e1a55e0b27f4e82e315b9896c18e251089ed7bdbd650",
+    "scripts/study/api854/prepare_worker.py": "4ae57e407a18aefcf4826087bc4095eef6300c603a0033a5ae42b3d766c39b25",
+    "scripts/study/api854/prepared_inputs.py": "2269f419c7942c5abcf81a31ed081a5486cb0d05c46ba767688252cf6ba121a7",
     "scripts/study/api854/queue_client.py": "1df960b57559b1553b6b0a4fd392ba689c9a2834a06f503ce84b5c30ac010f89",
     "scripts/study/api854/queue_connection.py": "93496ef2cce248a31bb5e0e5a548d2760e464b73fe0302018b3e270588f14c08",
-    "scripts/study/api854/queue_worker.py": "03898374815f1930d0bf0e2239d95a21addb0467f45fb1cd19161c74c88ad86d",
+    "scripts/study/api854/queue_worker.py": "e471556050fbd4e6a05b112b4ea4dc35e83d5aa8dd88eace4ac2ea8959043fb0",
     "scripts/study/api854/quota.py": "9512dc60220908caec124b7d0a494017d2651bccd2e60b8ab35f9fd5861aa7ce",
     "scripts/study/api854/suite_resolver.py": "30b5a6975e08dac8ceb6bf97002e05743cdb2bdc11c9798241c0d3f8e9f7c609",
     "scripts/study/api854/team_queue.py": "fd37b69ae117c7aba8c175b15b23d10909bec0f74adee6893ac759c3f43103c8",

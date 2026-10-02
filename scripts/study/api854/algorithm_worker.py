@@ -12,9 +12,12 @@ from .worker import new_worktrees, fixed_sources, artifact_index
 from generate import generate_suite
 
 
-def execute(job, protocol, results, worktrees, d4j):
+def execute(job, protocol, results, worktrees, d4j, *, prepared_input=None):
     if job["approach"] not in {"cmaes", "fscs-art"}:
         raise ValueError("algorithm_worker accepts only cmaes/fscs-art")
+    shared_v3 = protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3"
+    if shared_v3 and not prepared_input:
+        raise ValueError("Shared-v3 algorithms require the same bound preparation as API workers")
     output = start_attempt(results, job, "generation")
     started = time.monotonic()
     phase = "preflight"
@@ -30,6 +33,20 @@ def execute(job, protocol, results, worktrees, d4j):
             source_dir = (output / "setup/dir.src.classes.txt").read_text(encoding="utf-8").strip()
             classes = Path(prepared["classes_file"]).read_text(encoding="utf-8").strip().splitlines()
             sources = fixed_sources(prepared["fixed_worktree"], classes, source_dir)
+            if shared_v3:
+                from .preparation import clean_targets
+                from .preparation import clean_fixture_classes
+                if (sources != prepared_input["metadata"]["fixed_source_sha256"]
+                        or clean_targets(targets) != prepared_input["targets"]
+                        or clean_fixture_classes((output / "setup/fixture-classes.txt").read_text().splitlines()) != prepared_input["fixture_classes"]):
+                    raise ValueError("Algorithm discovery/source/fixture inventory differs from shared preparation")
+                fields = ("class", "constructor_types", "method", "parameter_types")
+                targets = sorted(targets, key=lambda t: tuple(t[k] for k in fields))
+                # Verify receiver/build context bytes, retaining modified-only coverage mapping.
+                for entry in prepared_input["manifest"]["source_files"]:
+                    from .common import contained
+                    if sha256(contained(prepared["fixed_worktree"], entry["path"])) != entry["sha256"]:
+                        raise ValueError("Algorithm fixed context differs from AI preparation")
             phase = "generation"
             generation = generate_suite(job["project"], job["bug_id"], job["approach"], protocol["budget"],
                                         protocol["seed"], targets, prepared["classpath"], output / "suite",
@@ -43,6 +60,10 @@ def execute(job, protocol, results, worktrees, d4j):
                 result["suite_sha256"] = sha256(generation["suite"])
                 result["test_count"] = generation["test_count"]
                 result["generation_seconds"] = generation["generation_seconds"]
+                if shared_v3:
+                    result.update(context_source_hash=prepared_input["metadata"]["context_source_hash"],
+                                  shared_targets_sha256=prepared_input["metadata"]["targets_sha256"],
+                                  prepare_attempt_id=prepared_input["prepare_attempt_id"])
     except Exception as error:
         outcome = "generation_failed" if phase == "generation" else "preflight_failed"
         result = envelope(job, outcome, error=f"{type(error).__name__}: {error}", failed_phase=phase,

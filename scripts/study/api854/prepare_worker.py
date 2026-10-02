@@ -8,7 +8,7 @@ from .environment import inspect_environment
 from .adapters import prepare_adapter
 from .worker import new_worktrees, fixed_sources, artifact_index
 from .context_export import BUILD_FILES, export_context
-from .preparation import compose
+from .preparation import compose, POLICY_V3, receiver_paths
 
 CONTEXT_POLICY = "modified-java-and-root-build-v1"
 PROMPT_POLICY = "beam-fixed-targets-junit4-v1"
@@ -45,7 +45,9 @@ def export_prompt(job, protocol, targets, context_dir):
 
 
 def execute(job, protocol, results, worktrees, d4j):
-    if protocol.get("context_selection") != CONTEXT_POLICY:
+    v3 = protocol.get("generation", {}).get("prepare_contract") == POLICY_V3["contract"]
+    context_policy = POLICY_V3["context_policy_id"] if v3 else CONTEXT_POLICY
+    if protocol.get("context_selection") != context_policy:
         raise ValueError("Frozen protocol must declare this explicit fixed-context selection")
     output = start_attempt(results, job, "prepare")
     started = time.monotonic()
@@ -61,12 +63,17 @@ def execute(job, protocol, results, worktrees, d4j):
             classes = Path(prepared["classes_file"]).read_text(encoding="utf-8").splitlines()
             fixed_tree = Path(prepared["fixed_worktree"])
             sources = fixed_sources(fixed_tree, classes, source_dir)
-            selected = sorted(sources) + sorted(name for name in BUILD_FILES if (fixed_tree / name).is_file())
+            extras = receiver_paths(targets, classes, source_dir) if v3 else []
+            selected = sorted(set(sources) | set(extras) | {name for name in BUILD_FILES if (fixed_tree / name).is_file()}) if v3 else sorted(sources) + sorted(name for name in BUILD_FILES if (fixed_tree / name).is_file())
             context = export_context(fixed_tree, job["project"], job["bug_id"], selected,
-                                     output / "context", policy_id=CONTEXT_POLICY)
+                                     output / "context", policy_id=context_policy)
             preparation = None
             prompt = None
-            if protocol.get("generation", {}).get("prompt_policy_id") == PROMPT_POLICY:
+            if v3:
+                fixture_classes = (output / "setup/fixture-classes.txt").read_text(encoding="utf-8").splitlines()
+                preparation = compose(output / "context", classes=classes, targets=targets, policy=POLICY_V3,
+                    modified_sources=sources, fixture_classes=fixture_classes)
+            elif protocol.get("generation", {}).get("prompt_policy_id") == PROMPT_POLICY:
                 prompt = export_prompt(job, protocol, targets, output / "context")
             else:
                 preparation = compose(output / "context", classes=classes, targets=targets)

@@ -1,5 +1,8 @@
 # Prepare v2, policy ร่วม, runner ทุก owner และ checklist Gate A
 
+ชุดใหม่ supersedes preparation proposal นี้: [AOM_PREPARE_V3_HANDOFF_TH.md](AOM_PREPARE_V3_HANDOFF_TH.md).
+v2 เดิมเก็บเป็น immutable evidence; discovery import/receiver/shared fixtures อยู่ใน v3 แล้ว.
+
 ออมทำทั้งสี่ส่วนแล้ว โดยเก็บ v1 และ frozen-core bytes เดิม.
 ชุดนี้เป็น proposal พร้อมตรวจรับ ไม่ใช่ frozen primary protocol หรือการเปิด live generation.
 

@@ -91,6 +91,11 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
                 and j.get("owner") == owner and j.get("approach") in approaches]
     if any(j.get("run_id") != run_id or j.get("protocol_hash") != protocol_hash for j in eligible):
         raise ValueError("Eligible queue mixes run IDs/protocols; controller must isolate the intended run")
+    shared_v3 = stage == "generate" and protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3"
+    if shared_v3:
+        from .prepared_inputs import load as load_prepared
+        for queued_job in eligible:
+            load_prepared(client, queued_job, protocol)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     if condition == "preflight":
@@ -116,7 +121,11 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
             if stage == "prepare":
                 result = prepare_worker.execute(job, protocol, results, worktrees, d4j)
             elif stage == "generate":
-                result = algorithm_worker.execute(job, protocol, results, worktrees, d4j)
+                if shared_v3:
+                    prepared_input = load_prepared(client, claim["job"], protocol)
+                    result = algorithm_worker.execute(job, protocol, results, worktrees, d4j, prepared_input=prepared_input)
+                else:
+                    result = algorithm_worker.execute(job, protocol, results, worktrees, d4j)
             else:
                 suite, lineage = download_generation(client, claim, output / "generation-input")
                 result = evaluate_worker.execute(job, protocol, results, worktrees, d4j, suite, lineage)

@@ -68,3 +68,7 @@ context/prompt supplement ยังต้องรวมกับ runtime ออ
 
 ตรวจรับ integration แชมป์ `d134cde6`: [AOM_CHAMP_INTEGRATION_REVIEW_TH.md](AOM_CHAMP_INTEGRATION_REVIEW_TH.md) —
 shared prepare v2 + callable resolver + runner guards รวมแล้ว; receiver/context รุ่นใหม่และ Gate A ยัง pending.
+
+ชุดส่งมอบใหม่ล่าสุด: [AOM_PREPARE_V3_HANDOFF_TH.md](AOM_PREPARE_V3_HANDOFF_TH.md) —
+import discovery ครบ 20 bugs/691 targets แล้ว พร้อม receiver partition/shared fixtures,
+CPU/API binding และงานต่อสำหรับแชมป์/บีม. Primary/provider/semantic/host Gate A ยัง pending.
