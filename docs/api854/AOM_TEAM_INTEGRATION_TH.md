@@ -1,3 +1,5 @@
+อัปเดตหลัง checkpoint นี้: [Prepare/policy/runner/Gate A v2](AOM_PREPARE_V2_TH.md)
+
 # ออมตรวจ branch beam/champ และเชื่อม worker ต่อ
 
 ตรวจ GitHub วันที่ 3 ต.ค. 2569 และรับ Champ `6ff837c1` กับ Beam `75eda88d`.

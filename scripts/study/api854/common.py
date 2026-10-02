@@ -102,7 +102,8 @@ def implementation_hashes():
     modules = ("__init__", "adapters", "algorithm_worker", "common", "configuration", "environment",
                "evaluate_worker", "make_job", "pack_suite", "queue_client", "queue_connection", "validity", "worker",
                "ai_handoff", "beam_queue", "core_preflight", "prepare_worker", "queue_worker", "suite_resolver",
-               "champ_queue", "context_export", "generate_worker", "kku_client", "lease", "models", "quota")
+               "champ_queue", "context_export", "generate_worker", "kku_client", "lease", "models", "quota",
+               "preparation", "team_queue", "api_worker")
     names += [f"scripts/study/api854/{name}.py" for name in modules]
     names += ["experiments/configs/api854-20261003/model-selection.json"]
     return {name: sha256(ROOT / name) for name in names}

@@ -64,3 +64,8 @@ Unknown metrics=null ไม่ใช่ 0; known-zero ratio ต้องมา�
 Workflow p50/p95 ใช้ nearest rank ของ completed attempt durations ไม่ใช่ isolated CPU benchmark
 Token บวกเฉพาะ generation attempts ไม่บวก provenance ที่คัดลอกไป evaluation อีกครั้ง
 Quota/ETA คง null เมื่อยังไม่มีข้อมูลที่ยืนยัน ไม่ extrapolate จากจำนวนบัญชี/เครื่อง
+
+## Shared policy v2 ที่ออมจัดทำ
+
+ดู AOM_PREPARE_V2_TH.md และ prepare-policy.v2.json สำหรับ primary draft ล่าสุด.
+Suite เกิน 30 methods ปฏิเสธทั้งชุด ไม่ใช้ source-order truncation. Core protocol เดิมคง bytes เดิม.

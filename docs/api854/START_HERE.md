@@ -59,3 +59,5 @@ Prepare pilot 20 bugs ของออม: [AOM_PREPARE_HANDOFF_TH.md](AOM_PREPAR
 Model/settings/quota และ adapters/evaluator ยังต้องตรวจให้ครบก่อน live generation.
 
 ตรวจรับ branch และ composition ล่าสุด: [AOM_TEAM_INTEGRATION_TH.md](AOM_TEAM_INTEGRATION_TH.md) — ยังรอ Gate A/settings/quota
+
+งานออมสี่ส่วนล่าสุด: [AOM_PREPARE_V2_TH.md](AOM_PREPARE_V2_TH.md) — prepare v2/policy ร่วม/runner ทุก owner/checklist Gate A

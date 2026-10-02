@@ -99,12 +99,13 @@ def generate_with_lease(worker, job, heartbeat: LeaseHeartbeat, **generation_opt
     ):
         raise ValueError("Handoff must share this heartbeat and claim")
     options = dict(generation_options)
+    expected_owner = options.pop("expected_owner", "champ")
     attempt_id = options.pop("attempt_id", heartbeat.claim["attempt_id"])
     if attempt_id != heartbeat.claim["attempt_id"]:
         raise ValueError("Use the queue claim's attempt ID")
     queue_job = heartbeat.claim["job"]
-    if queue_job.get("owner") != "champ" or queue_job.get("stage") != "generate":
-        raise ValueError("Require Champ's active generation claim")
+    if expected_owner not in {"aom", "beam", "champ"} or queue_job.get("owner") != expected_owner or queue_job.get("stage") != "generate":
+        raise ValueError("Require the assigned owner's active generation claim")
     for key in ("run_id", "protocol_hash", "project", "bug_id", "approach"):
         if queue_job.get(key) != getattr(job, key):
             raise ValueError(f"Generation job does not match claim {key}")

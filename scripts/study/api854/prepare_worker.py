@@ -7,6 +7,7 @@ from .environment import inspect_environment
 from .adapters import prepare_adapter
 from .worker import new_worktrees, fixed_sources, artifact_index
 from .context_export import BUILD_FILES, export_context
+from .preparation import compose
 
 CONTEXT_POLICY = "modified-java-and-root-build-v1"
 
@@ -31,11 +32,12 @@ def execute(job, protocol, results, worktrees, d4j):
             selected = sorted(sources) + sorted(name for name in BUILD_FILES if (fixed_tree / name).is_file())
             context = export_context(fixed_tree, job["project"], job["bug_id"], selected,
                                      output / "context", policy_id=CONTEXT_POLICY)
+            preparation = compose(output / "context", classes=classes, targets=targets)
             assert_implementation(protocol["source_sha256"])
             result = envelope(job, "prepared" if targets else "adapter_unsupported",
                               fixed_source_sha256=sources, context=context,
                               targets_sha256=prepared["targets_sha256"], target_count=len(targets),
-                              adapter=prepared, semantic_validity="pending_review")
+                              adapter=prepared, preparation=preparation, semantic_validity="pending_review")
     except Exception as error:
         result = envelope(job, "preflight_failed", error=f"{type(error).__name__}: {error}")
     result["worker_seconds"] = time.monotonic() - started
