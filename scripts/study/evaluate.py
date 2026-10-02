@@ -187,7 +187,9 @@ def copy_evidence(checkout: Path, destination: Path, names: tuple[str, ...]) -> 
     for name in names:
         source = checkout / name
         if source.is_file():
-            shutil.copy2(source, destination / name)
+            # Evidence provenance is bound by retained bytes/hashes. Unix metadata
+            # copying can fail on a Windows-mounted output directory in WSL.
+            shutil.copyfile(source, destination / name)
 
 
 def runtime_versions(d4j: str, output: Path, timeout: float) -> dict[str, Any]:
@@ -276,7 +278,7 @@ def evaluate_run(config: EvaluationConfig) -> dict[str, Any]:
         suite = Path(config.suite).resolve()
         record["java_source_files"] = validate_archive(suite)
         archive = output / f"{config.project}-{config.bug_id}f-{config.generator}.{config.seed}.tar.bz2"
-        shutil.copy2(suite, archive)
+        shutil.copyfile(suite, archive)
         record["suite_path"] = str(archive)
         record["source_suite_path"] = str(suite)
         record["suite_sha256"] = hashlib.sha256(archive.read_bytes()).hexdigest()
@@ -291,7 +293,7 @@ def evaluate_run(config: EvaluationConfig) -> dict[str, Any]:
             raise EvidenceError("Java 11 must be available on PATH for Defects4J evaluation")
         classes = output / "instrument-classes.txt"
         if config.classes_file is not None:
-            shutil.copy2(Path(config.classes_file).resolve(), classes)
+            shutil.copyfile(Path(config.classes_file).resolve(), classes)
             record["coverage_scope"] = "explicit_classes"
         else:
             stage_name = "export-classes"

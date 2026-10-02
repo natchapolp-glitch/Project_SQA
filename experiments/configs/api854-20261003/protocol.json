@@ -1,100 +1,173 @@
 {
-  "schema_version": 1,
-  "condition": "api854-20261003-primary-v1",
-  "state": "draft_pending_team_gate_a",
-  "defects4j_version": "3.0.1",
-  "schedule_timezone": "Asia/Bangkok",
-  "execution_timezone": "America/Los_Angeles",
-  "execution_timezone_rationale": "Retain existing generator/evaluator TZ consistently; scheduling and quota use Asia/Bangkok until server verification.",
+  "algorithm_input_budget": 30,
+  "algorithm_parameters": {
+    "cmaes_population": "4 + floor(3 * log(dimensions))",
+    "cmaes_sigma": 0.3,
+    "fixed_observations_per_proposal": 2,
+    "fscs_candidate_set_size": 10,
+    "normalized_bounds": [
+      -1.0,
+      1.0
+    ],
+    "objective": "minimize frequency of observed fixed behavior, not coverage"
+  },
   "approaches": [
     "cmaes",
     "fscs-art",
     "kku-claude",
     "kku-gemini"
   ],
-  "repeat_index": 1,
-  "generator_seed": 101,
-  "algorithm_input_budget": 30,
-  "test_method_cap": 30,
-  "algorithm_parameters": {
-    "fscs_candidate_set_size": 10,
-    "cmaes_sigma": 0.3,
-    "cmaes_population": "4 + floor(3 * log(dimensions))",
-    "normalized_bounds": [
-      -1.0,
-      1.0
-    ],
-    "objective": "minimize frequency of observed fixed behavior, not coverage",
-    "fixed_observations_per_proposal": 2
-  },
-  "target_policy": "All classes modified by each selected fix. Eligibility is intersection of fixed/buggy declaration signatures and common fixture types. No buggy behavior, patch contents, or triggering test supplied for generation.",
-  "context_policy": "Same fixed-source/API/build context and target list for all four methods; fresh KKU request per job; fixed source only; no execution/compile logs sent to AI.",
+  "approval_state": "integration_proposal_not_frozen",
+  "budget": 30,
   "command_timeout_seconds": 900,
-  "observation_timeout_seconds": 10,
+  "compatibility_policy": "none",
+  "condition": "api854-20261003-primary-v1",
+  "context_policy": "Same fixed-source/API/build context and target list for all four methods; fresh KKU request per job; fixed source only; no execution/compile logs sent to AI.",
+  "context_selection": "modified-java-and-root-build-v1",
+  "defects4j_version": "3.0.1",
+  "enabled_stages": [],
+  "evidence_freeze_at": "2026-10-05T03:00:00+07:00",
+  "execution_timezone": "America/Los_Angeles",
+  "execution_timezone_rationale": "Retain existing generator/evaluator TZ consistently; scheduling and quota use Asia/Bangkok until server verification.",
   "fixed_validation_repeats": 2,
+  "gate_a": {
+    "evidence": [],
+    "reviewed_by": {
+      "aom": false,
+      "beam": false,
+      "champ": false
+    }
+  },
+  "generation": {
+    "context_policy_id": "modified-java-and-root-build-v1",
+    "handoff_contract": "beam-v1",
+    "input_contract": "champ-generation-input-v1",
+    "max_tokens": 4096,
+    "prepare_contract": "aom-beam-prepare-v2",
+    "prompt_policy_id": "shared-fixed-targets-junit4-v2",
+    "prompt_token_reserve": null,
+    "suite_policy_id": "beam-java-suite-v1",
+    "suite_resolver": "scripts.study.api854.suite_resolver:BeamSuiteResolver",
+    "temperature": 0
+  },
+  "generation_cutoff_at": "2026-10-05T01:00:00+07:00",
+  "generator_seed": 101,
+  "historical_policy": "17-bug historical cohorts remain separate; never imported as API854 primary observations.",
+  "integration_status": "offline composed handoff verified; prepare prompt/metadata composition and team gates pending",
   "kku": {
     "claude_family": "Sonnet",
-    "gemini_family": "Flash Lite",
     "exact_model_ids": {
       "kku-claude": "claude-sonnet-5",
       "kku-gemini": "gemini-3.5-flash-lite"
     },
-    "temperature": null,
-    "max_output_tokens": null,
+    "fallback_allowed": false,
+    "gemini_family": "Flash Lite",
+    "max_output_tokens": 4096,
     "model_settings_verified": false,
     "notify_user_before_account_switch": true,
-    "fallback_allowed": false,
+    "output_seed": null,
     "send_execution_logs_to_ai": false,
-    "output_seed": null
+    "temperature": 0
   },
+  "model_policy": {
+    "kku-claude": {
+      "kku_model_id": "claude-sonnet-5"
+    },
+    "kku-gemini": {
+      "kku_model_id": "gemini-3.5-flash-lite"
+    }
+  },
+  "models": {
+    "kku-claude": {
+      "family": "sonnet",
+      "id": "claude-sonnet-5",
+      "name": "claude-sonnet-5"
+    },
+    "kku-gemini": {
+      "family": "flash-lite",
+      "id": "gemini-3.5-flash-lite",
+      "name": "gemini-3.5-flash-lite"
+    }
+  },
+  "observation_timeout_seconds": 10,
+  "prepare_policy_sha256": "dc63f8f8bb85ffae428d60f300f59c5789e7a2c19da2c91290aff3c70d18c971",
+  "prepare_status": "20 v2 contract-compatible fixed-source proposals; 0 source-bound target inventories received; no generation authorization",
   "processing_policy": {
-    "raw_response_immutable": true,
-    "source_order_cap": 30,
-    "compatibility_allowlist": [
-      "remove Markdown code fences",
-      "organize extracted Java files by declared package"
-    ],
     "assertion_edits_allowed": false,
-    "fixed_failure_pruning_allowed": false,
-    "semantic_repairs": "Require new protocol condition and disclosed raw/processed delta; not raw KKU output.",
+    "compatibility_allowlist": [
+      "extract complete Java fences without source edits",
+      "organize unchanged Java bytes by declared package/public class"
+    ],
+    "compatibility_policy": "none",
     "empty_or_null_return_suite": "invalid_suite",
+    "fixed_failure_pruning_allowed": false,
+    "fixture_policy": "common-fixed-buggy-production-types-v1",
+    "over_cap": "reject entire suite; preserve raw response; no truncation or semantic retry",
+    "raw_response_immutable": true,
     "required_history": [
       "raw_hash",
       "processed_hash",
       "operations",
       "excluded_methods",
       "operator"
-    ]
+    ],
+    "semantic_repairs": "Require new protocol condition and disclosed raw/processed delta; not raw KKU output.",
+    "source_order_cap": null,
+    "test_method_cap": 30
   },
-  "usable_policy": "Nonempty meaningful assertions and executed target; compile succeeds; identical suite passes fixed twice; buggy and fixed target-class coverage measured; detected=false is valid.",
-  "unknown_metrics": null,
-  "generation_cutoff_at": "2026-10-05T01:00:00+07:00",
-  "evidence_freeze_at": "2026-10-05T03:00:00+07:00",
-  "historical_policy": "17-bug historical cohorts remain separate; never imported as API854 primary observations.",
-  "models": {
-    "kku-claude": {
-      "id": "claude-sonnet-5",
-      "name": "claude-sonnet-5",
-      "family": "sonnet"
-    },
-    "kku-gemini": {
-      "id": "gemini-3.5-flash-lite",
-      "name": "gemini-3.5-flash-lite",
-      "family": "flash-lite"
-    }
-  },
-  "generation": {
-    "input_contract": "champ-generation-input-v1",
-    "temperature": 0,
-    "max_tokens": 4096,
-    "prompt_token_reserve": null,
-    "context_policy_id": "aom-fixed-modified-classes-build-v1-proposal",
-    "prompt_policy_id": "aom-fixed-junit4-cap30-v1-proposal",
-    "suite_policy_id": null,
-    "suite_resolver": null
-  },
-  "approval_state": "integration_proposal_not_frozen",
-  "start_at": "2026-10-03T05:00:00+07:00",
+  "repeat_index": 1,
+  "runner_plan_sha256": "5034311a3522c8b98bd30c7d3ad5aea8778395f3fe62b5ee6c1bf22702ac1255",
+  "schedule_timezone": "Asia/Bangkok",
+  "schema_version": 1,
+  "seed": 101,
   "settings_status": "Temperature 0 and max_tokens 4096 are Champ proposals for both methods, not team-frozen values. Prompt reserve must cover the largest prepared UTF-8 prompt conservatively plus provider framing overhead; inspect pilot context/model limits before freeze.",
-  "prepare_status": "20 fixed-source proposals verified; adapter eligibility and prompt review pending"
+  "source_sha256": {
+    "algorithms/java/SqaProbe.java": "6295d8b653d38adb96e071f9229527d6e0b06eba8db8824d318e77c977a5be76",
+    "algorithms/python/atcg/__init__.py": "1294b41a8603f959eb955c3d3f9fccc4190bc08082f0f8e7dd5c8317cb20aa86",
+    "algorithms/python/atcg/cmaes.py": "0dd7f69d73021602c214f6c57757f19513a5b1d77d6705e815e1856cc1c335e8",
+    "algorithms/python/atcg/fscs_art.py": "7e1a1fa2f05dd46de7af3225a9e2917e146ed174a8fcade6a6029591666bdc60",
+    "experiments/configs/api854-20261003/model-selection.json": "f6b542f81385a7881c62fbf0442c3d683c4c7d348ea82439b001b2e01821aa49",
+    "scripts/study/api854/__init__.py": "396d8ae661e26041750ee8178aea2e8bae994d387de1d8a2eccaf4f1af12248f",
+    "scripts/study/api854/adapters.py": "6b75e6554368e4ab95c597bceb7ec8330206b5a3788c0fe9f680e2982a36192d",
+    "scripts/study/api854/ai_handoff.py": "bd96ca2fef25cafd626347230f3d139f81724340e6ce0236dfd77c6e278bfe63",
+    "scripts/study/api854/algorithm_worker.py": "e6977aa039a37b6565cc7004070b106467307831a5f24f60de61d8540a3999e2",
+    "scripts/study/api854/api_worker.py": "fd7bcf345e8ae909ca837dfc02a406d6e0cc3a62797c6d6dcc2431b6ac963496",
+    "scripts/study/api854/beam_queue.py": "147e507426910f9480b57cc07c186d1d2ec96e4d50f3938e7a4ae4647668bebd",
+    "scripts/study/api854/champ_queue.py": "8286dd8a2739c5ff97e436f5714847ff3b2e4d94130c0119230f2d965f884a84",
+    "scripts/study/api854/common.py": "86a025b2b828f904be866016155f948690c233c6ef893d39a1d034a3daf34653",
+    "scripts/study/api854/configuration.py": "b083270d8add58665bdfa0d7765af20c1e251799b1b211d1c5c378504c2ab896",
+    "scripts/study/api854/context_export.py": "1a5dffe992dbb96592b17a80f635b610bb5b35718883fc36aa71c2b898204149",
+    "scripts/study/api854/core_preflight.py": "bdc097e35e8512668fa7b5365ea1572cd27f6bb3e3ca274c76ea17b06e75b51a",
+    "scripts/study/api854/environment.py": "c937bef71341a0131d77218f86144a1857fc2af50977d6985194f0fb8fa04826",
+    "scripts/study/api854/evaluate_worker.py": "d337a71b4cde05625bdce3afa608e378100c3bd86c8f930307e5dc6d0a658feb",
+    "scripts/study/api854/generate_worker.py": "ade50844f749e6a552dac68a258acdd38d91321b73225f6139f8b820928c50fa",
+    "scripts/study/api854/kku_client.py": "68febb3938b69e7504027cc31cc1a2a470cd3e37dfa4d50ebdcf900696a09245",
+    "scripts/study/api854/lease.py": "e54abd0fb4baf89caca13bf180456bb2c9100a732a4116dd6a13bb67cb8a0b3f",
+    "scripts/study/api854/make_job.py": "f6e09f642b227103547572adb44d61336b824e89824f01ff1d10745423adfd77",
+    "scripts/study/api854/models.py": "f2f55f63c10c1aaab0ffd3089ef18a4dfb8a012642a87a726ea5eaa8ea576901",
+    "scripts/study/api854/pack_suite.py": "c4341f218c93a42b135a5a80772ffcbe6625bc8cc8143bcd31136baa4deba62c",
+    "scripts/study/api854/preparation.py": "12ba356cbe6c0eee2bc7501772f1e5294401e9aa4a598493e160c8b936940014",
+    "scripts/study/api854/prepare_worker.py": "7930d00f682ea2b25958d6a096848c9927582babf9a191d2324a963aea18b614",
+    "scripts/study/api854/queue_client.py": "1df960b57559b1553b6b0a4fd392ba689c9a2834a06f503ce84b5c30ac010f89",
+    "scripts/study/api854/queue_connection.py": "93496ef2cce248a31bb5e0e5a548d2760e464b73fe0302018b3e270588f14c08",
+    "scripts/study/api854/queue_worker.py": "6774d6c6c209421708449af16423d6cf6139af9dca2bd401ed0b4efb6b67c3eb",
+    "scripts/study/api854/quota.py": "9512dc60220908caec124b7d0a494017d2651bccd2e60b8ab35f9fd5861aa7ce",
+    "scripts/study/api854/suite_resolver.py": "30b5a6975e08dac8ceb6bf97002e05743cdb2bdc11c9798241c0d3f8e9f7c609",
+    "scripts/study/api854/team_queue.py": "fd37b69ae117c7aba8c175b15b23d10909bec0f74adee6893ac759c3f43103c8",
+    "scripts/study/api854/validity.py": "d4240a6ae4c8f58e8f9bf4ad9b7182db7eb7fea065e52fb26b2a92865bd03b52",
+    "scripts/study/api854/worker.py": "95b0cee5def460922fecae273c1cd0895d43945d186954e9687a4a95caaf3cca",
+    "scripts/study/evaluate.py": "965281e94b9567448887c489591bdc38de210b8ecdb581a546165a7ed2c9e531",
+    "scripts/study/generate.py": "5e0246c548ab8c51b48b6f08b6ad96c45ad73ef6a25a88019ed76fc784920b96",
+    "scripts/study/run.py": "10a72bbbde358001598b033edb00f1274bc8a57488ad4e7adfc50331977c0de0"
+  },
+  "start_at": "2026-10-03T05:00:00+07:00",
+  "state": "draft_pending_team_gate_a",
+  "status": "proposal_pending_team_gate_a",
+  "suite_packaging": "beam-java-suite-v1",
+  "target_policy": "All classes modified by each selected fix. Eligibility is intersection of fixed/buggy declaration signatures and common fixture types. No buggy behavior, patch contents, or triggering test supplied for generation.",
+  "target_selection": "shared-declaration-signatures-v1",
+  "test_method_cap": 30,
+  "timezone": "America/Los_Angeles",
+  "unknown_metrics": null,
+  "usable_policy": "Nonempty meaningful assertions and executed target; compile succeeds; identical suite passes fixed twice; buggy and fixed target-class coverage measured; detected=false is valid."
 }

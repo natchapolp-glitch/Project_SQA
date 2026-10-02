@@ -43,6 +43,9 @@ class FrozenSettings:
     suite_resolver: str
     start_at: datetime
     generation_cutoff_at: datetime
+    handoff_contract: str = "champ-v1"
+    protocol: dict | None = None
+    prepare_contract: str = "champ-v1"
 
     @classmethod
     def load(cls, path: Path):
@@ -54,6 +57,28 @@ class FrozenSettings:
         if models != load_selection():
             raise WorkerBlocked("model_selection_not_frozen")
         generation = protocol.get("generation") or {}
+        prepare_contract = generation.get("prepare_contract", "champ-v1")
+        if prepare_contract not in {"champ-v1", "aom-beam-prepare-v2"}:
+            raise WorkerBlocked("prepare_contract_not_frozen")
+        if prepare_contract == "aom-beam-prepare-v2":
+            from .preparation import POLICY, encoded, digest as prepare_digest
+            if (generation.get("context_policy_id") != POLICY["context_policy_id"]
+                    or generation.get("prompt_policy_id") != POLICY["prompt_policy_id"]
+                    or generation.get("handoff_contract") != "beam-v1"
+                    or protocol.get("prepare_policy_sha256") != prepare_digest(encoded(POLICY))):
+                raise WorkerBlocked("shared_prepare_policy_not_frozen")
+        handoff_contract = generation.get("handoff_contract", "champ-v1")
+        if handoff_contract not in {"champ-v1", "beam-v1"}:
+            raise WorkerBlocked("handoff_contract_not_frozen")
+        if handoff_contract == "beam-v1":
+            if (protocol.get("suite_packaging") != "beam-java-suite-v1"
+                    or protocol.get("compatibility_policy") != "none"
+                    or type(protocol.get("test_method_cap")) is not int
+                    or protocol["test_method_cap"] != 30
+                    or generation.get("suite_policy_id") != "beam-java-suite-v1"
+                    or generation.get("suite_resolver") != "scripts.study.api854.suite_resolver:BeamSuiteResolver"
+                    or any(protocol.get("model_policy", {}).get(a, {}).get("kku_model_id") != models[a]["id"] for a in models)):
+                raise WorkerBlocked("beam_processing_contract_not_frozen")
         if generation.get("input_contract") != CONTRACT:
             raise WorkerBlocked("generation_contract_not_frozen")
         for key in ("max_tokens", "prompt_token_reserve"):
@@ -74,7 +99,8 @@ class FrozenSettings:
             raise WorkerBlocked("generation_window_not_frozen") from None
         return cls(digest(data), models, temperature, **{key: generation[key] for key in (
             "max_tokens", "prompt_token_reserve", "context_policy_id", "prompt_policy_id", "suite_policy_id", "suite_resolver")},
-            start_at=start, generation_cutoff_at=cutoff)
+            start_at=start, generation_cutoff_at=cutoff, handoff_contract=handoff_contract, protocol=protocol,
+            prepare_contract=generation.get("prepare_contract", "champ-v1"))
 
     @property
     def reserve_tokens(self):
@@ -95,13 +121,13 @@ def load_suite_resolver(spec: str):
     return resolver
 
 
-def resolve_prepared_job(client, job: dict, settings: FrozenSettings) -> GenerationJob:
+def resolve_prepared_job(client, job: dict, settings: FrozenSettings, *, owner="champ") -> GenerationJob:
     """Consume two hashed artifacts from the most recent prepared stage.
 
     Preparation owns the approved prompt/selection; this worker never appends
     errors, invents target selection, or alters source/assertions.
     """
-    if job.get("protocol_hash") != settings.protocol_hash or job.get("owner") != "champ" or \
+    if job.get("protocol_hash") != settings.protocol_hash or job.get("owner") != owner or \
             job.get("stage") != "generate" or job.get("approach") not in settings.models:
         raise WorkerBlocked("job_identity_or_protocol_mismatch")
     history = job.get("payload", {}).get("stage_history", [])
@@ -142,13 +168,31 @@ def resolve_prepared_job(client, job: dict, settings: FrozenSettings) -> Generat
     # message wrappers/system overhead; this is not a claimed tokenizer count.
     if len(prompt_bytes) > settings.prompt_token_reserve:
         raise WorkerBlocked("prompt_exceeds_frozen_conservative_bound")
+    if getattr(settings, "handoff_contract", "champ-v1") == "beam-v1":
+        fixed_sources = {row["path"]: row["sha256"] for row in files if row.get("path", "").endswith(".java")}
+        if (not fixed_sources or metadata.get("fixed_source_sha256") != fixed_sources
+                or metadata.get("context_source_hash") != source_hash):
+            raise WorkerBlocked("beam_preparation_lineage_mismatch")
+    if getattr(settings, "prepare_contract", "champ-v1") == "aom-beam-prepare-v2":
+        from .preparation import validate
+        try:
+            validate(manifest, metadata, prompt_bytes, download("targets.json"),
+                     download("prepare-policy.json"), require_eligible=True)
+        except ValueError:
+            raise WorkerBlocked("shared_preparation_not_ready") from None
+        if metadata["policy_sha256"] != settings.protocol.get("prepare_policy_sha256"):
+            raise WorkerBlocked("shared_preparation_policy_not_frozen")
     return GenerationJob(job["run_id"], settings.protocol_hash, job["project"], job["bug_id"],
                          job["approach"], prompt, source_hash)
 
 
 class APIWorker:
     def __init__(self, queue, kku, ledger, settings, *, approach, bucket, window,
-                 artifact_root, private_root, worker_id, suite_resolver, model, condition="primary-kku-api"):
+                 artifact_root, private_root, worker_id, suite_resolver, model, condition="primary-kku-api", owner="champ"):
+        if owner not in {"aom", "beam", "champ"} or (owner != "champ" and not getattr(queue, "team_routing", False)):
+            raise WorkerBlocked("owner_requires_explicit_runner_plan")
+        if owner != "champ" and settings.handoff_contract != "beam-v1":
+            raise WorkerBlocked("all_owner_routing_requires_beam_handoff")
         if not callable(suite_resolver):
             raise WorkerBlocked("beam_suite_resolver_unavailable")
         if condition not in {"primary-kku-api", "mock-integration"} or (
@@ -158,6 +202,7 @@ class APIWorker:
         resolve_selected([model], approach, settings.models)
         self.queue, self.kku, self.ledger, self.settings = queue, kku, ledger, settings
         self.approach, self.bucket, self.window = approach, bucket, window
+        self.owner = owner
         self.artifact_root, self.private_root = Path(artifact_root), Path(private_root)
         self.worker_id, self.suite_resolver, self.model = worker_id, suite_resolver, model
         self.condition = condition
@@ -169,7 +214,7 @@ class APIWorker:
             raise QuotaBlocked("Insufficient observed quota; notify user before switching")
         status = self.queue.request("GET", "/v1/status")
         eligible = [job for job in status.get("jobs", []) if job.get("state") == "queued" and
-                    job.get("stage") == "generate" and job.get("owner") == "champ" and
+                    job.get("stage") == "generate" and job.get("owner") == self.owner and
                     job.get("approach") == self.approach]
         # Controller 1.0 cannot filter claims by run/protocol; reject mixed
         # protocols before claim, and revalidate the actual returned claim.
@@ -177,7 +222,7 @@ class APIWorker:
             if job.get("protocol_hash") != self.settings.protocol_hash:
                 raise WorkerBlocked("mixed_generation_protocols_in_queue")
         if eligible:
-            prepared = resolve_prepared_job(self.queue, eligible[0], self.settings)
+            prepared = resolve_prepared_job(self.queue, eligible[0], self.settings, owner=self.owner)
             if sanitize(prepared.prompt, (self.kku.account.api_key, self.queue.token)) != prepared.prompt:
                 raise WorkerBlocked("credentials_in_prepared_prompt")
             self.ledger.available(self.kku.account.alias, self.bucket, self.window, job_key=prepared.key)
@@ -193,7 +238,7 @@ class APIWorker:
         ready = self.check()
         if ready["state"] == "idle":
             return ready
-        claim = self.queue.claim(self.worker_id, "generate", approaches=[self.approach], owner="champ")
+        claim = self.queue.claim(self.worker_id, "generate", approaches=[self.approach], owner=self.owner)
         if claim.get("job") is None:
             return {**ready, "state": "idle", "queue_mutations": 1}
         if not isinstance(claim.get("attempt_id"), str) or not re.fullmatch(
@@ -205,18 +250,28 @@ class APIWorker:
         self.private_root.mkdir(parents=True, exist_ok=True)
         write_json(self.private_root / f"claim-{claim['attempt_id']}.json", claim)
         try:
-            job = resolve_prepared_job(self.queue, claim["job"], self.settings)
+            job = resolve_prepared_job(self.queue, claim["job"], self.settings, owner=self.owner)
             if sanitize(job.prompt, (self.kku.account.api_key, self.queue.token, claim["lease_token"])) != job.prompt:
                 raise WorkerBlocked("credentials_in_prepared_prompt")
             guard = LeaseHeartbeat(self.queue, claim)
-            handoff = QueueGenerationHandoff(self.queue, claim, worker_id=self.worker_id,
-                suite_resolver=self.suite_resolver, suite_policy_id=self.settings.suite_policy_id,
-                credential_secrets=(self.kku.account.api_key,), lease_guard=guard)
+            if self.settings.handoff_contract == "beam-v1":
+                from .ai_handoff import BeamGenerationHandoff
+                from .queue_worker import local_job
+                prepared = next(h for h in reversed(claim["job"]["payload"]["stage_history"])
+                                if h.get("stage") == "prepare" and h.get("outcome") == "prepared")["metadata"]
+                handoff = BeamGenerationHandoff(self.queue, claim, heartbeat=guard, job=local_job(claim),
+                    protocol=self.settings.protocol, fixed_source_sha256=prepared["fixed_source_sha256"],
+                    context_source_hash=prepared["context_source_hash"], worker_id=self.worker_id,
+                    credential_secrets=(self.kku.account.api_key,))
+            else:
+                handoff = QueueGenerationHandoff(self.queue, claim, worker_id=self.worker_id,
+                    suite_resolver=self.suite_resolver, suite_policy_id=self.settings.suite_policy_id,
+                    credential_secrets=(self.kku.account.api_key,), lease_guard=guard)
             worker = GenerationWorker(self.kku, self.ledger, artifact_root=self.artifact_root,
                                       model=self.model, bucket=self.bucket, window=self.window, handoff=handoff,
                                       condition=self.condition)
             result = generate_with_lease(worker, job, guard, prompt_token_reserve=self.settings.prompt_token_reserve,
-                                        max_tokens=self.settings.max_tokens, temperature=self.settings.temperature)
+                                        max_tokens=self.settings.max_tokens, temperature=self.settings.temperature, expected_owner=self.owner)
         except Exception:
             write_json(self.private_root / f"reconcile-{claim['attempt_id']}.json", {
                 "state": "needs_operator_reconciliation", "job_id": claim["job"]["job_id"],
@@ -244,12 +299,20 @@ def main() -> int:
     parser.add_argument("--access", type=Path, default=Path(".local/api854/champ-access.private.json"))
     parser.add_argument("--ledger", type=Path, default=Path(".local/api854/quota.sqlite"))
     parser.add_argument("--worker-id", default="champ-pc1")
+    parser.add_argument("--runner-plan", type=Path)
+    parser.add_argument("--owner", choices=("aom", "beam", "champ"), default="champ")
     parser.add_argument("--artifact-root", type=Path, default=Path("results/study"))
     args = parser.parse_args()
     try:
         settings = FrozenSettings.load(args.protocol)
         resolver = load_suite_resolver(settings.suite_resolver)
-        queue = ChampQueueClient(QueueAccess.load(args.access))
+        if args.runner_plan:
+            from .team_queue import TeamQueueClient
+            queue = TeamQueueClient.from_plan(args.access, args.runner_plan, args.worker_id,
+                owner=args.owner, stage="generate", approaches=[args.approach],
+                protocol_path=args.protocol, condition="primary")
+        else:
+            queue = ChampQueueClient(QueueAccess.load(args.access))
         kku = KKUClient(load_account(args.account, args.secrets))
         models, _ = kku.list_models()
         model = resolve_selected(models, args.approach, settings.models)
@@ -257,7 +320,7 @@ def main() -> int:
         worker = APIWorker(queue, kku, ledger, settings, approach=args.approach, bucket=args.bucket,
                            window=args.window, artifact_root=args.artifact_root,
                            private_root=args.access.parent / "worker-state", worker_id=args.worker_id,
-                           suite_resolver=resolver, model=model)
+                           suite_resolver=resolver, model=model, owner=args.owner)
         result = worker.once() if args.once else worker.check()
     except Exception as error:
         # No arbitrary traceback/raw error/header can leak into CLI output.
