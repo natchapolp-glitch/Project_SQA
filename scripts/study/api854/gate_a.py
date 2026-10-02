@@ -54,6 +54,15 @@ def inspect(root=ROOT):
     protocol, plan = read_json(base / "protocol.json"), read_json(base / "runner-plan.v1.json")
     discovery = read_json(root / "output/api854-provider-preflight-20261003/champ-readiness-v2.json")
     scan = read_json(root / "docs/api854/evidence/beam-pilot-adapters-20261003.json")
+    review_ref = protocol.get("beam_handoff_review", {})
+    review_path = (root / review_ref.get("evidence_path", "")).resolve()
+    received = {}
+    if (review_path.is_relative_to(root.resolve()) and review_path.is_file()
+            and sha256(review_path) == review_ref.get("evidence_sha256")):
+        receipt = read_json(review_path)
+        if (receipt.get("inputs", {}).get("aom_v2_index_sha256") == sha256(preparation / "index.json")
+                and receipt.get("inputs", {}).get("aom_core_sha256") == sha256(base / "protocol.core-frozen.json")):
+            received = receipt
     routes = route_coverage(plan, read_json(base / "ownership.json"))
     identities = lambda rows: {(r["project"], r["bug_id"], r["owner"]) for r in rows}
     complete_pilot = len(index["records"]) == 20 and identities(index["records"]) == identities(core["pilot_bugs"])
@@ -63,7 +72,10 @@ def inspect(root=ROOT):
         {"id": "runner_coverage", "owner": "aom", "status": "pass" if not routes["gaps"] else "blocked", **routes},
         {"id": "runner_host_acceptance", "owner": "team", "status": "pending", "reason": "Host assignment prepared; host readiness and team review not received"},
         {"id": "model_discovery", "owner": "champ", "status": "pass" if {r['id'] for r in discovery['models']['selected_rows']} == {'claude-sonnet-5', 'gemini-3.5-flash-lite'} else "blocked", "scope": "catalog only, not resolved generation versions"},
-        {"id": "eligible_targets_20", "owner": "beam", "status": "pass" if eligible == 20 else "pending", "bound_v2_eligibility": eligible, "beam_scan_receipts": len(scan["bugs"]), "reason": "Receipt hashes do not substitute for source-bound target/fixture artifacts"},
+        {"id": "eligible_targets_20", "owner": "beam", "status": "pass" if eligible == 20 else "pending", "bound_v2_eligibility": eligible, "beam_scan_receipts": len(scan["bugs"]),
+         "received_source_matched_bugs": received.get("source_matched_bugs", 0),
+         "received_eligible_declarations": received.get("shared_target_count", 0),
+         "reason": "Received Beam discovery must be imported into a new agreed preparation contract; it does not bind the existing empty v2 inventories" if received else "Receipt hashes do not substitute for source-bound target/fixture artifacts"},
         {"id": "meaningful_oracles", "owner": "beam", "status": "pending", "reason": "fixed twice/buggy/coverage and semantic review for agreed pipeline; fixture smoke alone is insufficient"},
         {"id": "model_settings_limits_reserve", "owner": "champ", "status": "pending", "max_prompt_utf8_bytes": index["max_prompt_utf8_bytes"], "reason": "temperature 0/output 4096 proposed; provider limits/framing and runtime acceptance missing"},
         {"id": "observed_quota", "owner": "champ", "status": "pending", "reason": "remaining/bucket/expiry observation and ledger evidence missing"},
@@ -74,6 +86,8 @@ def inspect(root=ROOT):
                       root / "output/api854-provider-preflight-20261003/champ-aom-preparation-audit-v1.json",
                       root / "docs/api854/evidence/beam-pilot-adapters-20261003.json",
                       root / "docs/api854/evidence/beam-local-queue-smoke-20261003.json"]
+    if received:
+        evidence_paths.append(review_path)
     return {"schema_version": 1, "checked_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "gate_a_passed": all(c["status"] == "pass" for c in checklist), "generation_authorized": False,
             "checklist": checklist, "evidence": [{"path": p.relative_to(root).as_posix(), "sha256": sha256(p)} for p in evidence_paths],

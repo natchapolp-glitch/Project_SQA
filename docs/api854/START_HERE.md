@@ -61,3 +61,7 @@ Model/settings/quota และ adapters/evaluator ยังต้องตรว
 ตรวจรับ branch และ composition ล่าสุด: [AOM_TEAM_INTEGRATION_TH.md](AOM_TEAM_INTEGRATION_TH.md) — ยังรอ Gate A/settings/quota
 
 งานออมสี่ส่วนล่าสุด: [AOM_PREPARE_V2_TH.md](AOM_PREPARE_V2_TH.md) — prepare v2/policy ร่วม/runner ทุก owner/checklist Gate A
+
+ตรวจส่งมอบบีม `44dd5cb0`: [AOM_BEAM_HANDOFF_REVIEW_TH.md](AOM_BEAM_HANDOFF_REVIEW_TH.md) —
+รับหลักฐาน discovery ครบ 20 bugs/691 declarations และ exclusions 3 รายการแล้ว;
+context/prompt supplement ยังต้องรวมกับ runtime ออม และ fixture/oracle/Gate A ยัง pending.

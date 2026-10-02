@@ -27,6 +27,11 @@ prompt ใหญ่สุด 99,439 UTF-8 bytes ณ ชุดที่ยัง�
 เมื่อได้หลักฐาน ให้สร้าง version ใหม่ด้วย --eligibility-root ไม่แก้ v2 ที่ส่งตรวจรับแล้ว.
 eligible declarations หมายถึง discovery support เท่านั้น; semantic/oracle review ยังแยกต่างหาก.
 
+อัปเดตหลังตรวจบีม `44dd5cb0`: ได้รับ source-matched discovery ครบ 20 bugs/691 declarations
+และ exclusions 3 รายการแล้ว แต่ยังไม่ import ลง inventories ของ v2 เดิม.
+ดู [ผลตรวจ context/prompt และสัญญาที่ต้องรวม](AOM_BEAM_HANDOFF_REVIEW_TH.md)
+พร้อม checklist `gate-a-beam-review-release.json`. Semantic/oracle และ primary approval ยัง pending.
+
 ## 2. Policy ชุดเดียว
 
 ไฟล์ `experiments/configs/api854-20261003/prepare-policy.v2.json`:
