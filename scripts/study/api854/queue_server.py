@@ -471,7 +471,9 @@ def main():
     if set(credentials) != {"admin", "champ", "beam", "aom"} or any(not isinstance(x, str) or len(x) < 32 for x in credentials.values()):
         raise SystemExit("Invalid local credentials file")
     for role in ("champ", "beam", "aom"):
-        (args.root / f"{role}-access.private.json").write_text(json.dumps({"role": role, "worker_token": credentials[role], "schema_version": VERSION}, indent=2), encoding="utf-8")
+        access_path = args.root / f"{role}-access.private.json"
+        previous = json.loads(access_path.read_text(encoding="utf-8-sig")) if access_path.exists() else {}
+        access_path.write_text(json.dumps({**previous, "role": role, "worker_token": credentials[role], "schema_version": VERSION}, indent=2), encoding="utf-8")
     store = Store(args.root, credentials)
     if args.seed_manifest:
         if not args.protocol:
