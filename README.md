@@ -1,27 +1,10 @@
-# Current account update — 184/204 primary runs
+# Current project status — 2 October 2026
 
-Read `docs/ACCOUNT_UPDATE_20261002.md` for latest results. Strict Haiku primary:179/204. Separate academic clarification results: Time30, JxPath28, Collections30; not added to the primary count. New KKU account Claude Haiku quota:100%. Experiment remains incomplete; Classroom not submitted. DEADLINE PDF/PPTX describe an earlier183-run checkpoint.
+The KKU-only primary study has **185/204 completed runs** and 19 pending. CMA-ES, FSCS-ART and KKU Gemini are each 51/51; KKU Claude is 32/51. Strict Haiku-only primary total: 180/204. The latest JacksonCore run contributed 29 evaluated test methods; a subsequent Chart request was refused and remains pending.
 
-# Current account update — 184/204 primary runs
+The completed primary runs contain 4,862 retained test methods (repeated scenarios may count more than once). Clarification runs for Time, JxPath and Collections are separate and are not included in the primary total. See `docs/ACCOUNT_UPDATE_20261002.md`, `summary.json`, `pending-runs.csv` and the audit receipts under `output/kku-only-20261001/` for current evidence.
 
-Read `docs/ACCOUNT_UPDATE_20261002.md` for the latest results. Strict Haiku primary:179/204. JxPath iteration3:28 completed methods, kept separate. New account Claude quota:100%. Reports below are historical183-run checkpoints. Experiment incomplete; Classroom not submitted.
-
-# Latest submission checkpoint — 17 bugs, 2 October 2026
-
-Use **20261002_DEADLINE** PDF/PPTX and `docs/SUBMISSION_READY_20261002_DEADLINE.md`.
-Original-prompt primary results: **183/204 completed, 21 incomplete**. Both algorithms and KKU Gemini: 51/51 each. KKU Claude: 30/51, comprising 25 Haiku and 5 historical Sonnet results. Strict Haiku primary total: 178/204. One completed Time clarification result is separate and is not added to original-prompt totals. Current Haiku quota: 100%.
-
-The available evidence is checked and packaged for submission; the experiment is still incomplete. Classroom has not been submitted. Private screenshots remain in the local ZIP. All checkpoint statements below describe older versions; consult the current delivery status and verification receipts.
-
-## Historical checkpoints
-
-Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
-
-## Latest checkpoint: recovered screenshots — 178/204 runs
-
-All 54 missing primary provider screenshots have been received from the owner-provided ZIP and imported locally; current provenance audit: 200 records, zero issues. Experimental results unchanged: 178/204 completed, 26 incomplete. COMPLETE refers to screenshot recovery, not experiment completion.
-
-Current report/deck use `_20261002_COMPLETE`. Current private ZIP uses `_20261002_COMPLETE_VERIFIED_Evidence`. Read `docs/SUBMISSION_READY_20261002_COMPLETE.md` and `output/kku-only-20261001/delivery-status.json`. Private images remain outside public Git. Owner will submit Classroom themselves before midnight Bangkok time.
+The local evidence package is `output/SQA_Round2_17Bugs_20261002_ACCOUNT_UPDATE_V5_Evidence.zip`. Existing report markdown, PDF/PPTX, analysis.json and delivery-status.json files describe earlier checkpoints. The 850-bug experiment has not been run, the primary study is incomplete, and Classroom has not been submitted. Private provider screenshots are included in the local ZIP and intentionally excluded from public Git.
 
 # SQA Project 2.2 — CP353201
 
