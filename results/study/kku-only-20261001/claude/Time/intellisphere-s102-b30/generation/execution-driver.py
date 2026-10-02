@@ -16,9 +16,10 @@ sys.path.insert(0, str(ROOT / 'scripts/ai'))
 from evidence import ingest
 from evaluate import EvaluationConfig, evaluate_run, write_record
 from normalize_provider_source import normalize, positions, prune_fixed_failures
-from provider_compatibility_v39 import repair
+def repair(tests, project, tool, seed):
+    return []  # No historical, hash-specific compatibility repairs applied to fresh captures.
 
-PROCESSING_SOURCES = ('scripts/study/evaluate_provider_normalized_v54.py',
+PROCESSING_SOURCES = ('scripts/study/evaluate_provider_normalized_v73.py',
     'scripts/study/provider_prefix_v30.py',
     'scripts/study/provider_compatibility_v31.py',
     'scripts/study/provider_compatibility_v32.py',
@@ -68,14 +69,14 @@ def main():
             parser.error('Frozen source changed: ' + name)
     processing_hashes = {name: sha(ROOT / name) for name in PROCESSING_SOURCES}
     run = batch / args.project / f'{args.tool}-s{args.seed}-b30'
-    history = ROOT / 'results/validation/ai-source-processing-v54' / batch.name / args.project / run.name
+    history = ROOT / 'results/validation/ai-source-processing-v73' / batch.name / args.project / run.name
     if run.exists():
         old = json.loads((run / 'evaluation/record.json').read_text())
         if old['status'] == 'complete':
             parser.error('A completed run must not be overwritten')
         preserve_run(run, history / 'original-provider-attempt')
     started = time.monotonic()
-    working = capture / 'source-processing-v54'
+    working = capture / 'source-processing-v73'
     tests = working / 'tests'
     originals = working / 'input-tests'
     originals.mkdir(parents=True, exist_ok=False)
@@ -101,11 +102,11 @@ def main():
         run.mkdir(parents=True, exist_ok=True)
         metadata = dict(operator)
         metadata.update(context_manifest=str(context / 'context-manifest.json'),
-            manual_edits=edits, local_processing_policy='provider-source-processing-v54',
+            manual_edits=edits, local_processing_policy='provider-source-processing-v73',
             raw_test_method_count=raw_count, retained_test_method_count=count,
             generation_seconds=operator['generation_seconds'] + processing_seconds)
         metadata['notes'] = operator.get('notes', []) + [
-            'Local processing v54 (inherited compatibility chain v39): hash-identified JacksonXml XML reader START_ELEMENT fixture positioning via nextTag; assertions unchanged; prior v38 fully pruned failure retained.  fixed-compiler diagnosed local variable reference correction in hash-identified Haiku Codec/102; assertion expectations unchanged.  hash-identified Claude Cli complete-prefix recovery plus hash-identified Claude Jsoup complete-prefix recovery plus fixed-diagnosed Time String-null overload disambiguation plus exact-tail, hash-identified Gemini Lang complete-prefix recovery before evaluation; source-order cap at 30 tests, KKU renderer suffix cleanup, and up to two fixed-only method-pruning follow-ups.',
+            'Local processing v73: closed Java fences only, source-order cap of 30 methods, mechanical renderer suffix cleanup, and up to two fixed-only pruning passes. No inherited hash-specific compatibility repairs. Raw provider output remains unchanged.',
             'Raw provider response unchanged. No evaluation results were sent to either provider.',
             'The evaluated cohort is AI-assisted with local processing, not unedited model output.']
         operator_file = run / 'processing-operator-metadata.json'
@@ -143,7 +144,7 @@ def main():
             ai_execution_driver=PROCESSING_SOURCES[0],
             ai_execution_driver_sha256=processing_hashes[PROCESSING_SOURCES[0]],
             ai_processing_source_sha256=processing_hashes,
-            ai_source_processing_directory='source-processing-v54',
+            ai_source_processing_directory='source-processing-v73',
             ai_raw_test_method_count=raw_count,ai_local_processing_edits=edits,
             ai_fixed_pruning_history=pruning_history,
             test_count_source='java_ast_declared_test_methods',

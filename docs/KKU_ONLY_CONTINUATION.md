@@ -1,3 +1,5 @@
+Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
+
 # SQA round 2: KKU-only continuation, 1 October 2026
 
 Current checkpoint: `docs/SUBMISSION_READY_20261002_COMPLETE.md`. Collection stopped at owner request after Claude quota reached 100%; prepare from the captured results. Current deliverables use suffix `_20261002`. Historical checkpoints remain separate.

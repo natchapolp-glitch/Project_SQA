@@ -1,0 +1,27 @@
+Analysis
+
+I cannot generate compilable unit tests for TypeInfoFactory with the provided context. Here is why:
+
+Missing API Dependencies
+
+The production source TypeInfoFactory.java references several classes that are not supplied and cannot be accessed:
+
+com.google.gson.Preconditions – Used in checkArgument() and checkNotNull()
+com.google.gson.TypeUtils – Used in isArray(), toRawClass(), wrapWithArray()
+com.google.gson.TypeInfo – Constructor called but not defined
+com.google.gson.TypeInfoArray – Constructor called but not defined
+com.google.gson.ParameterizedTypeImpl – Constructor called but not defined
+com.google.gson.GenericArrayTypeImpl – Constructor called but not defined
+Build Configuration Issue
+
+The project uses JUnit 3.8.2 (from pom.xml), which requires tests to extend junit.framework.TestCase. The compiler target is Java 1.5 (<source>1.5</source>), which is incompatible with Java 11 syntax requirements mentioned in the constraints.
+
+What Would Be Needed
+
+To generate valid regression tests, I would require:
+
+Source files for all referenced utility classes (Preconditions, TypeUtils, TypeInfo, TypeInfoArray, ParameterizedTypeImpl, GenericArrayTypeImpl)
+OR access to compiled .class files for these dependencies
+Clarification on the actual Java source/target version to use (1.5 vs. 11)
+
+Recommendation: Provide the source code or compiled binaries for all transitive dependencies of TypeInfoFactory, or confirm that Gson version 1.6 has published these classes in a Maven repository that can be inspected.

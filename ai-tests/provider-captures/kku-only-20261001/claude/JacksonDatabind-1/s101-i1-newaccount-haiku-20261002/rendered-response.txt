@@ -1,0 +1,530 @@
+Analysis and Test Generation for BeanPropertyWriter
+
+I'll generate comprehensive regression tests for BeanPropertyWriter based on the production source and build configuration. The project uses JUnit 4.10 and is Java 11 compatible.
+
+Key Observations from Source:
+Immutable design: Most fields are final; copy constructors create new instances
+Internal settings: HashMap-based opaque storage for extensions
+Serialization flow: Three variants (field, column, placeholder)
+Dynamic serializers: PropertySerializerMap for runtime type resolution
+Self-reference detection: Checks cycles unless serializer uses object IDs
+Generated Tests
+java
+package com.fasterxml.jackson.databind.ser;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.io.SerializedString;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.introspect.*;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
+import com.fasterxml.jackson.databind.util.NameTransformer;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+
+import static org.junit.Assert.*;
+
+public class BeanPropertyWriterTest {
+
+    private BeanPropertyWriter writer;
+    private BeanPropertyDefinition propDef;
+    private AnnotatedMember member;
+    private Annotations contextAnnotations;
+    private JavaType declaredType;
+    private ObjectMapper mapper;
+
+    @Before
+    public void setUp() throws Exception {
+        mapper = new ObjectMapper();
+        
+        // Create a simple test property definition
+        propDef = new SimpleBeanPropertyDefinition("testProp", false, null);
+        
+        // Create annotated member from test class field
+        Field testField = TestBean.class.getDeclaredField("value");
+        contextAnnotations = new SimpleAnnotations(new HashMap<>());
+        declaredType = mapper.getTypeFactory().constructType(String.class);
+        
+        member = new AnnotatedField(null, testField, null);
+        
+        writer = new BeanPropertyWriter(
+            propDef, member, contextAnnotations, declaredType,
+            null, null, null, false, null
+        );
+    }
+
+    // ========== Basic Accessor Tests ==========
+
+    @Test
+    public void testGetName() {
+        assertEquals("testProp", writer.getName());
+    }
+
+    @Test
+    public void testGetSerializedName() {
+        SerializedString serialized = writer.getSerializedName();
+        assertNotNull(serialized);
+        assertEquals("testProp", serialized.getValue());
+    }
+
+    @Test
+    public void testGetType() {
+        JavaType type = writer.getType();
+        assertNotNull(type);
+        assertEquals(String.class, type.getRawClass());
+    }
+
+    @Test
+    public void testGetWrapperName() {
+        PropertyName wrapperName = writer.getWrapperName();
+        assertNull(wrapperName); // No wrapper by default
+    }
+
+    @Test
+    public void testGetMember() {
+        AnnotatedMember retrievedMember = writer.getMember();
+        assertNotNull(retrievedMember);
+        assertEquals(member, retrievedMember);
+    }
+
+    @Test
+    public void testGetPropertyType() {
+        Class<?> propType = writer.getPropertyType();
+        assertNotNull(propType);
+        assertEquals(String.class, propType);
+    }
+
+    @Test
+    public void testGetGenericPropertyType() {
+        java.lang.reflect.Type genericType = writer.getGenericPropertyType();
+        assertNotNull(genericType);
+    }
+
+    // ========== Serializer Assignment Tests ==========
+
+    @Test
+    public void testHasSerializerInitially() {
+        assertFalse(writer.hasSerializer());
+    }
+
+    @Test
+    public void testAssignSerializer() throws Exception {
+        JsonSerializer<Object> serializer = new SimpleSerializer();
+        writer.assignSerializer(serializer);
+        assertTrue(writer.hasSerializer());
+        assertEquals(serializer, writer.getSerializer());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAssignSerializerTwiceFails() throws Exception {
+        JsonSerializer<Object> ser1 = new SimpleSerializer();
+        JsonSerializer<Object> ser2 = new SimpleSerializer();
+        writer.assignSerializer(ser1);
+        writer.assignSerializer(ser2);
+    }
+
+    @Test
+    public void testAssignSerializerSameInstanceIdempotent() throws Exception {
+        JsonSerializer<Object> serializer = new SimpleSerializer();
+        writer.assignSerializer(serializer);
+        writer.assignSerializer(serializer); // Should not throw
+        assertEquals(serializer, writer.getSerializer());
+    }
+
+    @Test
+    public void testHasNullSerializerInitially() {
+        assertFalse(writer.hasNullSerializer());
+    }
+
+    @Test
+    public void testAssignNullSerializer() throws Exception {
+        JsonSerializer<Object> nullSer = new SimpleSerializer();
+        writer.assignNullSerializer(nullSer);
+        assertTrue(writer.hasNullSerializer());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testAssignNullSerializerTwiceFails() throws Exception {
+        JsonSerializer<Object> ser1 = new SimpleSerializer();
+        JsonSerializer<Object> ser2 = new SimpleSerializer();
+        writer.assignNullSerializer(ser1);
+        writer.assignNullSerializer(ser2);
+    }
+
+    // ========== Null Suppression Tests ==========
+
+    @Test
+    public void testWillSuppressNullsFalseByDefault() {
+        assertFalse(writer.willSuppressNulls());
+    }
+
+    @Test
+    public void testWillSuppressNullsTrue() throws Exception {
+        BeanPropertyWriter suppressWriter = new BeanPropertyWriter(
+            propDef, member, contextAnnotations, declaredType,
+            null, null, null, true, null
+        );
+        assertTrue(suppressWriter.willSuppressNulls());
+    }
+
+    // ========== Required Flag Tests ==========
+
+    @Test
+    public void testIsRequiredFalseByDefault() {
+        assertFalse(writer.isRequired());
+    }
+
+    @Test
+    public void testIsRequiredWithAnnotationIntrospector() {
+        AnnotationIntrospector introspector = mapper.getDeserializationConfig()
+            .getAnnotationIntrospector();
+        assertFalse(writer.isRequired(introspector));
+    }
+
+    // ========== Views Tests ==========
+
+    @Test
+    public void testGetViewsNullByDefault() {
+        Class<?>[] views = writer.getViews();
+        assertNull(views);
+    }
+
+    // ========== Serialization Type Tests ==========
+
+    @Test
+    public void testGetSerializationTypeNull() {
+        assertNull(writer.getSerializationType());
+    }
+
+    @Test
+    public void testGetRawSerializationTypeNull() {
+        assertNull(writer.getRawSerializationType());
+    }
+
+    // ========== Copy Constructor Tests ==========
+
+    @Test
+    public void testCopyConstructor() throws Exception {
+        JsonSerializer<Object> ser = new SimpleSerializer();
+        writer.assignSerializer(ser);
+        writer.setInternalSetting("key1", "value1");
+        
+        BeanPropertyWriter copy = new BeanPropertyWriter(writer);
+        
+        assertEquals(writer.getName(), copy.getName());
+        assertEquals(writer.getType(), copy.getType());
+        assertEquals(ser, copy.getSerializer());
+        assertEquals("value1", copy.getInternalSetting("key1"));
+    }
+
+    @Test
+    public void testCopyConstructorWithNewName() throws Exception {
+        SerializedString newName = new SerializedString("newName");
+        BeanPropertyWriter renamed = new BeanPropertyWriter(writer, newName);
+        
+        assertEquals("newName", renamed.getName());
+        assertEquals(writer.getType(), renamed.getType());
+    }
+
+    // ========== Rename Tests ==========
+
+    @Test
+    public void testRenameWithTransformer() {
+        NameTransformer transformer = new NameTransformer() {
+            @Override
+            public String transform(String input) {
+                return "prefix_" + input;
+            }
+
+            @Override
+            public String reverse(String input) {
+                return input.substring(7);
+            }
+        };
+        
+        BeanPropertyWriter renamed = writer.rename(transformer);
+        assertEquals("prefix_testProp", renamed.getName());
+    }
+
+    @Test
+    public void testRenameNoChangeReturnsThis() {
+        NameTransformer transformer = new NameTransformer() {
+            @Override
+            public String transform(String input) {
+                return input; // No change
+            }
+
+            @Override
+            public String reverse(String input) {
+                return input;
+            }
+        };
+        
+        BeanPropertyWriter renamed = writer.rename(transformer);
+        assertSame(writer, renamed);
+    }
+
+    // ========== Unwrapping Writer Tests ==========
+
+    @Test
+    public void testUnwrappingWriter() {
+        NameTransformer unwrapper = new NameTransformer() {
+            @Override
+            public String transform(String input) {
+                return input;
+            }
+
+            @Override
+            public String reverse(String input) {
+                return input;
+            }
+        };
+        
+        BeanPropertyWriter unwrapped = writer.unwrappingWriter(unwrapper);
+        assertNotNull(unwrapped);
+        assertNotSame(writer, unwrapped);
+    }
+
+    // ========== Non-Trivial Base Type Tests ==========
+
+    @Test
+    public void testSetNonTrivialBaseType() throws Exception {
+        JavaType baseType = mapper.getTypeFactory().constructType(java.util.List.class);
+        writer.setNonTrivialBaseType(baseType);
+        // Verify it was set (no getter, but used internally in _findAndAddDynamic)
+        assertNotNull(baseType);
+    }
+
+    // ========== Internal Settings Tests ==========
+
+    @Test
+    public void testGetInternalSettingEmpty() {
+        assertNull(writer.getInternalSetting("nonexistent"));
+    }
+
+    @Test
+    public void testSetInternalSetting() {
+        Object oldValue = writer.setInternalSetting("key1", "value1");
+        assertNull(oldValue);
+        assertEquals("value1", writer.getInternalSetting("key1"));
+    }
+
+    @Test
+    public void testSetInternalSettingOverwrite() {
+        writer.setInternalSetting("key1", "value1");
+        Object oldValue = writer.setInternalSetting("key1", "value2");
+        assertEquals("value1", oldValue);
+        assertEquals("value2", writer.getInternalSetting("key1"));
+    }
+
+    @Test
+    public void testRemoveInternalSetting() {
+        writer.setInternalSetting("key1", "value1");
+        Object removed = writer.removeInternalSetting("key1");
+        assertEquals("value1", removed);
+        assertNull(writer.getInternalSetting("key1"));
+    }
+
+    @Test
+    public void testRemoveInternalSettingNonexistent() {
+        Object removed = writer.removeInternalSetting("nonexistent");
+        assertNull(removed);
+    }
+
+    @Test
+    public void testRemoveLastInternalSettingClearsMap() {
+        writer.setInternalSetting("key1", "value1");
+        writer.removeInternalSetting("key1");
+        // Adding a new setting after clearing should work
+        writer.setInternalSetting("key2", "value2");
+        assertEquals("value2", writer.getInternalSetting("key2"));
+    }
+
+    @Test
+    public void testMultipleInternalSettings() {
+        writer.setInternalSetting("key1", "value1");
+        writer.setInternalSetting("key2", "value2");
+        writer.setInternalSetting("key3", "value3");
+        
+        assertEquals("value1", writer.getInternalSetting("key1"));
+        assertEquals("value2", writer.getInternalSetting("key2"));
+        assertEquals("value3", writer.getInternalSetting("key3"));
+    }
+
+    // ========== Annotation Tests ==========
+
+    @Test
+    public void testGetAnnotationNull() {
+        Annotation ann = writer.getAnnotation(Deprecated.class);
+        assertNull(ann);
+    }
+
+    @Test
+    public void testGetContextAnnotationNull() {
+        Annotation ann = writer.getContextAnnotation(Deprecated.class);
+        assertNull(ann);
+    }
+
+    // ========== Get Property Value Tests ==========
+
+    @Test
+    public void testGetPropertyValueFromField() throws Exception {
+        TestBean bean = new TestBean("testValue");
+        Object value = writer.get(bean);
+        assertEquals("testValue", value);
+    }
+
+    @Test(expected = Exception.class)
+    public void testGetPropertyValueFromNullBeanThrows() throws Exception {
+        writer.get(null);
+    }
+
+    // ========== ToString Tests ==========
+
+    @Test
+    public void testToString() {
+        String str = writer.toString();
+        assertNotNull(str);
+        assertTrue(str.contains("testProp"));
+    }
+
+    @Test
+    public void testToStringWithSerializer() throws Exception {
+        JsonSerializer<Object> ser = new SimpleSerializer();
+        writer.assignSerializer(ser);
+        String str = writer.toString();
+        assertTrue(str.contains("static serializer"));
+    }
+
+    @Test
+    public void testToStringWithoutSerializer() {
+        String str = writer.toString();
+        assertTrue(str.contains("no static serializer"));
+    }
+
+    // ========== Edge Cases ==========
+
+    @Test
+    public void testInternalSettingsWithNullKey() {
+        writer.setInternalSetting(null, "value");
+        assertEquals("value", writer.getInternalSetting(null));
+    }
+
+    @Test
+    public void testInternalSettingsWithNullValue() {
+        writer.setInternalSetting("key", null);
+        assertNull(writer.getInternalSetting("key"));
+    }
+
+    @Test
+    public void testInternalSettingsTypeVariety() {
+        Object key1 = new Object();
+        Object key2 = 42;
+        Object key3 = "stringKey";
+        
+        writer.setInternalSetting(key1, "obj");
+        writer.setInternalSetting(key2, "int");
+        writer.setInternalSetting(key3, "str");
+        
+        assertEquals("obj", writer.getInternalSetting(key1));
+        assertEquals("int", writer.getInternalSetting(key2));
+        assertEquals("str", writer.getInternalSetting(key3));
+    }
+
+    // ========== Test Fixtures ==========
+
+    public static class TestBean {
+        public String value;
+
+        public TestBean(String value) {
+            this.value = value;
+        }
+    }
+
+    static class SimpleSerializer extends JsonSerializer<Object> {
+        @Override
+        public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) {
+        }
+    }
+
+    static class SimpleBeanPropertyDefinition extends BeanPropertyDefinition {
+        private final String name;
+        private final boolean required;
+        private final PropertyName wrapperName;
+
+        SimpleBeanPropertyDefinition(String name, boolean required, PropertyName wrapperName) {
+            this.name = name;
+            this.required = required;
+            this.wrapperName = wrapperName;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public PropertyName getWrapperName() {
+            return wrapperName;
+        }
+
+        @Override
+        public boolean isRequired() {
+            return required;
+        }
+
+        @Override
+        public Class<?>[] findViews() {
+            return null;
+        }
+
+        @Override
+        public com.fasterxml.jackson.databind.introspect.AnnotatedMember getPrimaryMember() {
+            return null;
+        }
+    }
+
+    static class SimpleAnnotations extends com.fasterxml.jackson.databind.util.Annotations {
+        private final java.util.Map<Class<?>, Annotation> annotations;
+
+        SimpleAnnotations(java.util.Map<Class<?>, Annotation> annotations) {
+            this.annotations = annotations;
+        }
+
+        @Override
+        public <A extends Annotation> A get(Class<A> cls) {
+            return (A) annotations.get(cls);
+        }
+
+        @Override
+        public boolean has(Class<?> cls) {
+            return annotations.containsKey(cls);
+        }
+
+        @Override
+        public Annotation[] getAllAnnotations() {
+            return annotations.values().toArray(new Annotation[0]);
+        }
+    }
+}
+
+
+Copy
+
+Key Testing Strategies Applied:
+Immutability verification: Copy constructors create new instances with same state
+State transitions: Serializer assignment lifecycle and conflicts
+Internal settings: HashMap storage with proper cleanup
+Edge cases: Null values, duplicate operations, type variety
+Boundary conditions: Empty internal settings, no serializers
+Integration: Multi-setting interactions
+References:
+Jackson Core: https://github.com/FasterXML/jackson-core
+Jackson Databind: https://github.com/FasterXML/jackson-databind
+JUnit 4.10 API: https://junit.org/junit4/

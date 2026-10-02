@@ -3,30 +3,71 @@
   "provider": "KKU IntelSphere",
   "selected_agent": "Claude",
   "model": "claude-haiku-latest",
-  "generated_at": "2026-10-01T22:27:20.755Z",
-  "submitted_at": "2026-10-01T22:24:59.867Z",
-  "generation_seconds": 140.971816902,
+  "generated_at": "2026-10-02T11:01:25.681Z",
+  "submitted_at": "2026-10-02T10:59:31.470Z",
+  "generation_seconds": 119.564947441,
   "prompt_iteration": 1,
   "parameters": {
     "model_seed": null,
     "temperature": null
   },
   "session_url": "https://gen.ai.kku.ac.th/chat",
-  "manual_edits": [],
+  "manual_edits": [
+    {
+      "path": "org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStreamTest.java",
+      "before_sha256": "d873a568dfa6d9428609dbd47a5902914e805a50838253b462d6a16f3f09766e",
+      "after_sha256": "1bb9c05611fca011da7b022cbdec88b68a4ae3e36a5a748f76ebdc11c9c260f7",
+      "fixed_api_compatibility": "Exclude whole testFormatPropagatedToEntry: v73 fixed compiler rejects nonexistent CpioArchiveEntry() constructor. Retained assertions unchanged; prior failure preserved."
+    },
+    {
+      "path": "org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStreamTest.java",
+      "before_sha256": "1bb9c05611fca011da7b022cbdec88b68a4ae3e36a5a748f76ebdc11c9c260f7",
+      "after_sha256": "5cbd1e02703f2f72ef8ca2d74d4e4b8fdffcab3db97e8f7252f04829834205a9",
+      "renderer_suffixes_removed": 0,
+      "budget_removed_methods": [
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testFinishClosesCurrentEntry",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testClose",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testCloseTwice",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testCloseWithOpenEntry",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testWriteHeaderFormatNew",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testWriteHeaderFormatNewCrc",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testWriteHeaderFormatOldAscii",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testWriteHeaderFormatOldBinary",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testCRCCalculationForNewCrcFormat",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testWriteNewEntryName",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testCompleteWorkflowSingleEntry",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testCompleteWorkflowMultipleEntries",
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testCompleteWorkflowEmptyFile"
+      ],
+      "selection": "First 30 methods in sorted file/source order; no execution outcomes used."
+    },
+    {
+      "path": "org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStreamTest.java",
+      "before_sha256": "5cbd1e02703f2f72ef8ca2d74d4e4b8fdffcab3db97e8f7252f04829834205a9",
+      "after_sha256": "dbbcbc49e75290648027f9417bbdac764034ff495e127704e90548002386ea09",
+      "fixed_failed_methods_removed": [
+        "org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStreamTest::testFinishTwice"
+      ],
+      "selection": "Only assertion failures on fixed revision; no buggy outcomes used."
+    }
+  ],
   "capture_status": "captured-awaiting-evaluation",
+  "response_style": "Normal",
+  "account": "new-account-20261002",
+  "account_scope": "Profile observed; identifier omitted from public record",
+  "observed_claude_usage_percent": 65.5,
   "notes": [
     "Exact original prompt only. No evaluation feedback sent.",
-    "response.md serializes rendered DOM blocks, exact Java text preserved alongside rendered-response.html/text.",
-    "Observed UI upper-bound duration; displayed model label recorded exactly, resolved version unknown.",
-    "Local processing v68: closed Java fences only, source-order cap of 30 methods, mechanical renderer suffix cleanup, and up to two fixed-only pruning passes. Adds exact-hash Lang/101 complete-prefix recovery before evaluation; all retained assertions unchanged. Raw provider output remains unchanged.",
+    "response.md serializes DOM blocks. Exact Java text preserved in rendered-code.json and HTML; visibly unfinished class gets an unclosed Markdown fence, without adding source.",
+    "Explicit Haiku selected at owner request; exact displayed model label retained.",
+    "Submit-to-observed-completion upper bound, not model compute time.",
+    "Both rendered Java fences observed closed: first contains only package-relative filename, second contains a complete Java class. Source extractor ignores filename-only block.",
+    "Local processing v75: closed Java fences only, source-order cap of 30 methods, mechanical renderer suffix cleanup, and up to two fixed-only pruning passes. One disclosed hash-specific whole-method exclusion for Compress101 from v73 fixed compiler diagnostics. Raw provider output remains unchanged.",
     "Raw provider response unchanged. No evaluation results were sent to either provider.",
     "The evaluated cohort is AI-assisted with local processing, not unedited model output."
   ],
-  "response_style": "Normal",
-  "account": null,
-  "account_scope": "Current user-authorized session; exact account label not observed",
   "context_manifest": "/mnt/c/WORK/SQA_PROJECT/Project_SQA/results/study/kku-only-20261001/claude/Compress/ai-context/context-manifest.json",
-  "local_processing_policy": "provider-source-processing-v68",
-  "raw_test_method_count": 0,
-  "retained_test_method_count": 0
+  "local_processing_policy": "provider-source-processing-v75",
+  "raw_test_method_count": 43,
+  "retained_test_method_count": 29
 }

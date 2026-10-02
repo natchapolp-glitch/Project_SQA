@@ -1,3 +1,5 @@
+Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
+
 > Current checkpoint: อ่าน docs/SUBMISSION_READY_20261002_COMPLETE.md และ delivery-status.json ก่อน เอกสารด้านล่างเป็น handoff/checkpoint เก่า เก็บไว้เป็นประวัติ
 
 # Handoff งาน SQA รอบที่ 2 — กลุ่ม 14

@@ -1,3 +1,5 @@
+Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
+
 ## Latest checkpoint: recovered screenshots — 178/204 runs
 
 All 54 missing primary provider screenshots have been received from the owner-provided ZIP and imported locally; current provenance audit: 200 records, zero issues. Experimental results unchanged: 178/204 completed, 26 incomplete. COMPLETE refers to screenshot recovery, not experiment completion.

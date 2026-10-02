@@ -1,3 +1,5 @@
+Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
+
 # ชุดส่งอัปเดตภาพครบ — 2 ตุลาคม 2026
 
 ได้รับภาพ provider-screen.png ที่ขาดครบ 54 รายการจาก ZIP ที่เจ้าของงานส่งมา ผลตรวจ provenance ล่าสุด 200 records / 0 issues. นำเข้าเฉพาะภาพที่ขาด ไฟล์คำตอบและ metadata ที่อยู่คู่กันตรงกับของเดิม ไม่เขียนทับผลทดลอง

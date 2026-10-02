@@ -1,3 +1,5 @@
+Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
+
 # Demo รอบ 2: Claude/Gemini ผ่าน KKU เท่านั้น
 
 ใช้รายงาน/สไลด์ชื่อที่ลงท้าย `_20261002_COMPLETE` ใน `output/kku-only-20261001/` เป็นชุดปัจจุบัน

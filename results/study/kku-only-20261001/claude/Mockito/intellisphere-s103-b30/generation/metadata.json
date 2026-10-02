@@ -3,32 +3,49 @@
   "kind": "operator-supplied-ai-evidence",
   "tool": "intellisphere",
   "provider": "KKU AI Sphere / IntelliSphere",
-  "model": "claude-sonnet-latest",
+  "model": "claude-haiku-latest",
   "project": "Mockito",
   "bug_id": 1,
   "reference_revision": "1f",
   "run_id": "generation",
   "archive_run_seed": 103,
   "prompt_iteration": 1,
-  "generated_at": "2026-10-01T22:08:07.389Z",
-  "ingested_at": "2026-10-01T22:08:34.835933+00:00",
+  "generated_at": "2026-10-02T10:58:14.654Z",
+  "ingested_at": "2026-10-02T11:00:05.051171+00:00",
   "parameters": {
     "model_seed": null,
     "temperature": null
   },
   "session_url": "https://gen.ai.kku.ac.th/chat",
   "parent_run": null,
-  "manual_edits": [],
+  "manual_edits": [
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "before_sha256": "d708508ed96f60ade372dafd3813ae298533183efb3d9435f896e33f83a377a9",
+      "after_sha256": "084cc01a6ee2379c1a7f4d0491615fb9eac6cbaec157b03ccbe42bc002f11e94",
+      "fixed_failed_methods_removed": [
+        "org.mockito.internal.invocation.InvocationMatcherTest::testGetMethodReturnsCorrectMethod",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testGetMethodReturnsToStringMethod",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testToStringReturnsNonEmptyString",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testCaptureArgumentsFromNonVarargs",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testCaptureArgumentsFromVarargs",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testCaptureArgumentsFromWithCapturesArgumentsMatcher",
+        "org.mockito.internal.invocation.InvocationMatcherTest::testHasSameMethodWithNullMethodName"
+      ],
+      "selection": "Only assertion failures on fixed revision; no buggy outcomes used."
+    }
+  ],
   "notes": [
     "Exact original prompt only. No evaluation feedback sent.",
-    "response.md serializes rendered DOM blocks, exact Java text preserved alongside rendered-response.html/text.",
-    "Observed UI upper-bound duration; displayed model label recorded exactly, resolved version unknown.",
-    "Local processing v67: closed Java fences only, source-order cap of 30 methods, mechanical renderer suffix cleanup, and up to two fixed-only pruning passes. No inherited hash-specific compatibility repairs. Raw provider output remains unchanged.",
+    "response.md serializes DOM blocks. Exact Java text preserved in rendered-code.json and HTML; visibly unfinished class gets an unclosed Markdown fence, without adding source.",
+    "Explicit Haiku selected at owner request; exact displayed model label retained.",
+    "Submit-to-observed-completion upper bound, not model compute time.",
+    "Local processing v73: closed Java fences only, source-order cap of 30 methods, mechanical renderer suffix cleanup, and up to two fixed-only pruning passes. No inherited hash-specific compatibility repairs. Raw provider output remains unchanged.",
     "Raw provider response unchanged. No evaluation results were sent to either provider.",
     "The evaluated cohort is AI-assisted with local processing, not unedited model output."
   ],
   "prompt_sha256": "dc4243b3178e22d7b8c2ec5d1308a674adf7b837b2ab657c82188655b67124e1",
-  "response_sha256": "27b9a60aeae6b14822f317911415df6ddac46fb5011ab965d80046ee24d9dd27",
+  "response_sha256": "77af72592e5dcc9caaff22b634afdad88e375c448074951b760409af77d63e1b",
   "context_manifest_sha256": "54d1d47c8bf65ec4eb2558d08ea28adf889b360bd1513cb8a7de3cafa3366cde",
   "source_files": [
     {
@@ -65,10 +82,16 @@
       "bytes": 360
     }
   ],
-  "java_files": [],
-  "external_suite": null,
-  "external_suite_sha256": null,
-  "generation_status": "no_java_sources",
+  "java_files": [
+    {
+      "path": "org/mockito/internal/invocation/InvocationMatcherTest.java",
+      "sha256": "084cc01a6ee2379c1a7f4d0491615fb9eac6cbaec157b03ccbe42bc002f11e94",
+      "bytes": 14023
+    }
+  ],
+  "external_suite": "Mockito-1f-intellisphere.103.tar.bz2",
+  "external_suite_sha256": "931230a4a0d6a9ad2f5a1dbe65461820ef4c3f3d6c3a10e7668c73ecd85a7b6a",
+  "generation_status": "sources_received",
   "provenance_status": "recorded",
   "compile_status": "not_run",
   "fixed_test_status": "not_run",
@@ -77,6 +100,6 @@
   "branch_coverage": null,
   "fault_detected": null,
   "warnings": [
-    "No Java sources were extracted; retain this provider response as a generation failure"
+    "Manual source edits are declared; disclose them when comparing raw provider output"
   ]
 }
