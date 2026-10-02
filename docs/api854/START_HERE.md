@@ -4,7 +4,8 @@
 
 - เริ่ม: 3 ตุลาคม 2569 เวลา 05:00 ประเทศไทย
 - ส่ง: 5 ตุลาคม 2569 เวลา 05:00 ประเทศไทย (48 ชั่วโมง)
-- เป้าหมาย: 854 active bugs × CMA-ES/FSCS-ART/KKU Claude Haiku/KKU Gemini Flash Lite = 3,416 งาน รวมความล้มเหลวจากการทดลองจริงพร้อมหลักฐาน
+- เป้าหมาย: 854 active bugs × CMA-ES/FSCS-ART/KKU Claude Sonnet/KKU Gemini Flash Lite = 3,416 งาน รวมความล้มเหลวจากการทดลองจริงพร้อมหลักฐาน
+- โมเดลที่ผู้ใช้เลือกล่าสุด: `claude-sonnet-5` และ `gemini-3.5-flash-lite` ตาม [model-selection.json](../../experiments/configs/api854-20261003/model-selection.json) แทน Haiku ที่ระบุในแผนก่อนหน้า ต้องรวมคู่นี้เข้า frozen protocol ก่อน seed pilot; ห้าม fallback เป็น `claude-sonnet-5.5`
 - ทรัพยากรที่ผู้ใช้ยืนยัน: 10 บัญชี API-ready; บีม 3 เครื่อง แชมป์ 1 เครื่อง ออม 2 เครื่อง
 - ต้องแจ้งผู้ใช้ก่อนสลับบัญชีเมื่อ quota หมด; ห้ามส่ง compile/test logs กลับ AI
 - งานไม่เคยส่ง/รันเพราะ quota/deadline ต้องคง not_attempted ไม่แต่งเป็น failure
