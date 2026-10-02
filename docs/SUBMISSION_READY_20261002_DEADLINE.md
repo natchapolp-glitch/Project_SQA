@@ -1,3 +1,5 @@
+> Latest update: read ACCOUNT_UPDATE_20261002.md first. Primary184/204, remaining20. This document and its PDF/deck describe the earlier183-run checkpoint.
+
 # ชุดส่งล่าสุดก่อน 23:00 — 17 บัค
 
 ใช้ไฟล์ลงท้าย **20261002_DEADLINE** สำหรับการส่งล่าสุด ไฟล์ HAIKU/COMPLETE รุ่นก่อนเป็น checkpoint เก่า

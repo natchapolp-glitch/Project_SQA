@@ -1,3 +1,7 @@
+# Current account update — 184/204 primary runs
+
+Read `docs/ACCOUNT_UPDATE_20261002.md` for the latest results. Strict Haiku primary:179/204. JxPath iteration3:28 completed methods, kept separate. New account Claude quota:100%. Reports below are historical183-run checkpoints. Experiment incomplete; Classroom not submitted.
+
 # Latest submission checkpoint — 17 bugs, 2 October 2026
 
 Use **20261002_DEADLINE** PDF/PPTX and `docs/SUBMISSION_READY_20261002_DEADLINE.md`.
