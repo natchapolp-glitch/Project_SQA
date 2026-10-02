@@ -1,0 +1,24 @@
+{
+  "approval_state": "integration_proposal_not_frozen",
+  "note": "Aom merges agreed fields into the complete frozen experiment protocol before seeding. This file is not a standalone experiment protocol or permission to send requests.",
+  "start_at": "2026-10-03T05:00:00+07:00",
+  "generation_cutoff_at": "2026-10-05T01:00:00+07:00",
+  "models": {
+    "kku-claude": {"id": "claude-sonnet-5", "name": "claude-sonnet-5", "family": "sonnet"},
+    "kku-gemini": {"id": "gemini-3.5-flash-lite", "name": "gemini-3.5-flash-lite", "family": "flash-lite"}
+  },
+  "generation": {
+    "input_contract": "champ-generation-input-v1",
+    "temperature": 0,
+    "max_tokens": 4096,
+    "prompt_token_reserve": null,
+    "context_policy_id": null,
+    "prompt_policy_id": null,
+    "suite_policy_id": null,
+    "suite_resolver": null
+  },
+  "settings_status": "Temperature 0 and max_tokens 4096 are Champ proposals for both methods, not team-frozen values. Prompt reserve must cover the largest prepared UTF-8 prompt conservatively plus provider framing overhead; inspect pilot context/model limits before freeze.",
+  "prepare_artifacts": ["prompt.md", "context-manifest.json"],
+  "prepare_metadata": ["source_sha256", "prompt_sha256", "prompt_policy_id"],
+  "quota_policy": "Observed remaining only; reserve prompt bound + max_tokens atomically. One outstanding request per account, local global limit 2. No automatic account rotation, assumed reset, or semantic retry. Notify user before acknowledgement enables the next account."
+}

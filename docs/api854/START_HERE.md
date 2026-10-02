@@ -17,6 +17,7 @@
 3. [Ownership สำหรับระบบ](../../experiments/configs/api854-20261003/ownership.json)
 4. [ข้อมูลเงื่อนไขที่ผู้ใช้ยืนยัน](../../experiments/configs/api854-20261003/confirmed-plan-constraints.json)
 5. [API reference และ file map เดิม](../superpowers/plans/2026-10-02-sqa-api854-three-person-parallel.md) ใช้เฉพาะส่วนที่ไม่ขัดแผนล่าสุด
+6. [API worker ของแชมป์และสิ่งที่ออม/บีมต้องส่งก่อน pilot](API_WORKER_HANDOFF_TH.md)
 
 ## เริ่มทำพร้อมกัน
 
