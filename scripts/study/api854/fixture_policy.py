@@ -24,6 +24,18 @@ def validate_recipe(recipe, source_hashes=None):
     if source_hashes is not None and any(source_hashes.get(name) != recipe['source_sha256'][name] for name in RECIPE_SOURCES):
         raise ValueError('Explicit recipe source differs from frozen protocol')
     return True
+POLICY_V4 = 'beam-explicit-fixtures-v4-proposal'
+
+# Added capability recipes are fixed before any buggy evaluation. Mutators need
+# structural post-state; unsupported helpers/serialization hooks stay excluded.
+ADDITIONAL_METHODS = {
+    'org.apache.commons.codec.language.Caverphone': {'isCaverphoneEqual', 'encode', 'caverphone'},
+    'org.apache.commons.codec.language.Metaphone': {'isLastChar', 'isMetaphoneEqual', 'getMaxCodeLen', 'encode', 'metaphone'},
+    'org.apache.commons.codec.language.SoundexUtils': {'differenceEncoded', 'clean'},
+    'org.apache.commons.collections.map.Flat3Map': {'containsKey', 'containsValue', 'equals', 'isEmpty', 'size',
+        'clone', 'get', 'put', 'remove', 'toString', 'clear', 'putAll'},
+    'org.apache.commons.csv.ExtendedBufferedReader': {'getLineNumber', 'lookAhead', 'readAgain', 'read', 'readLine'},
+}
 
 SCALARS = {'boolean', 'byte', 'short', 'int', 'long', 'float', 'double', 'char',
            'java.lang.String', 'java.lang.Boolean', 'java.lang.Byte', 'java.lang.Short',
@@ -54,7 +66,7 @@ CLOSURE_METHODS = {'createEntryLattice', 'createInitialEstimateLattice', 'flowTh
 def select(targets, policy):
     if policy is None:
         return targets, []
-    if policy != POLICY:
+    if policy not in {POLICY, POLICY_V4}:
         raise ValueError('Unknown explicit fixture policy')
     selected, excluded = [], []
     for target in targets:
@@ -62,6 +74,9 @@ def select(targets, policy):
         family = CLOSURE if name == 'com.google.javascript.jscomp.TypeInference' else JXPATH if name in {
             'org.apache.commons.jxpath.ri.model.dom.DOMNodePointer',
             'org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer'} else set()
+        extra = policy == POLICY_V4 and name in ADDITIONAL_METHODS
+        if extra:
+            family = {'java.io.Reader'}
         reason = None
         if not family:
             reason = 'explicit_project_recipe_not_reviewed'
@@ -69,6 +84,10 @@ def select(targets, policy):
             reason = 'constructor_or_identity_oracle_not_reviewed'
         elif family is CLOSURE and target['method'] not in CLOSURE_METHODS:
             reason = 'specialized_ast_recipe_not_reviewed'
+        elif extra and target['method'] not in ADDITIONAL_METHODS[name]:
+            reason = 'additional_method_preconditions_or_state_not_reviewed'
+        elif extra and name.endswith('ExtendedBufferedReader') and target['parameter_types']:
+            reason = 'reader_buffer_offset_bounds_recipe_not_reviewed'
         else:
             required = set(filter(None, (target['constructor_types'] + ',' + target['parameter_types']).split(',')))
             missing = required - SCALARS - family

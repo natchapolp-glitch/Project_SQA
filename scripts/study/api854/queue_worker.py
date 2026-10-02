@@ -97,6 +97,9 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
         raise ValueError("Development work requires a separate beam-development-* run ID")
     if stage == "generate" and any(a not in {"cmaes", "fscs-art"} for a in approaches):
         raise ValueError("KKU generation is separate and requires API/account/prompt preflight")
+    if (protocol.get('fixture_policy_id')
+            and protocol.get('generation', {}).get('prepare_contract') == 'aom-beam-prepare-v3'):
+        raise ValueError('Explicit fixture recipes require a new shared preparation contract before claim')
     identifier(worker_id, "worker_id")
     protocol_hash = sha256(protocol_path)
     # Queue contract cannot filter claims by run/protocol. Refuse mixed eligible

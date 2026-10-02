@@ -13,6 +13,12 @@ from .preparation import compose, POLICY_V3, POLICY_V4, policy_for, shared_conte
 CONTEXT_POLICY = "modified-java-and-root-build-v1"
 PROMPT_POLICY = "beam-fixed-targets-junit4-v1"
 EXPLICIT_PROMPT_POLICY = 'beam-fixed-targets-explicit-fixtures-v3-junit4-proposal'
+SCALAR_PROMPT_POLICY = 'beam-fixed-targets-explicit-fixtures-v4-junit4-proposal'
+
+
+def explicit_prompt_policy(fixture_policy):
+    from .fixture_policy import POLICY, POLICY_V4
+    return {POLICY: EXPLICIT_PROMPT_POLICY, POLICY_V4: SCALAR_PROMPT_POLICY}[fixture_policy]
 
 
 def export_prompt(job, protocol, targets, context_dir):
@@ -20,26 +26,26 @@ def export_prompt(job, protocol, targets, context_dir):
     if generation is None:
         return None  # Core preflight records context; it cannot approve an AI prompt.
     fixture_policy = protocol.get('fixture_policy_id')
-    prompt_policy = EXPLICIT_PROMPT_POLICY if fixture_policy else PROMPT_POLICY
+    prompt_policy = explicit_prompt_policy(fixture_policy) if fixture_policy else PROMPT_POLICY
     if (generation.get("context_policy_id") != CONTEXT_POLICY
             or generation.get("prompt_policy_id") != prompt_policy
             or protocol["test_method_cap"] != 30):
         raise ValueError("Preparation prompt/context policies differ from this implementation")
     fixture_metadata, support = {}, ''
     if fixture_policy:
-        from .fixture_policy import POLICY, select
-        if fixture_policy != POLICY or generation.get('fixture_policy_id') != POLICY or select(targets, POLICY)[1]:
+        from .fixture_policy import select
+        if generation.get('fixture_policy_id') != fixture_policy or select(targets, fixture_policy)[1]:
             raise ValueError('Explicit fixture targets/policy must be frozen consistently')
         names = ['algorithms/java/SqaProbe.java', 'scripts/study/api854/fixture_policy.py']
         sources = {name: (ROOT / name).read_bytes().decode('utf-8') for name in names}
         hashes = {name: sha256(ROOT / name) for name in names}
         if any(protocol.get('source_sha256', {}).get(name) != value for name, value in hashes.items()):
             raise ValueError('Explicit fixture recipe source hashes differ from protocol')
-        recipe = {'schema_version': 1, 'fixture_policy_id': POLICY, 'source_sha256': hashes,
+        recipe = {'schema_version': 1, 'fixture_policy_id': fixture_policy, 'source_sha256': hashes,
             'sources': sources, 'scope': 'Same fixture construction/projection knowledge for all four approaches; no execution feedback'}
         recipe_path = context_dir / 'fixture-recipes.json'
         write_json(recipe_path, recipe)
-        fixture_metadata = {'fixture_policy_id': POLICY, 'fixture_recipes_sha256': sha256(recipe_path)}
+        fixture_metadata = {'fixture_policy_id': fixture_policy, 'fixture_recipes_sha256': sha256(recipe_path)}
         support = ('\n\nExplicit fixture policy and recipe definitions (generation support, separate from production source):\n'
             'Use these definitions to construct valid non-null receiver/dependency graphs and meaningful state assertions. '
             'Text/processing-instruction targets need those node kinds. Iterator/sort anchors belong to the receiver. '
@@ -72,7 +78,7 @@ def execute(job, protocol, results, worktrees, d4j):
     v3 = shared_context(contract)
     explicit = contract == POLICY_V4['contract']
     if protocol.get('fixture_policy_id') and (v3 or contract == 'aom-beam-prepare-v2') and not explicit:
-        raise ValueError('Explicit fixtures require new shared-v4 prompt and preparation')
+        raise ValueError('Explicit fixtures require a new shared preparation contract with matching recipe and prompt')
     context_policy = POLICY_V3["context_policy_id"] if v3 else CONTEXT_POLICY
     if protocol.get("context_selection") != context_policy:
         raise ValueError("Frozen protocol must declare this explicit fixed-context selection")
@@ -103,7 +109,7 @@ def execute(job, protocol, results, worktrees, d4j):
                 recipe = recipe_document(protocol['source_sha256']) if explicit else None
                 preparation = compose(output / "context", classes=classes, targets=targets, policy=policy_for(contract),
                     modified_sources=sources, fixture_classes=fixture_classes, fixture_recipe=recipe)
-            elif protocol.get("generation", {}).get("prompt_policy_id") in {PROMPT_POLICY, EXPLICIT_PROMPT_POLICY}:
+            elif protocol.get("generation", {}).get("prompt_policy_id") in {PROMPT_POLICY, EXPLICIT_PROMPT_POLICY, SCALAR_PROMPT_POLICY}:
                 prompt = export_prompt(job, protocol, targets, output / "context")
             else:
                 preparation = compose(output / "context", classes=classes, targets=targets)
