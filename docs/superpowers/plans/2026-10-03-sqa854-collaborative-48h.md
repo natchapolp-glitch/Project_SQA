@@ -86,6 +86,8 @@ T0 คือเวลาที่ทีมเริ่มตามแผนจ�
 - **บีม:** shard B 285 bugs ดูผลทั้งสี่วิธี + ดูแล evaluation coordinator
 - **ออม:** shard C 284 bugs ดูผลทั้งสี่วิธี + ดูแล queue/analysis coordinator
 
+รายการเจ้าของแต่ละ project/bug ที่ระบุจริง: `docs/api854/BUG_OWNERSHIP_20261003_TH.md` และ machine-readable `experiments/configs/api854-20261003/ownership.json` ใช้รายการนี้ก่อนแจกงาน ไม่มี bug ซ้ำระหว่างสามคน และทุกคนมี bugs จากทั้ง 17 projects จำนวนสมดุลแต่เวลาอาจต่างกัน ให้ปรับหลัง pilot ผ่าน reassignment event
+
 shard คือเจ้าของตรวจรับ ไม่ใช่การแบ่ง quota ล็อกกับคน จำนวนเครื่อง/บัญชีกระจายจากคิวกลาง และ reassignment ต้องมี event/lease เพื่อไม่ทำงานซ้ำ
 
 - [ ] รัน algorithms ล่วงหน้าและให้ API generation/evaluation ซ้อนกัน แจกงานตาม readiness ไม่รอ batch ทั้งหมดเสร็จก่อนทดสอบ
