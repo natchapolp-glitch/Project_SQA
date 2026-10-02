@@ -1,6 +1,6 @@
 """Download and bind shared-v3 preparation identically for CPU and API workers."""
 import json
-from .preparation import POLICY_V4, shared_context, digest, validate
+from .preparation import explicit_context, shared_context, digest, validate
 
 
 def load(client, job, protocol):
@@ -26,11 +26,11 @@ def load(client, job, protocol):
         raise ValueError("Shared preparation identity/stage metadata differs")
     targets, prompt, policy = download("targets.json"), download("prompt.md"), download("prepare-policy.json")
     recipe = None
-    if metadata.get('prepare_contract') == POLICY_V4['contract']:
+    if explicit_context(metadata.get('prepare_contract')):
         raw_recipe = download('fixture-recipes.json')
         recipe = json.loads(raw_recipe)
         from .fixture_policy import validate_recipe
-        validate_recipe(recipe, protocol['source_sha256'])
+        validate_recipe(recipe, protocol['source_sha256'], policy=protocol['fixture_policy_id'])
         if digest(raw_recipe) != metadata.get('fixture_recipes_sha256'):
             raise ValueError('Explicit recipe artifact bytes differ')
     validate(manifest, metadata, prompt, targets, policy, require_eligible=True, fixture_recipe=recipe)

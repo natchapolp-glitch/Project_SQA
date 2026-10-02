@@ -38,12 +38,27 @@ POLICY_V4 = {**POLICY_V3, "contract": "aom-beam-prepare-v4",
     "scope": "development proposal for Closure-176/JxPath-1 only; remaining 18 pilot bugs have no recipe approval"}
 
 
+POLICY_V5 = {**POLICY_V4, 'contract': 'aom-beam-prepare-v5',
+    'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v5',
+    'fixture_policy': 'beam-explicit-fixtures-v4-proposal',
+    'scope': 'five-bug development proposal only; remaining 15 pilot bugs lack reviewed recipes'}
+
+
+def explicit_context(contract):
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract']}
+
+
+def explicit_scope(policy):
+    original = {('Closure', 176), ('JxPath', 1)}
+    return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
+
+
 def shared_context(contract):
-    return contract in {POLICY_V3['contract'], POLICY_V4['contract']}
+    return contract == POLICY_V3['contract'] or explicit_context(contract)
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3, POLICY_V4):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")
@@ -127,7 +142,7 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
     if policy != policy_for(policy["contract"]):
         raise ValueError("Shared policy is not implemented")
     v3 = shared_context(policy['contract'])
-    explicit = policy == POLICY_V4
+    explicit = explicit_context(policy['contract'])
     if manifest["selection_policy_id"] != policy["context_policy_id"] or manifest["contains_execution_logs"] is not False:
         raise ValueError("Fixed context selection differs from shared policy")
     files = manifest["source_files"]
@@ -142,11 +157,11 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
     declarations = clean_targets(targets or [])
     if explicit:
         from .fixture_policy import select, validate_recipe
-        if (manifest['project'], manifest['bug_id']) not in {('Closure', 176), ('JxPath', 1)}:
-            raise ValueError('Explicit fixture proposal is reviewed for two bugs only')
+        if (manifest['project'], manifest['bug_id']) not in explicit_scope(policy):
+            raise ValueError('Explicit fixture proposal is reviewed for two bugs only' if policy == POLICY_V4 else 'Explicit fixture proposal is restricted to its five reviewed development bugs')
         if select(declarations, policy['fixture_policy'])[1] or not declarations:
             raise ValueError('Shared explicit targets require reviewed capabilities')
-        validate_recipe(fixture_recipe)
+        validate_recipe(fixture_recipe, policy=policy['fixture_policy'])
     elif fixture_recipe is not None:
         raise ValueError('Explicit recipes require a new preparation contract')
     sources = {row["path"]: row["sha256"] for row in files if row["path"].endswith(".java")}
@@ -260,11 +275,11 @@ def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=Fa
         raise ValueError("Eligibility state differs from declarations")
     if require_eligible and not declarations:
         raise ValueError("Shared declarations are required before generation")
-    if selected == POLICY_V4:
+    if explicit_context(selected['contract']):
         from .fixture_policy import select, validate_recipe
-        if (manifest['project'], manifest['bug_id']) not in {('Closure', 176), ('JxPath', 1)}:
-            raise ValueError('Explicit fixture proposal is reviewed for two bugs only')
-        validate_recipe(fixture_recipe)
+        if (manifest['project'], manifest['bug_id']) not in explicit_scope(selected):
+            raise ValueError('Explicit fixture proposal is reviewed for two bugs only' if selected == POLICY_V4 else 'Explicit fixture proposal is restricted to its five reviewed development bugs')
+        validate_recipe(fixture_recipe, policy=selected['fixture_policy'])
         if (metadata.get('fixture_policy_id') != selected['fixture_policy']
                 or metadata.get('fixture_recipes_sha256') != digest(encoded(fixture_recipe))
                 or encoded(fixture_recipe) not in prompt or select(declarations, selected['fixture_policy'])[1]):

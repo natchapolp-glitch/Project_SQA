@@ -87,7 +87,7 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
     if stage not in {"prepare", "generate", "evaluate"} or not approaches or any(a not in APPROACHES for a in approaches):
         raise ValueError("Invalid stage/approaches before claim")
     if protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3" and protocol.get("fixture_policy_id"):
-        raise ValueError("Shared-v3 explicit fixtures require a new reviewed preparation policy")
+        raise ValueError("Explicit fixtures require a new shared preparation contract before claim and a new reviewed preparation policy")
     if owner not in {"beam", "champ", "aom"} or (owner != "beam" and not getattr(client, "team_routing", False)
             and owner not in protocol.get("worker_routing", {}).get(stage, [])):
         raise ValueError("Cross-owner stage routing must be declared by the shared protocol")
@@ -99,9 +99,6 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
         raise ValueError("Development work requires a separate beam-development-* run ID")
     if stage == "generate" and any(a not in {"cmaes", "fscs-art"} for a in approaches):
         raise ValueError("KKU generation is separate and requires API/account/prompt preflight")
-    if (protocol.get('fixture_policy_id')
-            and protocol.get('generation', {}).get('prepare_contract') == 'aom-beam-prepare-v3'):
-        raise ValueError('Explicit fixture recipes require a new shared preparation contract before claim')
     identifier(worker_id, "worker_id")
     protocol_hash = sha256(protocol_path)
     # Queue contract cannot filter claims by run/protocol. Refuse mixed eligible

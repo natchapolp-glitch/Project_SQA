@@ -97,11 +97,12 @@ def validate_protocol(protocol):
         raise ValueError("This worker makes no compatibility or semantic repairs")
     if protocol.get('fixture_policy_id') not in {None, 'beam-explicit-fixtures-v3-proposal', 'beam-explicit-fixtures-v4-proposal'}:
         raise ValueError('Unknown fixture policy')
-    from .preparation import POLICY_V4, shared_context
+    from .preparation import explicit_context, policy_for, shared_context
     contract = protocol.get('generation', {}).get('prepare_contract')
     if shared_context(contract) or contract == 'aom-beam-prepare-v2':
         policy = protocol.get('fixture_policy_id')
-        if ((contract == POLICY_V4['contract']) != bool(policy)
+        if (explicit_context(contract) != bool(policy)
+                or (policy and policy_for(contract)['fixture_policy'] != policy)
                 or protocol.get('generation', {}).get('fixture_policy_id') != policy):
             raise ValueError('Explicit fixture policy requires matching shared-v4 preparation')
     if not implementation_matches(protocol.get("source_sha256")):

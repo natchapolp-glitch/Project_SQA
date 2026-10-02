@@ -25,8 +25,9 @@ def protocol_document(settings):
     generation = protocol.get("generation", {})
     if protocol.get('fixture_policy_id'):
         from .prepare_worker import explicit_prompt_policy
-        from .preparation import POLICY_V4
-        expected_prompt = POLICY_V4['prompt_policy_id'] if generation.get('prepare_contract') == POLICY_V4['contract'] else explicit_prompt_policy(protocol['fixture_policy_id'])
+        from .preparation import explicit_context, policy_for
+        contract = generation.get('prepare_contract')
+        expected_prompt = policy_for(contract)['prompt_policy_id'] if explicit_context(contract) else explicit_prompt_policy(protocol['fixture_policy_id'])
         if (generation.get('fixture_policy_id') != protocol['fixture_policy_id']
                 or generation.get('prompt_policy_id') != expected_prompt):
             raise ValueError('Explicit fixture policy/prompt has not been frozen consistently')
