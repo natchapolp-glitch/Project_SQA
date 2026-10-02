@@ -1,5 +1,7 @@
 # SQA API 854 Bugs — Three-Person Parallel Implementation Plan
 
+> **ปรับแผนวันที่ 2026-10-03:** ใช้ `2026-10-03-sqa854-collaborative-48h.md` เป็นแผนปัจจุบัน โดยช่วยกันแก้งานยากก่อนขยาย batch และต้องแจ้งผู้ใช้ก่อนสลับบัญชีเมื่อ quota หมด รายละเอียด API ในเอกสารนี้ยังเป็นข้อมูลอ้างอิง
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement task by task. แชมป์ บีม ออมทำพร้อมกันใน branch ของตนเอง แผนนี้แทนขอบเขตเดิม 17 bugs
 
 **Goal:** ประเมิน 854 active bugs จาก 17 projects ด้วย CMA-ES, FSCS-ART, KKU Claude และ KKU Gemini อย่างละหนึ่งรอบ รวม 3,416 งาน พร้อมผลและหลักฐานที่ตรวจสอบย้อนกลับได้
