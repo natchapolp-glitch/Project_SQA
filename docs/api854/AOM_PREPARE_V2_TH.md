@@ -1,5 +1,8 @@
 # Prepare v2, policy ร่วม, runner ทุก owner และ checklist Gate A
 
+ชุดใหม่ supersedes preparation proposal นี้: [AOM_PREPARE_V3_HANDOFF_TH.md](AOM_PREPARE_V3_HANDOFF_TH.md).
+v2 เดิมเก็บเป็น immutable evidence; discovery import/receiver/shared fixtures อยู่ใน v3 แล้ว.
+
 ออมทำทั้งสี่ส่วนแล้ว โดยเก็บ v1 และ frozen-core bytes เดิม.
 ชุดนี้เป็น proposal พร้อมตรวจรับ ไม่ใช่ frozen primary protocol หรือการเปิด live generation.
 
@@ -26,6 +29,11 @@ prompt ใหญ่สุด 99,439 UTF-8 bytes ณ ชุดที่ยัง�
 แทนรายการจริง. API worker ปฏิเสธชุดที่ไม่มี eligible declarations ก่อน generation.
 เมื่อได้หลักฐาน ให้สร้าง version ใหม่ด้วย --eligibility-root ไม่แก้ v2 ที่ส่งตรวจรับแล้ว.
 eligible declarations หมายถึง discovery support เท่านั้น; semantic/oracle review ยังแยกต่างหาก.
+
+อัปเดตหลังตรวจบีม `44dd5cb0`: ได้รับ source-matched discovery ครบ 20 bugs/691 declarations
+และ exclusions 3 รายการแล้ว แต่ยังไม่ import ลง inventories ของ v2 เดิม.
+ดู [ผลตรวจ context/prompt และสัญญาที่ต้องรวม](AOM_BEAM_HANDOFF_REVIEW_TH.md)
+พร้อม checklist `gate-a-beam-review-release.json`. Semantic/oracle และ primary approval ยัง pending.
 
 ## 2. Policy ชุดเดียว
 

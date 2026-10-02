@@ -1,0 +1,1721 @@
+Generate a deterministic JUnit 4 Java suite using only the supplied fixed source, build context, shared target declarations and fixture policy. Return complete Java code fences with explicit package declarations, public test classes and imports. Use at most 30 @Test methods. Use meaningful assertions derived from fixed API behavior; avoid non-null-only or empty tests, randomness, time dependence and external services. Do not modify or shadow production code. No assertion repairs or feedback loop. Suites exceeding 30 methods are rejected entirely.
+
+Project: JxPath; fixed revision: 22f.
+Modified target classes:
+org.apache.commons.jxpath.ri.model.dom.DOMNodePointer
+
+Fixture policy: common production types in fixed/buggy; simplest supported constructor selected by the shared probe. Use only the listed shared signatures and common fixture types.
+
+Shared target declarations:
+```json
+[
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "equalStrings",
+    "parameter_types": "java.lang.String,java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "findEnclosingAttribute",
+    "parameter_types": "org.w3c.dom.Node,java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "getLocalName",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "getNamespaceURI",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "getPrefix",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "testNode",
+    "parameter_types": "org.w3c.dom.Node,org.apache.commons.jxpath.ri.compiler.NodeTest"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "<init>",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "asPath",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "attributeIterator",
+    "parameter_types": "org.apache.commons.jxpath.ri.QName"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "childIterator",
+    "parameter_types": "org.apache.commons.jxpath.ri.compiler.NodeTest,boolean,org.apache.commons.jxpath.ri.model.NodePointer"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "compareChildNodePointers",
+    "parameter_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.apache.commons.jxpath.ri.model.NodePointer"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "createAttribute",
+    "parameter_types": "org.apache.commons.jxpath.JXPathContext,org.apache.commons.jxpath.ri.QName"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "createChild",
+    "parameter_types": "org.apache.commons.jxpath.JXPathContext,org.apache.commons.jxpath.ri.QName,int"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "createChild",
+    "parameter_types": "org.apache.commons.jxpath.JXPathContext,org.apache.commons.jxpath.ri.QName,int,java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "equals",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getBaseValue",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getDefaultNamespaceURI",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getImmediateNode",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getLanguage",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getLength",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getName",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getNamespaceResolver",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getNamespaceURI",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getNamespaceURI",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getPointerByID",
+    "parameter_types": "org.apache.commons.jxpath.JXPathContext,java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionByQName",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionOfElement",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionOfPI",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionOfTextNode",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getValue",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "hashCode",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isActual",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isCollection",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isLanguage",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isLeaf",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "matchesQName",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "namespaceIterator",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "namespacePointer",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "remove",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "setValue",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "stringValue",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "testNode",
+    "parameter_types": "org.apache.commons.jxpath.ri.compiler.NodeTest"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.w3c.dom.Node,java.util.Locale",
+    "method": "<init>",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.w3c.dom.Node,java.util.Locale,java.lang.String",
+    "method": "<init>",
+    "parameter_types": ""
+  }
+]
+```
+
+Common compiled production fixture classes (eligibility only, not oracle approval):
+```json
+[
+  "org.apache.commons.jxpath.AbstractFactory",
+  "org.apache.commons.jxpath.BasicNodeSet",
+  "org.apache.commons.jxpath.BasicVariables",
+  "org.apache.commons.jxpath.ClassFunctions",
+  "org.apache.commons.jxpath.CompiledExpression",
+  "org.apache.commons.jxpath.Container",
+  "org.apache.commons.jxpath.DynamicPropertyHandler",
+  "org.apache.commons.jxpath.ExceptionHandler",
+  "org.apache.commons.jxpath.ExpressionContext",
+  "org.apache.commons.jxpath.ExtendedKeyManager",
+  "org.apache.commons.jxpath.Function",
+  "org.apache.commons.jxpath.FunctionLibrary",
+  "org.apache.commons.jxpath.Functions",
+  "org.apache.commons.jxpath.IdentityManager",
+  "org.apache.commons.jxpath.JXPathAbstractFactoryException",
+  "org.apache.commons.jxpath.JXPathBasicBeanInfo",
+  "org.apache.commons.jxpath.JXPathBeanInfo",
+  "org.apache.commons.jxpath.JXPathContext",
+  "org.apache.commons.jxpath.JXPathContextFactory",
+  "org.apache.commons.jxpath.JXPathContextFactoryConfigurationError",
+  "org.apache.commons.jxpath.JXPathException",
+  "org.apache.commons.jxpath.JXPathFunctionNotFoundException",
+  "org.apache.commons.jxpath.JXPathIntrospector",
+  "org.apache.commons.jxpath.JXPathInvalidAccessException",
+  "org.apache.commons.jxpath.JXPathInvalidSyntaxException",
+  "org.apache.commons.jxpath.JXPathNotFoundException",
+  "org.apache.commons.jxpath.JXPathTypeConversionException",
+  "org.apache.commons.jxpath.KeyManager",
+  "org.apache.commons.jxpath.MapDynamicPropertyHandler",
+  "org.apache.commons.jxpath.NodeSet",
+  "org.apache.commons.jxpath.PackageFunctions",
+  "org.apache.commons.jxpath.Pointer",
+  "org.apache.commons.jxpath.Variables",
+  "org.apache.commons.jxpath.XMLDocumentContainer",
+  "org.apache.commons.jxpath.functions.ConstructorFunction",
+  "org.apache.commons.jxpath.functions.MethodFunction",
+  "org.apache.commons.jxpath.ri.Compiler",
+  "org.apache.commons.jxpath.ri.EvalContext",
+  "org.apache.commons.jxpath.ri.InfoSetUtil",
+  "org.apache.commons.jxpath.ri.JXPathCompiledExpression",
+  "org.apache.commons.jxpath.ri.JXPathContextFactoryReferenceImpl",
+  "org.apache.commons.jxpath.ri.JXPathContextReferenceImpl",
+  "org.apache.commons.jxpath.ri.NamespaceResolver",
+  "org.apache.commons.jxpath.ri.Parser",
+  "org.apache.commons.jxpath.ri.QName",
+  "org.apache.commons.jxpath.ri.axes.AncestorContext",
+  "org.apache.commons.jxpath.ri.axes.AttributeContext",
+  "org.apache.commons.jxpath.ri.axes.ChildContext",
+  "org.apache.commons.jxpath.ri.axes.DescendantContext",
+  "org.apache.commons.jxpath.ri.axes.InitialContext",
+  "org.apache.commons.jxpath.ri.axes.NamespaceContext",
+  "org.apache.commons.jxpath.ri.axes.NodeSetContext",
+  "org.apache.commons.jxpath.ri.axes.ParentContext",
+  "org.apache.commons.jxpath.ri.axes.PrecedingOrFollowingContext",
+  "org.apache.commons.jxpath.ri.axes.PredicateContext",
+  "org.apache.commons.jxpath.ri.axes.RootContext",
+  "org.apache.commons.jxpath.ri.axes.SelfContext",
+  "org.apache.commons.jxpath.ri.axes.SimplePathInterpreter",
+  "org.apache.commons.jxpath.ri.axes.UnionContext",
+  "org.apache.commons.jxpath.ri.compiler.Constant",
+  "org.apache.commons.jxpath.ri.compiler.CoreFunction",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperation",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationAdd",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationAnd",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationCompare",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationDivide",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThan",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThanOrEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationLessThan",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationLessThanOrEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationMod",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationMultiply",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationNegate",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationNotEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationOr",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationSubtract",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationUnion",
+  "org.apache.commons.jxpath.ri.compiler.Expression",
+  "org.apache.commons.jxpath.ri.compiler.ExpressionPath",
+  "org.apache.commons.jxpath.ri.compiler.ExtensionFunction",
+  "org.apache.commons.jxpath.ri.compiler.LocationPath",
+  "org.apache.commons.jxpath.ri.compiler.NameAttributeTest",
+  "org.apache.commons.jxpath.ri.compiler.NodeNameTest",
+  "org.apache.commons.jxpath.ri.compiler.NodeTest",
+  "org.apache.commons.jxpath.ri.compiler.NodeTypeTest",
+  "org.apache.commons.jxpath.ri.compiler.Operation",
+  "org.apache.commons.jxpath.ri.compiler.Path",
+  "org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest",
+  "org.apache.commons.jxpath.ri.compiler.Step",
+  "org.apache.commons.jxpath.ri.compiler.TreeCompiler",
+  "org.apache.commons.jxpath.ri.compiler.VariableReference",
+  "org.apache.commons.jxpath.ri.model.NodeIterator",
+  "org.apache.commons.jxpath.ri.model.NodePointer",
+  "org.apache.commons.jxpath.ri.model.NodePointerFactory",
+  "org.apache.commons.jxpath.ri.model.VariablePointer",
+  "org.apache.commons.jxpath.ri.model.VariablePointerFactory",
+  "org.apache.commons.jxpath.ri.model.beans.BeanAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.BeanPointer",
+  "org.apache.commons.jxpath.ri.model.beans.BeanPointerFactory",
+  "org.apache.commons.jxpath.ri.model.beans.BeanPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionAttributeNodeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionChildNodeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionNodeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionPointer",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionPointerFactory",
+  "org.apache.commons.jxpath.ri.model.beans.LangAttributePointer",
+  "org.apache.commons.jxpath.ri.model.beans.NullElementPointer",
+  "org.apache.commons.jxpath.ri.model.beans.NullPointer",
+  "org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.beans.PropertyIterator",
+  "org.apache.commons.jxpath.ri.model.beans.PropertyOwnerPointer",
+  "org.apache.commons.jxpath.ri.model.beans.PropertyPointer",
+  "org.apache.commons.jxpath.ri.model.container.ContainerPointer",
+  "org.apache.commons.jxpath.ri.model.container.ContainerPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dom.DOMAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.dom.DOMAttributePointer",
+  "org.apache.commons.jxpath.ri.model.dom.DOMNamespaceIterator",
+  "org.apache.commons.jxpath.ri.model.dom.DOMNodeIterator",
+  "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+  "org.apache.commons.jxpath.ri.model.dom.DOMPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dom.NamespacePointer",
+  "org.apache.commons.jxpath.ri.model.dynabeans.DynaBeanPointer",
+  "org.apache.commons.jxpath.ri.model.dynabeans.DynaBeanPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dynabeans.DynaBeanPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.dynabeans.StrictLazyDynaBeanPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPointer",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPropertyIterator",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMAttributePointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNamespaceIterator",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNamespacePointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNodeIterator",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMPointerFactory",
+  "org.apache.commons.jxpath.ri.parser.ParseException",
+  "org.apache.commons.jxpath.ri.parser.SimpleCharStream",
+  "org.apache.commons.jxpath.ri.parser.Token",
+  "org.apache.commons.jxpath.ri.parser.TokenMgrError",
+  "org.apache.commons.jxpath.ri.parser.XPathParser",
+  "org.apache.commons.jxpath.ri.parser.XPathParserConstants",
+  "org.apache.commons.jxpath.ri.parser.XPathParserTokenManager",
+  "org.apache.commons.jxpath.servlet.Constants",
+  "org.apache.commons.jxpath.servlet.HttpSessionAndServletContext",
+  "org.apache.commons.jxpath.servlet.HttpSessionHandler",
+  "org.apache.commons.jxpath.servlet.JXPathServletContexts",
+  "org.apache.commons.jxpath.servlet.KeywordVariables",
+  "org.apache.commons.jxpath.servlet.PageContextHandler",
+  "org.apache.commons.jxpath.servlet.PageScopeContext",
+  "org.apache.commons.jxpath.servlet.PageScopeContextHandler",
+  "org.apache.commons.jxpath.servlet.ServletContextHandler",
+  "org.apache.commons.jxpath.servlet.ServletRequestAndContext",
+  "org.apache.commons.jxpath.servlet.ServletRequestHandler",
+  "org.apache.commons.jxpath.util.BasicTypeConverter",
+  "org.apache.commons.jxpath.util.ClassLoaderUtil",
+  "org.apache.commons.jxpath.util.JXPath11CompatibleTypeConverter",
+  "org.apache.commons.jxpath.util.KeyManagerUtils",
+  "org.apache.commons.jxpath.util.MethodLookupUtils",
+  "org.apache.commons.jxpath.util.ReverseComparator",
+  "org.apache.commons.jxpath.util.TypeConverter",
+  "org.apache.commons.jxpath.util.TypeUtils",
+  "org.apache.commons.jxpath.util.ValueUtils",
+  "org.apache.commons.jxpath.xml.DOMParser",
+  "org.apache.commons.jxpath.xml.DocumentContainer",
+  "org.apache.commons.jxpath.xml.JDOMParser",
+  "org.apache.commons.jxpath.xml.XMLParser",
+  "org.apache.commons.jxpath.xml.XMLParser2"
+]
+```
+
+Reach the target with meaningful domain arguments. Do not substitute constructor exceptions, null-only inputs or empty collections for behavior assertions. No execution feedback or repair loop.
+
+## build.xml
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--build.xml generated by maven from project.xml version 1.2
+  on date June 28 2004, time 1759-->
+
+<project default="jar" name="commons-jxpath" basedir=".">
+  <property name="defaulttargetdir" value="${basedir}/target">
+  </property>
+  <property name="libdir" value="${basedir}/target/lib">
+  </property>
+  <property name="classes.dir" value="${basedir}/target/classes">
+  </property>
+  <property name="test.classes.dir" value="${basedir}/target/test-classes">
+  </property>
+  <property name="test.classes.dir" value="${basedir}/target/test-classes">
+  </property>
+  <property name="testreportdir" value="${basedir}/target/test-reports">
+  </property>
+  <property name="distdir" value="dist">
+  </property>
+  <property name="javadocdir" value="${basedir}/dist/docs/api">
+  </property>
+  <property name="final.name" value="commons-jxpath">
+  </property>
+  <target name="init" description="o Initializes some properties">
+    <mkdir dir="${libdir}">
+    </mkdir>
+    <condition property="noget">
+      <equals arg2="only" arg1="${build.sysclasspath}">
+      </equals>
+    </condition>
+  </target>
+  <target name="compile" description="o Compile the code" depends="get-deps">
+    <mkdir dir="${classes.dir}">
+    </mkdir>
+    <javac destdir="${classes.dir}" target="1.6" source="1.6" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="${basedir}/src/java">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      </classpath>
+    </javac>
+    <copy todir="${test.classes.dir}">
+      <fileset dir="src/test">
+        <include name="**/*.xml">
+        </include>
+      </fileset>
+    </copy>
+  </target>
+  <target name="jar" description="o Create the jar" depends="compile,test">
+    <jar jarfile="${defaulttargetdir}/${final.name}.jar" excludes="**/package.html" basedir="${classes.dir}">
+    </jar>
+  </target>
+  <target name="clean" description="o Clean up the generated directories">
+    <delete dir="${defaulttargetdir}">
+    </delete>
+    <delete dir="${distdir}">
+    </delete>
+  </target>
+  <target name="dist" description="o Create a distribution" depends="jar, javadoc">
+    <mkdir dir="dist">
+    </mkdir>
+    <copy todir="dist">
+      <fileset dir="${defaulttargetdir}" includes="*.jar">
+      </fileset>
+      <fileset dir="${basedir}" includes="LICENSE*, README*">
+      </fileset>
+    </copy>
+  </target>
+  <target name="test" description="o Run the test cases" if="test.failure" depends="internal-test">
+    <fail message="There were test failures.">
+    </fail>
+  </target>
+  <target name="test-reports" description="junitreport">
+    <mkdir dir="${testreportdir}/html" />
+    <junitreport todir="${testreportdir}/html">
+      <fileset dir="${testreportdir}" includes="TEST-*.xml" />
+      <report format="frames" todir="${testreportdir}/html" />
+    </junitreport>
+  </target>
+  <target name="internal-test" depends="compile.tests">
+    <mkdir dir="${testreportdir}">
+    </mkdir>
+    <junit dir="./" failureproperty="test.failure" printSummary="yes" fork="true" haltonerror="true">
+      <sysproperty key="basedir" value=".">
+      </sysproperty>
+      <formatter type="xml">
+      </formatter>
+      <formatter usefile="false" type="plain">
+      </formatter>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+        <pathelement path="${test.classes.dir}">
+        </pathelement>
+        <pathelement path="${classes.dir}">
+        </pathelement>
+      </classpath>
+      <batchtest todir="${testreportdir}">
+        <fileset dir="src/test">
+          <include name="**/*Test.java">
+          </include>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  <target name="compile.tests" depends="compile">
+    <mkdir dir="${test.classes.dir}">
+    </mkdir>
+    <javac destdir="${test.classes.dir}" target="1.6" source="1.6" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="${basedir}/src/test">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+        <pathelement path="${classes.dir}">
+        </pathelement>
+      </classpath>
+    </javac>
+    <copy todir="${test.classes.dir}">
+      <fileset dir="${basedir}/src\test">
+        <include name="**/*.xml">
+        </include>
+      </fileset>
+    </copy>
+  </target>
+  <target name="javadoc" description="o Generate javadoc">
+    <mkdir dir="${javadocdir}">
+    </mkdir>
+    <tstamp>
+      <format pattern="2001-yyyy" property="year">
+      </format>
+    </tstamp>
+    <property name="copyright" value="Copyright &amp;copy;  The Apache Software Foundation. All Rights Reserved.">
+    </property>
+    <property name="title" value="JXPath 1.2 API">
+    </property>
+    <javadoc use="true" private="true" destdir="${javadocdir}" author="true" version="true" sourcepath="src/java" packagenames="*">
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+        <pathelement location="${defaulttargetdir}/${final.name}.jar">
+        </pathelement>
+      </classpath>
+    </javadoc>
+  </target>
+  <target name="get-deps" unless="noget" depends="init">
+    <get dest="${libdir}/xerces-2.4.0.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/xerces/xerces/2.4.0/xerces-2.4.0.jar">
+    </get>
+    <get dest="${libdir}/servletapi-2.4.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/servletapi/servletapi/2.4/servletapi-2.4.jar">
+    </get>
+    <get dest="${libdir}/jsp-api-2.0.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/jspapi/jsp-api/2.0/jsp-api-2.0.jar">
+    </get>
+    <get dest="${libdir}/xml-apis-2.0.2.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/xml-apis/xml-apis/2.0.2/xml-apis-2.0.2.jar">
+    </get>
+    <get dest="${libdir}/jdom-1.0.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/jdom/jdom/1.0/jdom-1.0.jar">
+    </get>
+    <get dest="${libdir}/commons-beanutils-1.7.0.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar">
+    </get>
+    <get dest="${libdir}/commons-logging-1.1.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/commons-logging/commons-logging/1.1/commons-logging-1.1.jar">
+    </get>
+    <get dest="${libdir}/junit-3.8.1.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/junit/junit/3.8.1/junit-3.8.1.jar">
+    </get>
+    <get dest="${libdir}/mockrunner-jdk1.3-j2ee1.3-0.4.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/mockrunner-0.4.1.jar">
+    </get>
+  </target>
+  <target name="install-maven">
+    <get dest="${user.home}/maven-install-latest.jar" usetimestamp="true" src="${repo}/maven/maven-install-latest.jar">
+    </get>
+    <unjar dest="${maven.home}" src="${user.home}/maven-install-latest.jar">
+    </unjar>
+  </target>
+</project>
+
+```
+
+## pom.xml
+
+```
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-parent</artifactId>
+    <version>15</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>commons-jxpath</groupId>
+  <artifactId>commons-jxpath</artifactId>
+  <name>Commons JXPath</name>
+  <!-- when cutting a release, be sure to modify the commons.release.version property,
+    found at /project/properties/commons.release.version in this document -->
+  <version>1.4-SNAPSHOT</version>
+  <description>A Java-based implementation of XPath 1.0 that, in addition to XML processing, can inspect/modify Java object graphs (the library's explicit purpose) and even mixed Java/XML structures.</description>
+  <url>http://commons.apache.org/jxpath/</url>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://issues.apache.org/jira/browse/JXPATH</url>
+  </issueManagement>
+  <inceptionYear>2001</inceptionYear>
+  <developers>
+    <developer>
+      <id>dmitri</id>
+      <name>Dmitri Plotnikov</name>
+      <email>dmitri@apache.org</email>
+      <organization />
+    </developer>
+    <developer>
+      <id>craigmcc</id>
+      <name>Craig McClanahan</name>
+      <email>Craig.McClanahan@eng.sun.com</email>
+      <organization>Sun Microsystems</organization>
+    </developer>
+    <developer>
+      <id>mbenson</id>
+      <name>Matt Benson</name>
+      <email>mbenson@apache.org</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/commons/proper/jxpath/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/commons/proper/jxpath/trunk</developerConnection>
+    <url>http://svn.apache.org/repos/asf/commons/proper/jxpath/trunk</url>
+  </scm>
+
+  <properties>
+    <commons.componentid>jxpath</commons.componentid>
+    <!-- should agree with project.version for releases: -->
+    <commons.release.version>1.3</commons.release.version>
+    <commons.jira.id>JXPATH</commons.jira.id>
+    <commons.jira.pid>12310480</commons.jira.pid>
+  </properties> 
+
+  <build>
+    <sourceDirectory>src/java</sourceDirectory>
+    <testSourceDirectory>src/test</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>src/test</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </testResource>
+    </testResources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/bin.xml</descriptor>
+            <descriptor>src/assembly/src.xml</descriptor>
+          </descriptors>
+          <tarLongFileMode>gnu</tarLongFileMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.1.1</version>
+        <scope>runtime</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.4.0</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.4</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>xml-apis</groupId>
+      <artifactId>xml-apis</artifactId>
+      <version>1.3.04</version>
+      <scope>provided</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.0</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.8.2</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.mockrunner</groupId>
+      <artifactId>mockrunner-jdk1.3-j2ee1.3</artifactId>
+      <version>0.4</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>cglib-nodep</groupId>
+          <artifactId>cglib-nodep</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jboss</groupId>
+          <artifactId>jboss-jee</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>nekohtml</groupId>
+          <artifactId>nekohtml</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>struts</groupId>
+          <artifactId>struts</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>oro</groupId>
+          <artifactId>oro</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-validator</groupId>
+          <artifactId>commons-validator</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-digester</groupId>
+          <artifactId>commons-digester</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>taglist-maven-plugin</artifactId>
+        <version>2.2</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <configLocation>${basedir}/checkstyle.xml</configLocation>
+          <excludes>org/apache/commons/jxpath/ri/parser/*</excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <targetJdk>1.3</targetJdk>
+          <excludes>
+            <exclude>org/apache/commons/jxpath/ri/parser/*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>1.2</version>
+        <configuration>
+          <excludeFilterFile>${basedir}/conf/findbugs-exclude-filter.xml</excludeFilterFile>
+          <xmlOutput>true</xmlOutput>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+          <linksource>true</linksource>
+          <links>
+            <link>http://java.sun.com/j2se/1.3/docs/api/</link>
+            <link>http://java.sun.com/javaee/5/docs/api/</link>
+            <link>http://commons.apache.org/beanutils/apidocs/</link>
+            <link>http://www.jdom.org/docs/apidocs/</link> 
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rat-maven-plugin</artifactId>
+        <version>1.0-alpha-3</version>
+        <configuration>
+          <excludes>
+            <exclude>src/java/org/apache/commons/jxpath/ri/parser/*</exclude>
+            <exclude>src/conf/MANIFEST.MF</exclude>
+            <exclude>xdocs/style/project.css</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <name>Default Site</name>
+      <url>scp://people.apache.org/www/commons.apache.org/jxpath/</url>
+    </site>
+  </distributionManagement>
+</project>
+
+```
+
+## src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+
+```
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.model.dom;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.jxpath.JXPathAbstractFactoryException;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathException;
+import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.apache.commons.jxpath.ri.NamespaceResolver;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest;
+import org.apache.commons.jxpath.ri.model.NodeIterator;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.apache.commons.jxpath.ri.model.beans.NullPointer;
+import org.apache.commons.jxpath.util.TypeUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+
+/**
+ * A Pointer that points to a DOM node. Because a DOM Node is not guaranteed Serializable,
+ * a DOMNodePointer instance may likewise not be properly Serializable.
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class DOMNodePointer extends NodePointer {
+
+    private static final long serialVersionUID = -8751046933894857319L;
+
+    private Node node;
+    private Map namespaces;
+    private String defaultNamespace;
+    private String id;
+    private NamespaceResolver localNamespaceResolver;
+
+    /** XML namespace URI */
+    public static final String XML_NAMESPACE_URI =
+            "http://www.w3.org/XML/1998/namespace";
+
+    /** XMLNS namespace URI */
+    public static final String XMLNS_NAMESPACE_URI =
+            "http://www.w3.org/2000/xmlns/";
+
+    /**
+     * Create a new DOMNodePointer.
+     * @param node pointed at
+     * @param locale Locale
+     */
+    public DOMNodePointer(Node node, Locale locale) {
+        super(null, locale);
+        this.node = node;
+    }
+
+    /**
+     * Create a new DOMNodePointer.
+     * @param node pointed at
+     * @param locale Locale
+     * @param id string id
+     */
+    public DOMNodePointer(Node node, Locale locale, String id) {
+        super(null, locale);
+        this.node = node;
+        this.id = id;
+    }
+
+    /**
+     * Create a new DOMNodePointer.
+     * @param parent pointer
+     * @param node pointed
+     */
+    public DOMNodePointer(NodePointer parent, Node node) {
+        super(parent);
+        this.node = node;
+    }
+
+    public boolean testNode(NodeTest test) {
+        return testNode(node, test);
+    }
+
+    /**
+     * Test a Node.
+     * @param node to test
+     * @param test to execute
+     * @return true if node passes test
+     */
+    public static boolean testNode(Node node, NodeTest test) {
+        if (test == null) {
+            return true;
+        }
+        if (test instanceof NodeNameTest) {
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                return false;
+            }
+
+            NodeNameTest nodeNameTest = (NodeNameTest) test;
+            QName testName = nodeNameTest.getNodeName();
+            String namespaceURI = nodeNameTest.getNamespaceURI();
+            boolean wildcard = nodeNameTest.isWildcard();
+            String testPrefix = testName.getPrefix();
+            if (wildcard && testPrefix == null) {
+                return true;
+            }
+            if (wildcard
+                || testName.getName()
+                        .equals(DOMNodePointer.getLocalName(node))) {
+                String nodeNS = DOMNodePointer.getNamespaceURI(node);
+                return equalStrings(namespaceURI, nodeNS) || nodeNS == null
+                        && equalStrings(testPrefix, getPrefix(node));
+            }
+            return false;
+        }
+        if (test instanceof NodeTypeTest) {
+            int nodeType = node.getNodeType();
+            switch (((NodeTypeTest) test).getNodeType()) {
+                case Compiler.NODE_TYPE_NODE :
+                    return true;
+                case Compiler.NODE_TYPE_TEXT :
+                    return nodeType == Node.CDATA_SECTION_NODE
+                        || nodeType == Node.TEXT_NODE;
+                case Compiler.NODE_TYPE_COMMENT :
+                    return nodeType == Node.COMMENT_NODE;
+                case Compiler.NODE_TYPE_PI :
+                    return nodeType == Node.PROCESSING_INSTRUCTION_NODE;
+                default:
+                    return false;
+            }
+        }
+        if (test instanceof ProcessingInstructionTest
+                && node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE) {
+            String testPI = ((ProcessingInstructionTest) test).getTarget();
+            String nodePI = ((ProcessingInstruction) node).getTarget();
+            return testPI.equals(nodePI);
+        }
+        return false;
+    }
+
+    /**
+     * Test string equality.
+     * @param s1 String 1
+     * @param s2 String 2
+     * @return true if == or .equals()
+     */
+    private static boolean equalStrings(String s1, String s2) {
+        if (s1 == s2) {
+            return true;
+        }
+        s1 = s1 == null ? "" : s1.trim();
+        s2 = s2 == null ? "" : s2.trim();
+        return s1.equals(s2);
+    }
+
+    public QName getName() {
+        String ln = null;
+        String ns = null;
+        int type = node.getNodeType();
+        if (type == Node.ELEMENT_NODE) {
+            ns = DOMNodePointer.getPrefix(node);
+            ln = DOMNodePointer.getLocalName(node);
+        }
+        else if (type == Node.PROCESSING_INSTRUCTION_NODE) {
+            ln = ((ProcessingInstruction) node).getTarget();
+        }
+        return new QName(ns, ln);
+    }
+
+    public String getNamespaceURI() {
+        return getNamespaceURI(node);
+    }
+
+    public NodeIterator childIterator(NodeTest test, boolean reverse,
+            NodePointer startWith) {
+        return new DOMNodeIterator(this, test, reverse, startWith);
+    }
+
+    public NodeIterator attributeIterator(QName name) {
+        return new DOMAttributeIterator(this, name);
+    }
+
+    public NodePointer namespacePointer(String prefix) {
+        return new NamespacePointer(this, prefix);
+    }
+
+    public NodeIterator namespaceIterator() {
+        return new DOMNamespaceIterator(this);
+    }
+
+    public synchronized NamespaceResolver getNamespaceResolver() {
+        if (localNamespaceResolver == null) {
+            localNamespaceResolver = new NamespaceResolver(super.getNamespaceResolver());
+            localNamespaceResolver.setNamespaceContextPointer(this);
+        }
+        return localNamespaceResolver;
+    }
+
+    public String getNamespaceURI(String prefix) {
+        if (prefix == null || prefix.equals("")) {
+            return getDefaultNamespaceURI();
+        }
+
+        if (prefix.equals("xml")) {
+            return XML_NAMESPACE_URI;
+        }
+
+        if (prefix.equals("xmlns")) {
+            return XMLNS_NAMESPACE_URI;
+        }
+
+        String namespace = null;
+        if (namespaces == null) {
+            namespaces = new HashMap();
+        }
+        else {
+            namespace = (String) namespaces.get(prefix);
+        }
+
+        if (namespace == null) {
+            String qname = "xmlns:" + prefix;
+            Node aNode = node;
+            if (aNode instanceof Document) {
+                aNode = ((Document) aNode).getDocumentElement();
+            }
+            while (aNode != null) {
+                if (aNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Attr attr = ((Element) aNode).getAttributeNode(qname);
+                    if (attr != null) {
+                        namespace = attr.getValue();
+                        break;
+                    }
+                }
+                aNode = aNode.getParentNode();
+            }
+            if (namespace == null || namespace.equals("")) {
+                namespace = NodePointer.UNKNOWN_NAMESPACE;
+            }
+        }
+
+        namespaces.put(prefix, namespace);
+        if (namespace == UNKNOWN_NAMESPACE) {
+            return null;
+        }
+
+        // TBD: We are supposed to resolve relative URIs to absolute ones.
+        return namespace;
+    }
+
+    public String getDefaultNamespaceURI() {
+        if (defaultNamespace == null) {
+            Node aNode = node;
+            if (aNode instanceof Document) {
+                aNode = ((Document) aNode).getDocumentElement();
+            }
+            while (aNode != null) {
+                if (aNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Attr attr = ((Element) aNode).getAttributeNode("xmlns");
+                    if (attr != null) {
+                        defaultNamespace = attr.getValue();
+                        break;
+                    }
+                }
+                aNode = aNode.getParentNode();
+            }
+        }
+        if (defaultNamespace == null) {
+            defaultNamespace = "";
+        }
+        // TBD: We are supposed to resolve relative URIs to absolute ones.
+        return defaultNamespace.equals("") ? null : defaultNamespace;
+    }
+
+    public Object getBaseValue() {
+        return node;
+    }
+
+    public Object getImmediateNode() {
+        return node;
+    }
+
+    public boolean isActual() {
+        return true;
+    }
+
+    public boolean isCollection() {
+        return false;
+    }
+
+    public int getLength() {
+        return 1;
+    }
+
+    public boolean isLeaf() {
+        return !node.hasChildNodes();
+    }
+
+    /**
+     * Returns true if the xml:lang attribute for the current node
+     * or its parent has the specified prefix <i>lang</i>.
+     * If no node has this prefix, calls <code>super.isLanguage(lang)</code>.
+     * @param lang ns to test
+     * @return boolean
+     */
+    public boolean isLanguage(String lang) {
+        String current = getLanguage();
+        return current == null ? super.isLanguage(lang)
+                : current.toUpperCase(Locale.ENGLISH).startsWith(lang.toUpperCase(Locale.ENGLISH));
+    }
+
+    /**
+     * Find the nearest occurrence of the specified attribute
+     * on the specified and enclosing elements.
+     * @param n current node
+     * @param attrName attribute name
+     * @return attribute value
+     */
+    protected static String findEnclosingAttribute(Node n, String attrName) {
+        while (n != null) {
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element e = (Element) n;
+                String attr = e.getAttribute(attrName);
+                if (attr != null && !attr.equals("")) {
+                    return attr;
+                }
+            }
+            n = n.getParentNode();
+        }
+        return null;
+    }
+
+    /**
+     * Get the language attribute for this node.
+     * @return String language name
+     */
+    protected String getLanguage() {
+        return findEnclosingAttribute(node, "xml:lang");
+    }
+
+    /**
+     * Sets contents of the node to the specified value. If the value is
+     * a String, the contents of the node are replaced with this text.
+     * If the value is an Element or Document, the children of the
+     * node are replaced with the children of the passed node.
+     * @param value to set
+     */
+    public void setValue(Object value) {
+        if (node.getNodeType() == Node.TEXT_NODE
+            || node.getNodeType() == Node.CDATA_SECTION_NODE) {
+            String string = (String) TypeUtils.convert(value, String.class);
+            if (string != null && !string.equals("")) {
+                node.setNodeValue(string);
+            }
+            else {
+                node.getParentNode().removeChild(node);
+            }
+        }
+        else {
+            NodeList children = node.getChildNodes();
+            int count = children.getLength();
+            for (int i = count; --i >= 0;) {
+                Node child = children.item(i);
+                node.removeChild(child);
+            }
+
+            if (value instanceof Node) {
+                Node valueNode = (Node) value;
+                if (valueNode instanceof Element
+                    || valueNode instanceof Document) {
+                    children = valueNode.getChildNodes();
+                    for (int i = 0; i < children.getLength(); i++) {
+                        Node child = children.item(i);
+                        node.appendChild(child.cloneNode(true));
+                    }
+                }
+                else {
+                    node.appendChild(valueNode.cloneNode(true));
+                }
+            }
+            else {
+                String string = (String) TypeUtils.convert(value, String.class);
+                if (string != null && !string.equals("")) {
+                    Node textNode =
+                        node.getOwnerDocument().createTextNode(string);
+                    node.appendChild(textNode);
+                }
+            }
+        }
+    }
+
+    public NodePointer createChild(JXPathContext context, QName name, int index) {
+        if (index == WHOLE_COLLECTION) {
+            index = 0;
+        }
+        boolean success =
+            getAbstractFactory(context).createObject(
+                context,
+                this,
+                node,
+                name.toString(),
+                index);
+        if (success) {
+            NodeTest nodeTest;
+            String prefix = name.getPrefix();
+            String namespaceURI = prefix == null ? null : context
+                    .getNamespaceURI(prefix);
+            nodeTest = new NodeNameTest(name, namespaceURI);
+
+            NodeIterator it = childIterator(nodeTest, false, null);
+            if (it != null && it.setPosition(index + 1)) {
+                return it.getNodePointer();
+            }
+        }
+        throw new JXPathAbstractFactoryException(
+                "Factory could not create a child node for path: " + asPath()
+                        + "/" + name + "[" + (index + 1) + "]");
+    }
+
+    public NodePointer createChild(JXPathContext context, QName name,
+            int index, Object value) {
+        NodePointer ptr = createChild(context, name, index);
+        ptr.setValue(value);
+        return ptr;
+    }
+
+    public NodePointer createAttribute(JXPathContext context, QName name) {
+        if (!(node instanceof Element)) {
+            return super.createAttribute(context, name);
+        }
+        Element element = (Element) node;
+        String prefix = name.getPrefix();
+        if (prefix != null) {
+            String ns = null;
+            NamespaceResolver nsr = getNamespaceResolver();
+            if (nsr != null) {
+                ns = nsr.getNamespaceURI(prefix);
+            }
+            if (ns == null) {
+                throw new JXPathException(
+                    "Unknown namespace prefix: " + prefix);
+            }
+            element.setAttributeNS(ns, name.toString(), "");
+        }
+        else {
+            if (!element.hasAttribute(name.getName())) {
+                element.setAttribute(name.getName(), "");
+            }
+        }
+        NodeIterator it = attributeIterator(name);
+        it.setPosition(1);
+        return it.getNodePointer();
+    }
+
+    public void remove() {
+        Node parent = node.getParentNode();
+        if (parent == null) {
+            throw new JXPathException("Cannot remove root DOM node");
+        }
+        parent.removeChild(node);
+    }
+
+    public String asPath() {
+        if (id != null) {
+            return "id('" + escape(id) + "')";
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        if (parent != null) {
+            buffer.append(parent.asPath());
+        }
+        switch (node.getNodeType()) {
+            case Node.ELEMENT_NODE :
+                // If the parent pointer is not a DOMNodePointer, it is
+                // the parent's responsibility to produce the node test part
+                // of the path
+                if (parent instanceof DOMNodePointer) {
+                    if (buffer.length() == 0
+                            || buffer.charAt(buffer.length() - 1) != '/') {
+                        buffer.append('/');
+                    }
+                    String ln = DOMNodePointer.getLocalName(node);
+                    String nsURI = getNamespaceURI();
+                    if (nsURI == null) {
+                        buffer.append(ln);
+                        buffer.append('[');
+                        buffer.append(getRelativePositionByQName()).append(']');
+                    }
+                    else {
+                        String prefix = getNamespaceResolver().getPrefix(nsURI);
+                        if (prefix != null) {
+                            buffer.append(prefix);
+                            buffer.append(':');
+                            buffer.append(ln);
+                            buffer.append('[');
+                            buffer.append(getRelativePositionByQName());
+                            buffer.append(']');
+                        }
+                        else {
+                            buffer.append("node()");
+                            buffer.append('[');
+                            buffer.append(getRelativePositionOfElement());
+                            buffer.append(']');
+                        }
+                    }
+                }
+            break;
+            case Node.TEXT_NODE :
+            case Node.CDATA_SECTION_NODE :
+                buffer.append("/text()");
+                buffer.append('[');
+                buffer.append(getRelativePositionOfTextNode()).append(']');
+                break;
+            case Node.PROCESSING_INSTRUCTION_NODE :
+                buffer.append("/processing-instruction(\'");
+                buffer.append(((ProcessingInstruction) node).getTarget()).append("')");
+                buffer.append('[');
+                buffer.append(getRelativePositionOfPI()).append(']');
+                break;
+            case Node.DOCUMENT_NODE :
+                // That'll be empty
+                break;
+            default:
+                break;
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * Get relative position of this among like-named siblings.
+     * @return 1..n
+     */
+    private int getRelativePositionByQName() {
+        int count = 1;
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.ELEMENT_NODE && matchesQName(n)) {
+                count++;
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+
+    private boolean matchesQName(Node n) {
+        if (getNamespaceURI() != null) {
+            return equalStrings(getNamespaceURI(n), getNamespaceURI())
+                    && equalStrings(node.getLocalName(), n.getLocalName());
+        }
+        return equalStrings(node.getNodeName(), n.getNodeName());
+    }
+
+    /**
+     * Get relative position of this among all siblings.
+     * @return 1..n
+     */
+    private int getRelativePositionOfElement() {
+        int count = 1;
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                count++;
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+
+    /**
+     * Get the relative position of this among sibling text nodes.
+     * @return 1..n
+     */
+    private int getRelativePositionOfTextNode() {
+        int count = 1;
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.TEXT_NODE
+                || n.getNodeType() == Node.CDATA_SECTION_NODE) {
+                count++;
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+
+    /**
+     * Get the relative position of this among same-target processing instruction siblings.
+     * @return 1..n
+     */
+    private int getRelativePositionOfPI() {
+        int count = 1;
+        String target = ((ProcessingInstruction) node).getTarget();
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE
+                && ((ProcessingInstruction) n).getTarget().equals(target)) {
+                count++;
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+
+    public int hashCode() {
+        return node.hashCode();
+    }
+
+    public boolean equals(Object object) {
+        return object == this || object instanceof DOMNodePointer && node == ((DOMNodePointer) object).node;
+    }
+
+    /**
+     * Get any prefix from the specified node.
+     * @param node the node to check
+     * @return String xml prefix
+     */
+    public static String getPrefix(Node node) {
+        String prefix = node.getPrefix();
+        if (prefix != null) {
+            return prefix;
+        }
+
+        String name = node.getNodeName();
+        int index = name.lastIndexOf(':');
+        return index < 0 ? null : name.substring(0, index);
+    }
+
+    /**
+     * Get the local name of the specified node.
+     * @param node node to check
+     * @return String local name
+     */
+    public static String getLocalName(Node node) {
+        String localName = node.getLocalName();
+        if (localName != null) {
+            return localName;
+        }
+
+        String name = node.getNodeName();
+        int index = name.lastIndexOf(':');
+        return index < 0 ? name : name.substring(index + 1);
+    }
+
+    /**
+     * Get the ns uri of the specified node.
+     * @param node Node to check
+     * @return String ns uri
+     */
+    public static String getNamespaceURI(Node node) {
+        if (node instanceof Document) {
+            node = ((Document) node).getDocumentElement();
+        }
+
+        Element element = (Element) node;
+
+        String uri = element.getNamespaceURI();
+        if (uri == null) {
+            String prefix = getPrefix(node);
+            String qname = prefix == null ? "xmlns" : "xmlns:" + prefix;
+    
+            Node aNode = node;
+            while (aNode != null) {
+                if (aNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Attr attr = ((Element) aNode).getAttributeNode(qname);
+                    if (attr != null) {
+                        uri = attr.getValue();
+                        break;
+                    }
+                }
+                aNode = aNode.getParentNode();
+            }
+        }
+        return "".equals(uri) ? null : uri;
+    }
+
+    public Object getValue() {
+        if (node.getNodeType() == Node.COMMENT_NODE) {
+            String text = ((Comment) node).getData();
+            return text == null ? "" : text.trim();
+        }
+        return stringValue(node);
+    }
+
+    /**
+     * Get the string value of the specified node.
+     * @param node Node to check
+     * @return String
+     */
+    private String stringValue(Node node) {
+        int nodeType = node.getNodeType();
+        if (nodeType == Node.COMMENT_NODE) {
+            return "";
+        }
+        boolean trim = !"preserve".equals(findEnclosingAttribute(node, "xml:space"));
+        if (nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE) {
+            String text = node.getNodeValue();
+            return text == null ? "" : trim ? text.trim() : text;
+        }
+        if (nodeType == Node.PROCESSING_INSTRUCTION_NODE) {
+            String text = ((ProcessingInstruction) node).getData();
+            return text == null ? "" : trim ? text.trim() : text;
+        }
+        NodeList list = node.getChildNodes();
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < list.getLength(); i++) {
+            Node child = list.item(i);
+            buf.append(stringValue(child));
+        }
+        return buf.toString();
+    }
+
+    /**
+     * Locates a node by ID.
+     * @param context starting context
+     * @param id to find
+     * @return Pointer
+     */
+    public Pointer getPointerByID(JXPathContext context, String id) {
+        Document document = node.getNodeType() == Node.DOCUMENT_NODE ? (Document) node
+                : node.getOwnerDocument();
+        Element element = document.getElementById(id);
+        return element == null ? (Pointer) new NullPointer(getLocale(), id)
+                : new DOMNodePointer(element, getLocale(), id);
+    }
+
+    public int compareChildNodePointers(NodePointer pointer1,
+            NodePointer pointer2) {
+        Node node1 = (Node) pointer1.getBaseValue();
+        Node node2 = (Node) pointer2.getBaseValue();
+        if (node1 == node2) {
+            return 0;
+        }
+
+        int t1 = node1.getNodeType();
+        int t2 = node2.getNodeType();
+        if (t1 == Node.ATTRIBUTE_NODE && t2 != Node.ATTRIBUTE_NODE) {
+            return -1;
+        }
+        if (t1 != Node.ATTRIBUTE_NODE && t2 == Node.ATTRIBUTE_NODE) {
+            return 1;
+        }
+        if (t1 == Node.ATTRIBUTE_NODE && t2 == Node.ATTRIBUTE_NODE) {
+            NamedNodeMap map = ((Node) getNode()).getAttributes();
+            int length = map.getLength();
+            for (int i = 0; i < length; i++) {
+                Node n = map.item(i);
+                if (n == node1) {
+                    return -1;
+                }
+                if (n == node2) {
+                    return 1;
+                }
+            }
+            return 0; // Should not happen
+        }
+
+        Node current = node.getFirstChild();
+        while (current != null) {
+            if (current == node1) {
+                return -1;
+            }
+            if (current == node2) {
+                return 1;
+            }
+            current = current.getNextSibling();
+        }
+        return 0;
+    }
+}
+
+```

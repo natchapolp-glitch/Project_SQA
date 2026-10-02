@@ -137,3 +137,12 @@ validation เก็บใต้ results/validation/api854-beam/ ไม่รว
 - เอกสารตรวจรับ [BEAM_CHAMP_RESOLVER_TH.md](BEAM_CHAMP_RESOLVER_TH.md) พร้อม public proof
   และ shared contract proposal ที่ยังไม่ frozen. quota/settings จริงและ Gate A ยัง pending
 - Live prepare 24 งานยังรออนุญาตส่งหลักฐานไป URL ออม ตาม automatic approval review
+
+## ตรวจ prepare-v1 ครบ 20 bugs ตามบันทึกส่งมอบออม
+
+- ตรวจ artifact integrity และ fixed/buggy declaration + compiled fixture intersection ครบ 20 bugs จาก aom `8fcec539` แล้ว มี eligible declarations 691 รายการ ตัด fixed-only 3 รายการ
+- ส่ง callable resolver/adapters/evaluator พร้อม prospective FSCS-ART execution ของ Closure-176 และ JxPath-1: fixed สองรอบผ่าน, buggy ผ่านทั้งคู่จึง fault_detected=false, มี fixed และ supplementary buggy coverage จริง
+- ยัง usable=false: fixture/oracle review pending โดยมี exception/null สูง ไม่อ้างว่าประเมิน prospective suites ครบ 20 bugs/80 jobs
+- ส่ง eligibility/context supplement v2 เป็น proposal ใหม่ เพิ่ม Chart concrete receiver และ eligible method inventory; prompt ใหญ่สุด 115,826 UTF-8 bytes ยังไม่ได้ยืนยัน tokens/overhead
+- API854 ล่าสุดผ่าน 165 tests ไม่มี skip; 0 real KKU requests และ 0 live queue mutations
+- ส่งให้ออมตรวจรับตาม [BEAM_AOM_PREPARE_REVIEW_TH.md](BEAM_AOM_PREPARE_REVIEW_TH.md) พร้อม hashes ของ public evidence; ต้องรับ input/policy ใหม่และตรึง source hashes ใหม่ก่อนเปิด generation

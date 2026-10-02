@@ -61,3 +61,14 @@ Model/settings/quota และ adapters/evaluator ยังต้องตรว
 ตรวจรับ branch และ composition ล่าสุด: [AOM_TEAM_INTEGRATION_TH.md](AOM_TEAM_INTEGRATION_TH.md) — ยังรอ Gate A/settings/quota
 
 งานออมสี่ส่วนล่าสุด: [AOM_PREPARE_V2_TH.md](AOM_PREPARE_V2_TH.md) — prepare v2/policy ร่วม/runner ทุก owner/checklist Gate A
+
+ตรวจส่งมอบบีม `44dd5cb0`: [AOM_BEAM_HANDOFF_REVIEW_TH.md](AOM_BEAM_HANDOFF_REVIEW_TH.md) —
+รับหลักฐาน discovery ครบ 20 bugs/691 declarations และ exclusions 3 รายการแล้ว;
+context/prompt supplement ยังต้องรวมกับ runtime ออม และ fixture/oracle/Gate A ยัง pending.
+
+ตรวจรับ integration แชมป์ `d134cde6`: [AOM_CHAMP_INTEGRATION_REVIEW_TH.md](AOM_CHAMP_INTEGRATION_REVIEW_TH.md) —
+shared prepare v2 + callable resolver + runner guards รวมแล้ว; receiver/context รุ่นใหม่และ Gate A ยัง pending.
+
+ชุดส่งมอบใหม่ล่าสุด: [AOM_PREPARE_V3_HANDOFF_TH.md](AOM_PREPARE_V3_HANDOFF_TH.md) —
+import discovery ครบ 20 bugs/691 targets แล้ว พร้อม receiver partition/shared fixtures,
+CPU/API binding และงานต่อสำหรับแชมป์/บีม. Primary/provider/semantic/host Gate A ยัง pending.

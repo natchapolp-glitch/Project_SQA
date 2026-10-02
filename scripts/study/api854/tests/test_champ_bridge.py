@@ -103,6 +103,34 @@ class ChampBridgeTests(unittest.TestCase):
             self.worker(owner='beam')
         self.assertFalse(self.calls)
 
+    def test_explicit_receiver_context_preserves_modified_source_evaluator_lineage(self):
+        policy = 'beam-modified-and-shared-receiver-java-v2-proposal'
+        self.protocol['context_selection'] = policy
+        self.protocol['generation']['context_policy_id'] = policy
+        path = self.root / 'receiver-protocol.json'
+        common.write_json(path, self.protocol)
+        self.settings = FrozenSettings.load(path)
+        with self.store.db:
+            self.store.db.execute('UPDATE jobs SET protocol_hash=?', (self.settings.protocol_hash,))
+        self.store.seed({'bugs': [{'project': 'Lang', 'bug_id': 4, 'owner': 'champ'}]},
+                        'mock-only', self.settings.protocol_hash, False, protocol=test_beam_queue.mock_stage_gate())
+        extra = {'src/example/ConcreteReceiver.java': digest(b'public class ConcreteReceiver {}')}
+        self.manifest['selection_policy_id'] = policy
+        self.manifest['source_files'].append({'path': next(iter(extra)), 'sha256': next(iter(extra.values())), 'bytes': 32})
+        source_hash = digest(json.dumps(self.manifest['source_files'], sort_keys=True, separators=(',', ':')).encode())
+        self.manifest['source_hash'] = source_hash
+        (self.prepared / 'context-manifest.json').write_text(json.dumps(self.manifest))
+        (self.prepared / 'targets.json').write_text(json.dumps({'targets': [{'class': 'example.ConcreteReceiver', 'method': 'target'}]}))
+        self.prepare_metadata.update(source_sha256=source_hash, context_source_hash=source_hash,
+            target_classes=['Target'], additional_receiver_source_sha256=extra,
+            targets_sha256=common.sha256(self.prepared / 'targets.json'))
+        self.publish_prepare()
+        self.assertEqual(self.worker().once()['state'], 'published')
+        claim = QueueClient.claim(self.client, 'champ-fixture', 'evaluate', ['kku-claude'], owner='champ')
+        _, lineage = download_generation(self.client, claim, self.root / 'receiver-evaluation-input')
+        self.assertEqual(lineage['fixed_source_sha256'], self.sources)
+        self.assertEqual(lineage['context_source_hash'], source_hash)
+
     def test_cli_callable_publishes_unchanged_bare_java_suite_and_downloadable_lineage(self):
         self.publish_prepare()
         self.assertEqual(self.worker().check()['state'], 'ready')
