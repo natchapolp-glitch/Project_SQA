@@ -4,6 +4,8 @@
 policy v3, Chart receiver partition, CPU/API input binding, runner coverage และ Gate A evidence.
 เป็น proposal สำหรับทีมตรวจรับ ยังไม่ใช่ frozen primary protocol และยังไม่เปิด live pilot.
 
+ข้อความส่งต่อแยกผู้รับ: [AOM_TO_TEAM_MESSAGE_TH.md](AOM_TO_TEAM_MESSAGE_TH.md).
+
 ## ไฟล์ที่ให้เพื่อนดึง
 
 - [prepare-v3/index.json](../../output/api854-20261003/prepare-v3/index.json): 20 bugs, 691 targets,
@@ -20,6 +22,10 @@ policy v3, Chart receiver partition, CPU/API input binding, runner coverage แ�
   [validation receipt](../../output/api854-20261003/prepare-v3-validation.json),
   [capacity](../../output/api854-20261003/prepare-v3-capacity.json),
   [prompt sizes](../../output/api854-20261003/prepare-v3-prompts.csv).
+- [queue check](../../output/api854-20261003/prepare-v3-queue-check.json): local และ public tunnel
+  ผ่าน `/health`/`/v1/schema`; core 80 jobs ยัง prepare/queued/0 attempts เปิดเฉพาะ prepare.
+- [Cross-platform rebuild](../../output/api854-20261003/prepare-v3-cross-platform.json):
+  สร้าง prepare v3 ใหม่จริงบน WSL แล้วเทียบกับ Windows ครบ 264 files; bytes ตรงทั้งหมด.
 - [ZIP ส่งมอบ](../../output/api854-20261003/aom-prepare-pilot-v3.zip) และ `.sha256`:
   artifacts/policy/draft/runner/checklist/docs จากชุดเดียวกัน ไม่ใส่ tokens/keys.
 
