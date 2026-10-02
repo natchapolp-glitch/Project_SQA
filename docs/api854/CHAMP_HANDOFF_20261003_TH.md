@@ -45,6 +45,11 @@ observed quota กับ notification gate. รับงานทีละ job �
 ออมต้องตรวจ controller/tunnel และแจ้ง private access URL ใหม่ถ้ามีการเปลี่ยน;
 ไม่ใส่ URL/token ส่วนตัวในเอกสารสาธารณะนี้.
 
+Checkpoint ถัดมา: URL ใหม่ที่ผู้ใช้ส่งมาเชื่อม health/schema จากเครื่องแชมป์ผ่านแล้ว.
+พบ 80 jobs `prepare/queued` และเปิดเฉพาะ prepare; ปัญหา HTTP 530 ด้านบนเป็น
+เหตุการณ์ก่อน recovery. ดู [CHAMP_PROVIDER_ACCEPTANCE_TH.md](CHAMP_PROVIDER_ACCEPTANCE_TH.md)
+พร้อม public receipt สำหรับสถานะ model/settings/quota ที่ตรวจได้จริง.
+
 คิวพร้อมเชื่อมไม่ยืนยันว่า protocol/adapters พร้อม. ณ จุดส่งต่อชุดแรกยังไม่พบ
 ผลรัน API854 ใน local `results/study/`; ไม่อ้างว่า 854 bugs เริ่มหรือเสร็จแล้ว.
 โควตา 200k/350k เป็น planning input ไม่ใช่ remaining จริงของ Sonnet 5/Flash Lite.

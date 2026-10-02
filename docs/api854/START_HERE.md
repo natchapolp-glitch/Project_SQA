@@ -18,6 +18,7 @@
 4. [ข้อมูลเงื่อนไขที่ผู้ใช้ยืนยัน](../../experiments/configs/api854-20261003/confirmed-plan-constraints.json)
 5. [API reference และ file map เดิม](../superpowers/plans/2026-10-02-sqa-api854-three-person-parallel.md) ใช้เฉพาะส่วนที่ไม่ขัดแผนล่าสุด
 6. [API worker ของแชมป์และสิ่งที่ออม/บีมต้องส่งก่อน pilot](API_WORKER_HANDOFF_TH.md)
+7. [หลักฐาน model IDs/คิวใหม่ และ settings/quota ที่ยังรอยืนยัน](CHAMP_PROVIDER_ACCEPTANCE_TH.md)
 
 ## เริ่มทำพร้อมกัน
 

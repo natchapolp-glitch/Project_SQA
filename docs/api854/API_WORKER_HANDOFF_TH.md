@@ -94,7 +94,8 @@ Ledger นี้ใช้เครื่องเดียว; ถ้าแช�
 
 ## งานที่ยังต้องตรวจสด
 
-1. คิว/tunnel ของออมตอบ health/schema จากเครื่องแชมป์; รอบก่อนพบ HTTP 530.
+1. คิว/tunnel URL ใหม่ตอบ health/schema จากเครื่องแชมป์ผ่านแล้ว;
+   [provider acceptance](CHAMP_PROVIDER_ACCEPTANCE_TH.md) บันทึก prepare-only gate และ model discovery.
 2. actual remaining/bucket/reset ของบัญชีที่จัดสรร; ไม่จำเป็นต้องรอ keys ครบสิบเพื่อ pilot.
 3. target adapters และ meaningful fixed repeat/buggy/coverage ของบีม.
 4. settings/prompt/processing contract ข้างต้นได้รับการตรึงร่วมกัน.
