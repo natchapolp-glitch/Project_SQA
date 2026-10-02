@@ -1,6 +1,7 @@
 # หลักฐานอ่าน API/คิวจากเครื่องแชมป์ — 3 ตุลาคม 2569
 
 หลักฐาน API/คิว: [champ-readiness-v2.json](../../output/api854-provider-preflight-20261003/champ-readiness-v2.json)
+สถานะรับงานบีม/ออมล่าสุด: [CHAMP_TEAM_INTEGRATION_TH.md](CHAMP_TEAM_INTEGRATION_TH.md)
 เก็บ timestamps, HTTP status, hashes และรายการ fields ที่ตรวจได้.
 รุ่น v1 เก็บ checkpoint ก่อนเพิ่มข้อมูล stage gate; ไม่เขียนทับหลักฐานเดิม.
 ไม่มี KKU generation request, claim, upload, complete หรือการใช้โควตาสร้างเทสในการตรวจนี้.
@@ -74,7 +75,8 @@ Keys ที่เครื่องนี้พบมีเฉพาะ `a01`; �
    Readiness receipts v1/v2 เก็บสถานะ remote เดิมไว้เป็นประวัติ ไม่แก้ย้อนหลัง.
 2. ให้ทีมใช้ receipt นี้เป็นหลักฐาน model discovery/queue readiness;
    ไม่นับว่า settings/quota หรือ Gate B ผ่านแล้ว.
-3. บีมส่ง context/prompt/suite policies, resolver/adapters และ fixed/buggy/coverage evidence.
+3. รับ context/prompt/suite policies, resolver/adapters และ Lang-4 mock-AI fixed/buggy/coverage evidence จากบีมแล้ว.
+   ยังต้องมี source-bound targets/fixtures ครบ 20 bugs และ semantic review ตามเอกสาร integration ล่าสุด.
 4. หลังทีมตรวจครบ ให้ตรึง primary protocol bytes และ seed **run ใหม่**;
    คง core-frozen/preflight run เดิมไว้ ไม่เปลี่ยนย้อนหลัง.
 

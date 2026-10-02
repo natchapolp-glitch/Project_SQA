@@ -22,6 +22,7 @@ from .kku_client import KKUClient, KKUError, digest, load_account, sanitize, utc
 from .lease import LeaseHeartbeat, generate_with_lease
 from .models import load_selection, resolve_selected
 from .quota import QuotaBlocked, QuotaLedger
+from .queue_client import QueueClient
 
 CONTRACT = "champ-generation-input-v1"
 
@@ -46,6 +47,8 @@ class FrozenSettings:
     handoff_contract: str = "champ-v1"
     protocol: dict | None = None
     prepare_contract: str = "champ-v1"
+    protocol_bytes: bytes = b""
+    generation_owners: tuple = ("champ",)
 
     @classmethod
     def load(cls, path: Path):
@@ -76,7 +79,7 @@ class FrozenSettings:
                     or type(protocol.get("test_method_cap")) is not int
                     or protocol["test_method_cap"] != 30
                     or generation.get("suite_policy_id") != "beam-java-suite-v1"
-                    or generation.get("suite_resolver") != "scripts.study.api854.suite_resolver:BeamSuiteResolver"
+                    or generation.get("suite_resolver") not in {"scripts.study.api854.suite_resolver:BeamSuiteResolver", "scripts.study.api854.champ_bridge:champ_suite_resolver"}
                     or any(protocol.get("model_policy", {}).get(a, {}).get("kku_model_id") != models[a]["id"] for a in models)):
                 raise WorkerBlocked("beam_processing_contract_not_frozen")
         if generation.get("input_contract") != CONTRACT:
@@ -90,6 +93,10 @@ class FrozenSettings:
         for key in ("context_policy_id", "prompt_policy_id", "suite_policy_id", "suite_resolver"):
             if not isinstance(generation.get(key), str) or not generation[key].strip():
                 raise WorkerBlocked("processing_policies_not_frozen")
+        owners = generation.get("owners", ["champ"])
+        if (not isinstance(owners, list) or not owners or len(set(owners)) != len(owners)
+                or any(owner not in {"champ", "beam", "aom"} for owner in owners)):
+            raise WorkerBlocked("generation_owner_routing_not_frozen")
         try:
             start = datetime.fromisoformat(protocol["start_at"])
             cutoff = datetime.fromisoformat(protocol["generation_cutoff_at"])
@@ -100,7 +107,7 @@ class FrozenSettings:
         return cls(digest(data), models, temperature, **{key: generation[key] for key in (
             "max_tokens", "prompt_token_reserve", "context_policy_id", "prompt_policy_id", "suite_policy_id", "suite_resolver")},
             start_at=start, generation_cutoff_at=cutoff, handoff_contract=handoff_contract, protocol=protocol,
-            prepare_contract=generation.get("prepare_contract", "champ-v1"))
+            prepare_contract=generation.get("prepare_contract", "champ-v1"), protocol_bytes=data, generation_owners=tuple(owners))
 
     @property
     def reserve_tokens(self):
@@ -121,13 +128,15 @@ def load_suite_resolver(spec: str):
     return resolver
 
 
-def resolve_prepared_job(client, job: dict, settings: FrozenSettings, *, owner="champ") -> GenerationJob:
+def resolve_prepared_job(client, job: dict, settings: FrozenSettings, *, owner=None) -> GenerationJob:
     """Consume two hashed artifacts from the most recent prepared stage.
 
     Preparation owns the approved prompt/selection; this worker never appends
     errors, invents target selection, or alters source/assertions.
     """
-    if job.get("protocol_hash") != settings.protocol_hash or job.get("owner") != owner or \
+    selected_owner = job.get("owner") if owner is None else owner
+    owner_allowed = selected_owner in getattr(settings, "generation_owners", ("champ",)) or (getattr(client, "team_routing", False) and selected_owner == client.owner)
+    if job.get("protocol_hash") != settings.protocol_hash or job.get("owner") != selected_owner or not owner_allowed or \
             job.get("stage") != "generate" or job.get("approach") not in settings.models:
         raise WorkerBlocked("job_identity_or_protocol_mismatch")
     history = job.get("payload", {}).get("stage_history", [])
@@ -189,10 +198,6 @@ def resolve_prepared_job(client, job: dict, settings: FrozenSettings, *, owner="
 class APIWorker:
     def __init__(self, queue, kku, ledger, settings, *, approach, bucket, window,
                  artifact_root, private_root, worker_id, suite_resolver, model, condition="primary-kku-api", owner="champ"):
-        if owner not in {"aom", "beam", "champ"} or (owner != "champ" and not getattr(queue, "team_routing", False)):
-            raise WorkerBlocked("owner_requires_explicit_runner_plan")
-        if owner != "champ" and settings.handoff_contract != "beam-v1":
-            raise WorkerBlocked("all_owner_routing_requires_beam_handoff")
         if not callable(suite_resolver):
             raise WorkerBlocked("beam_suite_resolver_unavailable")
         if condition not in {"primary-kku-api", "mock-integration"} or (
@@ -200,6 +205,14 @@ class APIWorker:
         ):
             raise WorkerBlocked("mock_evidence_cannot_use_live_queue")
         resolve_selected([model], approach, settings.models)
+        if owner not in settings.generation_owners and not (
+            getattr(queue, "team_routing", False) and owner == queue.owner
+        ):
+            raise WorkerBlocked("generation_owner_routing_not_frozen")
+        if owner != "champ" and settings.handoff_contract != "beam-v1" and not callable(
+            getattr(suite_resolver, "create_handoff", None)
+        ):
+            raise WorkerBlocked("all_owner_routing_requires_beam_handoff")
         self.queue, self.kku, self.ledger, self.settings = queue, kku, ledger, settings
         self.approach, self.bucket, self.window = approach, bucket, window
         self.owner = owner
@@ -223,6 +236,9 @@ class APIWorker:
                 raise WorkerBlocked("mixed_generation_protocols_in_queue")
         if eligible:
             prepared = resolve_prepared_job(self.queue, eligible[0], self.settings, owner=self.owner)
+            validate_prepared = getattr(self.suite_resolver, "validate_prepared", None)
+            if callable(validate_prepared):
+                validate_prepared(self.queue, eligible[0], self.settings)
             if sanitize(prepared.prompt, (self.kku.account.api_key, self.queue.token)) != prepared.prompt:
                 raise WorkerBlocked("credentials_in_prepared_prompt")
             self.ledger.available(self.kku.account.alias, self.bucket, self.window, job_key=prepared.key)
@@ -238,7 +254,11 @@ class APIWorker:
         ready = self.check()
         if ready["state"] == "idle":
             return ready
-        claim = self.queue.claim(self.worker_id, "generate", approaches=[self.approach], owner=self.owner)
+        if getattr(self.queue, "team_routing", False) or self.owner == "champ":
+            claim = self.queue.claim(self.worker_id, "generate", approaches=[self.approach], owner=self.owner)
+        else:
+            # An explicit frozen owners list authorizes the coordinator shard.
+            claim = QueueClient.claim(self.queue, self.worker_id, "generate", approaches=[self.approach], owner=self.owner)
         if claim.get("job") is None:
             return {**ready, "state": "idle", "queue_mutations": 1}
         if not isinstance(claim.get("attempt_id"), str) or not re.fullmatch(
@@ -250,11 +270,18 @@ class APIWorker:
         self.private_root.mkdir(parents=True, exist_ok=True)
         write_json(self.private_root / f"claim-{claim['attempt_id']}.json", claim)
         try:
+            if claim["job"].get("owner") != self.owner:
+                raise WorkerBlocked("claimed_owner_differs_from_selected_shard")
             job = resolve_prepared_job(self.queue, claim["job"], self.settings, owner=self.owner)
             if sanitize(job.prompt, (self.kku.account.api_key, self.queue.token, claim["lease_token"])) != job.prompt:
                 raise WorkerBlocked("credentials_in_prepared_prompt")
             guard = LeaseHeartbeat(self.queue, claim)
-            if self.settings.handoff_contract == "beam-v1":
+            create_handoff = getattr(self.suite_resolver, "create_handoff", None)
+            if callable(create_handoff):
+                handoff = create_handoff(self.queue, claim, heartbeat=guard, settings=self.settings,
+                    worker_id=self.worker_id, credential_secrets=(self.kku.account.api_key,),
+                    private_root=self.private_root)
+            elif self.settings.handoff_contract == "beam-v1":
                 from .ai_handoff import BeamGenerationHandoff
                 from .queue_worker import local_job
                 prepared = next(h for h in reversed(claim["job"]["payload"]["stage_history"])
@@ -300,7 +327,8 @@ def main() -> int:
     parser.add_argument("--ledger", type=Path, default=Path(".local/api854/quota.sqlite"))
     parser.add_argument("--worker-id", default="champ-pc1")
     parser.add_argument("--runner-plan", type=Path)
-    parser.add_argument("--owner", choices=("aom", "beam", "champ"), default="champ")
+    parser.add_argument("--owner", choices=("champ", "beam", "aom"), default="champ",
+                        help="Owner shard explicitly permitted by generation.owners in the frozen protocol")
     parser.add_argument("--artifact-root", type=Path, default=Path("results/study"))
     args = parser.parse_args()
     try:

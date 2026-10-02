@@ -144,6 +144,11 @@ class GenerationWorker:
             # method-cap and compile-validity policy. Do not invent Java tests.
             blocks = re.findall(r"^```java[^\S\n]*\r?\n(.*?)^```[^\S\n]*\r?$", content,
                                 flags=re.MULTILINE | re.DOTALL)
+            fence_lines = re.findall(r"^```.*$", content, flags=re.MULTILINE)
+            if fence_lines and len(fence_lines) != 2 * len(blocks):
+                blocks = []  # Never silently drop a partial or non-Java block.
+            if not fence_lines and re.search(r"\bpublic\s+(?:(?:abstract|final|strictfp)\s+)*class\s+", content):
+                blocks = [content]  # Preserve one bare Java file byte-for-byte.
             sources = []
             if completion.outcome == "response_received":
                 for index, block in enumerate(blocks, 1):
