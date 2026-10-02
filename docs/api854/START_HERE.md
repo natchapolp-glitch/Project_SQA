@@ -11,6 +11,7 @@
 
 ## อ่านตามลำดับ
 
+0. [คิวกลางที่เปิดและวิธีเชื่อมต่อของแชมป์/บีม](QUEUE_CONNECTION_TH.md) — worker token รับผ่านช่องทางส่วนตัว
 1. [แผนล่าสุดและเงื่อนไขที่ยืนยัน](../superpowers/plans/2026-10-03-sqa854-collaborative-48h.md)
 2. [รายการ bugs ของแชมป์ บีม ออม](BUG_OWNERSHIP_20261003_TH.md)
 3. [Ownership สำหรับระบบ](../../experiments/configs/api854-20261003/ownership.json)
