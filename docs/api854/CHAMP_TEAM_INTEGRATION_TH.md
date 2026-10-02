@@ -44,3 +44,5 @@ Legacy evaluator/generator: ผ่านอีก 20 tests รวมผ่าน
 prepare v2 prompt สูงสุด 99,439 UTF-8 bytes ก่อนเติม target declarations; ไม่ใช่จำนวน tokens
 Temperature 0 / output 4096 ยังเป็นข้อเสนอ ต้องตรวจ limits และ reserve ก่อน freeze
 ไม่ต้องส่ง API keys ทั้ง 10 บัญชีเพื่อให้การตรวจ integration นี้ผ่าน; เก็บ keys/access ผ่านช่องทางส่วนตัวเท่านั้น
+
+งานเตรียมเพิ่มระหว่างรอ: [ขนาด prompt, งบจองและแบบฟอร์ม quota/settings](CHAMP_WAITING_WORK_TH.md)
