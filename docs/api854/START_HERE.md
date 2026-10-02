@@ -49,3 +49,5 @@ Protocol เป็น draft; Gate A/B ยังไม่ผ่าน ต้อ�
 - [รายการหลักฐาน](EVIDENCE_INDEX.md)
 
 ตรวจรับ worker/tunnel ล่าสุด: [AOM_ACCEPTANCE_TH.md](AOM_ACCEPTANCE_TH.md)
+
+Prepare pilot 20 bugs ของออม: [AOM_PREPARE_HANDOFF_TH.md](AOM_PREPARE_HANDOFF_TH.md) — artifacts พร้อมตรวจรับ ยังไม่เปิด generation
