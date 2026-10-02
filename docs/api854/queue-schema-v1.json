@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0",
+  "authentication": "Authorization: Bearer <private worker token>",
+  "stages": [
+    "prepare",
+    "generate",
+    "evaluate"
+  ],
+  "scheduling_states": [
+    "queued",
+    "leased",
+    "needs_reconciliation",
+    "finished"
+  ],
+  "observed_outcomes": {
+    "prepare": [
+      "adapter_unsupported",
+      "preflight_failed",
+      "prepared"
+    ],
+    "generate": [
+      "generated",
+      "generation_failed",
+      "needs_reconciliation",
+      "refused"
+    ],
+    "evaluate": [
+      "compile_failed",
+      "complete",
+      "coverage_failed",
+      "environment_failed",
+      "failed",
+      "fixed_failed",
+      "invalid",
+      "partial",
+      "timeout"
+    ]
+  },
+  "endpoints": {
+    "GET /health": "Public minimal readiness (no credentials or evidence)",
+    "GET /v1/schema": "This contract",
+    "GET /v1/status": "Counts and job outcomes",
+    "POST /v1/jobs/claim": {
+      "worker_id": "string",
+      "stage": "prepare|generate|evaluate",
+      "owner": "optional champ|beam|aom",
+      "approaches": "optional array",
+      "lease_seconds": "60..3600, default 900"
+    },
+    "POST /v1/jobs/{job_id}/renew": {
+      "attempt_id": "string",
+      "lease_token": "string",
+      "lease_version": "integer",
+      "lease_seconds": "60..3600"
+    },
+    "POST /v1/jobs/{job_id}/artifacts": {
+      "body": "raw bytes (maximum 20 MiB)",
+      "headers": [
+        "X-Artifact-Name",
+        "X-Attempt-ID",
+        "X-Lease-Token",
+        "X-Lease-Version"
+      ]
+    },
+    "GET /v1/artifacts/{artifact_id}": "Authenticated immutable bytes with SHA256/ETag",
+    "POST /v1/jobs/{job_id}/complete": {
+      "attempt_id": "string",
+      "lease_token": "string",
+      "lease_version": "integer",
+      "outcome": "stage-specific observed outcome",
+      "artifact_ids": "nonempty array uploaded by THIS attempt",
+      "metadata": "JSON object; suggested common fields and required AI generation fields below"
+    },
+    "POST /v1/jobs/{job_id}/fail": "Same envelope as complete, a failure outcome only",
+    "POST /v1/admin/reconcile/{job_id}": {
+      "admin_only": true,
+      "resolution": "resume|finish",
+      "outcome": "required for finish",
+      "reason": "required evidence/reconciliation reason"
+    }
+  },
+  "claim_response": "job (or null), attempt_id, lease_token, lease_version, lease_expires_at_unix",
+  "job_fields": [
+    "job_id",
+    "run_id",
+    "protocol_hash",
+    "project",
+    "bug_id",
+    "approach",
+    "owner",
+    "stage",
+    "state",
+    "outcome",
+    "payload",
+    "lease_version"
+  ],
+  "metadata_fields": [
+    "started_at_utc",
+    "ended_at_utc",
+    "worker_id",
+    "source_sha256",
+    "suite_sha256",
+    "raw_evaluator_status",
+    "failure_reason",
+    "executed_tests",
+    "skipped_tests",
+    "requested_model",
+    "actual_model",
+    "account_alias",
+    "prompt_sha256",
+    "response_id",
+    "usage",
+    "model_quota",
+    "checks_reach_target",
+    "line_covered",
+    "line_total",
+    "branch_covered",
+    "branch_total",
+    "fault_detected",
+    "stage_results"
+  ],
+  "generation_metadata": "For AI: requested_model, actual_model, account_alias, prompt_sha256, response_id, usage and model_quota. Unknown values are null, never invented.",
+  "artifact_namespace": "run_id/protocol_hash/project/bug_id/approach/attempt_id/name",
+  "rules": [
+    "All mutations are fenced by the active attempt, lease token and version.",
+    "Claims require an enabled stage for this exact run/protocol; missing approval fails closed.",
+    "Frozen-core preflight permits preparation only; primary generation needs verified exact models and three-owner Gate A.",
+    "prepare/prepared advances to generate; generate/generated advances to evaluate.",
+    "Each stage keeps its immutable artifacts in payload.stage_history.",
+    "An expired generation lease becomes needs_reconciliation; no automatic resend.",
+    "Expired preparation/evaluation requeue with prior artifact references intact.",
+    "finished outcomes need observed evidence, not an administrative quota/deadline label.",
+    "Never upload keys, authorization headers, emails or unrelated browser screenshots.",
+    "Zero skipped/failing reports alone do not establish meaningful test execution.",
+    "Queue success does not certify suite validity; worker evidence establishes that."
+  ]
+}
