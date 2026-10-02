@@ -1,4 +1,19 @@
-# Current project status — 2 October 2026
+# API854 — Aom preparation, 3 October 2026
+
+Read [START_HERE](docs/api854/START_HERE.md) for the current 48-hour plan.
+Aom's inventory/protocol/central queue/schema/report foundation is implemented.
+Installed Defects4J 3.0.1 active IDs match 854 bugs in 17 projects; 3,416 unique
+job keys are prepared, including Aom's 284 bugs / 1,136 keys. All are held and
+not_attempted. Gate A/B and live experiments have not started.
+See [Aom runbook](docs/api854/AOM_RUNBOOK_TH.md), [worker contract](docs/api854/QUEUE_CONTRACT_TH.md)
+and [progress](docs/api854/AOM_PROGRESS_TH.md). Exact KKU models/settings and
+adapter/four-method pipeline evidence remain team integration prerequisites.
+
+Update: [80-job pilot preparation queue is open](docs/api854/PILOT_OPENING_TH.md)
+on the existing authenticated `/v1` controller. Core policies are frozen;
+generation/evaluation remain blocked until exact model/settings and Gate A evidence are supplied.
+
+# Historical project status — 2 October 2026
 
 The KKU-only primary study has **185/204 completed runs** and 19 pending. CMA-ES, FSCS-ART and KKU Gemini are each 51/51; KKU Claude is 32/51. Strict Haiku-only primary total: 180/204. The latest JacksonCore run contributed 29 evaluated test methods; a subsequent Chart request was refused and remains pending.
 
