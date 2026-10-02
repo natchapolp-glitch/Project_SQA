@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "condition": "api854-20261003-primary-v1",
-  "state": "draft_pending_team_gate_a",
+  "condition": "api854-pilot-preflight-20261003-v1",
+  "state": "frozen_core",
   "defects4j_version": "3.0.1",
   "schedule_timezone": "Asia/Bangkok",
   "execution_timezone": "America/Los_Angeles",
@@ -33,11 +33,11 @@
   "observation_timeout_seconds": 10,
   "fixed_validation_repeats": 2,
   "kku": {
-    "claude_family": "Sonnet",
+    "claude_family": "Haiku",
     "gemini_family": "Flash Lite",
     "exact_model_ids": {
-      "kku-claude": "claude-sonnet-5",
-      "kku-gemini": "gemini-3.5-flash-lite"
+      "kku-claude": null,
+      "kku-gemini": null
     },
     "temperature": null,
     "max_output_tokens": null,
@@ -71,29 +71,126 @@
   "generation_cutoff_at": "2026-10-05T01:00:00+07:00",
   "evidence_freeze_at": "2026-10-05T03:00:00+07:00",
   "historical_policy": "17-bug historical cohorts remain separate; never imported as API854 primary observations.",
-  "models": {
-    "kku-claude": {
-      "id": "claude-sonnet-5",
-      "name": "claude-sonnet-5",
-      "family": "sonnet"
+  "enabled_stages": [
+    "prepare"
+  ],
+  "frozen_at_utc": "2026-10-02T18:44:51.891212+00:00",
+  "freeze_scope": "Inventory, target policy, algorithm budgets/seed, test cap, validity/processing policy and preregistered pilot; primary model/settings remain unbound. This is preparation only, not Gate A approval.",
+  "inventory_hash": "9a371667803d2af67804f6d7e139a21eb25c7c05b5a02aef35aa26aa61a9f772",
+  "pilot_bugs": [
+    {
+      "project": "Chart",
+      "bug_id": 1,
+      "owner": "champ"
     },
-    "kku-gemini": {
-      "id": "gemini-3.5-flash-lite",
-      "name": "gemini-3.5-flash-lite",
-      "family": "flash-lite"
+    {
+      "project": "Cli",
+      "bug_id": 1,
+      "owner": "aom"
+    },
+    {
+      "project": "Closure",
+      "bug_id": 1,
+      "owner": "aom"
+    },
+    {
+      "project": "Closure",
+      "bug_id": 176,
+      "owner": "beam"
+    },
+    {
+      "project": "Codec",
+      "bug_id": 1,
+      "owner": "aom"
+    },
+    {
+      "project": "Collections",
+      "bug_id": 1,
+      "owner": "aom"
+    },
+    {
+      "project": "Compress",
+      "bug_id": 1,
+      "owner": "champ"
+    },
+    {
+      "project": "Csv",
+      "bug_id": 1,
+      "owner": "aom"
+    },
+    {
+      "project": "Gson",
+      "bug_id": 1,
+      "owner": "champ"
+    },
+    {
+      "project": "JacksonCore",
+      "bug_id": 1,
+      "owner": "champ"
+    },
+    {
+      "project": "JacksonDatabind",
+      "bug_id": 1,
+      "owner": "aom"
+    },
+    {
+      "project": "JacksonDatabind",
+      "bug_id": 112,
+      "owner": "champ"
+    },
+    {
+      "project": "JacksonXml",
+      "bug_id": 1,
+      "owner": "beam"
+    },
+    {
+      "project": "Jsoup",
+      "bug_id": 1,
+      "owner": "beam"
+    },
+    {
+      "project": "JxPath",
+      "bug_id": 1,
+      "owner": "beam"
+    },
+    {
+      "project": "JxPath",
+      "bug_id": 22,
+      "owner": "beam"
+    },
+    {
+      "project": "Lang",
+      "bug_id": 1,
+      "owner": "aom"
+    },
+    {
+      "project": "Math",
+      "bug_id": 1,
+      "owner": "champ"
+    },
+    {
+      "project": "Mockito",
+      "bug_id": 1,
+      "owner": "beam"
+    },
+    {
+      "project": "Time",
+      "bug_id": 1,
+      "owner": "champ"
     }
-  },
-  "generation": {
-    "input_contract": "champ-generation-input-v1",
-    "temperature": 0,
-    "max_tokens": 4096,
-    "prompt_token_reserve": null,
-    "context_policy_id": null,
-    "prompt_policy_id": null,
-    "suite_policy_id": null,
-    "suite_resolver": null
-  },
-  "approval_state": "integration_proposal_not_frozen",
-  "start_at": "2026-10-03T05:00:00+07:00",
-  "settings_status": "Temperature 0 and max_tokens 4096 are Champ proposals for both methods, not team-frozen values. Prompt reserve must cover the largest prepared UTF-8 prompt conservatively plus provider framing overhead; inspect pilot context/model limits before freeze."
+  ],
+  "pilot_manifest_file_sha256": "3c3c9a829470a74e10e51b96aded2070b70c1cef7b30b4bbfbc8348d81ea325d",
+  "gate_a": {
+    "reviewed_by": {
+      "champ": false,
+      "beam": false,
+      "aom": false
+    },
+    "evidence": [],
+    "pending": [
+      "Champ exact models/settings/quota/context evidence",
+      "Beam four-method pipeline/adapter/validity evidence",
+      "Three-owner Gate A review"
+    ]
+  }
 }

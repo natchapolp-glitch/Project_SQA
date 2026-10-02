@@ -87,6 +87,8 @@ def schema():
             "response_id, usage and model_quota. Unknown values are null, never invented.",
         "artifact_namespace": "run_id/protocol_hash/project/bug_id/approach/attempt_id/name",
         "rules": ["All mutations are fenced by the active attempt, lease token and version.",
+            "Claims require an enabled stage for this exact run/protocol; missing approval fails closed.",
+            "Frozen-core preflight permits preparation only; primary generation needs verified exact models and three-owner Gate A.",
             "prepare/prepared advances to generate; generate/generated advances to evaluate.",
             "Each stage keeps its immutable artifacts in payload.stage_history.",
             "An expired generation lease becomes needs_reconciliation; no automatic resend.",
@@ -128,29 +130,53 @@ class Store:
           CREATE TABLE IF NOT EXISTS events (
             event_id INTEGER PRIMARY KEY, job_id TEXT, kind TEXT NOT NULL,
             created REAL NOT NULL, detail TEXT NOT NULL);
+          CREATE TABLE IF NOT EXISTS run_protocols (
+            run_id TEXT NOT NULL, protocol_hash TEXT NOT NULL, document TEXT NOT NULL,
+            PRIMARY KEY(run_id,protocol_hash));
+          CREATE TABLE IF NOT EXISTS stage_gates (
+            run_id TEXT NOT NULL, protocol_hash TEXT NOT NULL, stage TEXT NOT NULL,
+            PRIMARY KEY(run_id,protocol_hash,stage));
         """)
 
     def event(self, job_id, kind, detail):
         self.db.execute("INSERT INTO events(job_id,kind,created,detail) VALUES(?,?,?,?)",
                         (job_id, kind, time.time(), json.dumps(detail)))
 
-    def seed(self, manifest, run_id, protocol_hash, pilot):
+    def seed(self, manifest, run_id, protocol_hash, pilot, protocol=None):
         safe_name(run_id)
         if not re.fullmatch(r"[a-f0-9]{64}", protocol_hash):
             raise APIError(400, "protocol_hash_must_be_sha256")
+        protocol = protocol or {}
+        enabled = protocol.get("enabled_stages", [])
+        if not isinstance(enabled, list) or any(stage not in STAGES for stage in enabled):
+            raise ValueError("invalid enabled_stages")
+        if "generate" in enabled or "evaluate" in enabled:
+            kku = protocol.get("kku", {})
+            reviews = protocol.get("gate_a", {}).get("reviewed_by", {})
+            if (protocol.get("state") != "frozen" or not kku.get("model_settings_verified")
+                    or not all(kku.get("exact_model_ids", {}).get(a) for a in ("kku-claude", "kku-gemini"))
+                    or not all(reviews.get(owner) is True for owner in ("champ", "beam", "aom"))
+                    or not protocol.get("gate_a", {}).get("evidence")):
+                raise ValueError("generation/evaluation require frozen models and evidenced three-owner Gate A")
         bugs = manifest["bugs"]
         identities = [(row["project"], row["bug_id"]) for row in bugs]
         if len(identities) != len(set(identities)):
             raise APIError(400, "duplicate_inventory")
         if pilot:
             chosen = {}
-            for row in bugs:
+            for row in sorted(bugs, key=lambda r: (r["project"], r["bug_id"])):
                 chosen.setdefault(row["project"], row)
-            extras = [next(row for row in bugs if row["project"] == project and
-                           row["bug_id"] != chosen[project]["bug_id"])
+            extras = [max((row for row in bugs if row["project"] == project), key=lambda r: r["bug_id"])
                       for project in ("Closure", "JxPath", "JacksonDatabind")]
             bugs = list(chosen.values()) + extras
         with self.lock, self.db:
+            encoded = json.dumps(protocol, sort_keys=True, separators=(",", ":"))
+            previous = self.db.execute("SELECT document FROM run_protocols WHERE run_id=? AND protocol_hash=?", (run_id, protocol_hash)).fetchone()
+            if previous and previous[0] != encoded:
+                raise ValueError("frozen protocol cannot change under an existing hash")
+            self.db.execute("INSERT OR IGNORE INTO run_protocols VALUES(?,?,?)", (run_id, protocol_hash, encoded))
+            for stage in enabled:
+                self.db.execute("INSERT OR IGNORE INTO stage_gates VALUES(?,?,?)", (run_id, protocol_hash, stage))
             for row in bugs:
                 project = safe_name(row["project"])
                 if row["owner"] not in ("champ", "beam", "aom") or type(row["bug_id"]) is not int or row["bug_id"] < 1:
@@ -189,6 +215,8 @@ class Store:
             raise APIError(400, "invalid_stage")
         seconds = self.lease_seconds(body)
         clauses, args = ["state='queued'", "stage=?"], [stage]
+        clauses.append("EXISTS (SELECT 1 FROM stage_gates g WHERE g.run_id=jobs.run_id AND g.protocol_hash=jobs.protocol_hash AND g.stage=?)")
+        args.append(stage)
         if body.get("owner"):
             if body["owner"] not in ("champ", "beam", "aom"):
                 raise APIError(400, "invalid_owner")
@@ -335,6 +363,8 @@ class Store:
         with self.lock, self.db:
             self.expire()
             return {"schema_version": VERSION,
+                    "run_protocols": [{**dict(r), "document": json.loads(r["document"])} for r in self.db.execute("SELECT * FROM run_protocols")],
+                    "enabled_stages": [dict(r) for r in self.db.execute("SELECT * FROM stage_gates")],
                     "counts": [dict(row) for row in self.db.execute("SELECT stage,state,outcome,count(*) AS count FROM jobs GROUP BY stage,state,outcome")],
                     "attempts": [{**dict(row), "artifacts": [self.artifact_info(a) for a in self.db.execute(
                         "SELECT * FROM artifacts WHERE attempt_id=?", (row["attempt_id"],))]}
@@ -479,7 +509,8 @@ def main():
         if not args.protocol:
             parser.error("--protocol required with --seed-manifest")
         protocol_hash = digest(args.protocol.read_bytes())
-        count = store.seed(json.loads(args.seed_manifest.read_text(encoding="utf-8")), args.run_id, protocol_hash, args.seed_scope == "pilot")
+        count = store.seed(json.loads(args.seed_manifest.read_text(encoding="utf-8")), args.run_id, protocol_hash, args.seed_scope == "pilot",
+                           json.loads(args.protocol.read_text(encoding="utf-8")))
         print(f"Seed scope contains {count} unique job keys; existing jobs retained", flush=True)
     server = ThreadingHTTPServer((args.host, args.port), Handler)
     server.daemon_threads = True

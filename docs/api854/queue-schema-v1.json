@@ -123,6 +123,8 @@
   "artifact_namespace": "run_id/protocol_hash/project/bug_id/approach/attempt_id/name",
   "rules": [
     "All mutations are fenced by the active attempt, lease token and version.",
+    "Claims require an enabled stage for this exact run/protocol; missing approval fails closed.",
+    "Frozen-core preflight permits preparation only; primary generation needs verified exact models and three-owner Gate A.",
     "prepare/prepared advances to generate; generate/generated advances to evaluate.",
     "Each stage keeps its immutable artifacts in payload.stage_history.",
     "An expired generation lease becomes needs_reconciliation; no automatic resend.",

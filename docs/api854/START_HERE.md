@@ -33,6 +33,10 @@
 
 ## งานออมที่เตรียมแล้ว — 3 ตุลาคม 2569
 
+**อัปเดต:** [ตรึง core protocol และเปิดคิว preparation pilot80](PILOT_OPENING_TH.md)
+ใช้ controller `/v1/...` ของ QUEUE_CONNECTION_TH.md; generation/evaluation ยังถูก gate ไว้
+นี่ไม่ใช่ frozen primary model protocol หรือหลักฐานว่า Gate A/B ผ่าน
+
 ตรวจ installed Defects4J 3.0.1 ตรง 854 bugs/17 projects และสร้าง 3,416 job keys ไม่ซ้ำแล้ว
 งานออม 284 bugs/1,136 keys; คิวทั้งชุดยัง held/not_attempted และไม่มี live requests
 Protocol เป็น draft; Gate A/B ยังไม่ผ่าน ต้องใช้หลักฐานจากแชมป์/บีมและตรวจรับทั้งสามคน
@@ -43,3 +47,5 @@ Protocol เป็น draft; Gate A/B ยังไม่ผ่าน ต้อ�
 - [ความคืบหน้าและงานที่รอทีม](AOM_PROGRESS_TH.md)
 - [ร่างรายงาน](REPORT_TH.md)
 - [รายการหลักฐาน](EVIDENCE_INDEX.md)
+
+ตรวจรับ worker/tunnel ล่าสุด: [AOM_ACCEPTANCE_TH.md](AOM_ACCEPTANCE_TH.md)

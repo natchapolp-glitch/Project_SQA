@@ -1,5 +1,9 @@
 # Queue contract v1 — สำหรับแชมป์ บีม ออม
 
+**Deployment update:** ทีมใช้ `queue_server.py`/`queue_client.py` และ `/v1/...` จาก
+QUEUE_CONNECTION_TH.md กับ protocol.core-frozen.json สำหรับ prepare-only80jobs
+เนื้อหา endpoint ด้านล่างเป็น foundation service.py reference ไม่ใช่ deployed API; ห้ามเปิด controllerซ้ำ
+
 ไฟล์เจ้าของออม: `scripts/study/api854/{inventory,queue,service,report}.py`
 Runtime: `.local/api854/` ถูก ignore ทั้งฐานข้อมูล artifacts และ credentials
 คิวนี้ไม่เรียก KKU หรือ Defects4J เอง แชมป์/บีมต่อ workers ตาม contract นี้

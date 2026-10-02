@@ -1,8 +1,12 @@
 # คิวกลางและหลักฐานของออม — schema 1.0
 
+**อัปเดต 3 ต.ค. 01:45:** คิวมี pilot80jobs และเปิด stage prepare เท่านั้น
+protocol.core-frozen.json ตรึง target/budget/inventory; primary models/settings/Gate A ยังรอทีม
+generate/evaluate claims ถูกบล็อกโดย stage gates แยก run/protocol ดู [รายละเอียด](PILOT_OPENING_TH.md)
+
 ## URL ที่เปิดใช้งาน
 
-https://defendant-reaches-clinton-guides.trycloudflare.com
+https://angel-keywords-optics-alternatively.trycloudflare.com
 
 Cloudflare รับ HTTPS port 443 แล้วส่งเข้า controller ที่เครื่องออม `127.0.0.1:8765` ไม่ต้องอยู่ Wi-Fi เดียวกันหรือติดตั้ง VPN ที่เครื่องเพื่อน URL นี้เป็นชั่วคราว เปลี่ยนเมื่อเริ่ม tunnel ใหม่ เครื่องออมต้องเปิดอยู่และไม่ sleep ตลอดงาน ไม่รับประกัน uptime 48 ชั่วโมง
 
@@ -22,7 +26,7 @@ py scripts/study/api854/queue_client.py check
 เปลี่ยนชื่อไฟล์เป็นของบีมเมื่อใช้เครื่องบีม ผลต้องเห็น `health.ready=true` และ `authenticated_schema_version=1.0` ตัวอย่างไม่มี secret:
 
 ```powershell
-Invoke-RestMethod 'https://defendant-reaches-clinton-guides.trycloudflare.com/health'
+Invoke-RestMethod 'https://angel-keywords-optics-alternatively.trycloudflare.com/health'
 ```
 
 ## Contract ที่ทีมต้องตรวจรับก่อนเริ่ม pilot
