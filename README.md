@@ -1,5 +1,9 @@
 # Current account update — 184/204 primary runs
 
+Read `docs/ACCOUNT_UPDATE_20261002.md` for latest results. Strict Haiku primary:179/204. Separate academic clarification results: Time30, JxPath28, Collections30; not added to the primary count. New KKU account Claude Haiku quota:100%. Experiment remains incomplete; Classroom not submitted. DEADLINE PDF/PPTX describe an earlier183-run checkpoint.
+
+# Current account update — 184/204 primary runs
+
 Read `docs/ACCOUNT_UPDATE_20261002.md` for the latest results. Strict Haiku primary:179/204. JxPath iteration3:28 completed methods, kept separate. New account Claude quota:100%. Reports below are historical183-run checkpoints. Experiment incomplete; Classroom not submitted.
 
 # Latest submission checkpoint — 17 bugs, 2 October 2026

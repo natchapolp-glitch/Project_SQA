@@ -1,3 +1,5 @@
+> Latest update: read ACCOUNT_UPDATE_20261002.md first. Primary184/204, remaining20. Additional clarification results are separate. This document and its PDF/deck describe the earlier183-run checkpoint.
+
 > Latest update: read ACCOUNT_UPDATE_20261002.md first. Primary184/204, remaining20. This document and its PDF/deck describe the earlier183-run checkpoint.
 
 # ชุดส่งล่าสุดก่อน 23:00 — 17 บัค
