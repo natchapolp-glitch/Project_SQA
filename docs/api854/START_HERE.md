@@ -65,3 +65,6 @@ Model/settings/quota และ adapters/evaluator ยังต้องตรว
 ตรวจส่งมอบบีม `44dd5cb0`: [AOM_BEAM_HANDOFF_REVIEW_TH.md](AOM_BEAM_HANDOFF_REVIEW_TH.md) —
 รับหลักฐาน discovery ครบ 20 bugs/691 declarations และ exclusions 3 รายการแล้ว;
 context/prompt supplement ยังต้องรวมกับ runtime ออม และ fixture/oracle/Gate A ยัง pending.
+
+ตรวจรับ integration แชมป์ `d134cde6`: [AOM_CHAMP_INTEGRATION_REVIEW_TH.md](AOM_CHAMP_INTEGRATION_REVIEW_TH.md) —
+shared prepare v2 + callable resolver + runner guards รวมแล้ว; receiver/context รุ่นใหม่และ Gate A ยัง pending.

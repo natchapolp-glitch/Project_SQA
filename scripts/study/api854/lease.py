@@ -86,7 +86,7 @@ class LeaseHeartbeat:
         self.stop()
 
 
-def generate_with_lease(worker, job, heartbeat: LeaseHeartbeat, **generation_options):
+def generate_with_lease(worker, job, heartbeat: LeaseHeartbeat, *, owner=None, **generation_options):
     """Generate once under an existing claim; caller supplies frozen job/policy.
 
     No payload interpretation, scheduler, account switch or semantic retry.
@@ -99,7 +99,9 @@ def generate_with_lease(worker, job, heartbeat: LeaseHeartbeat, **generation_opt
     ):
         raise ValueError("Handoff must share this heartbeat and claim")
     options = dict(generation_options)
-    expected_owner = options.pop("expected_owner", "champ")
+    expected_owner = options.pop("expected_owner", owner or "champ")
+    if owner is not None and expected_owner != owner:
+        raise ValueError("Conflicting owner arguments")
     attempt_id = options.pop("attempt_id", heartbeat.claim["attempt_id"])
     if attempt_id != heartbeat.claim["attempt_id"]:
         raise ValueError("Use the queue claim's attempt ID")

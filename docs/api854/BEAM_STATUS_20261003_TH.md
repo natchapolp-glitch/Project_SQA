@@ -121,3 +121,19 @@ validation เก็บใต้ results/validation/api854-beam/ ไม่รว
 - Champ API CLI ล่าสุดใช้ individual context-manifest.json/prompt.md และ callable resolver
   ส่วน Beam handoff ส่ง suite + generation-lineage แยกเพื่อ evaluator. ต้องตรวจรับ composition
   กับ primary protocol ใหม่ก่อนใช้ CLI นี้ทำ real generation; preflight prepare ไม่ข้าม Gate A
+
+## ส่ง callable integration ให้ทีมตรวจรับ
+
+- Baseline commit `75eda88d` push branch beam แล้วด้วย Git author ที่ผู้ใช้กำหนด
+- เพิ่ม `scripts.study.api854.champ_bridge:champ_suite_resolver` ให้ APIWorker ใช้
+  Beam fenced handoff และส่ง suite/lineage สำหรับ evaluator ได้ครบ
+- Preparation สำหรับ shared primary contract export individual prompt/context/targets
+  และ metadata ที่ตรวจ hashes ได้ก่อน AI claim; core-preflight ยังเปิดเฉพาะ prepare
+- เพิ่ม routing ที่ระบุ owner shards ใน frozen protocol เพื่อให้ Champ API coordinator
+  และ Beam evaluator ทำงานข้าม owner ตามแผนโดยไม่เปลี่ยนเจ้าของ job
+- 160 API854 tests ผ่านไม่มี skip; รวม 20 legacy tests ที่ผ่านก่อนหน้าเป็น 180 tests
+- Actual local APIWorker/D4J smoke สอง mock AI jobs/6 stages ผ่าน fixed twice/buggy/coverage
+  ที่ Lang-4; zero real KKU/live queue mutations และ usable=false รอ semantic review
+- เอกสารตรวจรับ [BEAM_CHAMP_RESOLVER_TH.md](BEAM_CHAMP_RESOLVER_TH.md) พร้อม public proof
+  และ shared contract proposal ที่ยังไม่ frozen. quota/settings จริงและ Gate A ยัง pending
+- Live prepare 24 งานยังรออนุญาตส่งหลักฐานไป URL ออม ตาม automatic approval review

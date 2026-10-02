@@ -10,6 +10,7 @@ from .common import (ROOT, APPROACHES, read_json, write_json, load_job, sha256, 
 from .beam_queue import BeamAccess, BeamQueueClient, FencedPublisher, bundle_evidence, download_generation
 from .champ_queue import QueueError
 from .lease import LeaseHeartbeat
+from .queue_client import QueueClient
 
 
 def local_job(claim):
@@ -28,6 +29,7 @@ def stage_metadata(result, protocol, worker_id):
                 "implementation_sha256": protocol["source_sha256"],
                 "fixed_source_sha256": result.get("fixed_source_sha256"),
                 "targets_sha256": result.get("targets_sha256"),
+                "target_count": result.get("target_count"),
                 "suite_sha256": result.get("suite_sha256"), "test_count": result.get("test_count"),
                 "raw_evaluator_status": result.get("evaluator_status"),
                 "failure_reason": result.get("error"), "usable": result.get("usable", False),
@@ -48,6 +50,8 @@ def stage_metadata(result, protocol, worker_id):
         metadata["execution_binding_scope"] = "preparation_only"
         metadata["approval_state"] = protocol["approval_state"]
         metadata["primary"] = False
+    if result.get("prompt"):
+        metadata.update(result["prompt"])
     return metadata
 
 
@@ -55,14 +59,15 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
             worktrees, d4j="defects4j", condition="development", lease_seconds=900, heartbeat_interval=60, owner="beam"):
     if owner not in {"aom", "beam", "champ"}:
         raise ValueError("Invalid allocated owner")
-    if owner != "beam" and not getattr(client, "team_routing", False):
-        raise ValueError("Other owners require the explicit team runner plan")
     protocol = read_json(protocol_path)
     if condition == "preflight" or protocol.get("state") == "frozen_core":
         from .core_preflight import bind
         protocol = bind(protocol_path, stage=stage, condition=condition, run_id=run_id)
     if stage not in {"prepare", "generate", "evaluate"} or not approaches or any(a not in APPROACHES for a in approaches):
         raise ValueError("Invalid stage/approaches before claim")
+    if owner not in {"beam", "champ", "aom"} or (owner != "beam" and not getattr(client, "team_routing", False)
+            and owner not in protocol.get("worker_routing", {}).get(stage, [])):
+        raise ValueError("Cross-owner stage routing must be declared by the shared protocol")
     if not implementation_matches(protocol.get("source_sha256")):
         raise ValueError("Protocol implementation hashes differ before claiming any work")
     if condition == "primary" and protocol.get("status") != "frozen":
@@ -91,8 +96,11 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
     if condition == "preflight":
         write_json(output / "execution-binding.json", protocol)
     write_json(output / "claim-intent.json", {"worker_id": worker_id, "stage": stage, "run_id": run_id,
-                                             "protocol_hash": protocol_hash, "approaches": approaches})
-    claim = client.claim(worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds)
+                                             "protocol_hash": protocol_hash, "approaches": approaches, "owner": owner})
+    if getattr(client, "team_routing", False) or owner == "beam":
+        claim = client.claim(worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds)
+    else:
+        claim = QueueClient.claim(client, worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds)
     if not claim.get("job"):
         write_json(output / "receipt.json", {"state": "empty", "kku_requests": 0})
         return {"state": "empty", "kku_requests": 0}
@@ -123,6 +131,8 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
                     files.pop()
                     files += [source / "context" / name for name in
                               ("prompt.md", "targets.json", "prepare-policy.json", "prepare-metadata.json")]
+                elif result.get("prompt"):
+                    files += [source / "context/prompt.md"]
             outcome = result["observed_outcome"]
             if stage == "generate" and outcome == "generated":
                 prepared = [h for h in claim["job"].get("payload", {}).get("stage_history", [])
