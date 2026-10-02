@@ -32,8 +32,14 @@ output/*.zip
 output/**/*.zip
 !ai-tests/provider-captures/**/*.log
 
-# Private worker access tokens and local queue runtime.
+# API854 credentials and single-host runtime state (never package or publish).
 .local/
-*.private.json
+.superpowers/
+*.sqlite
+*.sqlite-*
 .env
 .env.*
+!.env.example
+
+# Worker credentials outside the default runtime must stay private.
+*.private.json

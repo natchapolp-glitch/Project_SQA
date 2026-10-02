@@ -139,7 +139,7 @@ class ChampBridgeTests(unittest.TestCase):
     def publish_prepare(self):
         with LeaseHeartbeat(self.client, self.prepare_claim) as guard:
             FencedPublisher(self.client, self.prepare_claim, guard, self.root / 'prepare-publication').publish(
-                'prepared', list(self.prepared.iterdir()), self.prepare_metadata)
+                'prepared', [p for p in self.prepared.iterdir() if p.is_file()], self.prepare_metadata)
 
     def transport(self, method, url, headers, body, timeout):
         self.calls.append(json.loads(body))
@@ -252,3 +252,51 @@ class ChampBridgeTests(unittest.TestCase):
         job = next(j for j in self.store.status()['jobs'] if j['approach'] == 'kku-claude')
         self.assertEqual(job['outcome'], 'generation_failed')
         self.assertEqual(len(self.calls), 1)
+
+    def shared_prepare(self, *, eligible):
+        from scripts.study.api854.context_export import export_context
+        from scripts.study.api854.preparation import compose, POLICY, encoded
+        fixed = self.root / 'shared-fixed'
+        (fixed / 'src').mkdir(parents=True)
+        (fixed / '.defects4j.config').write_bytes(b'pid=Lang\nvid=4f\n')
+        (fixed / 'src/Target.java').write_bytes(b'class Target {}')
+        self.prepared = self.root / 'shared-prepared'
+        export_context(fixed, 'Lang', 4, ['src/Target.java'], self.prepared,
+                       policy_id=POLICY['context_policy_id'])
+        targets = [{'class': 'Target', 'constructor_types': '', 'method': 'target', 'parameter_types': ''}]
+        self.prepare_metadata = compose(self.prepared, classes=['Target'], targets=targets if eligible else [])
+        self.protocol['prepare_policy_sha256'] = digest(encoded(POLICY))
+        self.protocol['generation'].update(prepare_contract='aom-beam-prepare-v2', handoff_contract='beam-v1',
+            prompt_policy_id=POLICY['prompt_policy_id'], prompt_token_reserve=100000)
+        self.protocol_path = self.root / 'shared-prepare-v2-protocol.json'
+        common.write_json(self.protocol_path, self.protocol)
+        self.settings = FrozenSettings.load(self.protocol_path)
+        with self.store.db:
+            self.store.db.execute('DELETE FROM attempts')
+            self.store.db.execute('DELETE FROM jobs')
+        self.store.seed({'bugs': [{'project': 'Lang', 'bug_id': 4, 'owner': 'champ'}]},
+            'mock-only', self.settings.protocol_hash, False, protocol=test_beam_queue.mock_stage_gate())
+        self.prepare_claim = self.client.claim('champ-fixture', 'prepare', ['kku-claude'])
+
+    def test_shared_prepare_v2_bridge_publishes_hash_bound_evaluator_input(self):
+        self.shared_prepare(eligible=True)
+        self.publish_prepare()
+        generated = self.worker().once()
+        self.assertEqual(generated['state'], 'published')
+        self.assertEqual(len(self.calls), 1)
+        claim = QueueClient.claim(self.client, 'champ-fixture', 'evaluate', ['kku-claude'], owner='champ')
+        suite, lineage = download_generation(self.client, claim, self.root / 'shared-evaluation')
+        evaluate_worker.validate_lineage(local_job(claim), lineage, suite, self.protocol)
+        self.assertEqual(lineage['context_source_hash'], self.prepare_metadata['context_source_hash'])
+        self.assertEqual(lineage['fixed_source_sha256'], self.prepare_metadata['fixed_source_sha256'])
+        self.assertEqual(lineage['job']['protocol_hash'], self.settings.protocol_hash)
+
+    def test_shared_prepare_v2_pending_targets_block_before_claim_and_provider(self):
+        from scripts.study.api854.api_worker import WorkerBlocked
+        self.shared_prepare(eligible=False)
+        self.publish_prepare()
+        before = len(self.store.status()['attempts'])
+        with self.assertRaisesRegex(WorkerBlocked, 'shared_preparation_not_ready'):
+            self.worker().once()
+        self.assertFalse(self.calls)
+        self.assertEqual(len(self.store.status()['attempts']), before)

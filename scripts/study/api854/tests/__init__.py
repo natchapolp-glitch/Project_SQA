@@ -1,1 +1,1 @@
-"""Team integration fixtures; no primary experiment results."""
+"""Offline API854 contract and recovery tests."""

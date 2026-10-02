@@ -58,7 +58,7 @@ class AomStoreIntegrationTests(unittest.TestCase):
     def setUpClass(cls):
         repository = Path(__file__).resolve().parents[4]
         try:
-            result = subprocess.run(['git', '-c', f'safe.directory={repository}', 'show', AOM_COMMIT + ':scripts/study/api854/queue_server.py'],
+            result = subprocess.run(['git', 'show', AOM_COMMIT + ':scripts/study/api854/queue_server.py'],
                                     cwd=repository, capture_output=True, check=True)
         except (OSError, subprocess.CalledProcessError):
             raise unittest.SkipTest('Pinned Aom queue object not present; fetch the team commit for integration')

@@ -156,3 +156,13 @@ validation เก็บใต้ results/validation/api854-beam/ ไม่รว
 - เพิ่ม hashed fixture recipe/prompt guard และ canonical targets.json artifact; ต้อง compose กับ runtime ออมและ re-pin shared protocol ก่อน live generation
 - Tests ผ่าน 178 API854 + 31 legacy/Java = 209, ไม่มี skip; 0 real KKU requests และ 0 live queue mutations
 - รายละเอียด/หลักฐาน/งานที่เหลือ: [BEAM_FIXTURE_REVIEW_TH.md](BEAM_FIXTURE_REVIEW_TH.md)
+
+## ยืนยันเครื่องเดียวและตรวจ runtime/prepare v3
+
+- บีมยืนยันมี 1 เครื่อง: runner proposal v2 ใช้ beam-pc1, CPU 1 slot, ถอน beam-pc2/3; routing ยังครบ 10,248 stage keys และ job ownership เดิม
+- รวม runtime ออม d147e216 กับ Beam changes; exact v3 review ผ่าน 20 bugs/691 declarations/3 exclusions และ 243 preparation file hashes รวม Chart receiver
+- เครื่องนี้ environment พร้อมจริงและ cross-process CPU lock ปฏิเสธงานซ้อน/ใช้ต่อหลัง release ได้ มี host receipt และ local runner integration test แยกจาก CPU experimental proofs
+- เพิ่ม explicit development v4 สำหรับ Codec/Collections/Csv; 6 suites fixed ผ่านสองรอบ ทุก stage executed=30/skipped=0/target_checks=30 พร้อม buggy และ fixed coverage จริง ทุก buggy ผ่าน จึงไม่ตรวจพบบัคในชุดนี้
+- เก็บ separate local semantic reviews valid สำหรับ retained suites ใน 5 bugs รวมสอง bugs รุ่นก่อน; ยังเหลืออีก 15 bugs และ unsampled-target/shared-policy/team review ไม่รับรอง shared-v3/Gate A จากผลนี้
+- เพิ่ม preclaim guard ห้าม relabel shared prepare v3 เดิมเป็น explicit recipe contract; ต้องตกลง shared version ใหม่/recipe knowledge ที่เท่ากันก่อน primary
+- รายละเอียดการส่งมอบและไฟล์ one-host proposal: [BEAM_ONE_HOST_V3_REVIEW_TH.md](BEAM_ONE_HOST_V3_REVIEW_TH.md)

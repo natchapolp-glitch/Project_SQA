@@ -1,5 +1,7 @@
 # SQA 854 Bugs — Collaborative 48-Hour Implementation Plan
 
+> **Model update from user, 2026-10-03:** Primary Claude is now `claude-sonnet-5`, replacing Haiku in the original plan below. Gemini stays `gemini-3.5-flash-lite`. Use `experiments/configs/api854-20261003/model-selection.json` for exact IDs and include this pair in the team-frozen protocol before live pilot. This selection does not verify quota, enable generation, or approve a fallback to Sonnet 5.5. Earlier Haiku references below describe the previous planning assumption.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans. งานอิสระในแต่ละระยะทำ parallel ได้ แต่ต้องผ่านจุดตรวจรับร่วมก่อนเริ่มระยะถัดไป แชมป์ บีม ออมใช้ Codex ใน branch ของตนเอง
 
 **Goal:** ตั้งแต่ 3 ต.ค. 2569 เวลา 05:00 ถึง 5 ต.ค. 2569 เวลา 05:00 (Asia/Bangkok) ให้ active bugs 854 รายการมีผลทดลองด้วย CMA-ES, FSCS-ART, KKU Claude Haiku และ KKU Gemini Flash Lite รวม 3,416 job keys โดยนับความล้มเหลวที่เกิดจากการทดลองจริงพร้อมหลักฐาน และแยกงานที่ยังไม่ทดลอง

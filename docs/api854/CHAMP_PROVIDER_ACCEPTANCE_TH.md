@@ -1,9 +1,25 @@
 # หลักฐานอ่าน API/คิวจากเครื่องแชมป์ — 3 ตุลาคม 2569
 
-หลักฐานปัจจุบัน: [champ-readiness-v2.json](../../output/api854-provider-preflight-20261003/champ-readiness-v2.json)
+หลักฐาน API/คิว: [champ-readiness-v2.json](../../output/api854-provider-preflight-20261003/champ-readiness-v2.json)
+สถานะรับงานบีม/ออมล่าสุด: [CHAMP_TEAM_INTEGRATION_TH.md](CHAMP_TEAM_INTEGRATION_TH.md)
 เก็บ timestamps, HTTP status, hashes และรายการ fields ที่ตรวจได้.
 รุ่น v1 เก็บ checkpoint ก่อนเพิ่มข้อมูล stage gate; ไม่เขียนทับหลักฐานเดิม.
 ไม่มี KKU generation request, claim, upload, complete หรือการใช้โควตาสร้างเทสในการตรวจนี้.
+
+## รับ integration ที่ออม push แล้ว
+
+ดึงและรวม branch `aom` ถึง commit `8fcec539` แล้ว (รวม `6dd61871`).
+ตรวจออฟไลน์บนเครื่องแชมป์ **116 tests ผ่าน** รวม gated Store ปัจจุบัน.
+ตรวจ prepare artifacts ครบ **20 bugs / 162 checksum entries**; source/prompt bytes
+และ metadata hashes ตรงกัน. SHA-256 ของ core protocol bytes ตรงทั้ง `.sha256`
+และ hash ที่คิวรายงานใน readiness receipt.
+หลักฐาน: [champ-aom-preparation-audit-v1.json](../../output/api854-provider-preflight-20261003/champ-aom-preparation-audit-v1.json).
+
+Prompt ใหญ่สุด Math-1 = **99,335 UTF-8 bytes**; รวม 20 prompts = 905,811 bytes.
+ตัวเลขนี้ไม่ใช่ measured tokens. Worker ปัจจุบันต้องมี conservative prompt reserve
+ครอบคลุม byte floor และ provider framing; ยังไม่กำหนด reserve/runtime model limits แทนทีม.
+Artifacts ยังระบุ adapter eligibility เป็น false; checksum ผ่านไม่อนุมัติ eligibility
+หรือ Gate A/B. ไม่เปลี่ยน frozen-core bytes และไม่ claim/publish preparation เข้าคิว.
 
 ## ยืนยันจาก endpoint จริงแล้ว
 
@@ -15,8 +31,8 @@
   ทั้งหมด `prepare/queued`. `enabled_stages` เปิดเฉพาะ `prepare`.
 - Hash ที่คิวรายงานสำหรับ run นี้:
   `675a480915c40ab19f7be57b56b046fb8c8924e7330e4cc8956b2ed3de6d31ad`.
-  ยังไม่ได้อ่าน bytes ของ `protocol.core-frozen.json` จาก Git branch ออม;
-  จึงยังไม่อ้างว่าเครื่องแชมป์เทียบ file hash หรือทำซ้ำ 114 tests แล้ว.
+  Readiness v2 เป็น checkpoint ก่อนออม push; checkpoint รับ integration ด้านบน
+  เทียบ core bytes/hash สำเร็จแล้ว และตรวจชุดล่าสุด 116 tests.
 - บัญชี alias `a01`: `GET /models` และ `POST /chat/models-list` คืน HTTP 200
   และแสดง exact string IDs `claude-sonnet-5` / `gemini-3.5-flash-lite` ทั้งสอง endpoint.
   Provider ที่รายการโมเดลระบุคือ Claude / Gemini ตามลำดับ.
@@ -55,15 +71,13 @@ Keys ที่เครื่องนี้พบมีเฉพาะ `a01`; �
 
 ## สิ่งที่ต้องส่งกลับให้ออม/บีม
 
-1. ออม **push `6dd61871` หรือ commit integration ล่าสุดขึ้น branch `aom`**.
-   ตอนตรวจ remote ยังอยู่ที่ `2e419e421c2fcc75dbfd516e04ed8ce27aafa463`.
-   ไฟล์บันทึกตรวจรับที่ `C:/Users/ACER/.../Project_SQA_aom/` เป็น path เครื่องออม;
-   เครื่องแชมป์ต้องรับไฟล์ผ่าน Git/private channel จึงจะตรวจได้.
+1. รับงานออมผ่าน Git แล้ว; ไม่ติดเรื่อง commit ยังไม่ push.
+   Readiness receipts v1/v2 เก็บสถานะ remote เดิมไว้เป็นประวัติ ไม่แก้ย้อนหลัง.
 2. ให้ทีมใช้ receipt นี้เป็นหลักฐาน model discovery/queue readiness;
    ไม่นับว่า settings/quota หรือ Gate B ผ่านแล้ว.
-3. บีมส่ง context/prompt/suite policies, resolver/adapters และ fixed/buggy/coverage evidence.
+3. รับ context/prompt/suite policies, resolver/adapters และ Lang-4 mock-AI fixed/buggy/coverage evidence จากบีมแล้ว.
+   ยังต้องมี source-bound targets/fixtures ครบ 20 bugs และ semantic review ตามเอกสาร integration ล่าสุด.
 4. หลังทีมตรวจครบ ให้ตรึง primary protocol bytes และ seed **run ใหม่**;
    คง core-frozen/preflight run เดิมไว้ ไม่เปลี่ยนย้อนหลัง.
 
-แชมป์ตรวจออฟไลน์ชุดที่มีใน branch ตนผ่าน 90 tests ก่อนหน้านี้.
-ผล 114 tests เป็นข้อมูลที่ออมแจ้ง ยังไม่ได้ทำซ้ำบนเครื่องนี้เพราะ commit ยังไม่อยู่บน remote.
+แชมป์ผ่าน 90 tests ก่อนรับงานออม; ปัจจุบันรวม integration และ prepare tests แล้วผ่าน 116 tests.

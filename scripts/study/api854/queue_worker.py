@@ -58,6 +58,9 @@ def stage_metadata(result, protocol, worker_id):
         metadata["source_sha256"] = result["context"]["source_hash"]
         metadata["context_source_hash"] = result["context"]["source_hash"]
         metadata["context_selection"] = result["context"]["selection_policy_id"]
+    if result.get("preparation"):
+        metadata["adapter_targets_sha256"] = result.get("targets_sha256")
+        metadata.update(result["preparation"])
     if protocol.get("preparation_only"):
         metadata["execution_binding_scope"] = "preparation_only"
         metadata["approval_state"] = protocol["approval_state"]
@@ -69,13 +72,15 @@ def stage_metadata(result, protocol, worker_id):
 
 def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, output, results,
             worktrees, d4j="defects4j", condition="development", lease_seconds=900, heartbeat_interval=60, owner="beam"):
+    if owner not in {"aom", "beam", "champ"}:
+        raise ValueError("Invalid allocated owner")
     protocol = read_json(protocol_path)
     if condition == "preflight" or protocol.get("state") == "frozen_core":
         from .core_preflight import bind
         protocol = bind(protocol_path, stage=stage, condition=condition, run_id=run_id)
     if stage not in {"prepare", "generate", "evaluate"} or not approaches or any(a not in APPROACHES for a in approaches):
         raise ValueError("Invalid stage/approaches before claim")
-    if owner not in {"beam", "champ", "aom"} or (owner != "beam"
+    if owner not in {"beam", "champ", "aom"} or (owner != "beam" and not getattr(client, "team_routing", False)
             and owner not in protocol.get("worker_routing", {}).get(stage, [])):
         raise ValueError("Cross-owner stage routing must be declared by the shared protocol")
     if not implementation_matches(protocol.get("source_sha256")):
@@ -86,6 +91,9 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
         raise ValueError("Development work requires a separate beam-development-* run ID")
     if stage == "generate" and any(a not in {"cmaes", "fscs-art"} for a in approaches):
         raise ValueError("KKU generation is separate and requires API/account/prompt preflight")
+    if (protocol.get('fixture_policy_id')
+            and protocol.get('generation', {}).get('prepare_contract') == 'aom-beam-prepare-v3'):
+        raise ValueError('Explicit fixture recipes require a new shared preparation contract before claim')
     identifier(worker_id, "worker_id")
     protocol_hash = sha256(protocol_path)
     # Queue contract cannot filter claims by run/protocol. Refuse mixed eligible
@@ -101,14 +109,21 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
                 and j.get("owner") == owner and j.get("approach") in approaches]
     if any(j.get("run_id") != run_id or j.get("protocol_hash") != protocol_hash for j in eligible):
         raise ValueError("Eligible queue mixes run IDs/protocols; controller must isolate the intended run")
+    shared_v3 = stage == "generate" and protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3"
+    if shared_v3:
+        from .prepared_inputs import load as load_prepared
+        for queued_job in eligible:
+            load_prepared(client, queued_job, protocol)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     if condition == "preflight":
         write_json(output / "execution-binding.json", protocol)
     write_json(output / "claim-intent.json", {"worker_id": worker_id, "stage": stage, "run_id": run_id,
                                              "protocol_hash": protocol_hash, "approaches": approaches, "owner": owner})
-    claim = (client.claim(worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds) if owner == "beam"
-             else QueueClient.claim(client, worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds))
+    if getattr(client, "team_routing", False) or owner == "beam":
+        claim = client.claim(worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds)
+    else:
+        claim = QueueClient.claim(client, worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds)
     if not claim.get("job"):
         write_json(output / "receipt.json", {"state": "empty", "kku_requests": 0})
         return {"state": "empty", "kku_requests": 0}
@@ -124,7 +139,11 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
             if stage == "prepare":
                 result = prepare_worker.execute(job, protocol, results, worktrees, d4j)
             elif stage == "generate":
-                result = algorithm_worker.execute(job, protocol, results, worktrees, d4j)
+                if shared_v3:
+                    prepared_input = load_prepared(client, claim["job"], protocol)
+                    result = algorithm_worker.execute(job, protocol, results, worktrees, d4j, prepared_input=prepared_input)
+                else:
+                    result = algorithm_worker.execute(job, protocol, results, worktrees, d4j)
             else:
                 suite, lineage = download_generation(client, claim, output / "generation-input")
                 result = evaluate_worker.execute(job, protocol, results, worktrees, d4j, suite, lineage)
@@ -133,9 +152,15 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
             publisher = FencedPublisher(client, claim, heartbeat, output / "publication")
             files = [source / "result.json", bundle_evidence(source, output / "evidence.tar.bz2", publisher.secrets)]
             if stage == "prepare" and result.get("context"):
-                target_artifact = canonical_targets_artifact(result['adapter']['targets_file'], output, result['targets_sha256'])
-                files += [source / "context/context-manifest.json", target_artifact]
-                if result.get("prompt"):
+                files += [source / "context/context-manifest.json"]
+                if result.get("preparation"):
+                    # Publish the sanitized declaration inventory, not duplicate targets.json names.
+                    files += [source / "context" / name for name in
+                              ("prompt.md", "targets.json", "prepare-policy.json", "prepare-metadata.json")]
+                else:
+                    target_artifact = canonical_targets_artifact(result['adapter']['targets_file'], output, result['targets_sha256'])
+                    files += [target_artifact]
+                if result.get("prompt") and not result.get("preparation"):
                     files += [source / "context/prompt.md"]
                     if result['prompt'].get('fixture_policy_id'):
                         files += [source / 'context/fixture-recipes.json']
@@ -179,7 +204,8 @@ def main():
     parser.add_argument("--stage", choices=("prepare", "generate", "evaluate"), required=True)
     parser.add_argument("--approaches", nargs="+", choices=sorted(APPROACHES), required=True)
     parser.add_argument("--worker-id", default="beam-pc1")
-    parser.add_argument("--owner", choices=("beam", "champ", "aom"), default="beam")
+    parser.add_argument("--runner-plan", type=Path)
+    parser.add_argument("--owner", choices=("aom", "beam", "champ"), default="beam")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--results", type=Path)
     parser.add_argument("--worktrees", type=Path, required=True)
@@ -188,13 +214,20 @@ def main():
     args = parser.parse_args()
     if args.results is None:
         args.results = ROOT / ("results/study" if args.condition == "primary" else "results/validation/api854-beam")
-    client = BeamQueueClient(BeamAccess.load(args.access))
+    if args.runner_plan:
+        from .team_queue import TeamQueueClient
+        client = TeamQueueClient.from_plan(args.access, args.runner_plan, args.worker_id,
+            owner=args.owner, stage=args.stage, approaches=args.approaches,
+            protocol_path=args.protocol, condition=args.condition)
+    else:
+        client = BeamQueueClient(BeamAccess.load(args.access))
     try:
         client.check()
         with cpu_slot(args.worktrees):
             receipt = run_one(client, protocol_path=args.protocol, run_id=args.run_id, stage=args.stage,
                               approaches=args.approaches, worker_id=args.worker_id, output=args.output,
-                              results=args.results, worktrees=args.worktrees, d4j=args.d4j, condition=args.condition, owner=args.owner)
+                              results=args.results, worktrees=args.worktrees, d4j=args.d4j, condition=args.condition,
+                              owner=args.owner)
     except QueueError as error:
         print(f"Queue {error.kind}; HTTP={error.status}; preserve evidence and reconcile")
         return 1
