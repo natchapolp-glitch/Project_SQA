@@ -95,6 +95,15 @@ def validate_protocol(protocol):
         raise ValueError("This adapter implements only shared-declaration-signatures-v1")
     if protocol.get("compatibility_policy") != "none":
         raise ValueError("This worker makes no compatibility or semantic repairs")
+    if protocol.get('fixture_policy_id') not in {None, 'beam-explicit-fixtures-v3-proposal'}:
+        raise ValueError('Unknown fixture policy')
+    from .preparation import POLICY_V4, shared_context
+    contract = protocol.get('generation', {}).get('prepare_contract')
+    if shared_context(contract) or contract == 'aom-beam-prepare-v2':
+        policy = protocol.get('fixture_policy_id')
+        if ((contract == POLICY_V4['contract']) != bool(policy)
+                or protocol.get('generation', {}).get('fixture_policy_id') != policy):
+            raise ValueError('Explicit fixture policy requires matching shared-v4 preparation')
     if not implementation_matches(protocol.get("source_sha256")):
         raise ValueError("Frozen implementation hashes differ; obtain a new protocol from Aom")
     return protocol
@@ -106,7 +115,7 @@ def implementation_hashes():
     # Other branches add their own client/server modules to the same package.
     # Pin this worker's actual dependencies without requiring unrelated files.
     modules = ("__init__", "adapters", "algorithm_worker", "common", "configuration", "environment",
-               "evaluate_worker", "make_job", "pack_suite", "queue_client", "queue_connection", "validity", "worker",
+               "evaluate_worker", "fixture_policy", "make_job", "pack_suite", "queue_client", "queue_connection", "validity", "worker",
                "ai_handoff", "champ_bridge", "beam_queue", "core_preflight", "prepare_worker", "queue_worker", "suite_resolver",
                "champ_queue", "context_export", "generate_worker", "kku_client", "lease", "models", "quota",
                "preparation", "prepared_inputs", "team_queue", "api_worker")

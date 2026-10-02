@@ -1,6 +1,6 @@
 """Download and bind shared-v3 preparation identically for CPU and API workers."""
 import json
-from .preparation import POLICY_V3, digest, validate
+from .preparation import POLICY_V4, shared_context, digest, validate
 
 
 def load(client, job, protocol):
@@ -20,12 +20,22 @@ def load(client, job, protocol):
     metadata = json.loads(download("prepare-metadata.json"))
     if (manifest.get("project") != job["project"] or manifest.get("bug_id") != job["bug_id"]
             or manifest.get("revision") != f"{job['bug_id']}f" or manifest.get("contains_execution_logs") is not False
-            or metadata.get("prepare_contract") != POLICY_V3["contract"]
+            or not shared_context(metadata.get("prepare_contract"))
+            or metadata.get('prepare_contract') != protocol.get('generation', {}).get('prepare_contract')
             or any(prepared.get("metadata", {}).get(k) != v for k, v in metadata.items())):
         raise ValueError("Shared preparation identity/stage metadata differs")
     targets, prompt, policy = download("targets.json"), download("prompt.md"), download("prepare-policy.json")
-    validate(manifest, metadata, prompt, targets, policy, require_eligible=True)
+    recipe = None
+    if metadata.get('prepare_contract') == POLICY_V4['contract']:
+        raw_recipe = download('fixture-recipes.json')
+        recipe = json.loads(raw_recipe)
+        from .fixture_policy import validate_recipe
+        validate_recipe(recipe, protocol['source_sha256'])
+        if digest(raw_recipe) != metadata.get('fixture_recipes_sha256'):
+            raise ValueError('Explicit recipe artifact bytes differ')
+    validate(manifest, metadata, prompt, targets, policy, require_eligible=True, fixture_recipe=recipe)
     if metadata["policy_sha256"] != protocol.get("prepare_policy_sha256"):
         raise ValueError("Preparation policy differs from protocol")
     return {"metadata": metadata, "manifest": manifest, "targets": json.loads(targets)["targets"],
-            "fixture_classes": json.loads(targets)["fixture_classes"], "prepare_attempt_id": prepared["attempt_id"]}
+            "fixture_classes": json.loads(targets)["fixture_classes"], "fixture_recipe": recipe,
+            "prepare_attempt_id": prepared["attempt_id"]}

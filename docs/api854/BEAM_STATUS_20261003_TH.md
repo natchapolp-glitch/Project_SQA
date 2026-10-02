@@ -146,3 +146,13 @@ validation เก็บใต้ results/validation/api854-beam/ ไม่รว
 - ส่ง eligibility/context supplement v2 เป็น proposal ใหม่ เพิ่ม Chart concrete receiver และ eligible method inventory; prompt ใหญ่สุด 115,826 UTF-8 bytes ยังไม่ได้ยืนยัน tokens/overhead
 - API854 ล่าสุดผ่าน 165 tests ไม่มี skip; 0 real KKU requests และ 0 live queue mutations
 - ส่งให้ออมตรวจรับตาม [BEAM_AOM_PREPARE_REVIEW_TH.md](BEAM_AOM_PREPARE_REVIEW_TH.md) พร้อม hashes ของ public evidence; ต้องรับ input/policy ใหม่และตรึง source hashes ใหม่ก่อนเปิด generation
+
+## หลังส่ง handoff: explicit fixture development รอบใหม่
+
+- แก้ Closure-176 และ JxPath-1 เป็น explicit fixture policy v3 พร้อม FSCS-ART/CMA-ES จริงรวม 4 suites; fixed ผ่านสองรอบ ทุก stage executed=30/skipped=0/target_checks=30 และมี fixed/buggy coverage
+- Closure ตรวจพบบัคทั้งสอง algorithms (2 buggy failures ต่อ suite); JxPath ยังไม่ตรวจพบบัค ไม่มี unexpected fixed exceptions ใน retained tests
+- เก็บ local semantic review แยกจาก immutable original results ผล valid เฉพาะ 4 development suites; ไม่ใช่ team/Gate A approval หรือการรับรองครบ 20 bugs
+- ส่ง eligibility.json ครบ 20 bugs/691 declarations ที่ builder ออม `32b8378f` รับได้ โดย label ยังเป็น historical discovery policy ไม่ใช่ explicit fixture approval ของทั้ง pilot
+- เพิ่ม hashed fixture recipe/prompt guard และ canonical targets.json artifact; ต้อง compose กับ runtime ออมและ re-pin shared protocol ก่อน live generation
+- Tests ผ่าน 178 API854 + 31 legacy/Java = 209, ไม่มี skip; 0 real KKU requests และ 0 live queue mutations
+- รายละเอียด/หลักฐาน/งานที่เหลือ: [BEAM_FIXTURE_REVIEW_TH.md](BEAM_FIXTURE_REVIEW_TH.md)

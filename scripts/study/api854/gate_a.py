@@ -74,6 +74,12 @@ def inspect(root=ROOT):
                 and receipt.get("inputs", {}).get("aom_core_sha256") == sha256(base / "protocol.core-frozen.json")):
             received = receipt
     routes = route_coverage(plan, read_json(base / "ownership.json"))
+    fixture_ref = protocol.get('beam_fixture_review', {})
+    fixture_path = (root / fixture_ref.get('evidence_path', '')).resolve()
+    fixture_received = {}
+    if (fixture_path.is_relative_to(root.resolve()) and fixture_path.is_file()
+            and sha256(fixture_path) == fixture_ref.get('evidence_sha256')):
+        fixture_received = read_json(fixture_path)
     identities = lambda rows: {(r["project"], r["bug_id"], r["owner"]) for r in rows}
     complete_pilot = len(index["records"]) == 20 and identities(index["records"]) == identities(core["pilot_bugs"])
     checklist = [
@@ -86,7 +92,11 @@ def inspect(root=ROOT):
          "received_source_matched_bugs": received.get("source_matched_bugs", 0),
          "received_eligible_declarations": received.get("shared_target_count", 0),
          "reason": "Source-bound discovery imported; meaningful fixture/oracle review remains separate" if eligible == 20 else "Discovery must be bound to the selected preparation contract"},
-        {"id": "meaningful_oracles", "owner": "beam", "status": "pending", "reason": "fixed twice/buggy/coverage and semantic review for agreed pipeline; fixture smoke alone is insufficient"},
+        {"id": "meaningful_oracles", "owner": "beam", "status": "pending",
+         "received_development_suites":len(fixture_received.get('development_suites', [])),
+         "received_recipe_reviewed_bugs":fixture_received.get('recipe_reviewed_bugs', 0),
+         "remaining_pilot_bugs_without_recipe_review":fixture_received.get('remaining_pilot_bugs_without_recipe_review', 20),
+         "reason": "Two-bug development execution/semantic evidence received; remaining recipes and team acceptance of shared primary pipeline are pending" if fixture_received else "fixed twice/buggy/coverage and semantic review for agreed pipeline; fixture smoke alone is insufficient"},
         {"id": "model_settings_limits_reserve", "owner": "champ", "status": "pending", "max_prompt_utf8_bytes": index["max_prompt_utf8_bytes"], "reason": "temperature 0/output 4096 proposed; provider limits/framing and runtime acceptance missing"},
         {"id": "observed_quota", "owner": "champ", "status": "pending", "reason": "remaining/bucket/expiry observation and ledger evidence missing"},
         {"id": "three_owner_review", "owner": "team", "status": "pending", "reviewed_by": {"aom": False, "champ": False, "beam": False}},
@@ -98,6 +108,8 @@ def inspect(root=ROOT):
                       root / "docs/api854/evidence/beam-local-queue-smoke-20261003.json"]
     if received:
         evidence_paths.append(review_path)
+    if fixture_received:
+        evidence_paths.append(fixture_path)
     return {"schema_version": 1, "checked_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
             "gate_a_passed": all(c["status"] == "pass" for c in checklist), "generation_authorized": False,
             "checklist": checklist, "evidence": [{"path": p.relative_to(root).as_posix(), "sha256": sha256(p)} for p in evidence_paths],

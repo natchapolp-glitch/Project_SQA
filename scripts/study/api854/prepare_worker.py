@@ -3,25 +3,48 @@ from pathlib import Path
 import json
 import time
 
-from .common import start_attempt, snapshot_implementation, assert_implementation, envelope, write_json, sha256
+from .common import ROOT, start_attempt, snapshot_implementation, assert_implementation, envelope, write_json, sha256
 from .environment import inspect_environment
 from .adapters import prepare_adapter
 from .worker import new_worktrees, fixed_sources, artifact_index
 from .context_export import BUILD_FILES, export_context
-from .preparation import compose, POLICY_V3, receiver_paths
+from .preparation import compose, POLICY_V3, POLICY_V4, policy_for, shared_context, receiver_paths
 
 CONTEXT_POLICY = "modified-java-and-root-build-v1"
 PROMPT_POLICY = "beam-fixed-targets-junit4-v1"
+EXPLICIT_PROMPT_POLICY = 'beam-fixed-targets-explicit-fixtures-v3-junit4-proposal'
 
 
 def export_prompt(job, protocol, targets, context_dir):
     generation = protocol.get("generation")
     if generation is None:
         return None  # Core preflight records context; it cannot approve an AI prompt.
+    fixture_policy = protocol.get('fixture_policy_id')
+    prompt_policy = EXPLICIT_PROMPT_POLICY if fixture_policy else PROMPT_POLICY
     if (generation.get("context_policy_id") != CONTEXT_POLICY
-            or generation.get("prompt_policy_id") != PROMPT_POLICY
+            or generation.get("prompt_policy_id") != prompt_policy
             or protocol["test_method_cap"] != 30):
         raise ValueError("Preparation prompt/context policies differ from this implementation")
+    fixture_metadata, support = {}, ''
+    if fixture_policy:
+        from .fixture_policy import POLICY, select
+        if fixture_policy != POLICY or generation.get('fixture_policy_id') != POLICY or select(targets, POLICY)[1]:
+            raise ValueError('Explicit fixture targets/policy must be frozen consistently')
+        names = ['algorithms/java/SqaProbe.java', 'scripts/study/api854/fixture_policy.py']
+        sources = {name: (ROOT / name).read_bytes().decode('utf-8') for name in names}
+        hashes = {name: sha256(ROOT / name) for name in names}
+        if any(protocol.get('source_sha256', {}).get(name) != value for name, value in hashes.items()):
+            raise ValueError('Explicit fixture recipe source hashes differ from protocol')
+        recipe = {'schema_version': 1, 'fixture_policy_id': POLICY, 'source_sha256': hashes,
+            'sources': sources, 'scope': 'Same fixture construction/projection knowledge for all four approaches; no execution feedback'}
+        recipe_path = context_dir / 'fixture-recipes.json'
+        write_json(recipe_path, recipe)
+        fixture_metadata = {'fixture_policy_id': POLICY, 'fixture_recipes_sha256': sha256(recipe_path)}
+        support = ('\n\nExplicit fixture policy and recipe definitions (generation support, separate from production source):\n'
+            'Use these definitions to construct valid non-null receiver/dependency graphs and meaningful state assertions. '
+            'Text/processing-instruction targets need those node kinds. Iterator/sort anchors belong to the receiver. '
+            'Setup failures are not target-method observations. Do not change production code.\n```json\n'
+            + recipe_path.read_text(encoding='utf-8') + '```\n')
     # Only common declaration eligibility reaches the prompt, never discovery
     # errors, fixed/buggy differences, patch contents or execution feedback.
     prompt = (
@@ -36,16 +59,20 @@ def export_prompt(job, protocol, targets, context_dir):
         "No explanation, partial files, compile/test feedback, pruning or repair loop.\n\n"
         "Eligible targets (shared declaration signatures and supported fixture types):\n"
         + json.dumps(targets, ensure_ascii=False, sort_keys=True, indent=2) + "\n\n"
-        + (context_dir / "context.md").read_text(encoding="utf-8"))
+        + (context_dir / "context.md").read_text(encoding="utf-8") + support)
     path = context_dir / "prompt.md"
     with path.open("xb") as stream:
         stream.write(prompt.encode("utf-8"))
-    return {"prompt_sha256": sha256(path), "prompt_policy_id": PROMPT_POLICY,
-            "context_policy_id": CONTEXT_POLICY, "prompt_utf8_bytes": path.stat().st_size}
+    return {"prompt_sha256": sha256(path), "prompt_policy_id": prompt_policy,
+            "context_policy_id": CONTEXT_POLICY, "prompt_utf8_bytes": path.stat().st_size, **fixture_metadata}
 
 
 def execute(job, protocol, results, worktrees, d4j):
-    v3 = protocol.get("generation", {}).get("prepare_contract") == POLICY_V3["contract"]
+    contract = protocol.get('generation', {}).get('prepare_contract')
+    v3 = shared_context(contract)
+    explicit = contract == POLICY_V4['contract']
+    if protocol.get('fixture_policy_id') and (v3 or contract == 'aom-beam-prepare-v2') and not explicit:
+        raise ValueError('Explicit fixtures require new shared-v4 prompt and preparation')
     context_policy = POLICY_V3["context_policy_id"] if v3 else CONTEXT_POLICY
     if protocol.get("context_selection") != context_policy:
         raise ValueError("Frozen protocol must declare this explicit fixed-context selection")
@@ -58,7 +85,8 @@ def execute(job, protocol, results, worktrees, d4j):
             result = envelope(job, "preflight_failed", issues=environment["issues"])
         else:
             trees = new_worktrees(worktrees, job, "prepare")
-            prepared, targets = prepare_adapter(d4j, job, trees, output / "setup", protocol["command_timeout_seconds"])
+            fixture_options = {'fixture_policy': protocol['fixture_policy_id']} if protocol.get('fixture_policy_id') else {}
+            prepared, targets = prepare_adapter(d4j, job, trees, output / "setup", protocol["command_timeout_seconds"], **fixture_options)
             source_dir = (output / "setup/dir.src.classes.txt").read_text(encoding="utf-8").strip()
             classes = Path(prepared["classes_file"]).read_text(encoding="utf-8").splitlines()
             fixed_tree = Path(prepared["fixed_worktree"])
@@ -71,9 +99,11 @@ def execute(job, protocol, results, worktrees, d4j):
             prompt = None
             if v3:
                 fixture_classes = (output / "setup/fixture-classes.txt").read_text(encoding="utf-8").splitlines()
-                preparation = compose(output / "context", classes=classes, targets=targets, policy=POLICY_V3,
-                    modified_sources=sources, fixture_classes=fixture_classes)
-            elif protocol.get("generation", {}).get("prompt_policy_id") == PROMPT_POLICY:
+                from .fixture_policy import recipe_document
+                recipe = recipe_document(protocol['source_sha256']) if explicit else None
+                preparation = compose(output / "context", classes=classes, targets=targets, policy=policy_for(contract),
+                    modified_sources=sources, fixture_classes=fixture_classes, fixture_recipe=recipe)
+            elif protocol.get("generation", {}).get("prompt_policy_id") in {PROMPT_POLICY, EXPLICIT_PROMPT_POLICY}:
                 prompt = export_prompt(job, protocol, targets, output / "context")
             else:
                 preparation = compose(output / "context", classes=classes, targets=targets)

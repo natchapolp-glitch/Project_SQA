@@ -1,5 +1,7 @@
 import sys
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -10,6 +12,13 @@ TARGETS = [{'class': 'example.Target', 'constructor_types': '', 'method': 'value
 
 
 class ProspectiveGeneratorTests(unittest.TestCase):
+    def test_malformed_fixture_failure_remains_a_raw_protocol_error(self):
+        result = SimpleNamespace(returncode=0, stdout='SQA_FIXTURE_FAILURE:???\n', stderr='')
+        with patch.object(generate.subprocess, 'run', return_value=result):
+            observed = generate.observe('fixture', TARGETS[0], [0, 0, 0], 10, 'explicit-policy')
+        self.assertEqual(observed['status'], 'protocol_error')
+        self.assertEqual(observed['stdout'], result.stdout)
+
     def test_cmaes_partial_population_never_exceeds_budget(self):
         calls = []
         def observer(target, vector):
