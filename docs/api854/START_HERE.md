@@ -28,3 +28,16 @@
 กำหนด cutoff: ส่ง AI ใหม่ถึง 5 ต.ค. 01:00, drain และ freeze 03:00, ตรวจแพ็กและส่งถึง 05:00
 
 เอกสารนี้เป็น handoff และ plan ไม่ใช่หลักฐานว่า API runner ถูกสร้างหรือเริ่มรันแล้ว ไม่มีการตั้งเวลารันอัตโนมัติจากการเขียนไฟล์นี้
+
+## งานออมที่เตรียมแล้ว — 3 ตุลาคม 2569
+
+ตรวจ installed Defects4J 3.0.1 ตรง 854 bugs/17 projects และสร้าง 3,416 job keys ไม่ซ้ำแล้ว
+งานออม 284 bugs/1,136 keys; คิวทั้งชุดยัง held/not_attempted และไม่มี live requests
+Protocol เป็น draft; Gate A/B ยังไม่ผ่าน ต้องใช้หลักฐานจากแชมป์/บีมและตรวจรับทั้งสามคน
+
+- [Protocol และ fairness](PROTOCOL_TH.md)
+- [Queue/schema contract สำหรับ workers](QUEUE_CONTRACT_TH.md)
+- [คำสั่งใช้งานสำหรับออม](AOM_RUNBOOK_TH.md)
+- [ความคืบหน้าและงานที่รอทีม](AOM_PROGRESS_TH.md)
+- [ร่างรายงาน](REPORT_TH.md)
+- [รายการหลักฐาน](EVIDENCE_INDEX.md)
