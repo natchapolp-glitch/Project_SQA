@@ -77,6 +77,12 @@ def load_job(job_path, protocol_path, *, allow_core_preflight=False):
             raise ValueError("Frozen core is preparation only, not a generation/evaluation protocol")
         from .core_preflight import bind
         protocol = bind(protocol_path, stage="prepare", condition="preflight", run_id=job["run_id"])
+    validate_protocol(protocol)
+    return job, protocol
+
+
+def validate_protocol(protocol):
+    """Validate the implementation contract without creating a job or claim."""
     if not isinstance(protocol, dict) or type(protocol.get("schema_version")) is not int or protocol.get("schema_version") != 1 or protocol.get("defects4j_version") != "3.0.1" or protocol.get("timezone") != "America/Los_Angeles":
         raise ValueError("Protocol must pin Defects4J 3.0.1 and test timezone")
     for field in ("seed", "budget", "test_method_cap"):
@@ -91,7 +97,7 @@ def load_job(job_path, protocol_path, *, allow_core_preflight=False):
         raise ValueError("This worker makes no compatibility or semantic repairs")
     if not implementation_matches(protocol.get("source_sha256")):
         raise ValueError("Frozen implementation hashes differ; obtain a new protocol from Aom")
-    return job, protocol
+    return protocol
 
 
 def implementation_hashes():
@@ -101,7 +107,7 @@ def implementation_hashes():
     # Pin this worker's actual dependencies without requiring unrelated files.
     modules = ("__init__", "adapters", "algorithm_worker", "common", "configuration", "environment",
                "evaluate_worker", "make_job", "pack_suite", "queue_client", "queue_connection", "validity", "worker",
-               "ai_handoff", "beam_queue", "core_preflight", "prepare_worker", "queue_worker", "suite_resolver",
+               "ai_handoff", "api_worker", "beam_queue", "champ_bridge", "core_preflight", "prepare_worker", "queue_worker", "suite_resolver",
                "champ_queue", "context_export", "generate_worker", "kku_client", "lease", "models", "quota")
     names += [f"scripts/study/api854/{name}.py" for name in modules]
     names += ["experiments/configs/api854-20261003/model-selection.json"]

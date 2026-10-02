@@ -22,6 +22,7 @@ from .kku_client import KKUClient, KKUError, digest, load_account, sanitize, utc
 from .lease import LeaseHeartbeat, generate_with_lease
 from .models import load_selection, resolve_selected
 from .quota import QuotaBlocked, QuotaLedger
+from .queue_client import QueueClient
 
 CONTRACT = "champ-generation-input-v1"
 
@@ -43,6 +44,8 @@ class FrozenSettings:
     suite_resolver: str
     start_at: datetime
     generation_cutoff_at: datetime
+    protocol_bytes: bytes = b""
+    generation_owners: tuple = ("champ",)
 
     @classmethod
     def load(cls, path: Path):
@@ -65,6 +68,10 @@ class FrozenSettings:
         for key in ("context_policy_id", "prompt_policy_id", "suite_policy_id", "suite_resolver"):
             if not isinstance(generation.get(key), str) or not generation[key].strip():
                 raise WorkerBlocked("processing_policies_not_frozen")
+        owners = generation.get("owners", ["champ"])
+        if (not isinstance(owners, list) or not owners or len(set(owners)) != len(owners)
+                or any(owner not in {"champ", "beam", "aom"} for owner in owners)):
+            raise WorkerBlocked("generation_owner_routing_not_frozen")
         try:
             start = datetime.fromisoformat(protocol["start_at"])
             cutoff = datetime.fromisoformat(protocol["generation_cutoff_at"])
@@ -74,7 +81,7 @@ class FrozenSettings:
             raise WorkerBlocked("generation_window_not_frozen") from None
         return cls(digest(data), models, temperature, **{key: generation[key] for key in (
             "max_tokens", "prompt_token_reserve", "context_policy_id", "prompt_policy_id", "suite_policy_id", "suite_resolver")},
-            start_at=start, generation_cutoff_at=cutoff)
+            start_at=start, generation_cutoff_at=cutoff, protocol_bytes=data, generation_owners=tuple(owners))
 
     @property
     def reserve_tokens(self):
@@ -101,7 +108,7 @@ def resolve_prepared_job(client, job: dict, settings: FrozenSettings) -> Generat
     Preparation owns the approved prompt/selection; this worker never appends
     errors, invents target selection, or alters source/assertions.
     """
-    if job.get("protocol_hash") != settings.protocol_hash or job.get("owner") != "champ" or \
+    if job.get("protocol_hash") != settings.protocol_hash or job.get("owner") not in settings.generation_owners or \
             job.get("stage") != "generate" or job.get("approach") not in settings.models:
         raise WorkerBlocked("job_identity_or_protocol_mismatch")
     history = job.get("payload", {}).get("stage_history", [])
@@ -148,7 +155,7 @@ def resolve_prepared_job(client, job: dict, settings: FrozenSettings) -> Generat
 
 class APIWorker:
     def __init__(self, queue, kku, ledger, settings, *, approach, bucket, window,
-                 artifact_root, private_root, worker_id, suite_resolver, model, condition="primary-kku-api"):
+                 artifact_root, private_root, worker_id, suite_resolver, model, condition="primary-kku-api", owner="champ"):
         if not callable(suite_resolver):
             raise WorkerBlocked("beam_suite_resolver_unavailable")
         if condition not in {"primary-kku-api", "mock-integration"} or (
@@ -156,11 +163,14 @@ class APIWorker:
         ):
             raise WorkerBlocked("mock_evidence_cannot_use_live_queue")
         resolve_selected([model], approach, settings.models)
+        if owner not in settings.generation_owners:
+            raise WorkerBlocked("generation_owner_routing_not_frozen")
         self.queue, self.kku, self.ledger, self.settings = queue, kku, ledger, settings
         self.approach, self.bucket, self.window = approach, bucket, window
         self.artifact_root, self.private_root = Path(artifact_root), Path(private_root)
         self.worker_id, self.suite_resolver, self.model = worker_id, suite_resolver, model
         self.condition = condition
+        self.owner = owner
 
     def check(self) -> dict:
         self.queue.check()
@@ -169,7 +179,7 @@ class APIWorker:
             raise QuotaBlocked("Insufficient observed quota; notify user before switching")
         status = self.queue.request("GET", "/v1/status")
         eligible = [job for job in status.get("jobs", []) if job.get("state") == "queued" and
-                    job.get("stage") == "generate" and job.get("owner") == "champ" and
+                    job.get("stage") == "generate" and job.get("owner") == self.owner and
                     job.get("approach") == self.approach]
         # Controller 1.0 cannot filter claims by run/protocol; reject mixed
         # protocols before claim, and revalidate the actual returned claim.
@@ -178,6 +188,9 @@ class APIWorker:
                 raise WorkerBlocked("mixed_generation_protocols_in_queue")
         if eligible:
             prepared = resolve_prepared_job(self.queue, eligible[0], self.settings)
+            validate_prepared = getattr(self.suite_resolver, "validate_prepared", None)
+            if callable(validate_prepared):
+                validate_prepared(self.queue, eligible[0], self.settings)
             if sanitize(prepared.prompt, (self.kku.account.api_key, self.queue.token)) != prepared.prompt:
                 raise WorkerBlocked("credentials_in_prepared_prompt")
             self.ledger.available(self.kku.account.alias, self.bucket, self.window, job_key=prepared.key)
@@ -193,7 +206,9 @@ class APIWorker:
         ready = self.check()
         if ready["state"] == "idle":
             return ready
-        claim = self.queue.claim(self.worker_id, "generate", approaches=[self.approach], owner="champ")
+        # Cross-owner coordination is permitted only by the frozen owners list;
+        # ordinary ChampQueueClient calls retain their original own-shard guard.
+        claim = QueueClient.claim(self.queue, self.worker_id, "generate", approaches=[self.approach], owner=self.owner)
         if claim.get("job") is None:
             return {**ready, "state": "idle", "queue_mutations": 1}
         if not isinstance(claim.get("attempt_id"), str) or not re.fullmatch(
@@ -205,18 +220,26 @@ class APIWorker:
         self.private_root.mkdir(parents=True, exist_ok=True)
         write_json(self.private_root / f"claim-{claim['attempt_id']}.json", claim)
         try:
+            if claim["job"].get("owner") != self.owner:
+                raise WorkerBlocked("claimed_owner_differs_from_selected_shard")
             job = resolve_prepared_job(self.queue, claim["job"], self.settings)
             if sanitize(job.prompt, (self.kku.account.api_key, self.queue.token, claim["lease_token"])) != job.prompt:
                 raise WorkerBlocked("credentials_in_prepared_prompt")
             guard = LeaseHeartbeat(self.queue, claim)
-            handoff = QueueGenerationHandoff(self.queue, claim, worker_id=self.worker_id,
-                suite_resolver=self.suite_resolver, suite_policy_id=self.settings.suite_policy_id,
-                credential_secrets=(self.kku.account.api_key,), lease_guard=guard)
+            create_handoff = getattr(self.suite_resolver, "create_handoff", None)
+            if callable(create_handoff):
+                handoff = create_handoff(self.queue, claim, heartbeat=guard, settings=self.settings,
+                    worker_id=self.worker_id, credential_secrets=(self.kku.account.api_key,),
+                    private_root=self.private_root)
+            else:
+                handoff = QueueGenerationHandoff(self.queue, claim, worker_id=self.worker_id,
+                    suite_resolver=self.suite_resolver, suite_policy_id=self.settings.suite_policy_id,
+                    credential_secrets=(self.kku.account.api_key,), lease_guard=guard)
             worker = GenerationWorker(self.kku, self.ledger, artifact_root=self.artifact_root,
                                       model=self.model, bucket=self.bucket, window=self.window, handoff=handoff,
                                       condition=self.condition)
             result = generate_with_lease(worker, job, guard, prompt_token_reserve=self.settings.prompt_token_reserve,
-                                        max_tokens=self.settings.max_tokens, temperature=self.settings.temperature)
+                                        max_tokens=self.settings.max_tokens, temperature=self.settings.temperature, owner=self.owner)
         except Exception:
             write_json(self.private_root / f"reconcile-{claim['attempt_id']}.json", {
                 "state": "needs_operator_reconciliation", "job_id": claim["job"]["job_id"],
@@ -244,6 +267,8 @@ def main() -> int:
     parser.add_argument("--access", type=Path, default=Path(".local/api854/champ-access.private.json"))
     parser.add_argument("--ledger", type=Path, default=Path(".local/api854/quota.sqlite"))
     parser.add_argument("--worker-id", default="champ-pc1")
+    parser.add_argument("--owner", choices=("champ", "beam", "aom"), default="champ",
+                        help="Owner shard explicitly permitted by generation.owners in the frozen protocol")
     parser.add_argument("--artifact-root", type=Path, default=Path("results/study"))
     args = parser.parse_args()
     try:
@@ -257,7 +282,7 @@ def main() -> int:
         worker = APIWorker(queue, kku, ledger, settings, approach=args.approach, bucket=args.bucket,
                            window=args.window, artifact_root=args.artifact_root,
                            private_root=args.access.parent / "worker-state", worker_id=args.worker_id,
-                           suite_resolver=resolver, model=model)
+                           suite_resolver=resolver, model=model, owner=args.owner)
         result = worker.once() if args.once else worker.check()
     except Exception as error:
         # No arbitrary traceback/raw error/header can leak into CLI output.

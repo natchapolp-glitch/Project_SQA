@@ -86,7 +86,7 @@ class LeaseHeartbeat:
         self.stop()
 
 
-def generate_with_lease(worker, job, heartbeat: LeaseHeartbeat, **generation_options):
+def generate_with_lease(worker, job, heartbeat: LeaseHeartbeat, *, owner="champ", **generation_options):
     """Generate once under an existing claim; caller supplies frozen job/policy.
 
     No payload interpretation, scheduler, account switch or semantic retry.
@@ -103,8 +103,8 @@ def generate_with_lease(worker, job, heartbeat: LeaseHeartbeat, **generation_opt
     if attempt_id != heartbeat.claim["attempt_id"]:
         raise ValueError("Use the queue claim's attempt ID")
     queue_job = heartbeat.claim["job"]
-    if queue_job.get("owner") != "champ" or queue_job.get("stage") != "generate":
-        raise ValueError("Require Champ's active generation claim")
+    if owner not in {"champ", "beam", "aom"} or queue_job.get("owner") != owner or queue_job.get("stage") != "generate":
+        raise ValueError("Require the selected owner's active generation claim")
     for key in ("run_id", "protocol_hash", "project", "bug_id", "approach"):
         if queue_job.get(key) != getattr(job, key):
             raise ValueError(f"Generation job does not match claim {key}")

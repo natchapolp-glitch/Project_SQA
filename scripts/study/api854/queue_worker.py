@@ -10,6 +10,7 @@ from .common import (ROOT, APPROACHES, read_json, write_json, load_job, sha256, 
 from .beam_queue import BeamAccess, BeamQueueClient, FencedPublisher, bundle_evidence, download_generation
 from .champ_queue import QueueError
 from .lease import LeaseHeartbeat
+from .queue_client import QueueClient
 
 
 def local_job(claim):
@@ -28,6 +29,7 @@ def stage_metadata(result, protocol, worker_id):
                 "implementation_sha256": protocol["source_sha256"],
                 "fixed_source_sha256": result.get("fixed_source_sha256"),
                 "targets_sha256": result.get("targets_sha256"),
+                "target_count": result.get("target_count"),
                 "suite_sha256": result.get("suite_sha256"), "test_count": result.get("test_count"),
                 "raw_evaluator_status": result.get("evaluator_status"),
                 "failure_reason": result.get("error"), "usable": result.get("usable", False),
@@ -45,17 +47,22 @@ def stage_metadata(result, protocol, worker_id):
         metadata["execution_binding_scope"] = "preparation_only"
         metadata["approval_state"] = protocol["approval_state"]
         metadata["primary"] = False
+    if result.get("prompt"):
+        metadata.update(result["prompt"])
     return metadata
 
 
 def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, output, results,
-            worktrees, d4j="defects4j", condition="development", lease_seconds=900, heartbeat_interval=60):
+            worktrees, d4j="defects4j", condition="development", lease_seconds=900, heartbeat_interval=60, owner="beam"):
     protocol = read_json(protocol_path)
     if condition == "preflight" or protocol.get("state") == "frozen_core":
         from .core_preflight import bind
         protocol = bind(protocol_path, stage=stage, condition=condition, run_id=run_id)
     if stage not in {"prepare", "generate", "evaluate"} or not approaches or any(a not in APPROACHES for a in approaches):
         raise ValueError("Invalid stage/approaches before claim")
+    if owner not in {"beam", "champ", "aom"} or (owner != "beam"
+            and owner not in protocol.get("worker_routing", {}).get(stage, [])):
+        raise ValueError("Cross-owner stage routing must be declared by the shared protocol")
     if not implementation_matches(protocol.get("source_sha256")):
         raise ValueError("Protocol implementation hashes differ before claiming any work")
     if condition == "primary" and protocol.get("status") != "frozen":
@@ -76,7 +83,7 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
             for row in status["enabled_stages"]):
         raise ValueError("Queue has not enabled this run/protocol/stage")
     eligible = [j for j in status.get("jobs", []) if j.get("state") == "queued" and j.get("stage") == stage
-                and j.get("owner") == "beam" and j.get("approach") in approaches]
+                and j.get("owner") == owner and j.get("approach") in approaches]
     if any(j.get("run_id") != run_id or j.get("protocol_hash") != protocol_hash for j in eligible):
         raise ValueError("Eligible queue mixes run IDs/protocols; controller must isolate the intended run")
     output = Path(output)
@@ -84,14 +91,15 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
     if condition == "preflight":
         write_json(output / "execution-binding.json", protocol)
     write_json(output / "claim-intent.json", {"worker_id": worker_id, "stage": stage, "run_id": run_id,
-                                             "protocol_hash": protocol_hash, "approaches": approaches})
-    claim = client.claim(worker_id, stage, approaches, owner="beam", lease_seconds=lease_seconds)
+                                             "protocol_hash": protocol_hash, "approaches": approaches, "owner": owner})
+    claim = (client.claim(worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds) if owner == "beam"
+             else QueueClient.claim(client, worker_id, stage, approaches, owner=owner, lease_seconds=lease_seconds))
     if not claim.get("job"):
         write_json(output / "receipt.json", {"state": "empty", "kku_requests": 0})
         return {"state": "empty", "kku_requests": 0}
     job = local_job(claim)
     if (job["run_id"] != run_id or job["protocol_hash"] != protocol_hash or claim["job"].get("stage") != stage
-            or claim["job"].get("owner") != "beam" or job["approach"] not in approaches):
+            or claim["job"].get("owner") != owner or job["approach"] not in approaches):
         raise ValueError("Claim identity changed; preserve claim intent and reconcile without executing")
     write_json(output / "job.json", job)  # No lease token is persisted in public evidence.
     job, protocol = load_job(output / "job.json", protocol_path, allow_core_preflight=condition == "preflight")
@@ -111,6 +119,8 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
             files = [source / "result.json", bundle_evidence(source, output / "evidence.tar.bz2", publisher.secrets)]
             if stage == "prepare" and result.get("context"):
                 files += [source / "context/context-manifest.json", Path(result["adapter"]["targets_file"])]
+                if result.get("prompt"):
+                    files += [source / "context/prompt.md"]
             outcome = result["observed_outcome"]
             if stage == "generate" and outcome == "generated":
                 prepared = [h for h in claim["job"].get("payload", {}).get("stage_history", [])
@@ -151,6 +161,7 @@ def main():
     parser.add_argument("--stage", choices=("prepare", "generate", "evaluate"), required=True)
     parser.add_argument("--approaches", nargs="+", choices=sorted(APPROACHES), required=True)
     parser.add_argument("--worker-id", default="beam-pc1")
+    parser.add_argument("--owner", choices=("beam", "champ", "aom"), default="beam")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--results", type=Path)
     parser.add_argument("--worktrees", type=Path, required=True)
@@ -165,7 +176,7 @@ def main():
         with cpu_slot(args.worktrees):
             receipt = run_one(client, protocol_path=args.protocol, run_id=args.run_id, stage=args.stage,
                               approaches=args.approaches, worker_id=args.worker_id, output=args.output,
-                              results=args.results, worktrees=args.worktrees, d4j=args.d4j, condition=args.condition)
+                              results=args.results, worktrees=args.worktrees, d4j=args.d4j, condition=args.condition, owner=args.owner)
     except QueueError as error:
         print(f"Queue {error.kind}; HTTP={error.status}; preserve evidence and reconcile")
         return 1

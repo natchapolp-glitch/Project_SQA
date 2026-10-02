@@ -63,7 +63,7 @@ class QueueIntegrationTests(unittest.TestCase):
         common.write_json(folder / "result.json", result)
         return result
 
-    def run_stage(self, stage):
+    def run_stage(self, stage, owner="beam"):
         self.serial += 1
         worker = {"prepare": "prepare_worker", "generate": "algorithm_worker", "evaluate": "evaluate_worker"}[stage]
         phase = {"prepare": "prepare", "generate": "generation", "evaluate": "evaluation"}[stage]
@@ -72,7 +72,24 @@ class QueueIntegrationTests(unittest.TestCase):
             return queue_worker.run_one(self.client, protocol_path=self.protocol_path, run_id=self.run_id,
                 stage=stage, approaches=["cmaes"], worker_id="beam-fixture",
                 output=self.root / f"run-{self.serial}", results=self.root / "results", worktrees=self.root / "trees",
-                heartbeat_interval=0.02)
+                heartbeat_interval=0.02, owner=owner)
+
+    def test_cross_owner_requires_protocol_route_and_keeps_owner_lineage(self):
+        with self.assertRaisesRegex(ValueError, "routing"):
+            self.run_stage("prepare", owner="champ")
+        self.assertEqual(len(self.store.status()["attempts"]), 0)
+        path = self.root / "routed-protocol.json"
+        protocol = common.read_json(self.protocol_path)
+        protocol["worker_routing"] = {s: ["champ"] for s in ("prepare", "generate", "evaluate")}
+        common.write_json(path, protocol)
+        self.protocol_path = path
+        with self.store.db:
+            self.store.db.execute("DELETE FROM jobs")
+        self.store.seed({"bugs": [{"project": "Lang", "bug_id": 4, "owner": "champ"}]},
+                        self.run_id, common.sha256(path), False, protocol=mock_stage_gate())
+        receipts = [self.run_stage(s, owner="champ") for s in ("prepare", "generate", "evaluate")]
+        self.assertEqual([r["outcome"] for r in receipts], ["prepared", "generated", "complete"])
+        self.assertTrue(all(j["owner"] == "champ" for j in self.store.status()["jobs"]))
 
     def test_prepare_generate_evaluate_transition_and_cross_attempt_artifacts(self):
         receipts = [self.run_stage(stage) for stage in ("prepare", "generate", "evaluate")]
