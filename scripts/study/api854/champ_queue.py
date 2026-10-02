@@ -137,12 +137,18 @@ class QueueGenerationHandoff:
     """
     def __init__(self, client: ChampQueueClient, claim: dict, *, worker_id: str,
                  suite_resolver: Callable[[dict], Path] | None = None,
-                 suite_policy_id: str | None = None, credential_secrets: tuple[str, ...] = ()):
+                 suite_policy_id: str | None = None, credential_secrets: tuple[str, ...] = (),
+                 lease_guard=None):
         self.client, self.claim, self.worker_id = client, claim, worker_id
         self.suite_resolver, self.suite_policy_id = suite_resolver, suite_policy_id
+        if lease_guard is not None and lease_guard.claim is not claim:
+            raise ValueError("Lease guard and handoff must share the same claim")
+        self.lease_guard = lease_guard
         self.secrets = (client.token, claim["lease_token"], *credential_secrets)
 
     def _validate(self, result: dict):
+        if self.lease_guard is not None:
+            self.lease_guard.check()
         job = self.claim.get("job") or {}
         if job.get("owner") != "champ" or job.get("stage") != "generate":
             raise ValueError("Require an active Champ generation claim")
@@ -248,6 +254,9 @@ class QueueGenerationHandoff:
         intent = directory / "queue-complete-intent.json"
         if intent.exists():
             raise QueueError("completion_needs_reconciliation", unknown=True)
+        if self.lease_guard is not None:
+            self.lease_guard.before_complete()
+            self._validate(result)
         write_json(intent, {"job_id": self.claim["job"]["job_id"], "attempt_id": self.claim["attempt_id"],
                             "outcome": outcome, "artifact_ids": [a["artifact_id"] for a in artifacts],
                             "metadata": metadata, "created_at_utc": utc_now()})

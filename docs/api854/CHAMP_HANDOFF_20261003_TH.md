@@ -8,6 +8,12 @@ fixed-context exporter, generation evidence และ queue adapter schema 1.0
 ตรวจออฟไลน์ 68 tests ผ่านก่อนส่งต่อชุดแรก; ไม่มีผล mock รวมใน primary study.
 คำสั่งตรวจและ interfaces อยู่ใน [API_SETUP_TH.md](API_SETUP_TH.md).
 
+ชุดถัดไปเพิ่ม `lease.py`: `LeaseHeartbeat` / `generate_with_lease()` ต่ออายุ claim เดิม
+ระหว่าง generation และหยุด publication เมื่อ lease หลุด. ก่อน complete จะหยุด
+heartbeat แล้ว renew อีกครั้งเพื่อไม่ให้ renew ชน stage transition.
+ตรวจออฟไลน์รวม 77 tests ผ่าน; ไม่มี live generation หรือ scheduler เพิ่ม.
+ชุดแรกเผยแพร่บน `champ` commit `805c4113500467e9e7d0c7eb3e3506de593f9614`.
+
 - **ออมใช้:** `GenerationJob`, `GenerationWorker.generate()`,
   `ChampQueueClient`, `QueueGenerationHandoff` และ model-selection manifest.
   ต้องรวม `claude-sonnet-5` / `gemini-3.5-flash-lite` เข้า frozen protocol.
@@ -26,6 +32,12 @@ fixed-context exporter, generation evidence และ queue adapter schema 1.0
 | บีม | target/context selection, adapter readiness, suite resolver และ frozen processing policy |
 | แชมป์ | actual remaining quota และหลักฐาน bucket/reset ของโมเดลที่เลือก |
 | ทั้งทีม | เลือกผู้ส่ง API ต่อบัญชีเพียงเครื่องเดียว หรือใช้ global limiter กลาง; lease renewal/recovery และ end-to-end pilot |
+
+การตรวจสดรอบถัดมาใน session วันที่ 3 ต.ค. ด้วย `python -m scripts.study.api854.champ_queue`
+คืน `request_failed`, HTTP `530`; ไม่มี claim/upload/completion หรือ KKU request.
+หลักฐาน health พร้อมที่บันทึกไว้ก่อนหน้าไม่รับรอง availability ปัจจุบัน.
+ออมต้องตรวจ controller/tunnel และแจ้ง private access URL ใหม่ถ้ามีการเปลี่ยน;
+ไม่ใส่ URL/token ส่วนตัวในเอกสารสาธารณะนี้.
 
 คิวพร้อมเชื่อมไม่ยืนยันว่า protocol/adapters พร้อม. ณ จุดส่งต่อชุดแรกยังไม่พบ
 ผลรัน API854 ใน local `results/study/`; ไม่อ้างว่า 854 bugs เริ่มหรือเสร็จแล้ว.

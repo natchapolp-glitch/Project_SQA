@@ -102,7 +102,34 @@ Outcome mapping:
 เครือข่ายหลุดตอนส่ง completion: ห้ามเรียก KKU ใหม่หรือ resend completion โดยเดา
 ตรวจ `GET /v1/status`/attempt/artifact references กับออมก่อน; ถ้าสิทธิ์หมดใช้ออม/admin reconcile
 เมื่อ process ตายหลัง send intent ให้ถือว่า outcome ยังไม่ทราบ อย่าลบ reservation เพื่อยิงซ้ำ
-Caller ต้อง renew lease ระหว่างงาน และก่อนหมดอายุ; adapter นี้ไม่มี background renew/scheduler
+ใช้ `LeaseHeartbeat` และ `generate_with_lease()` ใน `lease.py` เพื่อ renew claim เดิม
+ก่อนส่ง KKU และระหว่างรอคำตอบ. ส่ง heartbeat เดียวกันเป็น `lease_guard` ของ
+`QueueGenerationHandoff`; หยุด heartbeat และ renew ครั้งสุดท้ายก่อน complete/fail.
+เมื่อ renew ไม่สำเร็จจะหยุด publication และเก็บ generation artifacts ไว้
+ไม่ cancel/ยิงคำขอ KKU ซ้ำ. ถ้าคำตอบยังไม่ทราบต้อง reconcile usage และคิวกับออม.
+ส่วนนี้ยังไม่ใช่ scheduler และไม่ claim งานเอง; caller ต้องใช้ frozen payload contract.
+
+ตัวอย่างการเชื่อมหลังมี frozen job และ suite policy (ไม่รันทันทีจากตัวอย่าง):
+
+```python
+from scripts.study.api854.lease import LeaseHeartbeat, generate_with_lease
+
+heartbeat = LeaseHeartbeat(queue_client, claim)
+handoff = QueueGenerationHandoff(
+    queue_client, claim, worker_id="champ-pc1",
+    suite_resolver=beam_suite_resolver, suite_policy_id=frozen_suite_policy_id,
+    credential_secrets=(kku_client.account.api_key,), lease_guard=heartbeat,
+)
+worker = GenerationWorker(
+    kku_client, ledger, artifact_root=artifact_root, model=pinned_model,
+    bucket=verified_bucket, window=observed_window, handoff=handoff,
+)
+result = generate_with_lease(
+    worker, frozen_job, heartbeat,
+    prompt_token_reserve=frozen_prompt_token_bound,
+    max_tokens=frozen_output_budget, temperature=frozen_temperature,
+)
+```
 
 ## รายการที่ต้องให้ทีมช่วยก่อน live pilot
 
@@ -113,6 +140,12 @@ Caller ต้อง renew lease ระหว่างงาน และก่�
 - **บีม:** fixed-context selection/target readiness และ suite resolver ตาม interface ข้างต้น
   evaluator ต้องตรวจ meaningful assertions, fixed repeat, buggy และ coverage ด้วย suite เดียวกัน
 - **ทั้งทีม:** ตรวจ global API limiter/บัญชีร่วม, lease renew/recovery และรับ contract ก่อนใช้ quota จริง
+
+เครื่องแชมป์พบ credentials เฉพาะ alias `a01` ในจุดส่งต่อวันที่ 3 ต.ค.
+หากให้แชมป์เป็น API coordinator ทั้งหมด ต้องจัดสรร keys a01–a10 ใน ignored local file
+และยืนยัน observed remaining ของแต่ละบัญชี. หากส่งจากหลายเครื่อง ให้แยกบัญชี
+ไม่ใช้ alias/bucket เดียวพร้อมกันข้ามเครื่องด้วย ledger แบบ local นี้.
+เริ่ม pilot ด้วยบัญชีเดียวที่ตรวจโควตาแล้วได้ ไม่จำเป็นต้องรอ keys ครบสิบ.
 
 Offline tests ใช้ fixture แยก condition `mock-integration`; adapter ปฏิเสธ mock evidence บน live client
 ไม่มี mock results รวมเข้า primary dataset และการเชื่อมคิวสำเร็จไม่เท่ากับเริ่มทดลองสำเร็จ
