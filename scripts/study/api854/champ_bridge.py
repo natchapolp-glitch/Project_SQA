@@ -66,17 +66,32 @@ def prepared_binding(client, job, settings):
             raise ValueError("Unsafe or duplicated fixed-context source")
         if path.suffix == ".java":
             sources[name] = entry["sha256"]
-    if (not sources or metadata.get("fixed_source_sha256") != sources
+    fixed_sources = metadata.get("fixed_source_sha256")
+    if (not isinstance(fixed_sources, dict) or not fixed_sources
+            or any(sources.get(name) != digest for name, digest in fixed_sources.items())
             or metadata.get("context_source_hash") != generation_job.source_hash):
         raise ValueError("Prepared fixed-source mapping/context hash is absent or differs")
+    additional = {name: digest for name, digest in sources.items() if name not in fixed_sources}
+    if additional and (protocol.get("context_selection") != "beam-modified-and-shared-receiver-java-v2-proposal"
+            or metadata.get("additional_receiver_source_sha256") != additional):
+        raise ValueError("Additional receiver sources require the explicit shared v2 policy and mapping")
     raw_targets, target_artifact = download("targets.json")
     document = json.loads(raw_targets)
     targets = document.get("targets") if isinstance(document, dict) else None
     if (not isinstance(targets, list) or not targets or metadata.get("targets_sha256") != digest(raw_targets)
             or metadata.get("target_count") != len(targets)):
         raise ValueError("Prepared common targets are empty or differ from metadata")
+    if additional:
+        modified = metadata.get("target_classes")
+        if not isinstance(modified, list) or not modified:
+            raise ValueError("Supplementary context requires retained modified target classes")
+        receiver_names = {target["class"] for target in targets} - set(modified)
+        for name in additional:
+            if not any(name.endswith("/" + receiver.split("$", 1)[0].replace(".", "/") + ".java")
+                       for receiver in receiver_names):
+                raise ValueError("Additional source is not an eligible shared concrete receiver")
     return {"schema_version": 1, "protocol": protocol, "protocol_hash": settings.protocol_hash,
-            "fixed_source_sha256": sources, "context_source_hash": generation_job.source_hash,
+            "fixed_source_sha256": fixed_sources, "context_source_hash": generation_job.source_hash,
             "prepare_attempt_id": prepared["attempt_id"],
             "targets_sha256": digest(raw_targets), "target_artifact_id": target_artifact["artifact_id"]}
 
