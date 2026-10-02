@@ -1,0 +1,932 @@
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Comparator;
+import java.util.List;
+public class GeneratedStudyTest {
+  private static final java.util.concurrent.atomic.AtomicInteger EXECUTED = new java.util.concurrent.atomic.AtomicInteger();
+  private static final java.util.concurrent.atomic.AtomicInteger TARGET_CHECKS = new java.util.concurrent.atomic.AtomicInteger();
+  @org.junit.AfterClass public static void retainStageCounts() throws Exception {
+    String report = "{\"schema_version\":1,\"executed\":" + EXECUTED.get() + ",\"skipped\":0,\"target_checks\":" + TARGET_CHECKS.get() + "}\n";
+    Files.write(Paths.get("sqa-stage-counts.json"), report.getBytes(StandardCharsets.UTF_8));
+  }
+  @Test(timeout=10000)
+  public void generated1() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:dXJuOnNxYTppdGVt|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getNamespaceURI", "", new double[]{-0.19275191598468638, 1, -0.29502854980607007, -0.86670299434726183, 0.18153854892674576, 0.09391060736277862}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated2() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:YmV0YW5lc3RlZG5lc3RlZC1sYXN0|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getValue", "", new double[]{0.50412928835565052, -0.39292398935287515, 0.75899392485952166, -0.33753704139927643, 0.23283417482554164, -0.46267521452595367}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated3() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Boolean:ZmFsc2U=|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "equals", "java.lang.Object", new double[]{0.5035220270807621, 0.6696236056587499, 0.027441509136262351, -0.53909145252019786, -0.12079846485769112, 0.92817365087904291, 0.12832943474678932, 0.77217563711311499, 0.045872834140195586}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated4() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:dXJuOnNxYTppdGVt|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "", "getNamespaceURI", "org.w3c.dom.Node", new double[]{-0.56432122761603942, -0.3921202415456484, -0.55710208988686183}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated5() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:YT1i|state=xml:<root><item id=\"left\">alpha<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"left\">alpha<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "escape", "java.lang.String", new double[]{-0.25630375578480008, -0.28437430425406618, -0.99571928534083087, 0.38693633886282797, -0.99078136129558703, 0.23950509416686216, 0.29068450657000516, 0.25956817639741148, -0.94741527720343555}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated6() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:aXRlbQ==|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "", "getLocalName", "org.w3c.dom.Node", new double[]{0.19129711544027342, -0.87495743092009015, -0.27542383336715137}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated7() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:qname:item|state=xml:<root><item id=\"right\">beta<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"right\">beta<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "getName", "", new double[]{0.49371923411137969, 0.071252638175748256, -0.060797673131111001, -0.7930064999182006, -0.87752891804063471, -0.75292737371422824}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated8() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:iterator[pointer:java.lang.String:dXJuOnNxYTpyb290;pointer:java.lang.String:dXJuOnNxYTpyb290;pointer:java.lang.String:dXJuOnNxYTppdGVt;]|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "namespaceIterator", "", new double[]{0.87851295682988773, 0.4778499707230357, -0.37471399254636167, 0.39895865985604273, 0.14174545310793471, 0.31069901760123675}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated9() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:null|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getDefaultNamespaceURI", "", new double[]{-0.6472267139526553, 0.52454705185353734, 0.5414362171196252, -0.37501790087675724, 0.81889869415101868, -0.04253261418341437}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated10() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:iterator[pointer:node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1;pointer:node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1;]|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "childIterator", "org.apache.commons.jxpath.ri.compiler.NodeTest,boolean,org.apache.commons.jxpath.ri.model.NodePointer", new double[]{-0.41132936662745717, -0.36284272727406147, -1, 0.097564133299704162, -0.6641139476632324, 1, -0.13977256882343458, 0.57721993083825507, 0.22121045864752714, -0.45867890837502273, 0.14245789368506659, -0.24843161395786006, -0.22308711057709732, -0.02125566985687833, -1}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated11() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Boolean:dHJ1ZQ==|state=xml:<root><item id=\"right\">beta<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"right\">beta<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "", "testNode", "org.apache.commons.jxpath.ri.model.NodePointer,java.lang.Object,org.apache.commons.jxpath.ri.compiler.NodeTest", new double[]{0.347521163674963, -0.085763046033880561, 0.85134085161424855, -0.59396638020620018, -1, 0.16239113735875974, -0.52121884132143448, -0.042303679198522758, -0.33544049761425471}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated12() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Boolean:ZmFsc2U=|state=xml:<root><item id=\"right\">beta<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"right\">beta<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "isCollection", "", new double[]{0.24773185217077776, 0.12484320837035356, 0.32906429197534376, -0.10006135265009714, -0.79200469044545263, -0.65721692046961855}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated13() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MQ==|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getRelativePositionByName", "", new double[]{-0.65076271407798203, -0.29655111206723, 1, 5.2158445888128568e-05, -0.35533609116172221, -0.26050312140050608}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated14() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:iterator[]|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "childIterator", "org.apache.commons.jxpath.ri.compiler.NodeTest,boolean,org.apache.commons.jxpath.ri.model.NodePointer", new double[]{0.20950035255294827, 0.17571607084527072, 0.6302048316622314, -0.12914286337348668, 0.018849233938760784, 0.11701605298965062, 1, -0.2894479992607803, 0.87989523160955341, 0.75835725677125998, 1, 1, -0.43437540577665601, 0.97964007317479074, 0.20352773182034187}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated15() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MA==|state=xml:<root><?fixture before?><?fixture beta?></root>:child=xml:<?fixture beta?>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "getRelativePositionOfPI", "java.lang.String", new double[]{0.15857318849467861, 0.84614667239646391, -0.42154550179486922, -0.51235597244987996, 0.36341281220387239, 0.34926191892030761, 0.89830490332000346, 1, -0.095533667126393829}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated16() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:iterator[pointer:xml:<item>nested</item>;pointer:xml:<item>nested-last</item>;]|state=xml:<root><item id=\"right\">beta<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"right\">beta<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "childIterator", "org.apache.commons.jxpath.ri.compiler.NodeTest,boolean,org.apache.commons.jxpath.ri.model.NodePointer", new double[]{0.30614956545671174, 0.85375906275097524, 0.49858978162590195, -1, -0.62164483542904558, -0.18325009862823216, -0.11096480904749895, 0.59769589507758625, -0.86661097071887316, -1, -0.87492544878314138, 0.44891903022901947, -0.14755455092437433, 0.32966975738338522, 0.13923600378631848}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated17() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Boolean:ZmFsc2U=|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "isLanguage", "java.lang.String", new double[]{-0.39241750462042058, 0.44932896955464924, -0.17790635061288462, -0.45570691402064101, 0.0047569718115691925, 0.076395879575641742, 0.39642420254657296, 1, 1}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated18() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MA==|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "compareChildNodePointers", "org.apache.commons.jxpath.ri.model.NodePointer,org.apache.commons.jxpath.ri.model.NodePointer", new double[]{1, 0.22582235356353686, -0.87467323034277267, -0.73397675252188688, 0.60881234213024449, 0.073682269581014898, -0.28985711603873671, -0.99666458952070869, 0.51158835936651559, -0.84464713380291145, 0.73907179247934984, 1}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated19() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MQ==|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getLength", "", new double[]{-0.36891355582563001, -0.21079978897625157, -0.59614290314040019, 0.28411211352564214, 1, 0.046024816221367774}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated20() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MQ==|state=xml:<root><item id=\"left\">alpha<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"left\">alpha<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "getRelativePositionByName", "", new double[]{-0.90599825942797341, 0.45440505649115481, 0.14448753088555075, -0.36239808146443669, -1, 0.57123402061263973}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated21() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MQ==|state=xml:<root><item id=\"right\">beta<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"right\">beta<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "getRelativePositionOfElement", "", new double[]{0.096453498137819366, 0.19149066300036222, -0.7126591433630981, -1, -0.11667725012432396, -1}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated22() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MQ==|state=xml:<root><item id=\"right\">beta<item>nested</item><item>nested-last</item></item></root>:child=xml:<item id=\"right\">beta<item>nested</item><item>nested-last</item></item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "getRelativePositionByName", "", new double[]{0.58872801801843355, 0.23277458438748433, 0.25226642656396314, -0.27746195562853654, 0.55198807946269801, 0.12506184489163177}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated23() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:aXRlbQ==|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "", "getLocalName", "org.w3c.dom.Node", new double[]{-0.15232335694852772, 0.10789789168764771, -1}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated24() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("void|state=xml:<root><item id=\"left\">7494</item></root>:child=xml:<item id=\"left\">7494</item>:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer", "java.lang.Object,java.util.Locale", "setValue", "java.lang.Object", new double[]{-0.51684444863741608, 1, 0.99552394987655424, -0.61612208601267549, -0.020366532116717087, 0.50094318432925755, 0.74943392840234879, 1, -0.32190994863112815}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated25() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:YT1i|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "escape", "java.lang.String", new double[]{-1, 0.2373535612970285, 0.47417616034907833, -0.13204716506661188, 0.11194021412365965, -0.48470691044120034, 0.26869889318586115, 1, 0.046700124484685968}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated26() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:dXJuOnNxYTppdGVt|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getNamespaceURI", "", new double[]{-0.47843117121833167, 0.66910823279623355, 0.6832121549297151, -0.34242388392807704, -0.48264087394404726, 0.6888365767660265}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated27() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.String:dXJuOnNxYTppdGVt|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getNamespaceURI", "java.lang.String", new double[]{0.94428730451539744, -0.051559505068846379, 1, -1, 0.18733232490252594, 0.71090335443405372, 0.76463868496139165, -0.60282505412674703, 0.47809399931788282}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated28() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Integer:MQ==|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "getLength", "", new double[]{0.25290587245145302, 0.39745692904985819, 1, 0.15100617518911469, 1, -0.47087784753840395}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated29() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:java.lang.Boolean:dHJ1ZQ==|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"right\"[][node:3:\"#text\":\"right\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"beta\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "testNode", "org.apache.commons.jxpath.ri.compiler.NodeTest", new double[]{0.24700813102074848, -0.62634670128625325, 0.15056866986348089, -0.80759248640574532, 0.19413976213968354, 0.044215558429649637, 0.19353686999203701, 0.46649512673884386, 0.38437104483274404}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+  @Test(timeout=10000)
+  public void generated30() {
+    EXECUTED.incrementAndGet();
+    try {
+      assertEquals("value:iterator[pointer:node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1;]|state=node:1:\"r:root\":\"null\"[node:2:\"xml:lang\":\"en\"[][node:3:\"#text\":\"en\"[][]children:0]children:1, node:2:\"xmlns:r\":\"urn:sqa:root\"[][node:3:\"#text\":\"urn:sqa:root\"[][]children:0]children:1][node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3]children:1:child=node:1:\"i:item\":\"null\"[node:2:\"id\":\"left\"[][node:3:\"#text\":\"left\"[][]children:0]children:1, node:2:\"xmlns:i\":\"urn:sqa:item\"[][node:3:\"#text\":\"urn:sqa:item\"[][]children:0]children:1][node:3:\"#text\":\"alpha\"[][]children:0node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested\"[][]children:0]children:1node:1:\"i:item\":\"null\"[][node:3:\"#text\":\"nested-last\"[][]children:0]children:1]children:3:attached=true", SqaProbe.observeWithPolicy("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer", "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node", "attributeIterator", "org.apache.commons.jxpath.ri.QName", new double[]{-0.30958525837784867, -0.11841017591170408, 0.44747805167244192, 0.1283624607301394, -0.093244723682808589, -0.22697607542222853, -0.068051778091394732, 0.17502174088337255, 1}, "beam-explicit-fixtures-v3-proposal"));
+    } finally { if (SqaProbe.targetInvoked()) TARGET_CHECKS.incrementAndGet(); }
+  }
+
+/** Fixed-revision observations for explicitly supported, deterministic Java APIs.
+ * No buggy source, patch, or triggering test is used during input generation.
+ * The same source is packaged with the generated JUnit suite.
+ */
+public static final class SqaProbe {
+    private static final String[] STRINGS = {
+        "", "0", "1", "-1", "null", "true", "false", "abc", "ABC", " ",
+        "0x0", "0x1", "0xFFFFFFFF", "1.0", "1e3", "NaN", "Infinity",
+        "{}", "[]", "[1]", "{\"a\":1}", "a=b", "--help", "-x", "a,b",
+        "1970-01-01", "a\\nb", "a\nb", "a\tb", "\u0e17\u0e14\u0e2a\u0e2d\u0e1a"
+    };
+    private static final long[] NUMBERS = {0, 1, -1, 2, -2, 10, -10, 127, 128,
+        255, 256, 32767, -32768, Integer.MAX_VALUE, Integer.MIN_VALUE};
+
+    private SqaProbe() { }
+
+    public static final String EXPLICIT_FIXTURES = "beam-explicit-fixtures-v3-proposal";
+    private static final ThreadLocal<FixtureSession> FIXTURES = new ThreadLocal<FixtureSession>();
+    private static final ThreadLocal<Boolean> INVOKED = new ThreadLocal<Boolean>();
+
+    /** A setup failure is never an observation of an uncalled target method. */
+    private static final class FixtureFailure extends RuntimeException {
+        FixtureFailure(String message, Throwable cause) { super(message, cause); }
+    }
+
+    // Production factories only: no dataset test classes, patches or buggy results.
+    // Reflection keeps the helper compilable without project-specific dependencies.
+    private static Object call(Object receiver, String name, Class<?>[] parameterTypes, Object... values)
+            throws ReflectiveOperationException {
+        Class<?> declaring = receiver instanceof Class ? (Class<?>)receiver : receiver.getClass();
+        while (declaring != null) {
+            try {
+                Method method = declaring.getDeclaredMethod(name, parameterTypes);
+                method.setAccessible(true);
+                return method.invoke(receiver instanceof Class ? null : receiver, values);
+            } catch (NoSuchMethodException missing) { declaring = declaring.getSuperclass(); }
+        }
+        throw new NoSuchMethodException(name);
+    }
+
+    private static Object construct(String name, Class<?>[] parameterTypes, Object... values)
+            throws ReflectiveOperationException {
+        Constructor<?> ctor = Class.forName(name).getDeclaredConstructor(parameterTypes);
+        ctor.setAccessible(true);
+        return ctor.newInstance(values);
+    }
+
+    private static final class FixtureSession {
+        final String targetClass;
+        final String method;
+        boolean constructing;
+        Object compiler, registry, scope, cfg, reverse, flow, closureNode, receiver;
+        org.w3c.dom.Element domRoot;
+        org.w3c.dom.Node domChild;
+        Object jdomRoot, jdomChild;
+
+        FixtureSession(String targetClass, String method) {
+            this.targetClass = targetClass;
+            this.method = method;
+        }
+
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        Object nativeType(String name, boolean object) throws ReflectiveOperationException {
+            Class<?> nativeClass = Class.forName("com.google.javascript.rhino.jstype.JSTypeNative");
+            Object key = Enum.valueOf((Class)nativeClass, name);
+            return call(registry, object ? "getNativeObjectType" : "getNativeType", new Class<?>[]{nativeClass}, key);
+        }
+
+        void closure(double a) throws ReflectiveOperationException {
+            if (compiler != null) return;
+            Class<?> node = Class.forName("com.google.javascript.rhino.Node");
+            Class<?> scopeClass = Class.forName("com.google.javascript.jscomp.Scope");
+            Class<?> abstractCompiler = Class.forName("com.google.javascript.jscomp.AbstractCompiler");
+            compiler = construct("com.google.javascript.jscomp.Compiler", new Class<?>[]{});
+            Object options = construct("com.google.javascript.jscomp.CompilerOptions", new Class<?>[]{});
+            call(compiler, "initOptions", new Class<?>[]{options.getClass()}, options);
+            registry = call(compiler, "getTypeRegistry", new Class<?>[]{});
+            String expression = a < 0 ? "x + 1" : "x + 's'";
+            if (method.contains("And") || method.contains("ShortCircuit")) expression = "x && true";
+            if (method.contains("Or")) expression = "x || false";
+            if (method.equals("traverseArrayLiteral")) expression = "[x, 1]";
+            if (method.equals("traverseObjectLiteral")) expression = "({p:x})";
+            if (method.equals("traverseHook")) expression = "x ? 1 : 2";
+            if (method.equals("traverseAssign")) expression = "x = 2";
+            if (method.equals("traverseGetElem")) expression = "x['p']";
+            if (method.equals("traverseGetProp") || method.contains("Property")) expression = "x.p";
+            if (method.equals("traverseName") || method.equals("redeclareSimpleVar")
+                    || method.equals("narrowScope") || method.equals("updateScopeForTypeChange")) expression = "x";
+            Object script = call(compiler, "parseTestCode", new Class<?>[]{String.class},
+                    "function fixture(x) { return " + expression + "; }");
+            Object function = call(script, "getFirstChild", new Class<?>[]{});
+            Object global = call(scopeClass, "createGlobalScope", new Class<?>[]{node}, script);
+            scope = construct(scopeClass.getName(), new Class<?>[]{scopeClass, node}, global, function);
+            Object astParameters = call(call(function, "getFirstChild", new Class<?>[]{}), "getNext", new Class<?>[]{});
+            Object name = call(astParameters, "getFirstChild", new Class<?>[]{});
+            call(scope, "declare", new Class<?>[]{String.class, node,
+                    Class.forName("com.google.javascript.rhino.jstype.JSType"),
+                    Class.forName("com.google.javascript.jscomp.CompilerInput")}, "x", name, nativeType("UNKNOWN_TYPE", false), null);
+            Object body = call(function, "getLastChild", new Class<?>[]{});
+            Object returnNode = call(body, "getFirstChild", new Class<?>[]{});
+            closureNode = method.equals("traverseReturn") || method.equals("branchedFlowThrough")
+                    ? returnNode : call(returnNode, "getFirstChild", new Class<?>[]{});
+            if (method.equals("traverseObjectLiteral"))
+                call(closureNode, "setJSType", new Class<?>[]{Class.forName("com.google.javascript.rhino.jstype.JSType")}, nativeType("OBJECT_TYPE", true));
+            Object analysis = construct("com.google.javascript.jscomp.ControlFlowAnalysis",
+                    new Class<?>[]{abstractCompiler, boolean.class, boolean.class}, compiler, false, true);
+            call(analysis, "process", new Class<?>[]{node, node}, null, function);
+            cfg = call(analysis, "getCfg", new Class<?>[]{});
+            Object convention = call(compiler, "getCodingConvention", new Class<?>[]{});
+            reverse = construct("com.google.javascript.jscomp.type.SemanticReverseAbstractInterpreter",
+                    new Class<?>[]{Class.forName("com.google.javascript.jscomp.CodingConvention"), registry.getClass()}, convention, registry);
+            flow = call(Class.forName("com.google.javascript.jscomp.LinkedFlowScope"), "createEntryLattice",
+                    new Class<?>[]{scopeClass}, scope);
+            call(flow, "inferSlotType", new Class<?>[]{String.class, Class.forName("com.google.javascript.rhino.jstype.JSType")},
+                    "x", nativeType(a < 0 ? "NUMBER_TYPE" : "STRING_TYPE", false));
+        }
+
+        void dom(double a) throws Exception {
+            if (domRoot != null) return;
+            javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            org.w3c.dom.Document document = factory.newDocumentBuilder().newDocument();
+            domRoot = document.createElementNS("urn:sqa:root", "r:root");
+            document.appendChild(domRoot);
+            domRoot.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:r", "urn:sqa:root");
+            domRoot.setAttributeNS("http://www.w3.org/XML/1998/namespace", "xml:lang", "en");
+            org.w3c.dom.Element element = document.createElementNS("urn:sqa:item", "i:item");
+            domChild = element;
+            element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:i", "urn:sqa:item");
+            element.setAttribute("id", a < 0 ? "left" : "right");
+            domChild.appendChild(document.createTextNode(a < 0 ? "alpha" : "beta"));
+            org.w3c.dom.Element grandchild = document.createElementNS("urn:sqa:item", "i:item");
+            grandchild.appendChild(document.createTextNode("nested"));
+            domChild.appendChild(grandchild);
+            org.w3c.dom.Element last = document.createElementNS("urn:sqa:item", "i:item");
+            last.appendChild(document.createTextNode("nested-last"));
+            domChild.appendChild(last);
+            if (method.equals("getRelativePositionOfPI")) {
+                domRoot.appendChild(document.createProcessingInstruction("fixture", "before"));
+                domChild = document.createProcessingInstruction("fixture", a < 0 ? "alpha" : "beta");
+            } else if (method.equals("getRelativePositionOfTextNode")) {
+                domRoot.appendChild(document.createCDATASection("before"));
+                domChild = document.createTextNode(a < 0 ? "alpha" : "beta");
+            }
+            domRoot.appendChild(domChild);
+        }
+
+        void jdom(double a) throws ReflectiveOperationException {
+            if (jdomRoot != null) return;
+            Class<?> element = Class.forName("org.jdom.Element");
+            jdomRoot = construct(element.getName(), new Class<?>[]{String.class}, "root");
+            jdomChild = construct(element.getName(), new Class<?>[]{String.class}, "item");
+            call(jdomChild, "setText", new Class<?>[]{String.class}, a < 0 ? "alpha" : "beta");
+            call(jdomChild, "setAttribute", new Class<?>[]{String.class, String.class}, "id", a < 0 ? "left" : "right");
+            Object grandchild = construct(element.getName(), new Class<?>[]{String.class}, "item");
+            call(grandchild, "setText", new Class<?>[]{String.class}, "nested");
+            call(jdomChild, "addContent", new Class<?>[]{Class.forName("org.jdom.Content")}, grandchild);
+            Object last = construct(element.getName(), new Class<?>[]{String.class}, "item");
+            call(last, "setText", new Class<?>[]{String.class}, "nested-last");
+            call(jdomChild, "addContent", new Class<?>[]{Class.forName("org.jdom.Content")}, last);
+            if (method.equals("getRelativePositionOfPI")) {
+                Object before = construct("org.jdom.ProcessingInstruction", new Class<?>[]{String.class, String.class}, "fixture", "before");
+                call(jdomRoot, "addContent", new Class<?>[]{Class.forName("org.jdom.Content")}, before);
+                jdomChild = construct("org.jdom.ProcessingInstruction", new Class<?>[]{String.class, String.class}, "fixture", a < 0 ? "alpha" : "beta");
+            } else if (method.equals("getRelativePositionOfTextNode")) {
+                Object before = construct("org.jdom.CDATA", new Class<?>[]{String.class}, "before");
+                call(jdomRoot, "addContent", new Class<?>[]{Class.forName("org.jdom.Content")}, before);
+                jdomChild = construct("org.jdom.Text", new Class<?>[]{String.class}, a < 0 ? "alpha" : "beta");
+            }
+            call(jdomRoot, "addContent", new Class<?>[]{Class.forName("org.jdom.Content")}, jdomChild);
+        }
+
+        void configurePointer(Object pointer) throws ReflectiveOperationException {
+            Class<?> resolverClass = Class.forName("org.apache.commons.jxpath.ri.NamespaceResolver");
+            Object resolver = construct(resolverClass.getName(), new Class<?>[]{resolverClass}, new Object[]{null});
+            call(resolver, "registerNamespace", new Class<?>[]{String.class, String.class}, "i", "urn:sqa:item");
+            call(resolver, "registerNamespace", new Class<?>[]{String.class, String.class}, "r", "urn:sqa:root");
+            call(resolver, "setNamespaceContextPointer", new Class<?>[]{Class.forName("org.apache.commons.jxpath.ri.model.NodePointer")}, pointer);
+            call(pointer, "setNamespaceResolver", new Class<?>[]{resolverClass}, resolver);
+        }
+
+        Object argument(Class<?> type, double a, double b, double c, int depth) {
+            try {
+                if (depth > 2) throw new FixtureFailure("Fixture recursion limit: " + type.getName(), null);
+                if (scalar(type)) {
+                    if (type == String.class && method.equals("getRelativePositionOfPI")) return a < 0 ? "fixture" : "other";
+                    if (type == String.class && (method.equals("namespacePointer") || method.equals("getNamespaceURI")))
+                        return a < 0 ? "r" : "i";
+                    return legacyArgument(type, Math.max(-0.95, a), b, c, depth);
+                }
+                if (type.isArray()) {
+                    Object array = Array.newInstance(type.getComponentType(), bucket(c, 5));
+                    for (int i = 0; i < Array.getLength(array); i++)
+                        Array.set(array, i, argument(type.getComponentType(), a, b, c, depth + 1));
+                    return array;
+                }
+                String name = type.getName();
+                if (name.startsWith("com.google.javascript.")) {
+                    closure(a);
+                    if (name.endsWith(".AbstractCompiler")) return compiler;
+                    if (name.endsWith(".ControlFlowGraph")) return cfg;
+                    if (name.endsWith(".ReverseAbstractInterpreter")) return reverse;
+                    if (name.endsWith(".Scope")) return scope;
+                    if (name.endsWith(".Scope$Var")) return call(scope, "getVar", new Class<?>[]{String.class}, "x");
+                    if (name.endsWith(".FlowScope")) return flow;
+                    if (name.endsWith(".Node")) return closureNode;
+                    if (name.endsWith(".JSType")) return nativeType(a < 0 ? "NUMBER_TYPE" : "STRING_TYPE", false);
+                    if (name.endsWith(".ObjectType")) return nativeType("OBJECT_TYPE", true);
+                }
+                if (name.startsWith("org.w3c.dom.")) {
+                    dom(a);
+                    if (type.isInstance(domChild)) return domChild;
+                    if (type.isInstance(domChild.getOwnerDocument())) return domChild.getOwnerDocument();
+                }
+                if (type == java.util.Locale.class) return java.util.Locale.ROOT;
+                if (name.equals("org.apache.commons.jxpath.ri.QName"))
+                    return construct(name, new Class<?>[]{String.class}, method.equals("attributeIterator") ? "id" : "item");
+                if (name.equals("org.apache.commons.jxpath.ri.compiler.NodeTest"))
+                    return construct("org.apache.commons.jxpath.ri.compiler.NodeNameTest",
+                            new Class<?>[]{Class.forName("org.apache.commons.jxpath.ri.QName"), String.class},
+                            targetClass.contains(".jdom.")
+                                ? construct("org.apache.commons.jxpath.ri.QName", new Class<?>[]{String.class}, "item")
+                                : construct("org.apache.commons.jxpath.ri.QName", new Class<?>[]{String.class, String.class}, "i", "item"),
+                            targetClass.contains(".jdom.") ? null : "urn:sqa:item");
+                if (name.equals("org.apache.commons.jxpath.ri.model.NodePointer")) {
+                    if (targetClass.contains(".jdom.")) {
+                        jdom(a);
+                        if (!constructing && (method.equals("childIterator") || method.equals("compareChildNodePointers"))) {
+                            List<?> children = (List<?>)call(jdomChild, "getContent", new Class<?>[]{});
+                            Object anchor = children.get(a < 0 ? 0 : children.size() - 1);
+                            Object pointer = construct(targetClass, new Class<?>[]{type, Object.class}, receiver, anchor);
+                            configurePointer(pointer);
+                            return pointer;
+                        }
+                        Object pointer = construct("org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+                                new Class<?>[]{Object.class, java.util.Locale.class}, jdomRoot, java.util.Locale.ROOT);
+                        configurePointer(pointer);
+                        return pointer;
+                    }
+                    dom(a);
+                    if (!constructing && (method.equals("childIterator") || method.equals("compareChildNodePointers"))) {
+                        org.w3c.dom.Node anchor = a < 0 ? domChild.getFirstChild() : domChild.getLastChild();
+                        Object pointer = construct(targetClass, new Class<?>[]{type, org.w3c.dom.Node.class}, receiver, anchor);
+                        configurePointer(pointer);
+                        return pointer;
+                    }
+                    Object pointer = construct("org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+                            new Class<?>[]{org.w3c.dom.Node.class, java.util.Locale.class}, domRoot, java.util.Locale.ROOT);
+                    configurePointer(pointer);
+                    return pointer;
+                }
+                if (type == Object.class && targetClass.contains(".jdom.")
+                        && (constructing || !method.equals("setValue"))) { jdom(a); return jdomChild; }
+                if (type == java.util.Iterator.class) return new ArrayList<Object>().iterator();
+                if (type == java.util.List.class || type == java.util.Collection.class || type == Iterable.class)
+                    return new ArrayList<Object>();
+                if (type == java.util.Set.class) return new java.util.HashSet<Object>();
+                if (type == java.util.Map.class) return new java.util.HashMap<Object,Object>();
+                if (type == Object.class || type == Number.class || type == java.util.Date.class)
+                    return legacyArgument(type, Math.max(-0.95, a), b, c, depth);
+                throw new FixtureFailure("No explicit recipe: " + name, null);
+            } catch (FixtureFailure failure) { throw failure; }
+            catch (Exception failure) { throw new FixtureFailure("Fixture recipe failed: " + type.getName()
+                    + ":" + failure.getClass().getName() + ":" + failure.getMessage(), failure); }
+        }
+
+        String nodeSnapshot(org.w3c.dom.Node node, int depth) {
+            if (depth > 8) return "depth-limit";
+            StringBuilder out = new StringBuilder("node:").append(node.getNodeType()).append(':')
+                    .append(quote(node.getNodeName())).append(':').append(quote(String.valueOf(node.getNodeValue())));
+            org.w3c.dom.NamedNodeMap attributes = node.getAttributes();
+            List<String> attrs = new ArrayList<String>();
+            if (attributes != null) for (int i = 0; i < attributes.getLength(); i++)
+                attrs.add(nodeSnapshot(attributes.item(i), depth + 1));
+            java.util.Collections.sort(attrs);
+            out.append(attrs.toString()).append('[');
+            org.w3c.dom.NodeList children = node.getChildNodes();
+            for (int i = 0; i < Math.min(256, children.getLength()); i++) out.append(nodeSnapshot(children.item(i), depth + 1));
+            return out.append("]children:").append(children.getLength()).toString();
+        }
+
+        Object field(Object value, String name) throws ReflectiveOperationException {
+            java.lang.reflect.Field field = value.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(value);
+        }
+
+        String projection(Object result, int depth) throws ReflectiveOperationException {
+            if (depth > 8) throw new FixtureFailure("Oracle projection depth exceeded", null);
+            if (result == null) return "null";
+            String name = result.getClass().getName();
+            if (result instanceof org.w3c.dom.Node) return nodeSnapshot((org.w3c.dom.Node)result, 0);
+            if (name.equals("org.jdom.Element") || name.equals("org.jdom.ProcessingInstruction")
+                    || name.equals("org.jdom.Text") || name.equals("org.jdom.CDATA")) {
+                Object writer = construct("org.jdom.output.XMLOutputter", new Class<?>[]{});
+                return "xml:" + call(writer, "outputString", new Class<?>[]{result.getClass()}, result);
+            }
+            if (name.equals("org.apache.commons.jxpath.ri.QName")) return "qname:" + result.toString();
+            if (name.startsWith("com.google.javascript.rhino.jstype.")) return "js-type:" + result.toString();
+            if (name.equals("com.google.javascript.jscomp.LinkedFlowScope")) {
+                Object slot = call(result, "getSlot", new Class<?>[]{String.class}, "x");
+                return "flow:x=" + (slot == null ? "absent" : projection(call(slot, "getType", new Class<?>[]{}), depth + 1));
+            }
+            if (name.endsWith("TypeInference$BooleanOutcomePair"))
+                return "boolean-pair:" + field(result, "toBooleanOutcomes") + ':' + field(result, "booleanValues")
+                    + ":left=" + projection(field(result, "leftScope"), depth + 1)
+                    + ":right=" + projection(field(result, "rightScope"), depth + 1);
+            if (result instanceof List) {
+                StringBuilder out = new StringBuilder("list[");
+                if (((List<?>)result).size() > 256) throw new FixtureFailure("Oracle collection limit exceeded", null);
+                for (Object item : (List<?>)result) out.append(projection(item, depth + 1)).append(';');
+                return out.append(']').toString();
+            }
+            if (name.startsWith("org.apache.commons.jxpath.ri.model.")) {
+                Class<?> pointer = Class.forName("org.apache.commons.jxpath.ri.model.NodePointer");
+                if (pointer.isInstance(result))
+                    return "pointer:" + projection(call(result, "getImmediateNode", new Class<?>[]{}), depth + 1);
+                if (Class.forName("org.apache.commons.jxpath.ri.model.NodeIterator").isInstance(result)) {
+                    StringBuilder out = new StringBuilder("iterator[");
+                    for (int i = 1; i <= 9; i++) {
+                        boolean present = (Boolean)call(result, "setPosition", new Class<?>[]{int.class}, i);
+                        if (!present) return out.append(']').toString();
+                        if (i == 9) throw new FixtureFailure("Oracle iterator limit exceeded", null);
+                        out.append(projection(call(result, "getNodePointer", new Class<?>[]{}), depth + 1)).append(';');
+                    }
+                }
+            }
+            String simple = value(result);
+            if (simple.startsWith("object-type:")) throw new FixtureFailure("No structural oracle: " + name, null);
+            return simple;
+        }
+
+        String state() throws ReflectiveOperationException {
+            if (compiler != null) {
+                Object jsType = call(closureNode, "getJSType", new Class<?>[]{});
+                return "ast:" + call(closureNode, "toStringTree", new Class<?>[]{})
+                    + ":ast-type=" + projection(jsType, 0) + ':' + projection(flow, 0);
+            }
+            if (domRoot != null) return nodeSnapshot(domRoot, 0) + ":child=" + nodeSnapshot(domChild, 0)
+                    + ":attached=" + (domChild.getParentNode() != null);
+            if (jdomRoot != null) return projection(jdomRoot, 0) + ":child=" + projection(jdomChild, 0)
+                    + ":attached=" + (call(jdomChild, "getParent", new Class<?>[]{}) != null);
+            return "stateless-scalars";
+        }
+    }
+
+    private static String quote(String value) {
+        StringBuilder out = new StringBuilder("\"");
+        for (char c : value.toCharArray()) {
+            if (c == '"' || c == '\\') out.append('\\').append(c);
+            else if (c < 32) out.append(String.format("\\u%04x", (int)c));
+            else out.append(c);
+        }
+        return out.append('"').toString();
+    }
+
+    private static String typeNames(Class<?>[] types) {
+        List<String> names = new ArrayList<String>();
+        for (Class<?> type : types) names.add(type.getName());
+        return String.join(",", names);
+    }
+
+    private static boolean scalar(Class<?> type) {
+        return type.isPrimitive() || type == String.class || type == Boolean.class
+            || type == Character.class || type == Byte.class || type == Short.class
+            || type == Integer.class || type == Long.class || type == Float.class
+            || type == Double.class || type.isEnum();
+    }
+
+    private static boolean supported(Class<?> type) {
+        return scalar(type) || (type.isArray() && scalar(type.getComponentType()));
+    }
+
+    private static boolean supportedParameters(Class<?>[] types) {
+        if (types.length > 6) return false;
+        for (Class<?> type : types) if (type == void.class) return false;
+        return true;
+    }
+
+    private static Class<?> type(String name) throws ClassNotFoundException {
+        if (name.equals("boolean")) return boolean.class;
+        if (name.equals("byte")) return byte.class;
+        if (name.equals("short")) return short.class;
+        if (name.equals("int")) return int.class;
+        if (name.equals("long")) return long.class;
+        if (name.equals("float")) return float.class;
+        if (name.equals("double")) return double.class;
+        if (name.equals("char")) return char.class;
+        return Class.forName(name);
+    }
+
+    private static Class<?>[] types(String names) throws ClassNotFoundException {
+        if (names.length() == 0) return new Class<?>[0];
+        String[] split = names.split(",", -1);
+        Class<?>[] result = new Class<?>[split.length];
+        for (int i = 0; i < split.length; i++) result[i] = type(split[i]);
+        return result;
+    }
+
+    private static int bucket(double coordinate, int size) {
+        double unit = Math.max(0, Math.min(1, (coordinate + 1) / 2));
+        return Math.min(size - 1, (int)(unit * size));
+    }
+
+    private static Object argument(Class<?> type, double a, double b, double c) {
+        return argument(type, a, b, c, 0);
+    }
+
+    private static Object argument(Class<?> type, double a, double b, double c, int depth) {
+        FixtureSession session = FIXTURES.get();
+        return session == null ? legacyArgument(type, a, b, c, depth) : session.argument(type, a, b, c, depth);
+    }
+
+    private static Object legacyArgument(Class<?> type, double a, double b, double c, int depth) {
+        if (depth > 2) return null;
+        if (type.isArray()) {
+            int length = bucket(c, 5);
+            Object array = Array.newInstance(type.getComponentType(), length);
+            for (int i = 0; i < length; i++) {
+                Array.set(array, i, argument(type.getComponentType(),
+                    Math.max(-1, Math.min(1, a + i * 0.17)), b, c, depth + 1));
+            }
+            return array;
+        }
+        if (!type.isPrimitive() && a < -0.96) return null;
+        if (type == String.class) {
+            int selection = bucket(a, STRINGS.length + 4);
+            if (selection < STRINGS.length) return STRINGS[selection];
+            int length = bucket(c, 33);
+            char character = "0123456789abcdefXYZ +-_.".charAt(bucket(b, 23));
+            char[] value = new char[length];
+            Arrays.fill(value, character);
+            return new String(value);
+        }
+        if (type == boolean.class || type == Boolean.class) return a >= 0;
+        if (type == char.class || type == Character.class) return (char)bucket(a, 128);
+        if (type.isEnum()) {
+            Object[] values = type.getEnumConstants();
+            return values.length == 0 ? null : values[bucket(a, values.length)];
+        }
+        long integer = b < 0 ? NUMBERS[bucket(a, NUMBERS.length)] : Math.round(a * 10000);
+        if (type == byte.class || type == Byte.class) return (byte)integer;
+        if (type == short.class || type == Short.class) return (short)integer;
+        if (type == int.class || type == Integer.class) return (int)integer;
+        if (type == long.class || type == Long.class) return integer;
+        double real = b < 0 ? integer : a * 1000;
+        if (type == float.class || type == Float.class) return (float)real;
+        if (type == double.class || type == Double.class) return real;
+        if (type == Number.class) return Double.valueOf(real);
+        if (type == Object.class) return b < 0 ? STRINGS[bucket(a, STRINGS.length)] : Long.valueOf(integer);
+        if (type == java.util.Date.class) return new java.util.Date(integer);
+        if (type == java.util.List.class || type == java.util.Collection.class || type == Iterable.class)
+            return new java.util.ArrayList<Object>();
+        if (type == java.util.Set.class) return new java.util.HashSet<Object>();
+        if (type == java.util.Map.class) return new java.util.HashMap<Object,Object>();
+        if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers()) && !type.getName().startsWith("java.")) {
+            Constructor<?>[] constructors = type.getDeclaredConstructors();
+            Arrays.sort(constructors, new Comparator<Constructor<?>>() {
+                public int compare(Constructor<?> left, Constructor<?> right) {
+                    int count = left.getParameterCount() - right.getParameterCount();
+                    return count != 0 ? count : left.toString().compareTo(right.toString());
+                }
+            });
+            for (Constructor<?> constructor : constructors) {
+                if (constructor.getParameterCount() > 3) continue;
+                try {
+                    constructor.setAccessible(true);
+                    Class<?>[] parameters = constructor.getParameterTypes();
+                    Object[] values = new Object[parameters.length];
+                    for (int i = 0; i < values.length; i++) values[i] = argument(parameters[i], a, b, c, depth + 1);
+                    return constructor.newInstance(values);
+                } catch (ReflectiveOperationException error) {
+                    // Failed fixture construction yields an explicit null boundary input.
+                } catch (RuntimeException error) {
+                    // Encapsulated/unconstructible fixture yields the same null boundary.
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Object[] arguments(Class<?>[] types, double[] vector, int offset) {
+        Object[] values = new Object[types.length];
+        for (int i = 0; i < types.length; i++) {
+            int start = offset + 3 * i;
+            values[i] = argument(types[i], vector[start % vector.length],
+                vector[(start + 1) % vector.length], vector[(start + 2) % vector.length]);
+        }
+        return values;
+    }
+
+    private static String value(Object value) {
+        if (value == null) return "null";
+        Class<?> type = value.getClass();
+        if (type.isArray()) {
+            StringBuilder out = new StringBuilder(type.getName()).append('[');
+            int length = Array.getLength(value);
+            if (length > 100000) throw new IllegalStateException("SQA_HARNESS oversized outcome");
+            for (int i = 0; i < length; i++) out.append(value(Array.get(value, i))).append(';');
+            return out.append(']').toString();
+        }
+        if (value instanceof Class) return "class:" + ((Class<?>)value).getName();
+        if (!scalar(type) && !(value instanceof Number)) return "object-type:" + type.getName();
+        String text = value instanceof Enum ? ((Enum<?>) value).name() : String.valueOf(value);
+        return type.getName() + ":" + Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String snapshot(String observed) {
+        // JVM string constants are limited to 65,535 encoded bytes. Long exact
+        // observations use a deterministic digest rather than enormous literals.
+        if (observed.length() <= 16000) return observed;
+        byte[] bytes = observed.getBytes(StandardCharsets.UTF_8);
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(bytes);
+            StringBuilder hex = new StringBuilder();
+            for (byte item : digest) hex.append(String.format("%02x", item & 255));
+            return "sha256:" + hex + ":bytes:" + bytes.length;
+        } catch (NoSuchAlgorithmException error) {
+            throw new IllegalStateException("SQA_HARNESS SHA-256 unavailable", error);
+        }
+    }
+
+    public static String observe(String className, String constructorTypes, String methodName,
+                                 String methodTypes, double[] vector) {
+        INVOKED.set(false);
+        if (vector.length == 0) throw new IllegalArgumentException("SQA_HARNESS empty vector");
+        try {
+            Class<?> target = Class.forName(className);
+            Class<?>[] ctorTypes = types(constructorTypes);
+            Class<?>[] parameterTypes = types(methodTypes);
+            Object receiver = null;
+            Method method = null;
+            if (!methodName.equals("<init>")) {
+                Class<?> declaring = target;
+                while (declaring != null) {
+                    try { method = declaring.getDeclaredMethod(methodName, parameterTypes); break; }
+                    catch (NoSuchMethodException missing) { declaring = declaring.getSuperclass(); }
+                }
+                if (method == null) throw new NoSuchMethodException(methodName);
+                method.setAccessible(true);
+            }
+            if (method == null || !Modifier.isStatic(method.getModifiers())) {
+                Constructor<?> ctor = target.getDeclaredConstructor(ctorTypes);
+                ctor.setAccessible(true);
+                FixtureSession session = FIXTURES.get();
+                if (session != null) session.constructing = true;
+                try {
+                    Object[] values = arguments(ctorTypes, vector, 0);
+                    if (method == null) INVOKED.set(true);
+                    receiver = ctor.newInstance(values);
+                    if (session != null) session.receiver = receiver;
+                    if (session != null && className.startsWith("org.apache.commons.jxpath.ri.model.")) session.configurePointer(receiver);
+                } catch (InvocationTargetException error) {
+                    if (session != null && method != null)
+                        throw new FixtureFailure("Receiver constructor failed before method invocation", error.getCause());
+                    throw error;
+                } finally { if (session != null) session.constructing = false; }
+            }
+            if (method == null) {
+                if (FIXTURES.get() == null) return "constructed:" + target.getName();
+                try { return snapshot("constructed:" + target.getName() + ":state=" + FIXTURES.get().state()); }
+                catch (ReflectiveOperationException failure) { throw new FixtureFailure("Constructor state oracle failed", failure); }
+            }
+            Object[] values = arguments(parameterTypes, vector, ctorTypes.length * 3);
+            INVOKED.set(true);
+            Object result = method.invoke(receiver, values);
+            if (FIXTURES.get() != null) {
+                FixtureSession session = FIXTURES.get();
+                try {
+                    return snapshot((method.getReturnType() == void.class ? "void" : "value:" + session.projection(result, 0))
+                            + "|state=" + session.state());
+                } catch (ReflectiveOperationException failure) { throw new FixtureFailure("Structural oracle failed", failure); }
+            }
+            return method.getReturnType() == void.class ? "void" : snapshot("value:" + value(result));
+        } catch (InvocationTargetException error) {
+            Throwable cause = error.getCause();
+            if (cause instanceof VirtualMachineError || cause instanceof LinkageError || cause instanceof ThreadDeath)
+                throw new IllegalStateException("SQA_HARNESS JVM failure", cause);
+            return "exception:" + cause.getClass().getName();
+        } catch (ReflectiveOperationException error) {
+            throw new IllegalStateException("SQA_HARNESS reflection failure", error);
+        } catch (LinkageError error) {
+            throw new IllegalStateException("SQA_HARNESS linkage failure", error);
+        }
+    }
+
+    public static String observeWithPolicy(String className, String constructorTypes, String methodName,
+            String methodTypes, double[] vector, String policy) {
+        if (!EXPLICIT_FIXTURES.equals(policy)) throw new IllegalArgumentException("Unknown explicit fixture policy");
+        FIXTURES.set(new FixtureSession(className, methodName));
+        try { return observe(className, constructorTypes, methodName, methodTypes, vector); }
+        finally { FIXTURES.remove(); }
+    }
+
+    public static boolean targetInvoked() { return Boolean.TRUE.equals(INVOKED.get()); }
+
+    private static String descriptor(String className, String ctor, String method, String params, int count) {
+        return "{\"class\":" + quote(className) + ",\"constructor_types\":" + quote(ctor)
+            + ",\"method\":" + quote(method) + ",\"parameter_types\":" + quote(params)
+            + ",\"dimensions\":" + Math.max(3, count * 3) + "}";
+    }
+
+    private static void discover(String[] classes, List<String> fixtureClasses) {
+        List<String> targets = new ArrayList<String>();
+        List<String> errors = new ArrayList<String>();
+        for (String className : classes) {
+            try {
+                Class<?> target = Class.forName(className, false, SqaProbe.class.getClassLoader());
+                Class<?> receiverType = target;
+                if (Modifier.isAbstract(target.getModifiers())) {
+                    for (String name : fixtureClasses) {
+                        try {
+                            Class<?> candidate = Class.forName(name, false, SqaProbe.class.getClassLoader());
+                            if (!Modifier.isAbstract(candidate.getModifiers()) && target.isAssignableFrom(candidate)
+                                    && candidate.getDeclaredConstructors().length > 0) {
+                                receiverType = candidate;
+                                break;
+                            }
+                        } catch (ClassNotFoundException ignored) { } catch (LinkageError ignored) { }
+                    }
+                }
+                List<Constructor<?>> constructors = new ArrayList<Constructor<?>>();
+                if (!Modifier.isAbstract(receiverType.getModifiers()) && !receiverType.isEnum()) {
+                    Constructor<?>[] all = receiverType.getDeclaredConstructors();
+                    Arrays.sort(all, new Comparator<Constructor<?>>() {
+                        public int compare(Constructor<?> a, Constructor<?> b) { return a.toString().compareTo(b.toString()); }
+                    });
+                    for (Constructor<?> ctor : all) {
+                        if (supportedParameters(ctor.getParameterTypes())) constructors.add(ctor);
+                    }
+                    // Select a constructor before generating inputs; prefer the simplest fixture.
+                    java.util.Collections.sort(constructors, new Comparator<Constructor<?>>() {
+                        public int compare(Constructor<?> a, Constructor<?> b) { return a.getParameterCount() - b.getParameterCount(); }
+                    });
+                }
+                Method[] methods = target.getDeclaredMethods();
+                Arrays.sort(methods, new Comparator<Method>() {
+                    public int compare(Method a, Method b) { return a.toString().compareTo(b.toString()); }
+                });
+                for (Method method : methods) {
+                    if (method.isSynthetic() || method.getName().equals("main")
+                        || method.isBridge() || !supportedParameters(method.getParameterTypes())
+                        ) continue;
+                    if (Modifier.isStatic(method.getModifiers())) {
+                        targets.add(descriptor(className, "", method.getName(),
+                            typeNames(method.getParameterTypes()), method.getParameterCount()));
+                    } else if (!constructors.isEmpty()) {
+                        Constructor<?> ctor = constructors.get(0);
+                        targets.add(descriptor(receiverType.getName(), typeNames(ctor.getParameterTypes()), method.getName(),
+                            typeNames(method.getParameterTypes()), ctor.getParameterCount() + method.getParameterCount()));
+                    }
+                }
+                for (Constructor<?> ctor : constructors) {
+                    if (ctor.getParameterCount() > 0)
+                        targets.add(descriptor(receiverType.getName(), typeNames(ctor.getParameterTypes()), "<init>", "", ctor.getParameterCount()));
+                }
+            } catch (Throwable error) {
+                if (error instanceof VirtualMachineError || error instanceof ThreadDeath) throw (Error)error;
+                errors.add(quote(className + ":" + error.getClass().getName()));
+            }
+        }
+        System.out.println("{\"targets\":[" + String.join(",", targets) + "],\"errors\":[" + String.join(",", errors) + "]}");
+    }
+
+    public static void main(String[] args) throws Exception {
+        if (args.length > 0 && args[0].equals("discover")) {
+            int start = 1;
+            List<String> fixtures = new ArrayList<String>();
+            if (args.length > 2 && args[1].equals("--fixtures")) {
+                fixtures = Files.readAllLines(Paths.get(args[2]), StandardCharsets.UTF_8);
+                start = 3;
+            }
+            discover(Arrays.copyOfRange(args, start, args.length), fixtures);
+            return;
+        }
+        if ((args.length != 6 && args.length != 7) || !args[0].equals("observe"))
+            throw new IllegalArgumentException("SQA_HARNESS expected discover classes or observe class ctor method types vector");
+        String[] pieces = args[5].split(",");
+        double[] vector = new double[pieces.length];
+        for (int i = 0; i < pieces.length; i++) {
+            vector[i] = Double.parseDouble(pieces[i]);
+            if (!Double.isFinite(vector[i]))
+                throw new IllegalArgumentException("SQA_HARNESS nonfinite vector");
+        }
+        String outcome;
+        try {
+            outcome = args.length == 7 ? observeWithPolicy(args[1], args[2], args[3], args[4], vector, args[6])
+                : observe(args[1], args[2], args[3], args[4], vector);
+        } catch (FixtureFailure failure) {
+            System.out.println("SQA_FIXTURE_FAILURE:" + Base64.getEncoder().encodeToString(failure.getMessage().getBytes(StandardCharsets.UTF_8)));
+            return;
+        }
+        System.out.println("SQA_TRACE:{\"target_invoked\":" + Boolean.TRUE.equals(INVOKED.get()) + "}");
+        System.out.println("SQA_RESULT:" + Base64.getEncoder().encodeToString(outcome.getBytes(StandardCharsets.UTF_8)));
+    }
+}
+}

@@ -91,6 +91,16 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual([r["outcome"] for r in receipts], ["prepared", "generated", "complete"])
         self.assertTrue(all(j["owner"] == "champ" for j in self.store.status()["jobs"]))
 
+    def test_shared_v3_cannot_enable_two_bug_explicit_policy_before_claim(self):
+        protocol = common.read_json(self.protocol_path)
+        protocol.update(fixture_policy_id='beam-explicit-fixtures-v3-proposal',
+                        generation={'prepare_contract':'aom-beam-prepare-v3'})
+        self.protocol_path = self.root/'unsupported-shared-fixtures.json'
+        common.write_json(self.protocol_path, protocol)
+        with self.assertRaisesRegex(ValueError, 'new reviewed preparation policy'):
+            self.run_stage('prepare')
+        self.assertFalse(self.store.status()['attempts'])
+
     def test_prepare_generate_evaluate_transition_and_cross_attempt_artifacts(self):
         receipts = [self.run_stage(stage) for stage in ("prepare", "generate", "evaluate")]
         self.assertEqual([r["outcome"] for r in receipts], ["prepared", "generated", "complete"])

@@ -23,6 +23,69 @@ from .test_worker import completion
 
 
 class ChampBridgeTests(unittest.TestCase):
+    def explicit_preparation(self):
+        from scripts.study.api854.fixture_policy import POLICY
+        from scripts.study.api854.prepare_worker import EXPLICIT_PROMPT_POLICY, export_prompt
+        self.protocol['fixture_policy_id'] = POLICY
+        self.protocol['generation'].update(fixture_policy_id=POLICY,
+            prompt_policy_id=EXPLICIT_PROMPT_POLICY, prompt_token_reserve=200000)
+        path = self.root / 'explicit-source-protocol.json'
+        common.write_json(path, self.protocol)
+        self.settings = FrozenSettings.load(path)
+        with self.store.db:
+            self.store.db.execute('UPDATE jobs SET protocol_hash=?', (self.settings.protocol_hash,))
+        self.prepared = self.root / 'explicit-prepared'
+        self.prepared.mkdir()
+        common.write_json(self.prepared / 'context-manifest.json', self.manifest)
+        (self.prepared / 'context.md').write_text('offline fixed-source fixture; not study evidence')
+        targets = [{'class': 'com.google.javascript.jscomp.TypeInference', 'constructor_types': '',
+            'method': 'getBooleanOutcomes',
+            'parameter_types': 'com.google.javascript.rhino.jstype.BooleanLiteralSet,com.google.javascript.rhino.jstype.BooleanLiteralSet,boolean'}]
+        self.prepare_metadata.update(export_prompt({'project': 'Lang', 'bug_id': 4}, self.protocol, targets, self.prepared))
+        common.write_json(self.prepared / 'targets.json', {'targets': targets})
+        self.prepare_metadata['targets_sha256'] = common.sha256(self.prepared / 'targets.json')
+
+    def test_explicit_recipe_bytes_are_accepted_without_claim_or_provider_send(self):
+        self.explicit_preparation()
+        self.publish_prepare()
+        job = next(row for row in self.client.request('GET', '/v1/status')['jobs']
+                   if row['approach'] == 'kku-claude')
+        binding = champ_bridge.prepared_binding(self.client, job, self.settings)
+        self.assertEqual(binding['fixed_source_sha256'], self.sources)
+        self.assertFalse(self.calls)
+        self.assertEqual(self.store.status()['jobs'][0]['state'], 'queued')
+
+    def test_changed_recipe_source_is_rejected_even_with_updated_artifact_hash(self):
+        self.explicit_preparation()
+        path = self.prepared / 'fixture-recipes.json'
+        recipe = common.read_json(path)
+        recipe['sources']['algorithms/java/SqaProbe.java'] += '\n// altered recipe source\n'
+        path.write_bytes(json.dumps(recipe).encode('utf-8'))
+        self.prepare_metadata['fixture_recipes_sha256'] = common.sha256(path)
+        self.publish_prepare()
+        with self.assertRaisesRegex(ValueError, 'recipe bytes/source hashes differ'):
+            job = next(row for row in self.client.request('GET', '/v1/status')['jobs']
+                       if row['approach'] == 'kku-claude')
+            champ_bridge.prepared_binding(self.client, job, self.settings)
+        self.assertFalse(self.calls)
+        self.assertEqual(self.store.status()['jobs'][0]['state'], 'queued')
+
+    def test_explicit_fixture_protocol_rejects_legacy_prepare_before_api_claim(self):
+        from scripts.study.api854.fixture_policy import POLICY
+        from scripts.study.api854.prepare_worker import EXPLICIT_PROMPT_POLICY
+        self.protocol['fixture_policy_id'] = POLICY
+        self.protocol['generation'].update(fixture_policy_id=POLICY, prompt_policy_id=EXPLICIT_PROMPT_POLICY)
+        self.prepare_metadata['prompt_policy_id'] = EXPLICIT_PROMPT_POLICY
+        path = self.root / 'explicit-fixture-protocol.json'
+        common.write_json(path, self.protocol)
+        self.settings = FrozenSettings.load(path)
+        with self.store.db:
+            self.store.db.execute('UPDATE jobs SET protocol_hash=?', (self.settings.protocol_hash,))
+        self.publish_prepare()
+        with self.assertRaisesRegex(Exception, 'Prepared fixture policy differs'):
+            self.worker().once()
+        self.assertFalse(self.calls)
+
     def setUp(self):
         test_beam_queue.QueueIntegrationTests.setUp(self)
         with self.store.db:

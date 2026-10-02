@@ -20,6 +20,21 @@ def local_job(claim):
             "repeat_index": job.get("payload", {}).get("repeat_index", 1), "attempt_id": claim["attempt_id"]}
 
 
+def canonical_targets_artifact(source, output, expected_hash):
+    """Keep selected bytes immutable while using the queue's agreed artifact name."""
+    source = Path(source)
+    if sha256(source) != expected_hash:
+        raise ValueError('Selected target inventory changed before upload')
+    if source.name == 'targets.json':
+        return source
+    destination = Path(output) / 'targets.json'
+    with destination.open('xb') as stream:
+        stream.write(source.read_bytes())
+    if sha256(destination) != expected_hash:
+        raise ValueError('Canonical target artifact bytes differ')
+    return destination
+
+
 def stage_metadata(result, protocol, worker_id):
     measurement = result.get("measurement", {})
     review = result.get("validity", {}).get("review", {})
@@ -65,6 +80,8 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
         protocol = bind(protocol_path, stage=stage, condition=condition, run_id=run_id)
     if stage not in {"prepare", "generate", "evaluate"} or not approaches or any(a not in APPROACHES for a in approaches):
         raise ValueError("Invalid stage/approaches before claim")
+    if protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3" and protocol.get("fixture_policy_id"):
+        raise ValueError("Shared-v3 explicit fixtures require a new reviewed preparation policy")
     if owner not in {"beam", "champ", "aom"} or (owner != "beam" and not getattr(client, "team_routing", False)
             and owner not in protocol.get("worker_routing", {}).get(stage, [])):
         raise ValueError("Cross-owner stage routing must be declared by the shared protocol")
@@ -134,14 +151,18 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
             publisher = FencedPublisher(client, claim, heartbeat, output / "publication")
             files = [source / "result.json", bundle_evidence(source, output / "evidence.tar.bz2", publisher.secrets)]
             if stage == "prepare" and result.get("context"):
-                files += [source / "context/context-manifest.json", Path(result["adapter"]["targets_file"])]
+                files += [source / "context/context-manifest.json"]
                 if result.get("preparation"):
                     # Publish the sanitized declaration inventory, not duplicate targets.json names.
-                    files.pop()
                     files += [source / "context" / name for name in
                               ("prompt.md", "targets.json", "prepare-policy.json", "prepare-metadata.json")]
-                elif result.get("prompt"):
-                    files += [source / "context/prompt.md"]
+                else:
+                    target_artifact = canonical_targets_artifact(result['adapter']['targets_file'], output, result['targets_sha256'])
+                    files += [target_artifact]
+                    if result.get("prompt"):
+                        files += [source / "context/prompt.md"]
+                        if result['prompt'].get('fixture_policy_id'):
+                            files += [source / 'context/fixture-recipes.json']
             outcome = result["observed_outcome"]
             if stage == "generate" and outcome == "generated":
                 prepared = [h for h in claim["job"].get("payload", {}).get("stage_history", [])

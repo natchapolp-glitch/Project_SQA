@@ -23,6 +23,11 @@ def protocol_document(settings):
     protocol = json.loads(settings.protocol_bytes)
     validate_protocol(protocol)
     generation = protocol.get("generation", {})
+    if protocol.get('fixture_policy_id'):
+        from .prepare_worker import EXPLICIT_PROMPT_POLICY
+        if (generation.get('fixture_policy_id') != protocol['fixture_policy_id']
+                or generation.get('prompt_policy_id') != EXPLICIT_PROMPT_POLICY):
+            raise ValueError('Explicit fixture policy/prompt has not been frozen consistently')
     if (protocol.get("status") != "frozen" or protocol.get("approval_state") != "frozen"
             or protocol.get("suite_packaging") != BeamSuiteResolver.policy_id
             or protocol.get("test_method_cap") != 30
@@ -82,6 +87,22 @@ def prepared_binding(client, job, settings):
     if (not isinstance(targets, list) or not targets or metadata.get("targets_sha256") != digest(raw_targets)
             or metadata.get("target_count") != len(targets)):
         raise ValueError("Prepared common targets are empty or differ from metadata")
+    if protocol.get('fixture_policy_id'):
+        from .fixture_policy import select
+        policy = protocol['fixture_policy_id']
+        if metadata.get('fixture_policy_id') != policy:
+            raise ValueError('Prepared fixture policy differs from frozen generation')
+        raw_recipe, _ = download('fixture-recipes.json')
+        recipe = json.loads(raw_recipe)
+        names = ['algorithms/java/SqaProbe.java', 'scripts/study/api854/fixture_policy.py']
+        expected = {name: protocol['source_sha256'][name] for name in names}
+        if (metadata.get('fixture_recipes_sha256') != digest(raw_recipe)
+                or recipe.get('fixture_policy_id') != policy or recipe.get('source_sha256') != expected
+                or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(names)
+                or any(not isinstance(recipe['sources'][name], str) or digest(recipe['sources'][name].encode('utf-8')) != expected[name] for name in names)):
+            raise ValueError('Prepared fixture recipe bytes/source hashes differ')
+        if select(targets, policy)[1]:
+            raise ValueError('Prepared targets do not match explicit fixture capabilities')
     if additional:
         modified = metadata.get("target_classes")
         if not isinstance(modified, list) or not modified:

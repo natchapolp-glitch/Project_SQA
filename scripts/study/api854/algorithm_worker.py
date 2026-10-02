@@ -29,7 +29,8 @@ def execute(job, protocol, results, worktrees, d4j, *, prepared_input=None):
         else:
             phase = "adapter"
             trees = new_worktrees(worktrees, job, "generation")
-            prepared, targets = prepare_adapter(d4j, job, trees, output / "setup", protocol["command_timeout_seconds"])
+            fixture_options = {'fixture_policy': protocol['fixture_policy_id']} if protocol.get('fixture_policy_id') else {}
+            prepared, targets = prepare_adapter(d4j, job, trees, output / "setup", protocol["command_timeout_seconds"], **fixture_options)
             source_dir = (output / "setup/dir.src.classes.txt").read_text(encoding="utf-8").strip()
             classes = Path(prepared["classes_file"]).read_text(encoding="utf-8").strip().splitlines()
             sources = fixed_sources(prepared["fixed_worktree"], classes, source_dir)
@@ -50,7 +51,7 @@ def execute(job, protocol, results, worktrees, d4j, *, prepared_input=None):
             phase = "generation"
             generation = generate_suite(job["project"], job["bug_id"], job["approach"], protocol["budget"],
                                         protocol["seed"], targets, prepared["classpath"], output / "suite",
-                                        protocol["observation_timeout_seconds"])
+                                        protocol["observation_timeout_seconds"], **fixture_options)
             assert_implementation(protocol["source_sha256"])
             result = envelope(job, "generated" if generation["test_count"] else "generation_failed",
                               generation=generation, fixed_source_sha256=sources,
