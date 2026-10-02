@@ -1,5 +1,8 @@
 # แชมป์รับงานบีมและออม — 3 ตุลาคม 2569
 
+สถานะล่าสุดเป็น shared v3 และ Beam `3ff1a6a4`: [CHAMP_V3_ACCEPTANCE_TH.md](CHAMP_V3_ACCEPTANCE_TH.md)
+บันทึกด้านล่างเก็บการตรวจ integration รุ่นก่อนหน้าไว้
+
 รับ `beam ce17ce49` และ `aom c6982003` เข้า branch `champ` แล้ว เพื่อให้ทีมตรวจรับโค้ดร่วมกัน
 ยังไม่เปิด live pilot และไม่มี KKU generation หรือการเปลี่ยนสถานะคิวจริงในการตรวจครั้งนี้
 

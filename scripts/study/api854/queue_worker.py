@@ -86,6 +86,8 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
         protocol = bind(protocol_path, stage=stage, condition=condition, run_id=run_id)
     if stage not in {"prepare", "generate", "evaluate"} or not approaches or any(a not in APPROACHES for a in approaches):
         raise ValueError("Invalid stage/approaches before claim")
+    if protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3" and protocol.get("fixture_policy_id"):
+        raise ValueError("Shared-v3 explicit fixtures require a new reviewed preparation policy")
     if owner not in {"beam", "champ", "aom"} or (owner != "beam" and not getattr(client, "team_routing", False)
             and owner not in protocol.get("worker_routing", {}).get(stage, [])):
         raise ValueError("Cross-owner stage routing must be declared by the shared protocol")
