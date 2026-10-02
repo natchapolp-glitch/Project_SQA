@@ -27,6 +27,12 @@ class JavaProbeIntegrationTests(unittest.TestCase):
             public Concrete() {}
             public int value(int input) { return input; }
           }
+          public static class Broken {
+            public Broken() { throw new NullPointerException("fixture setup"); }
+            public int value() { return 7; }
+          }
+          public static int dom(org.w3c.dom.Node node) { return node.getChildNodes().getLength(); }
+          public static int unsupported(java.io.InputStream input) { return input == null ? 0 : 1; }
         }''')
         root = Path(__file__).resolve().parents[3]
         subprocess.run(['javac', '--release', '8', '-d', str(cls.folder),
@@ -76,6 +82,34 @@ class JavaProbeIntegrationTests(unittest.TestCase):
         self.assertEqual(first, self.outcome('ProbeFixture', '', 'large', '', '0,0,0'))
         self.assertNotEqual(first, self.outcome('ProbeFixture', '', 'largeOther', '', '0,0,0'))
         self.assertLess(len(first), 200)
+
+    def test_explicit_fixture_rejects_constructor_exception_before_target(self):
+        result = self.run_probe('observe', 'ProbeFixture$Broken', '', 'value', '', '0,0,0',
+                                'beam-explicit-fixtures-v3-proposal')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('SQA_FIXTURE_FAILURE:', result.stdout)
+        self.assertNotIn('SQA_RESULT:', result.stdout)
+
+    def test_explicit_fixture_never_turns_unsupported_reference_into_null(self):
+        result = self.run_probe('observe', 'ProbeFixture', '', 'unsupported', 'java.io.InputStream', '0,0,0',
+                                'beam-explicit-fixtures-v3-proposal')
+        self.assertIn('SQA_FIXTURE_FAILURE:', result.stdout)
+        self.assertNotIn('SQA_RESULT:', result.stdout)
+
+    def test_explicit_dom_recipe_reaches_target_with_structural_oracle(self):
+        result = self.run_probe('observe', 'ProbeFixture', '', 'dom', 'org.w3c.dom.Node', '0,0,0',
+                                'beam-explicit-fixtures-v3-proposal')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('"target_invoked":true', result.stdout)
+        outcome = base64.b64decode(result.stdout.split('SQA_RESULT:')[1].strip()).decode()
+        self.assertIn('value:java.lang.Integer:Mw==|state=node:', outcome)
+        self.assertIn('nested', outcome)
+
+    def test_explicit_opaque_oracle_failure_is_not_a_target_exception(self):
+        result = self.run_probe('observe', 'ProbeFixture', '', 'opaque', '', '0,0,0',
+                                'beam-explicit-fixtures-v3-proposal')
+        self.assertIn('SQA_FIXTURE_FAILURE:', result.stdout)
+        self.assertNotIn('SQA_RESULT:', result.stdout)
 
 
 if __name__ == '__main__':
