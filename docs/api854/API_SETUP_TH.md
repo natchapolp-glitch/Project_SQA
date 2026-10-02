@@ -1,7 +1,9 @@
 # API client และ queue adapter ฝั่งแชมป์
 
 ขอบเขตที่ทำ: KKU client, model discovery, quota ledger แบบเครื่องเดียว, fixed-context exporter,
-generation evidence และ adapter สำหรับคิวออม schema 1.0 ยังไม่มี scheduler ที่รันงานจริงอัตโนมัติ
+generation evidence, adapter สำหรับคิวออม schema 1.0 และ CLI API worker ครั้งละหนึ่ง job.
+ยังไม่มี scheduler ที่รันงานจริงอัตโนมัติ. ดู [API_WORKER_HANDOFF_TH.md](API_WORKER_HANDOFF_TH.md)
+สำหรับ worker/settings/prepare artifact contract ที่ต้องให้ออมและบีมตรวจรับก่อน pilot.
 
 ## ผลตรวจจากเครื่องแชมป์
 

@@ -14,6 +14,12 @@ heartbeat แล้ว renew อีกครั้งเพื่อไม่ใ
 ตรวจออฟไลน์รวม 77 tests ผ่าน; ไม่มี live generation หรือ scheduler เพิ่ม.
 ชุดแรกเผยแพร่บน `champ` commit `805c4113500467e9e7d0c7eb3e3506de593f9614`.
 
+ชุด API worker เพิ่ม CLI `api_worker --check/--once` และ `quota_control` สำหรับ
+observed quota กับ notification gate. รับงานทีละ job โดยไม่ใช้ draft protocol;
+รายละเอียด settings/input contract ที่ทีมต้อง freeze อยู่ใน
+[API_WORKER_HANDOFF_TH.md](API_WORKER_HANDOFF_TH.md).
+ทดสอบกับ Store ของออมจาก commit ที่ตรึงแบบออฟไลน์แล้ว แต่ยังไม่ได้ live pilot.
+
 - **ออมใช้:** `GenerationJob`, `GenerationWorker.generate()`,
   `ChampQueueClient`, `QueueGenerationHandoff` และ model-selection manifest.
   ต้องรวม `claude-sonnet-5` / `gemini-3.5-flash-lite` เข้า frozen protocol.

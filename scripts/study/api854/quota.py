@@ -168,6 +168,30 @@ class QuotaLedger:
             raise QuotaBlocked("Insufficient observed quota; notify before selecting another account")
         return reservation_id
 
+    def available(self, account: str, model: str, window: str, *, job_key: str | None = None) -> int:
+        """Read-only scheduling check; reserve() still rechecks atomically.
+
+        Call before claiming a job so missing/expired quota does not turn an
+        unattempted job into a leased generation job needing reconciliation.
+        """
+        with self._connection() as db:
+            account_row = db.execute("SELECT state FROM accounts WHERE alias=?", (account,)).fetchone()
+            route = db.execute("SELECT account FROM routes WHERE model=?", (model,)).fetchone()
+            bucket = db.execute("SELECT * FROM buckets WHERE account=? AND model=? AND window=?",
+                                (account, model, window)).fetchone()
+            if not account_row or account_row[0] != "active" or not route or route[0] != account:
+                raise QuotaBlocked("Account is not the active verified route")
+            if not bucket or bucket["state"] != "active" or self._time() >= self._time(bucket["reset_at"]):
+                raise QuotaBlocked("Require a current observed quota window")
+            active = db.execute("SELECT account FROM reservations WHERE state IN ('reserved','needs_reconciliation')").fetchall()
+            if len(active) >= self.global_limit or any(row[0] == account for row in active):
+                raise QuotaBlocked("Outstanding reservation/concurrency requires waiting or reconciliation")
+            if job_key is not None:
+                previous = db.execute("SELECT state,outcome FROM reservations WHERE job_key=?", (job_key,)).fetchall()
+                if len(previous) >= 3 or any(row["state"] != "released" or row["outcome"] != "rate_limited" for row in previous):
+                    raise QuotaBlocked("Job already attempted; do not regenerate")
+            return bucket["remaining"]
+
     def finish(self, reservation_id: str, *, outcome: str, remaining: int | None = None,
                used: int | None = None, unknown: bool = False):
         if remaining is not None and (type(remaining) is not int or remaining < 0):
