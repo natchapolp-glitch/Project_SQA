@@ -43,6 +43,8 @@ class FrozenSettings:
     suite_resolver: str
     start_at: datetime
     generation_cutoff_at: datetime
+    handoff_contract: str = "champ-v1"
+    protocol: dict | None = None
 
     @classmethod
     def load(cls, path: Path):
@@ -54,6 +56,18 @@ class FrozenSettings:
         if models != load_selection():
             raise WorkerBlocked("model_selection_not_frozen")
         generation = protocol.get("generation") or {}
+        handoff_contract = generation.get("handoff_contract", "champ-v1")
+        if handoff_contract not in {"champ-v1", "beam-v1"}:
+            raise WorkerBlocked("handoff_contract_not_frozen")
+        if handoff_contract == "beam-v1":
+            if (protocol.get("suite_packaging") != "beam-java-suite-v1"
+                    or protocol.get("compatibility_policy") != "none"
+                    or type(protocol.get("test_method_cap")) is not int
+                    or protocol["test_method_cap"] != 30
+                    or generation.get("suite_policy_id") != "beam-java-suite-v1"
+                    or generation.get("suite_resolver") != "scripts.study.api854.suite_resolver:BeamSuiteResolver"
+                    or any(protocol.get("model_policy", {}).get(a, {}).get("kku_model_id") != models[a]["id"] for a in models)):
+                raise WorkerBlocked("beam_processing_contract_not_frozen")
         if generation.get("input_contract") != CONTRACT:
             raise WorkerBlocked("generation_contract_not_frozen")
         for key in ("max_tokens", "prompt_token_reserve"):
@@ -74,7 +88,7 @@ class FrozenSettings:
             raise WorkerBlocked("generation_window_not_frozen") from None
         return cls(digest(data), models, temperature, **{key: generation[key] for key in (
             "max_tokens", "prompt_token_reserve", "context_policy_id", "prompt_policy_id", "suite_policy_id", "suite_resolver")},
-            start_at=start, generation_cutoff_at=cutoff)
+            start_at=start, generation_cutoff_at=cutoff, handoff_contract=handoff_contract, protocol=protocol)
 
     @property
     def reserve_tokens(self):
@@ -142,6 +156,11 @@ def resolve_prepared_job(client, job: dict, settings: FrozenSettings) -> Generat
     # message wrappers/system overhead; this is not a claimed tokenizer count.
     if len(prompt_bytes) > settings.prompt_token_reserve:
         raise WorkerBlocked("prompt_exceeds_frozen_conservative_bound")
+    if getattr(settings, "handoff_contract", "champ-v1") == "beam-v1":
+        fixed_sources = {row["path"]: row["sha256"] for row in files if row.get("path", "").endswith(".java")}
+        if (not fixed_sources or metadata.get("fixed_source_sha256") != fixed_sources
+                or metadata.get("context_source_hash") != source_hash):
+            raise WorkerBlocked("beam_preparation_lineage_mismatch")
     return GenerationJob(job["run_id"], settings.protocol_hash, job["project"], job["bug_id"],
                          job["approach"], prompt, source_hash)
 
@@ -209,9 +228,19 @@ class APIWorker:
             if sanitize(job.prompt, (self.kku.account.api_key, self.queue.token, claim["lease_token"])) != job.prompt:
                 raise WorkerBlocked("credentials_in_prepared_prompt")
             guard = LeaseHeartbeat(self.queue, claim)
-            handoff = QueueGenerationHandoff(self.queue, claim, worker_id=self.worker_id,
-                suite_resolver=self.suite_resolver, suite_policy_id=self.settings.suite_policy_id,
-                credential_secrets=(self.kku.account.api_key,), lease_guard=guard)
+            if self.settings.handoff_contract == "beam-v1":
+                from .ai_handoff import BeamGenerationHandoff
+                from .queue_worker import local_job
+                prepared = next(h for h in reversed(claim["job"]["payload"]["stage_history"])
+                                if h.get("stage") == "prepare" and h.get("outcome") == "prepared")["metadata"]
+                handoff = BeamGenerationHandoff(self.queue, claim, heartbeat=guard, job=local_job(claim),
+                    protocol=self.settings.protocol, fixed_source_sha256=prepared["fixed_source_sha256"],
+                    context_source_hash=prepared["context_source_hash"], worker_id=self.worker_id,
+                    credential_secrets=(self.kku.account.api_key,))
+            else:
+                handoff = QueueGenerationHandoff(self.queue, claim, worker_id=self.worker_id,
+                    suite_resolver=self.suite_resolver, suite_policy_id=self.settings.suite_policy_id,
+                    credential_secrets=(self.kku.account.api_key,), lease_guard=guard)
             worker = GenerationWorker(self.kku, self.ledger, artifact_root=self.artifact_root,
                                       model=self.model, bucket=self.bucket, window=self.window, handoff=handoff,
                                       condition=self.condition)

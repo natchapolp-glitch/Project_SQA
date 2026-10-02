@@ -102,7 +102,7 @@ class GenerationWorker:
         if temperature is not None:
             request["temperature"] = temperature
         write_json(path / "request.json", request)
-        (path / "prompt.md").write_text(job.prompt, encoding="utf-8")
+        (path / "prompt.md").write_bytes(job.prompt.encode("utf-8"))
         reservation_id = self.ledger.reserve(self.client.account.alias, self.bucket, self.window,
                                             tokens=prompt_token_reserve + max_tokens, job_key=job.key)
         started = {"artifact_schema": "champ-generation-v1-proposal", "condition": self.condition,
@@ -139,7 +139,7 @@ class GenerationWorker:
             write_json(path / "response-evidence.json", completion.evidence)
             raw_content = completion.content
             content = sanitize(raw_content, (self.client.account.api_key,))
-            (path / "response.txt").write_text(content, encoding="utf-8")
+            (path / "response.txt").write_bytes(content.encode("utf-8"))
             # Export complete fences in source order; evaluator owns filename,
             # method-cap and compile-validity policy. Do not invent Java tests.
             blocks = re.findall(r"^```java[^\S\n]*\r?\n(.*?)^```[^\S\n]*\r?$", content,
@@ -148,7 +148,7 @@ class GenerationWorker:
             if completion.outcome == "response_received":
                 for index, block in enumerate(blocks, 1):
                     filename = f"source-block-{index:03d}.java"
-                    (path / filename).write_text(block, encoding="utf-8")
+                    (path / filename).write_bytes(block.encode("utf-8"))
                     sources.append({"path": filename, "sha256": digest(block.encode())})
             outcome = completion.outcome
             if outcome == "response_received" and not sources:
