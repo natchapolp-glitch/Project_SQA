@@ -1,5 +1,7 @@
 # SQA Review and Three-Person Parallel Implementation Plan
 
+> **แผนเก่า — เปลี่ยนขอบเขตแล้ว:** ใช้ `2026-10-02-sqa-api854-three-person-parallel.md` ในโฟลเดอร์นี้เป็นแผนปัจจุบัน: 854 active bugs × 4 วิธี ผ่าน KKU API 10 บัญชี แผนนี้เก็บเป็นประวัติของชุด 17 bugs
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans when implementing this plan. แผนนี้แบ่งงานให้คน 3 คนทำพร้อมกัน โดยแต่ละคนมีเจ้าของไฟล์ชัดเจน
 
 **Goal:** ทำชุดทดลอง 17 โปรเจกต์ให้ตรวจสอบย้อนกลับได้ พร้อมรายงานเปรียบเทียบ 2 อัลกอริทึมและ 2 AI และชุดส่งงานที่ตัวเลขตรงกับหลักฐาน
