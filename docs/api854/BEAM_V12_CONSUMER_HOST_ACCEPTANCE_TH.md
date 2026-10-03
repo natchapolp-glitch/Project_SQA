@@ -55,8 +55,8 @@ v11 receiptของรอบก่อนเก็บตามoriginal v11pins �
 ## Current worklist และงานส่งต่อ
 
 Actual shared v12: **403selected /288exclusions /denominator691**.
-[Exact691worklist](../../output/api854-20261004/beam-v12-all691-worklist-v1/declarations.json)
-และ [ตาราง20bugs](../../output/api854-20261004/beam-v12-all691-worklist-v1/WORKLIST_TH.md)
+[Exact691worklist](../../output/api854-20261004/beam-v12-all691-worklist-v2/declarations.json)
+และ [ตาราง20bugs](../../output/api854-20261004/beam-v12-all691-worklist-v2/WORKLIST_TH.md)
 เทียบแต่ละ identityกับ original common inventoryแล้ว ไม่ลด denominator.
 
 - Graphics7รวมแล้วในv12; คำรับv12ข้างบนปิด Beam scoped consumer/component/technical-host ของรุ่นนี้.
@@ -69,14 +69,18 @@ Actual shared v12: **403selected /288exclusions /denominator691**.
   Cobertura203/495lines และ103/376branches. เป็นmanual component development;
   ยังไม่รวมsharedหรือprimary algorithm/model results.
 - Enum4pendingร่วมทีมตามคำตอบผู้ใช้วันที่4ต.ค.; คงอยู่ภายใน288exclusionsและ691denominator.
-- อีก269excluded declarations ยังต้องทำfixture/preconditions/oracle/execution evidence.
+- **Csv constructor1มีหลักฐานเพิ่มพร้อมตรวจร่วม**:
+  [BEAM_CSV_CONSTRUCTOR_CANDIDATE_20261004_TH.md](BEAM_CSV_CONSTRUCTOR_CANDIDATE_20261004_TH.md).
+  Native5cases/JDIexactconstructorและfullDefects4J fixedสองรอบ/buggy/coverage;
+  Cobertura11/37lines,3/26branches. Fault observationมาจากfollow-upCRlinecount ไม่ใช่constructordefect.
+- อีก268excluded declarations ยังต้องทำfixture/preconditions/oracle/execution evidence.
   Selected390ที่อยู่นอกnewChronology/Graphics13มีhistorical scoped evidenceบางส่วน;
   ต้องปิด semanticรายdeclaration/domainให้ครบ ไม่ตีความว่า403selectedคือ403semantic approvals.
 - Final provider settings/limits/input tokens/framing/quota/reset/expiry/reserveเป็นงานแชมป์;
   final owner-host/semantic/GateAเป็นการรับร่วมทีม. บีมไม่เปิดliveแทนคำรับเหล่านั้น.
 
 รอบv12ตรวจนี้ KKUrequests0 /livequeue mutations0 /primaryresults0 /
-newfullDefects4Jevaluations0. แยกจาก standalone Collectionsซึ่งมีfull development evaluationใหม่1ชุด.
+newfullDefects4Jevaluations0. แยกจาก standalone CollectionsและCsvซึ่งมีfull development evaluationใหม่รวม2ชุด.
 ไม่มีgeneration/backgroundAPIหรือlivepilotเปิดอยู่จากงานบีมรอบนี้.
 
 ## ข้อความส่งออมและแชมป์
@@ -86,6 +90,6 @@ newfullDefects4Jevaluations0. แยกจาก standalone Collectionsซึ่
 > Chronology13casesและretained64fixedcasesซ้ำพร้อมfixture/fatal controls.
 > Nativebeam-pc1 CPU1receiptผูกprotocol/index/runner/runtime v12แล้ว.
 > อ่านBEAM_V12_CONSUMER_HOST_ACCEPTANCE_TH.mdพร้อมreceipt/checksumsได้ครับ.
-> ส่งCollections10/40casesเพิ่มให้ตรวจร่วมด้วย มีfixedสองรอบ/buggy/coverageจริง.
+> ส่งCollections10/40casesและCsvconstructor1/5casesเพิ่มให้ตรวจร่วมด้วย มีfixedสองรอบ/buggy/coverageจริง.
 > Actualยัง403/288จาก691;Codec5ยังรอsharedintegration,Enum4pendingร่วมทีม.
 > ไม่ได้เรียกKKU/คิวและยังไม่อนุมัติall691หรือGateAครับ.

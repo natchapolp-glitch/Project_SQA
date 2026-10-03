@@ -1,0 +1,101 @@
+{
+  "policy_id": "beam-csv-constructor-bounded-v1",
+  "source_condition": "shared-v12-development",
+  "source_commit": "63ad195623c2ed3f67f3ae232c00c54d3160ce72",
+  "target": {
+    "class": "org.apache.commons.csv.ExtendedBufferedReader",
+    "constructor_types": "java.io.Reader",
+    "method": "<init>",
+    "parameter_types": ""
+  },
+  "descriptor": "(Ljava/io/Reader;)V",
+  "cases": [
+    {
+      "case": "empty",
+      "input": "",
+      "expected": {
+        "exception_class": null,
+        "initial_last": -2,
+        "initial_lines": 0,
+        "initial_reads": 0,
+        "initial_closes": 0,
+        "first": -1,
+        "last_after_first": -1,
+        "lines_after_first": 0,
+        "close_count": 1
+      }
+    },
+    {
+      "case": "ascii",
+      "input": "abc",
+      "expected": {
+        "exception_class": null,
+        "initial_last": -2,
+        "initial_lines": 0,
+        "initial_reads": 0,
+        "initial_closes": 0,
+        "first": 97,
+        "last_after_first": 97,
+        "lines_after_first": 0,
+        "close_count": 1
+      }
+    },
+    {
+      "case": "crlf",
+      "input": "\r\nnext",
+      "expected": {
+        "exception_class": null,
+        "initial_last": -2,
+        "initial_lines": 0,
+        "initial_reads": 0,
+        "initial_closes": 0,
+        "first": 13,
+        "last_after_first": 13,
+        "lines_after_first": 1,
+        "close_count": 1
+      }
+    },
+    {
+      "case": "unicode",
+      "input": "ก😀",
+      "expected": {
+        "exception_class": null,
+        "initial_last": -2,
+        "initial_lines": 0,
+        "initial_reads": 0,
+        "initial_closes": 0,
+        "first": 3585,
+        "last_after_first": 3585,
+        "lines_after_first": 0,
+        "close_count": 1
+      }
+    },
+    {
+      "case": "null_reader",
+      "input": null,
+      "expected": {
+        "exception_class": "java.lang.NullPointerException",
+        "initial_last": null,
+        "initial_lines": null,
+        "initial_reads": null,
+        "initial_closes": null,
+        "first": null,
+        "last_after_first": null,
+        "lines_after_first": null,
+        "close_count": null
+      }
+    }
+  ],
+  "oracle_basis": "UNDEFINED/line-counter initial state in production contract, lazy construction and supplied Reader contents/close ownership; independent Python expected constants derived from sealed String inputs, not fixed output",
+  "fixture_scope": "Real StringReader plus forwarding read/close counters, empty/ASCII/CRLF/non-ASCII supplementary chars and null boundary. No arbitrary Reader implementations, read failures, concurrency, parser dialects or full legal domain approval. Follow-up read/close checks validate argument binding; no additional target count.",
+  "selection_used_buggy_outcomes": false,
+  "primary": false,
+  "kku_requests": 0,
+  "queue_mutations": 0,
+  "shared_selected": 403,
+  "shared_excluded": 288,
+  "denominator": 691,
+  "shared_integration_approved": false,
+  "full_legal_domain_approved": false,
+  "gate_a_approved": false
+}
