@@ -1,5 +1,9 @@
 # งานออมที่ทำได้โดยไม่รอทีม — source preparation / recovery / demo
 
+**ตรวจรับทีมรุ่นถัดมา:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
+มี settings-request acceptance และ quota snapshot ของแชมป์แล้ว งาน source/build และ ZIP ด้านล่าง
+คงเป็น snapshot เดิมที่ไม่มี KKU request และยังไม่อนุมัติ primary/Gate A
+
 คำสั่งผู้ใช้: ทำงานที่ออมทำได้เองต่อบน `aom` ใช้หนึ่ง CPU slot; ยังไม่เรียก KKU หรือเปิด primary queue ชุด source preparation ใหม่นี้แยกจาก shared preparation v5 และไม่เปลี่ยน frozen protocol/runtime เดิม
 
 ผล source/build ที่ตรวจแล้ว: **284 unique bugs ของออม เก็บ fixed source และ compile ผ่านครบ 284** ผล v1 เดิมผ่าน 282 และ source selection ติด 2 รายการ แก้ Gson-18 ใน v2 และ Time-25 ใน v3 โดยรักษา raw failures เดิม รวม **287 source preparation attempts** (284 completed original records + 2 recovery attempts + 1 interrupted attempt) ไม่ใช่จำนวนรอบทดลองหลัก ผล primary ใหม่ยังเป็น **0**

@@ -1,5 +1,9 @@
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
+Latest team receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md).
+Request settings and historical quota observations are verified; final limits,
+framing, reset/expiry and the final shared pilot condition remain pending.
+
 Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Shared v5 currently prepares five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 
 Aom's independent fixed-source/build preparation, local recovery rehearsal,

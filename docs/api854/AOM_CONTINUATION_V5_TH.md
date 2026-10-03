@@ -1,5 +1,9 @@
 # ออม: ทำต่อครบทุกบั๊ก — checkpoint 3 ตุลาคม 2026
 
+**ติดตามต่อ:** [ออมตรวจรับ Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
+และ [งานเตรียม source/build ออมครบ 284 bugs](AOM_INDEPENDENT_PREPARATION_TH.md)
+Checkpoint v5 ด้านล่างคง inputs/ตัวเลขของรุ่นเดิม Primary ใหม่ยัง 0; final Gate A ยัง pending
+
 คำสั่งเจ้าของงานในแชทนี้: ทำต่อบน branch `aom`, push เข้า `aom`, เริ่ม **1 รอบต่อบั๊กต่อวิธี** ก่อนเพิ่มรอบซ้ำ และใช้ **Claude Sonnet 5 / Gemini 3.5 Flash Lite ผ่าน KKU** ตามแผนใหม่ ชุดปัจจุบันยังไม่เปิด generation หรือ primary queue
 
 ## แผนและสิ่งที่ทำเพิ่ม
