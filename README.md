@@ -1,3 +1,5 @@
+Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](docs/api854/CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+
 Latest Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](docs/api854/CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
 
 # Current Aom continuation: 854 active bugs, one repeat per approach

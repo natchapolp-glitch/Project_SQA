@@ -1,0 +1,177 @@
+{
+  "project": "Gson",
+  "bug_id": 1,
+  "owner": "champ",
+  "primary": false,
+  "semantic_approved": false,
+  "cases": [
+    {
+      "target": {
+        "class": "com.google.gson.TypeInfoFactory",
+        "constructor_types": "",
+        "method": "extractRealTypes",
+        "parameter_types": "[Ljava.lang.reflect.Type;,java.lang.reflect.Type,java.lang.Class"
+      },
+      "vector": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "v7_capability": "selected",
+      "exclusion_reason": null,
+      "first": {
+        "status": "ok",
+        "outcome": "value:array[type:java.lang.Integer;]|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "second": {
+        "status": "ok",
+        "outcome": "value:array[type:java.lang.Integer;]|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "repeat_equal": true,
+      "oracle_approved": false
+    },
+    {
+      "target": {
+        "class": "com.google.gson.TypeInfoFactory",
+        "constructor_types": "",
+        "method": "getActualType",
+        "parameter_types": "java.lang.reflect.Type,java.lang.reflect.Type,java.lang.Class"
+      },
+      "vector": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "v7_capability": "selected",
+      "exclusion_reason": null,
+      "first": {
+        "status": "ok",
+        "outcome": "value:type:com.google.gson.ParameterizedTypeImpl@28ed64c1|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "second": {
+        "status": "ok",
+        "outcome": "value:type:com.google.gson.ParameterizedTypeImpl@28ed64c1|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "repeat_equal": true,
+      "oracle_approved": false
+    },
+    {
+      "target": {
+        "class": "com.google.gson.TypeInfoFactory",
+        "constructor_types": "",
+        "method": "getIndex",
+        "parameter_types": "[Ljava.lang.reflect.TypeVariable;,java.lang.reflect.TypeVariable"
+      },
+      "vector": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "v7_capability": "selected",
+      "exclusion_reason": null,
+      "first": {
+        "status": "ok",
+        "outcome": "value:java.lang.Integer:MA==|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "second": {
+        "status": "ok",
+        "outcome": "value:java.lang.Integer:MA==|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "repeat_equal": true,
+      "oracle_approved": false
+    },
+    {
+      "target": {
+        "class": "com.google.gson.TypeInfoFactory",
+        "constructor_types": "",
+        "method": "getTypeInfoForArray",
+        "parameter_types": "java.lang.reflect.Type"
+      },
+      "vector": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "v7_capability": "selected",
+      "exclusion_reason": null,
+      "first": {
+        "status": "ok",
+        "outcome": "value:type-info:type:java.lang.Integer[]|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "second": {
+        "status": "ok",
+        "outcome": "value:type-info:type:java.lang.Integer[]|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "repeat_equal": true,
+      "oracle_approved": false
+    },
+    {
+      "target": {
+        "class": "com.google.gson.TypeInfoFactory",
+        "constructor_types": "",
+        "method": "getTypeInfoForField",
+        "parameter_types": "java.lang.reflect.Field,java.lang.reflect.Type"
+      },
+      "vector": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "v7_capability": "selected",
+      "exclusion_reason": null,
+      "first": {
+        "status": "ok",
+        "outcome": "value:type-info:type:com.google.gson.ParameterizedTypeImpl@28ed64c1|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "second": {
+        "status": "ok",
+        "outcome": "value:type-info:type:com.google.gson.ParameterizedTypeImpl@28ed64c1|state=stateless-scalars",
+        "target_invoked": true
+      },
+      "repeat_equal": true,
+      "oracle_approved": false
+    }
+  ],
+  "fixed_source_comparison": {
+    "matched": [
+      {
+        "path": "gson/src/main/java/com/google/gson/TypeInfoFactory.java",
+        "expected": "53426632a38460714bc5d02460c41a9b83bc8318115e2cd9119fe7a39dd6db22",
+        "actual": "53426632a38460714bc5d02460c41a9b83bc8318115e2cd9119fe7a39dd6db22"
+      }
+    ],
+    "mismatches": []
+  },
+  "status": "fixed_sweep_complete",
+  "status_counts": {
+    "ok": 5
+  },
+  "repeated_stable_invocations": 5
+}
