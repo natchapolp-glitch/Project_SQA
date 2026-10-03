@@ -1,7 +1,15 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
 บันทึก 3 ตุลาคม 2026 (Asia/Bangkok) เพื่อรับช่วงจากบัญชี/เครื่องของเพื่อนโดยอ่านสถานะจาก Git และไฟล์หลักฐาน
-ล่าสุดรับ `beam 8af29c16` และ `aom a4880fb2` แล้ว:
+ล่าสุดรับ `beam 0ca73ee6` แล้ว:
+อ่าน [Champ รับตรวจเครื่องบีม/consumers v10](CHAMP_BEAM_V10_ACCEPTANCE_TH.md) และ
+[receipt](../../output/api854-20261003/champ-beam-v10-acceptance-v1/receipt.json).
+รับ scoped Beam consumer/bounded oracle/beam-pc1 CPU1slot technical-host evidence;
+ตรวจ manifest1026/provenance133/rawcommands141 และ fixed64cases/128observations+separate mutationครบ.
+Rebind worksheet40pairsเดิมแล้ว; provider/reserve/GateAยังpending ไม่มีAPIrequestหรือexecutionใหม่.
+ยังไม่รับ semantic390, GateA หรือ hostอื่นทั้งหมด. ไม่ต้องรอคำรับconsumer/เครื่องบีมชุดนี้อีก.
+
+ก่อนหน้านี้รับ `beam 8af29c16` และ `aom a4880fb2` แล้ว:
 อ่าน [Champ v10 readiness review](CHAMP_V10_READINESS_REVIEW_TH.md) และ
 [sealed review v2](../../output/api854-20261003/champ-v10-readiness-review-v2/receipt.json).
 Received Aom v10 ครบ20bugs/390selected/301exclusions/691; เพิ่มBuffer8+Lang2เท่านั้น.
@@ -10,7 +18,8 @@ Received Aom v10 ครบ20bugs/390selected/301exclusions/691; เพิ่มB
 RequestedmodelIDs/settingsตรงprotocol แต่ currentproviderIDs/effectivesettings/limits/token-framing/quota-reset-expiryยังpending.
 ตรวจpublicdocsโดยไม่มีauthenticatedAPIcall; credentials10aliasesโหลดofflineได้และignored/untracked.
 Champworkingtree/sharedruntimeยังv9/380/311; v10executeจากpinnedAomsnapshotที่runtimeต่าง8ไฟล์.
-รอBeamfinalv10semantic/hostverdictและprovider/three-ownerGateAหลักฐาน. เก็บfailedcountguardv1ครบ.
+รับBeamscopedv10consumer/boundedoracle/hostverdictแล้วตามด้านบน; รอprovider/remainingowner-host/three-ownerGateAหลักฐาน.
+เก็บfailedcountguardv1ครบ.
 
 Shared development checkpoint อยู่ที่ `da878b54fc6e5ed5b0ec15d6853373346642c86c`;
 รับช่วง handoff `e742095d` แล้วสร้าง standalone Chronology candidate ต่อโดยไม่เปลี่ยน shared v9.
@@ -141,7 +150,8 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
    ถ้า remote ของออมหรือบีมมีงานใหม่ ให้ตรวจ intake กับ pins เดิมก่อนรวม; อย่าแทนคู่ปัจจุบันด้วยไฟล์คนละรุ่น
    ปัจจุบันรับ `beam 8af29c16` / `aom a4880fb2` แบบ isolated intake แล้ว.
    Aom v10 390/301/691 มี Champ offline bindings/fixed-runtime review และ worksheet40pairsพร้อม.
-   รอBeamfinalv10semantic/host และ currentprovider/limits/settings/token-framing/quota/reset/expiry.
+   รับBeam0ca73ee6scopedconsumer/boundedoracle/hostแล้ว; รอremainingowner-host/fullsemanticcriteria
+   และcurrentprovider/limits/settings/token-framing/quota/reset/expiryตามGateAที่ทีมเลือก.
    Buffer 8 + Lang 2 บน v9 เป็น proposed 390/301/691; เพิ่ม Chronology 6 หลัง shared integration ผ่านเป็น 396/295.
    ไม่ใช้ Beam-only 389/302 แทน final union
 2. ปิด bounded candidate fixture/oracle ฝั่งแชมป์จาก `Chronology` (6 affected targets) และ `Graphics2D` (7)
@@ -195,5 +205,5 @@ verifier ที่ execute v3 ถูก snapshot ใน packet; verifier ปั�
 ## Prompt สำหรับ Codex คนถัดไป
 
 ```text
-รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md และ CHAMP_V10_READINESS_REVIEW_TH.md ก่อน ตรวจ HEAD/status/current v9 100 pins และ sealed candidates รับBeam8af29c16/Aoma4880fb2แล้ว: receivedv10 20bugs390/301/691, consumers80, nativefixed64casesซ้ำ, received7tests/Champnegative8testsผ่าน; sealedchamp-v10-readiness-review-v2มี40pairs/max265937bytes/guard270033+unknownH/finalreservenull CurrentproviderIDs/effectivesettings/limits/token-framing/currentquota-reset-expiryยังpending credentials10aliasesโหลดofflineignoredได้ห้ามแสดงkey ไม่มีauthenticatedAPIcall/queue/ledger mutation Champsharedruntimeยังv9 380/311; อย่าใช้runtimeคนละรุ่น รอBeamfinalv10semantic/hostverdictกับprovider/three-ownerGateAหลักฐาน เก็บv1failedcountguard/oldreceiptsครบ Chronology6boundedjoint/Graphics7standaloneยังไม่adoptและemptyenum4unsupported ห้ามgeneration/livequeueจนgates/ownerapprovalsครบ อย่าสร้างbranch/worktreeซ้ำหรือแตะPDF สรุปผลพร้อมข้อความบีมออมแล้วcommit/pushchampเมื่อพร้อม
+รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md, CHAMP_BEAM_V10_ACCEPTANCE_TH.md และ CHAMP_V10_READINESS_REVIEW_TH.md ก่อน ตรวจ HEAD/status/current v9 100 pinsและsealed candidates ReceivedAoma4880fb2v10 20bugs390/301/691: Champตรวจinputs80/nativefixed64ซ้ำแล้ว รับBeam0ca73ee6scopedconsumer/boundedoracle/beam-pc1CPU1slothostevidenceด้วย manifest1026/provenance133/rawcommands141และ64cases/128observations+separatemutationverified Worksheet40pairs/max265937bytes/guard270033+unknownH/finalreservenullคงเดิม CurrentproviderIDs/effectivesettings/limits/token-framing/currentquota-reset-expiryยังpending Credentials10aliasesofflineignoredห้ามแสดงkey ไม่มีauthenticatedAPIcall/queue/ledger mutation Champsharedruntimeยังv9 380/311อย่าใช้runtimeคนละรุ่น ไม่ต้องรอBeamconsumer/hostชุดนี้อีก แต่ยังไม่รับsemantic390หรือGateA/teamfreeze รอprovider/remainingownerhost/ทีมกำหนดGateAหรือscopedpilotcriteriaชัดก่อนactualexperiments เก็บfailedattempts/oldreceipts Chronology6/Graphics7ยังไม่adoptemptyenum4unsupported ห้ามgeneration/livequeueจนgates/ownerapprovalsครบ อย่าสร้างbranch/worktreeซ้ำหรือแตะPDF สรุปผลพร้อมข้อความบีมออมแล้วcommit/pushchampเมื่อพร้อม
 ```
