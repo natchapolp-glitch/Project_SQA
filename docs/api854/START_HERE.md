@@ -1,18 +1,15 @@
+ฝั่งบีมกำลังรวม Champ `2ac55e31` กับ Aom `c25faa5e` ใน checkout แยก ก่อนทำ fixture/oracle development ใหม่ ยังไม่เปิด Gate A/pilot หรือรับ keys เพิ่ม
+
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
-**Integration ล่าสุด:** [แชมป์รับ Aom b11b379a / build และวัด prompt v6 ใหม่หลังรวม](CHAMP_AOMB11_V6_INTEGRATION_TH.md)
-ร่างครบ 20 bugs แต่ selected 377/691; ยังรออีก 314 declarations และ semantic/shared acceptance
-รับงานบีมรอบแก้จาก champ 7e09a5fe และ integration e5d4a66b แล้ว; งานรับ keys ยังพักไว้
-Checkpoint ที่รับจากออม: [shared development v6](AOM_CHAMP8E_V6_DEVELOPMENT_TH.md)
+**Integration ล่าสุดของออม:** [รับ Champ 7e09a5fe / repair audit และ shared development v7 ครบ 20 inputs](AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md)
+ตรวจ combined 15 bugs / 30 local-valid suites; candidate ยังรองรับ subset 377/691 declarations
+มี worklist อีก 314 รายการ; max prompt 250,315 bytes; offline tests ผ่าน 302 ข้าม 1; ยังไม่เปิด Gate A/pilot
 
-**Integration ก่อนหน้า:** [แชมป์รับ Aom 4a0e699c และตรวจ recipe ↔ protocol runtime](CHAMP_AOM4A_INTEGRATION_TH.md)
-คู่ shared-v5 เดิมยัง 5/20 bugs และ 124/691 declarations; runtime pins เก่าถูก blocked เมื่อเทียบกับโค้ดที่รวมล่าสุด
-งานรับ keys พักไว้ตามคำขอผู้ใช้; limits/framing/bucket/reset/expiry และ final 20-bug reserve ยัง pending
-
-**Checker ที่รับจากออม:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
+**ประวัติ checker:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
 การใช้ gate_a ต้องระบุ --protocol และ --runner; worksheet/preflight ไม่ใช่การอนุมัติเปิด pilot
 
-**สถานะตรวจรับของออมล่าสุด:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
+**Historical provider receipt:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
 runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ aom-pc1; ยังไม่เปิด primary/Gate A
 รายการทรัพยากรและข้อมูลไม่ยืนยันในแผนแรกด้านล่างให้เทียบกับ checkpoint ที่ตรวจรับรุ่นล่าสุดก่อนใช้งาน
 

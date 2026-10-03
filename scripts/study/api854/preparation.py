@@ -51,13 +51,17 @@ POLICY_V6 = {**POLICY_V5, 'contract': 'aom-beam-prepare-v6-development',
         ['Compress',1],['Csv',1],['Gson',1],['JacksonCore',1],['JacksonDatabind',1],['JacksonDatabind',112],
         ['JacksonXml',1],['Jsoup',1],['JxPath',1],['JxPath',22],['Lang',1],['Math',1],['Mockito',1],['Time',1]]}
 
+POLICY_V7 = {**POLICY_V6, 'contract': 'aom-beam-prepare-v7-development',
+    'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v7-development',
+    'scope': '20-bug development candidate after repair intake; capability subset only, not full 691-declaration or team approval'}
+
 
 def explicit_context(contract):
-    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract']}
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract']}
 
 
 def explicit_scope(policy):
-    if policy == POLICY_V6:
+    if policy in (POLICY_V6, POLICY_V7):
         return {tuple(row) for row in policy['development_bugs']}
     original = {('Closure', 176), ('JxPath', 1)}
     return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
@@ -68,7 +72,7 @@ def shared_context(contract):
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")

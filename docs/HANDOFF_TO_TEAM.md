@@ -1,4 +1,6 @@
-Latest Champ integration: [Aom b11b379a / newly measured twenty-bug development inputs](api854/CHAMP_AOMB11_V6_INTEGRATION_TH.md). The merge includes Champ e5d4a66b and Beam repair intake from 7e09a5fe. Preparation is still a 377/691 subset; Gate A and generation remain closed. Account intake is paused.
+Current owner of this continuation is Beam. Integration combines Champ `2ac55e31` and Aom `c25faa5e` before prospective fixture development. Account intake remains paused; no KKU/live pilot is authorized by these drafts.
+
+Latest Aom checkpoint: [Champ 7e09a5fe repair intake / twenty-bug v7 development candidate](api854/AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md). Repair/combined evidence audited; fresh preparation has 20 bugs, 377 selected declarations and 314 unsupported declarations with a full handoff worklist. Maximum prompt is 250,315 UTF-8 bytes. Offline integration ran 303 tests (302 passed, 1 symlink skip). Gate A is closed; no new KKU requests or primary experiments.
 
 Previous Champ integration: [Aom 4a0e699c / selected pair, recipe sources and Windows stage creation](api854/CHAMP_AOM4A_INTEGRATION_TH.md). Shared-v5 is still five bugs / 124 of 691 declarations, with old runtime pins blocked against the merged code. Account intake is paused. No live pilot or KKU requests in this integration.
 
