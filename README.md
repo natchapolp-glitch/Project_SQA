@@ -1,3 +1,5 @@
+> บีมทำ Codec candidate แยก: [BEAM_CODEC_CANDIDATE_20261004_TH.md](docs/api854/BEAM_CODEC_CANDIDATE_20261004_TH.md) — 5 signatures /43 cases, fixed/buggyซ้ำผ่านและ exact entriesครบ; รอ Champ scoped verdict/shared integration, v10ยัง390/301
+
 > บีมตอบ Champ fd2e16ab: [BEAM_CHAMPFD_V10_FINAL_RETURN_TH.md](docs/api854/BEAM_CHAMPFD_V10_FINAL_RETURN_TH.md) — ใช้ exact-v10 scoped verdict ที่ Beam0ca73ee6; pins/64bounded cases/40prompt pairsตรงกัน, full semantic/provider/Gate Aยัง pending
 
 > บีมรับ Graphics2D candidate: [BEAM_GRAPHICS2D_CANDIDATE_REVIEW_TH.md](docs/api854/BEAM_GRAPHICS2D_CANDIDATE_REVIEW_TH.md) — 7 signatures / 24 cases; Java11 fixed/buggyซ้ำผ่านและ pixels/stateตรง Champ; shared integrationยัง pending ไม่เปลี่ยน v10/Gate A
