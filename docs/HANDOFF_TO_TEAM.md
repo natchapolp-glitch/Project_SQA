@@ -1,3 +1,5 @@
+Latest Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](api854/CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+
 Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](api854/CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
 
 Latest Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](api854/CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
