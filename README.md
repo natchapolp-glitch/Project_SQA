@@ -1,3 +1,5 @@
+Latest Aom intake: [Beam 22982e8c scoped Lang source/oracle review and joint-verdict tasks](docs/api854/AOM_BEAM_LANG_INTAKE_TH.md). 281 checksums verified; historical shared v8 retained. Lang and buffer decisions remain separate; Gate A/pilot closed.
+
 Latest Aom intake: [Beam c125695a buffer/runtime review and exact tasks for Champ/Beam](docs/api854/AOM_BEAM_BUFFER_INTAKE_TH.md). 193 checksums verified; shared buffer composition awaits joint acceptance. Historical v7 retained; Gate A/pilot closed.
 
 Latest Aom waiting work: [host/input readiness, recovered prepare-only queue and exact tasks for Beam/Champ](docs/api854/AOM_V8_WAITING_WORK_TH.md). Shared v8 unchanged; Gate A/pilot remain closed.

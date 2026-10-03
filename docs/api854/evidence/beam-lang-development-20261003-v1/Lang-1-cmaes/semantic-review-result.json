@@ -1,0 +1,89 @@
+{
+  "job": {
+    "schema_version": 1,
+    "run_id": "beam-development-beam-lang-development-v1",
+    "project": "Lang",
+    "bug_id": 1,
+    "approach": "cmaes",
+    "protocol_hash": "6a6f81cbf7d78fa13e9d9070ef14cc86bd822e513a1fe4a8be349ef606251c2e",
+    "repeat_index": 1,
+    "attempt_id": "fixture-eval-Lang-1-cmaes-1"
+  },
+  "evaluation_result_sha256": "8a74f2107b9bc649d4b517d5ad15c5b10fbbd16cd39bb9d0124e88f735bdad31",
+  "status": "valid",
+  "usable": true,
+  "review_sha256": "2eea0a11e43d8047159a1e2c9a009163f9c4029584209540449f5d1a73954c5d",
+  "review": {
+    "reviewer": "Codex local development review",
+    "suite_sha256": "061c51edc9494fdd7a14ac795f067a1871599955da7e526458174f90fe92a2a2",
+    "fixed_source_sha256": {
+      "src/main/java/org/apache/commons/lang3/math/NumberUtils.java": "0374c7b486626927217ad42677e1a57fc60fc551218660316a0e7f4f8ea79477"
+    },
+    "verdict": "valid",
+    "target_execution_evidence": [
+      {
+        "path": "measurement/coverage/coverage.xml",
+        "sha256": "7abd94b3d8cfbe5e7a2da601e0b738c182bd587d510f460cce1779fbffcd016f"
+      },
+      {
+        "path": "semantic-evidence/fixture-oracle-review.json",
+        "sha256": "8d71aa10e46c364d70fad6132d5fe9bb92854a6a34c7e2951fec9c5a8529ed7a"
+      }
+    ],
+    "fixture_oracle_review": {
+      "scope": "local development only",
+      "reviewed_case_count": 30,
+      "recipe_proof": "Existing numeric methods keep their bounded v5 inputs. isAllZeros explicitly covers null, empty, zero-only and nonzero text; validateArray receives null, empty int[], and nonempty int[] only. Successful validation compares actual array contents; documented null/empty rejection compares exception class, message and input state. No non-array object is selected as a legal fixture.",
+      "team_or_primary_approval": false,
+      "helper_sha256": "c206379895c53991d784f3225bd550f2d2432e0250a8352b57eeaa53488eac47"
+    },
+    "weak_oracles": {
+      "invalid_case_ids": [],
+      "expected_boundary_exception_case_ids": [
+        2,
+        8,
+        13,
+        14
+      ],
+      "partial_projection_limitations_disclosed": true
+    },
+    "stage_counts": {
+      "fixed-1": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/fixed-1/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "fixed-2": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/fixed-2/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "buggy": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/buggy/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "coverage": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/coverage/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      }
+    }
+  }
+}
