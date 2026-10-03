@@ -12,7 +12,7 @@ Checkpoint ที่รับจากออม: [shared development v6](AOM_CHA
 **Checker ที่รับจากออม:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
 การใช้ gate_a ต้องระบุ --protocol และ --runner; worksheet/preflight ไม่ใช่การอนุมัติเปิด pilot
 
-**สถานะตรวจรับของออมล่าสุด:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
+**Historical provider receipt:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
 runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ aom-pc1; ยังไม่เปิด primary/Gate A
 รายการทรัพยากรและข้อมูลไม่ยืนยันในแผนแรกด้านล่างให้เทียบกับ checkpoint ที่ตรวจรับรุ่นล่าสุดก่อนใช้งาน
 

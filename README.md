@@ -12,7 +12,7 @@ Received Aom checker update: [Aom acceptance of Champ b6051367 and selected Gate
 Gate A requires an explicit protocol/runner pair and validates its fixture recipes.
 The five-bug bindings passed at Aom's received checkpoint; final shared inputs and team/provider approval remain pending.
 
-Latest team receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md).
+Historical provider receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md).
 Request settings and historical quota observations are verified; final limits,
 framing, reset/expiry and the final shared pilot condition remain pending.
 
