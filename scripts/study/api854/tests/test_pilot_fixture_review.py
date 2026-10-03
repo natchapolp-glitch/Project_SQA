@@ -1,7 +1,7 @@
 import unittest
 from scripts.study.api854.common import ROOT, read_json
 from scripts.study.api854.fixture_policy import POLICY_V4, POLICY_V5, select
-from scripts.study.api854.fixture_semantics import descriptor, expected_exception
+from scripts.study.api854.fixture_semantics import descriptor, expected_exception, declaring_class
 
 
 class PilotFixtureReviewTests(unittest.TestCase):
@@ -38,3 +38,9 @@ class PilotFixtureReviewTests(unittest.TestCase):
         self.assertEqual(descriptor('[I,int,java.lang.String'),'([IILjava/lang/String;)')
         self.assertEqual(descriptor('[Ljava.lang.Object;'),'([Ljava/lang/Object;)')
         self.assertNotEqual(descriptor('char'),descriptor('[C,int,int'))
+
+    def test_chart_override_does_not_use_superclass_coverage_as_execution_proof(self):
+        target = {'class':'org.jfree.chart.renderer.category.AreaRenderer','method':'getLegendItem'}
+        self.assertEqual(declaring_class(target),target['class'])
+        self.assertEqual(declaring_class({**target,'method':'getLegendItems'}),
+                         'org.jfree.chart.renderer.category.AbstractCategoryItemRenderer')
