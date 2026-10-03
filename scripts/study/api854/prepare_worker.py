@@ -8,7 +8,7 @@ from .environment import inspect_environment
 from .adapters import prepare_adapter
 from .worker import new_worktrees, fixed_sources, artifact_index
 from .context_export import BUILD_FILES, export_context
-from .preparation import compose, POLICY_V8, FRACTION_FACTORY_SOURCES, policy_for, shared_context, explicit_context, receiver_paths
+from .preparation import compose, POLICY_V8, POLICY_V10, FRACTION_FACTORY_SOURCES, policy_for, shared_context, explicit_context, receiver_paths
 
 CONTEXT_POLICY = "modified-java-and-root-build-v1"
 PROMPT_POLICY = "beam-fixed-targets-junit4-v1"
@@ -75,7 +75,7 @@ def export_prompt(job, protocol, targets, context_dir):
 
 
 def selected_context_sources(job, contract, sources, extras, fixed_tree):
-    supplemental = FRACTION_FACTORY_SOURCES if contract == POLICY_V8['contract'] and (job['project'],job['bug_id']) == ('Math',1) else {}
+    supplemental = FRACTION_FACTORY_SOURCES if contract in {POLICY_V8['contract'], POLICY_V10['contract']} and (job['project'],job['bug_id']) == ('Math',1) else {}
     for name,expected in supplemental.items():
         if sha256(fixed_tree/name) != expected:
             raise ValueError('Reviewed production factory source differs from fixed checkout')

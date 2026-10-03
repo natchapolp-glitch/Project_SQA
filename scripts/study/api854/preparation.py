@@ -67,12 +67,20 @@ POLICY_V8 = {**POLICY_V7, 'contract':'aom-beam-prepare-v8-development',
     'scope':'v7 development subset plus exactly BigFraction/Fraction getField(double receiver, no method arguments); remaining exclusions retained'}
 
 
+POLICY_V10 = {**POLICY_V8, 'contract':'aom-beam-prepare-v10-development',
+    'context_policy_id':'modified-java-root-build-receivers-factories-joint-v10-development',
+    'prompt_policy_id':'shared-fixed-joint-bounded-recipes-junit4-v10-development',
+    'fixture_policy':'aom-beam-champ-joint-fixtures-v10-development',
+    'scope':'v9 setter/JDOM/Math retained plus jointly accepted Buffer eight and Lang two; 301 exclusions, final semantic/host/provider acceptance pending',
+    'bounded_scope':'Lang private helpers only; null/String/int[] and exact Boolean/exception-message/state. Csv uses fresh reader with explicit two-stream condition. No expansion of legal domains.'}
+
+
 def explicit_context(contract):
-    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract'], POLICY_V8['contract']}
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract'], POLICY_V8['contract'], POLICY_V10['contract']}
 
 
 def explicit_scope(policy):
-    if policy in (POLICY_V6, POLICY_V7, POLICY_V8):
+    if policy in (POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V10):
         return {tuple(row) for row in policy['development_bugs']}
     original = {('Closure', 176), ('JxPath', 1)}
     return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
@@ -83,7 +91,7 @@ def shared_context(contract):
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7, POLICY_V8):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V10):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")
@@ -114,7 +122,7 @@ def java_mapping(manifest, metadata):
     if not isinstance(fixed, dict) or not fixed or any(java.get(p) != h for p, h in fixed.items()):
         raise ValueError("Modified fixed-source mapping differs")
     additional = {p: h for p, h in java.items() if p not in fixed}
-    if metadata.get('prepare_contract') == POLICY_V8['contract']:
+    if metadata.get('prepare_contract') in {POLICY_V8['contract'], POLICY_V10['contract']}:
         supplemental = FRACTION_FACTORY_SOURCES if (manifest.get('project'),manifest.get('bug_id')) == ('Math',1) else {}
         if (metadata.get('additional_fixture_source_sha256') != supplemental or set(supplemental) & set(fixed)
                 or any(additional.get(p) != h for p,h in supplemental.items())):
@@ -201,8 +209,8 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
                or fixture_classes is None or any(not re.fullmatch(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*", c) for c in fixtures)):
         raise ValueError("V3 requires modified-source mapping and declaration-only fixture inventory")
     additional = {p: h for p, h in sources.items() if p not in (modified_sources or sources)}
-    supplemental = FRACTION_FACTORY_SOURCES if policy == POLICY_V8 and (manifest['project'],manifest['bug_id']) == ('Math',1) else {}
-    if policy == POLICY_V8:
+    supplemental = FRACTION_FACTORY_SOURCES if policy in (POLICY_V8, POLICY_V10) and (manifest['project'],manifest['bug_id']) == ('Math',1) else {}
+    if policy in (POLICY_V8, POLICY_V10):
         if any(additional.get(p) != h for p,h in supplemental.items()):
             raise ValueError('Reviewed factory context is required')
         additional = {p:h for p,h in additional.items() if p not in supplemental}
@@ -259,7 +267,7 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
                         fixture_class_count=len(fixtures), fixture_classes_sha256=digest(encoded(fixtures)))
     if explicit:
         metadata.update(fixture_policy_id=policy['fixture_policy'], fixture_recipes_sha256=digest(encoded(fixture_recipe)))
-    if policy == POLICY_V8:
+    if policy in (POLICY_V8, POLICY_V10):
         metadata['additional_fixture_source_sha256'] = supplemental
     if v3:
         validate(manifest, metadata, prompt, targets_bytes, encoded(policy), fixture_recipe=fixture_recipe)
@@ -289,7 +297,7 @@ def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=Fa
             or metadata.get("context_policy_id") != selected["context_policy_id"] or metadata.get("context_selection") != selected["context_policy_id"]
             or metadata.get("prompt_policy_id") != selected["prompt_policy_id"] or json.loads(policy) != selected):
         raise ValueError("Preparation policy differs")
-    if selected == POLICY_V8:
+    if selected in (POLICY_V8, POLICY_V10):
         text = prompt.decode('utf-8')
         for source in files:
             header = '## ' + source['path'] + '\n\n'

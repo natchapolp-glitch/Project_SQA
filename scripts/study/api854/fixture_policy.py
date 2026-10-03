@@ -8,7 +8,7 @@ def recipe_document(source_hashes, policy=POLICY):
     expected = {name: source_hashes[name] for name in RECIPE_SOURCES}
     if any(sha256(ROOT / name) != value for name, value in expected.items()):
         raise ValueError('Explicit recipe source differs from protocol')
-    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V10}:
         raise ValueError('Unknown explicit fixture policy')
     return {'schema_version': 1, 'fixture_policy_id': policy, 'source_sha256': expected,
         'sources': {name: (ROOT / name).read_bytes().decode('utf-8') for name in RECIPE_SOURCES},
@@ -17,7 +17,7 @@ def recipe_document(source_hashes, policy=POLICY):
 
 def validate_recipe(recipe, source_hashes=None, policy=POLICY):
     from .preparation import digest
-    if (policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
+    if (policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V10} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
             or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(RECIPE_SOURCES)
             or not isinstance(recipe.get('source_sha256'), dict) or set(recipe['source_sha256']) != set(RECIPE_SOURCES)
             or any(not isinstance(recipe['sources'][name], str)
@@ -29,6 +29,20 @@ def validate_recipe(recipe, source_hashes=None, policy=POLICY):
 POLICY_V4 = 'beam-explicit-fixtures-v4-proposal'
 POLICY_V5 = 'beam-explicit-fixtures-v5-proposal'
 POLICY_V6 = 'aom-beam-fraction-field-v6-development'
+POLICY_V10 = 'aom-beam-champ-joint-fixtures-v10-development'
+JOINT_SIGNATURES = {
+    ('org.apache.commons.codec.language.Metaphone', '', 'setMaxCodeLen', 'int'),
+    ('com.fasterxml.jackson.core.io.NumberInput', '', 'inLongRange', '[C,int,int,boolean'),
+    ('com.fasterxml.jackson.core.io.NumberInput', '', 'parseBigDecimal', '[C'),
+    ('com.fasterxml.jackson.core.io.NumberInput', '', 'parseBigDecimal', '[C,int,int'),
+    ('com.fasterxml.jackson.core.io.NumberInput', '', 'parseInt', '[C,int,int'),
+    ('com.fasterxml.jackson.core.io.NumberInput', '', 'parseLong', '[C,int,int'),
+    ('com.fasterxml.jackson.core.util.TextBuffer', 'com.fasterxml.jackson.core.util.BufferRecycler', 'append', '[C,int,int'),
+    ('com.fasterxml.jackson.core.util.TextBuffer', 'com.fasterxml.jackson.core.util.BufferRecycler', 'append', 'java.lang.String,int,int'),
+    ('org.apache.commons.csv.ExtendedBufferedReader', 'java.io.Reader', 'read', '[C,int,int'),
+    ('org.apache.commons.lang3.math.NumberUtils', '', 'isAllZeros', 'java.lang.String'),
+    ('org.apache.commons.lang3.math.NumberUtils', '', 'validateArray', 'java.lang.Object'),
+}
 
 # Fixed-source recipes, declared before generation/evaluation. This development
 # version deliberately preserves unsupported declarations as explicit exclusions.
@@ -123,8 +137,15 @@ CLOSURE_METHODS = {'createEntryLattice', 'createInitialEstimateLattice', 'flowTh
 def select(targets, policy):
     if policy is None:
         return targets, []
-    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V10}:
         raise ValueError('Unknown explicit fixture policy')
+    if policy == POLICY_V10:
+        # Preserve v5+Math and add only exact peer-approved identities. JDOM is a repair.
+        fields = ('class', 'constructor_types', 'method', 'parameter_types')
+        selected, excluded = select(targets, POLICY_V6)
+        chosen = {tuple(t[k] for k in fields) for t in selected} | JOINT_SIGNATURES
+        return ([t for t in targets if tuple(t[k] for k in fields) in chosen],
+                [r for r in excluded if tuple(r['target'][k] for k in fields) not in chosen])
     if policy == POLICY_V6:
         # Keep every v5 decision, adding only the exact Champ-accepted signatures.
         selected, excluded = select(targets, POLICY_V5)

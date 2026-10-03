@@ -40,7 +40,10 @@ public final class SqaProbe {
     public static final String EXPLICIT_FIXTURES = "beam-explicit-fixtures-v3-proposal";
     public static final String SCALAR_FIXTURES = "beam-explicit-fixtures-v4-proposal";
     public static final String PILOT_FIXTURES = "beam-explicit-fixtures-v5-proposal";
+    public static final String BUFFER_FIXTURES = "beam-explicit-fixtures-v6-buffer-proposal";
     public static final String FRACTION_FIELD_FIXTURES = "aom-beam-fraction-field-v6-development";
+    public static final String LANG_HELPER_FIXTURES = "beam-explicit-fixtures-v9-buffer-lang-development";
+    public static final String JOINT_FIXTURES = "aom-beam-champ-joint-fixtures-v10-development";
     private static final ThreadLocal<FixtureSession> FIXTURES = new ThreadLocal<FixtureSession>();
     private static final ThreadLocal<Boolean> INVOKED = new ThreadLocal<Boolean>();
 
@@ -75,7 +78,12 @@ public final class SqaProbe {
         final String targetClass;
         final String method;
         final boolean pilot;
+        final boolean bufferSlices;
+        char[] outputBuffer;
         final boolean fractionField;
+        final boolean langHelpers;
+        final boolean reviewed;
+        Object validationInput;
         boolean constructing;
         Object compiler, registry, scope, cfg, reverse, flow, closureNode, receiver;
         org.w3c.dom.Element domRoot;
@@ -177,8 +185,62 @@ public final class SqaProbe {
         FixtureSession(String targetClass, String method, String policy) {
             this.targetClass = targetClass;
             this.method = method;
-            this.pilot = PILOT_FIXTURES.equals(policy) || FRACTION_FIELD_FIXTURES.equals(policy);
-            this.fractionField = FRACTION_FIELD_FIXTURES.equals(policy);
+            this.reviewed = JOINT_FIXTURES.equals(policy);
+            this.langHelpers = LANG_HELPER_FIXTURES.equals(policy) || reviewed;
+            this.bufferSlices = BUFFER_FIXTURES.equals(policy) || langHelpers;
+            this.fractionField = FRACTION_FIELD_FIXTURES.equals(policy) || langHelpers;
+            this.pilot = PILOT_FIXTURES.equals(policy) || bufferSlices || fractionField;
+        }
+
+        Object[] langHelperArguments(Class<?>[] types, double[] vector) {
+            if (!langHelpers || constructing || !targetClass.equals("org.apache.commons.lang3.math.NumberUtils")
+                    || types.length != 1) return null;
+            double a = vector[0];
+            if (method.equals("isAllZeros") && types[0] == String.class)
+                return new Object[]{new String[]{null, "", "0", "000", "001", "12", "00 0", "-0"}[bucket(a, 8)]};
+            if (method.equals("validateArray") && types[0] == Object.class) {
+                Object[] arrays = {null, new int[0], new int[]{0}, new int[]{-1, 0, 7}};
+                validationInput = arrays[bucket(a, arrays.length)];
+                return new Object[]{validationInput};
+            }
+            return null;
+        }
+
+        Object[] boundedBufferArguments(Class<?>[] types, double[] vector) {
+            if (!bufferSlices || constructing || types.length == 0) return null;
+            double a = vector[0], b = vector[1 % vector.length];
+            if (targetClass.equals("com.fasterxml.jackson.core.io.NumberInput") && types[0] == char[].class) {
+                String text;
+                if (method.equals("parseLong"))
+                    text = new String[]{"1000000000", "1234567890123", "123456789012345678"}[bucket(a, 3)];
+                else if (method.equals("parseInt"))
+                    text = new String[]{"0", "7", "12345", "999999999"}[bucket(a, 4)];
+                else if (method.equals("inLongRange"))
+                    text = new String[]{"0", "9223372036854775807", "9223372036854775808", "9223372036854775809"}[bucket(a, 4)];
+                else if (method.equals("parseBigDecimal"))
+                    text = new String[]{"0", "12.50", "-0.125"}[bucket(a, 3)];
+                else return null;
+                if (types.length == 1) return new Object[]{text.toCharArray()};
+                char[] chars = ("##" + text + "?").toCharArray();
+                if (types.length == 4) return new Object[]{chars, 2, text.length(), b < 0};
+                return new Object[]{chars, 2, text.length()};
+            }
+            if (targetClass.equals("com.fasterxml.jackson.core.util.TextBuffer") && method.equals("append")
+                    && types.length == 3 && (types[0] == char[].class || types[0] == String.class)) {
+                String text = a < 0 ? "xABCDy" : "p12345q";
+                int offset = a < 0 ? 1 : 2;
+                int length = 1 + bucket(b, text.length() - offset - 1);
+                return new Object[]{types[0] == char[].class ? text.toCharArray() : text, offset, length};
+            }
+            if (targetClass.equals("org.apache.commons.csv.ExtendedBufferedReader") && method.equals("read")
+                    && types.length == 3 && types[0] == char[].class) {
+                outputBuffer = new char[8];
+                Arrays.fill(outputBuffer, '~');
+                int offset = a < 0 ? 1 : 2;
+                int length = 1 + bucket(b, outputBuffer.length - offset - 1);
+                return new Object[]{outputBuffer, offset, length};
+            }
+            return null;
         }
 
         Object option(String name, String text) throws ReflectiveOperationException {
@@ -357,6 +419,9 @@ public final class SqaProbe {
             try {
                 if (depth > 2) throw new FixtureFailure("Fixture recursion limit: " + type.getName(), null);
                 String name = type.getName();
+                if (reviewed && !constructing && targetClass.equals("org.apache.commons.codec.language.Metaphone")
+                        && method.equals("setMaxCodeLen") && type == int.class)
+                    return a < -8 ? 0 : a < 0 ? 1 : a < 8 ? 4 : 8;
                 if (pilot) {
                     if (targetClass.equals("com.google.gson.TypeInfoFactory")) {
                         java.lang.reflect.Field value = GenericFixture.class.getField(a < 0 ? "value" : "items");
@@ -475,7 +540,7 @@ public final class SqaProbe {
                     return array;
                 }
                 if (type == java.io.Reader.class && targetClass.equals("org.apache.commons.csv.ExtendedBufferedReader"))
-                    return new java.io.StringReader(STRINGS[bucket(a, STRINGS.length)]);
+                    return new java.io.StringReader(bufferSlices ? (a < 0 ? "A\nBC\nDE" : "12\n345\n") : STRINGS[bucket(a, STRINGS.length)]);
                 if (name.startsWith("com.google.javascript.")) {
                     closure(a);
                     if (name.endsWith(".AbstractCompiler")) return compiler;
@@ -637,6 +702,10 @@ public final class SqaProbe {
                     return "duration:" + call(result, "getName", new Class<?>[]{}) + ':' + call(result, "isSupported", new Class<?>[]{});
             }
             if (result instanceof org.w3c.dom.Node) return nodeSnapshot((org.w3c.dom.Node)result, 0);
+            if (reviewed && name.equals("org.jdom.Attribute"))
+                return "jdom-attribute:name=" + projection(call(result, "getName", new Class<?>[]{}), depth + 1)
+                    + ":namespace=" + projection(call(result, "getNamespaceURI", new Class<?>[]{}), depth + 1)
+                    + ":value=" + projection(call(result, "getValue", new Class<?>[]{}), depth + 1);
             if (name.equals("org.jdom.Element") || name.equals("org.jdom.ProcessingInstruction")
                     || name.equals("org.jdom.Text") || name.equals("org.jdom.CDATA")) {
                 Object writer = construct("org.jdom.output.XMLOutputter", new Class<?>[]{});
@@ -687,6 +756,15 @@ public final class SqaProbe {
         }
 
         String state() throws ReflectiveOperationException {
+            if (reviewed && targetClass.equals("org.apache.commons.codec.language.Metaphone")
+                    && method.equals("setMaxCodeLen")) {
+                int limit = ((Number)call(receiver, "getMaxCodeLen", new Class<?>[]{})).intValue();
+                String encoded = (String)call(receiver, "metaphone", new Class<?>[]{String.class}, "architecture");
+                return "metaphone:maxCodeLen=" + limit + ":encoded=" + encoded
+                    + ":maxCodeLenAfterEncoding=" + call(receiver, "getMaxCodeLen", new Class<?>[]{});
+            }
+            if (langHelpers && targetClass.equals("org.apache.commons.lang3.math.NumberUtils")
+                    && method.equals("validateArray")) return "validation-input:" + value(validationInput);
             if (pilot && targetClass.equals("com.google.javascript.jscomp.RemoveUnusedVars"))
                 return "cleanup:" + call(cleanupScript, "toStringTree", new Class<?>[]{});
             if (pilot && targetClass.equals("org.jfree.chart.renderer.category.AreaRenderer"))
@@ -712,7 +790,8 @@ public final class SqaProbe {
             if (targetClass.equals("org.apache.commons.collections.map.Flat3Map")) return projection(receiver, 0);
             if (targetClass.equals("org.apache.commons.csv.ExtendedBufferedReader"))
                 return "reader:line=" + call(receiver, "getLineNumber", new Class<?>[]{})
-                    + ":last=" + call(receiver, "readAgain", new Class<?>[]{});
+                    + ":last=" + call(receiver, "readAgain", new Class<?>[]{})
+                    + (bufferSlices && outputBuffer != null ? ":buffer=" + value(outputBuffer) : "");
             if (compiler != null) {
                 Object jsType = call(closureNode, "getJSType", new Class<?>[]{});
                 return "ast:" + call(closureNode, "toStringTree", new Class<?>[]{})
@@ -862,6 +941,13 @@ public final class SqaProbe {
     }
 
     private static Object[] arguments(Class<?>[] types, double[] vector, int offset) {
+        FixtureSession explicitSession = FIXTURES.get();
+        if (explicitSession != null) {
+            Object[] helpers = explicitSession.langHelperArguments(types, vector);
+            if (helpers != null) return helpers;
+            Object[] bounded = explicitSession.boundedBufferArguments(types, vector);
+            if (bounded != null) return bounded;
+        }
         Object[] values = new Object[types.length];
         for (int i = 0; i < types.length; i++) {
             int start = offset + 3 * i;
@@ -992,6 +1078,13 @@ public final class SqaProbe {
             Throwable cause = error.getCause();
             if (cause instanceof VirtualMachineError || cause instanceof LinkageError || cause instanceof ThreadDeath)
                 throw new IllegalStateException("SQA_HARNESS JVM failure", cause);
+            FixtureSession session = FIXTURES.get();
+            if (session != null && session.langHelpers && session.targetClass.equals("org.apache.commons.lang3.math.NumberUtils")
+                    && session.method.equals("validateArray")) {
+                try { return "exception:" + cause.getClass().getName() + "|message=" + value(cause.getMessage())
+                        + "|state=" + session.state(); }
+                catch (ReflectiveOperationException failure) { throw new FixtureFailure("Validation boundary oracle failed", failure); }
+            }
             return "exception:" + cause.getClass().getName();
         } catch (ReflectiveOperationException error) {
             throw new IllegalStateException("SQA_HARNESS reflection failure", error);
@@ -1002,8 +1095,9 @@ public final class SqaProbe {
 
     public static String observeWithPolicy(String className, String constructorTypes, String methodName,
             String methodTypes, double[] vector, String policy) {
-        if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy) && !PILOT_FIXTURES.equals(policy)
-                && !FRACTION_FIELD_FIXTURES.equals(policy))
+        if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy)
+                && !PILOT_FIXTURES.equals(policy) && !BUFFER_FIXTURES.equals(policy)
+                && !FRACTION_FIELD_FIXTURES.equals(policy) && !LANG_HELPER_FIXTURES.equals(policy) && !JOINT_FIXTURES.equals(policy))
             throw new IllegalArgumentException("Unknown explicit fixture policy");
         FIXTURES.set(new FixtureSession(className, methodName, policy));
         try { return observe(className, constructorTypes, methodName, methodTypes, vector); }
