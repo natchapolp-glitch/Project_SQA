@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "review_status": "pass",
+  "reviewer_commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+  "beam_commit": "477b4f8a36957994a3a60c7ba9d035b12234c19f",
+  "aom_commit": "f753770d32fbdda0d9a345b370df24d82e479f0f",
+  "verdicts": [
+    {
+      "path": "output/api854-20261003/champ-final-recipe-joint-return-v1/champ-buffer-csv-joint-verdict.json",
+      "sha256": "660e0a0853b627747cb1d2849cbe85074cbfb5e56141eccc08ed39df2d284c29"
+    },
+    {
+      "path": "output/api854-20261003/champ-final-recipe-joint-return-v1/champ-chronology-joint-verdict.json",
+      "sha256": "14a6ae7a62d61b428be07f766a3b5075ae1712afe6a8bc2b249280f3609e54d7"
+    },
+    {
+      "path": "output/api854-20261003/champ-final-recipe-joint-return-v1/champ-lang-joint-verdict.json",
+      "sha256": "f0ca00b1f04355ba6d58527a6c04678b2a8110b7edd6420e900f4e860962547f"
+    },
+    {
+      "path": "output/api854-20261003/champ-final-recipe-joint-return-v1/champ-setter-jdom-preservation.json",
+      "sha256": "96dbd6376f5f266b20c6cb8e64f61d572d92403bf55f637d07d3e55c54f676ed"
+    }
+  ],
+  "proposed_union": {
+    "shared_base": "api854-20261003-twenty-bug-development-v9-integrated",
+    "actual_selected": 380,
+    "actual_unsupported": 311,
+    "denominator": 691,
+    "buffer_and_lang_only": {
+      "selected": 390,
+      "unsupported": 301
+    },
+    "including_chronology_after_shared_invocation_and_oracle_integration": {
+      "selected": 396,
+      "unsupported": 295
+    },
+    "identity_deltas": {
+      "Buffer/Csv": [
+        {
+          "project": "Csv",
+          "bug_id": 1,
+          "class": "org.apache.commons.csv.ExtendedBufferedReader",
+          "constructor_types": "java.io.Reader",
+          "method": "read",
+          "parameter_types": "[C,int,int"
+        },
+        {
+          "project": "JacksonCore",
+          "bug_id": 1,
+          "class": "com.fasterxml.jackson.core.io.NumberInput",
+          "constructor_types": "",
+          "method": "inLongRange",
+          "parameter_types": "[C,int,int,boolean"
+        },
+        {
+          "project": "JacksonCore",
+          "bug_id": 1,
+          "class": "com.fasterxml.jackson.core.io.NumberInput",
+          "constructor_types": "",
+          "method": "parseBigDecimal",
+          "parameter_types": "[C"
+        },
+        {
+          "project": "JacksonCore",
+          "bug_id": 1,
+          "class": "com.fasterxml.jackson.core.io.NumberInput",
+          "constructor_types": "",
+          "method": "parseBigDecimal",
+          "parameter_types": "[C,int,int"
+        },
+        {
+          "project": "JacksonCore",
+          "bug_id": 1,
+          "class": "com.fasterxml.jackson.core.io.NumberInput",
+          "constructor_types": "",
+          "method": "parseInt",
+          "parameter_types": "[C,int,int"
+        },
+        {
+          "project": "JacksonCore",
+          "bug_id": 1,
+          "class": "com.fasterxml.jackson.core.io.NumberInput",
+          "constructor_types": "",
+          "method": "parseLong",
+          "parameter_types": "[C,int,int"
+        },
+        {
+          "project": "JacksonCore",
+          "bug_id": 1,
+          "class": "com.fasterxml.jackson.core.util.TextBuffer",
+          "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+          "method": "append",
+          "parameter_types": "[C,int,int"
+        },
+        {
+          "project": "JacksonCore",
+          "bug_id": 1,
+          "class": "com.fasterxml.jackson.core.util.TextBuffer",
+          "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+          "method": "append",
+          "parameter_types": "java.lang.String,int,int"
+        }
+      ],
+      "Lang": [
+        {
+          "project": "Lang",
+          "bug_id": 1,
+          "class": "org.apache.commons.lang3.math.NumberUtils",
+          "constructor_types": "",
+          "method": "isAllZeros",
+          "parameter_types": "java.lang.String"
+        },
+        {
+          "project": "Lang",
+          "bug_id": 1,
+          "class": "org.apache.commons.lang3.math.NumberUtils",
+          "constructor_types": "",
+          "method": "validateArray",
+          "parameter_types": "java.lang.Object"
+        }
+      ],
+      "Chronology": [
+        {
+          "project": "Time",
+          "bug_id": 1,
+          "class": "org.joda.time.Partial",
+          "constructor_types": "",
+          "method": "getField",
+          "parameter_types": "int,org.joda.time.Chronology"
+        },
+        {
+          "project": "Time",
+          "bug_id": 1,
+          "class": "org.joda.time.Partial",
+          "constructor_types": "",
+          "method": "withChronologyRetainFields",
+          "parameter_types": "org.joda.time.Chronology"
+        },
+        {
+          "project": "Time",
+          "bug_id": 1,
+          "class": "org.joda.time.Partial",
+          "constructor_types": "[Lorg.joda.time.DateTimeFieldType;,[I,org.joda.time.Chronology",
+          "method": "<init>",
+          "parameter_types": ""
+        },
+        {
+          "project": "Time",
+          "bug_id": 1,
+          "class": "org.joda.time.Partial",
+          "constructor_types": "org.joda.time.Chronology",
+          "method": "<init>",
+          "parameter_types": ""
+        },
+        {
+          "project": "Time",
+          "bug_id": 1,
+          "class": "org.joda.time.Partial",
+          "constructor_types": "org.joda.time.Chronology,[Lorg.joda.time.DateTimeFieldType;,[I",
+          "method": "<init>",
+          "parameter_types": ""
+        },
+        {
+          "project": "Time",
+          "bug_id": 1,
+          "class": "org.joda.time.Partial",
+          "constructor_types": "org.joda.time.DateTimeFieldType,int,org.joda.time.Chronology",
+          "method": "<init>",
+          "parameter_types": ""
+        }
+      ]
+    },
+    "implemented": false,
+    "full_semantic_coverage_approved": false
+  },
+  "final_preparation_created": false,
+  "final_reserve": null,
+  "gate_a_approved": false,
+  "pilot_authorized": false
+}
