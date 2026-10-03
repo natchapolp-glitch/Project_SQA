@@ -1,31 +1,23 @@
-Latest: Aom received Math-only v8/Beam host evidence from 24a38184; 809 checksums verified, four-consumer rerun passed. See [AOM_BEAM_V8_RECEIVED_ACCEPTANCE_TH.md](AOM_BEAM_V8_RECEIVED_ACCEPTANCE_TH.md). Final recipe verdicts below remain pending.
+# ข้อความพร้อมส่งต่อจากออม — Buffer/Csv verdict 2e11c7d9
 
-# ข้อความพร้อมส่งต่อจากออม — scoped Lang 22982e8c
+## ส่งให้แชมป์
 
-ออมตรวจ Beam 22982e8c แล้ว: 281 checksums/runtime 41 pins ตรง,
-ตรวจ fixed source และ independently recomputed reference oracles;
-sampled FSCS-ART/CMA-ES 60 methods และ reference 12 cases มี fixed สองรอบ/buggy/coverage ตรง.
-ออมรัน snapshot tests เพิ่ม 14 ผ่าน ไม่มี skip; shared v8 เดิม 266 ไฟล์คง bytes เดิม.
-รายละเอียด/receipt/template: [AOM_BEAM_LANG_INTAKE_TH.md](AOM_BEAM_LANG_INTAKE_TH.md).
+ออมตรวจรับ Beam 2e11c7d9 แล้ว: exact buffer recipes 8 รายการและ Csv stream condition
+มี reference 42 cases / 84 fixed observations พร้อม fixed สองรอบ/buggy/coverage ตรงหลักฐาน.
+ออมรันเพิ่ม 11 tests ผ่าน ไม่มี skip; historical packets/shared v8 คงเดิม.
+อ่าน [AOM_BEAM_BUFFER_VERDICT_ACCEPTANCE_TH.md](AOM_BEAM_BUFFER_VERDICT_ACCEPTANCE_TH.md)
+และใช้ champ-buffer-return.template.json ใน intake bundle ส่ง actual scoped verdict
+ต่อ 8 signatures และ Csv condition พร้อม receipt/commit/path/SHA-256.
+ระบุรับ/ไม่รับเป็นรายรายการได้ ไม่ต้องรอ Lang/Codec/exclusions ทั้งหมด.
+เมื่อรับร่วมกัน ออมจึงรวมกับ v9 รักษา setter/JDOM/Math สร้าง preparation ใหม่
+และส่ง prompts ให้แชมป์วัด final reserve/settings/limits/framing/current quota/expiry.
+Proposed union 388/691 และ 303 exclusions ยังไม่ implement และไม่รวม Lang สองรายการ.
 
-## ส่งให้แชมป์และบีม
+## ส่งให้บีม
 
-กรุณา fetch origin/aom แล้วร่วมตัดสินรับ isAllZeros(String) และ validateArray(Object)
-เฉพาะ Lang-1, constructor_types ว่าง ทั้งคู่ private static.
-ตรวจ null/empty/text/array preconditions และ exception class/message/array-state oracle
-ตาม fixed source พร้อมรับข้อจำกัด int[] และ private-helper domain.
-ใช้ joint-lang-acceptance.template.json ผูก actual verdict/evidence แล้ว push branch/commit/path/SHA-256.
-Lang ตัดสินแยกจาก buffer 8 รายการได้; ไม่ต้องรอ Codec หรือ exclusions ทั้งหมด.
-
-## งานหลังรับ verdict
-
-ออมรวมเฉพาะ accepted signatures โดยรักษา setter/JDOM/Math ของ shared v9.
-Lang อย่างเดียวจะเป็น prospective 382/691; ถ้ารับ buffer 8 ด้วยจะเป็น 390/691.
-Beam combined policy 389/691 ยังไม่มี setter ใหม่ของ v9 และเปิด buffer/Csv stream โดยปริยาย
-จึงใช้แทน final condition โดยตรงไม่ได้.
-หลังออมสร้าง preparation/prompts ใหม่ที่ตรวจตรงกันทั้ง 4 approaches
-แชมป์จึงวัด final reserve/settings/limits/framing/current quota/expiry จากรุ่นนั้น.
-
-Buffer ยังใช้ [intake ก่อนหน้า](AOM_BEAM_BUFFER_INTAKE_TH.md) และ receipt/template เดิม;
-คง coverage gap ของ CMA-ES String append และ original fault=false/usable=false ตามจริง.
-Gate A/pilot ยังปิด; primary added=0, KKU requests=0, live queue mutations=0 ในงานนี้.
+ออมรับตรวจ Buffer/Csv verdict/reference จาก 2e11c7d9 แล้ว พร้อม scoped review บน aom.
+ขอร่วมปิด verdict กับแชมป์และคง exact signatures/preconditions/oracles ที่ผูก hashes.
+Historical CMA-ES String append entry hits=0 / FSCS-ART=2 คงเดิม;
+independent reference coverage ไม่เปลี่ยนผล algorithm เดิม.
+ถ้าสูตรเปลี่ยน ให้ seal prospective packet ใหม่ ไม่แก้หลักฐานเก่า.
+Lang/Codec ทำและตัดสินแยกได้; Gate A/pilot ยังปิด ไม่มี KKU/live queue mutation ในงานออมนี้.
