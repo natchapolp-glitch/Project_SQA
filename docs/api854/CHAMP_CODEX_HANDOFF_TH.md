@@ -1,5 +1,20 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
+ผลจริงล่าสุด: อ่าน [ready results update](CHAMP_READY_RESULTS_UPDATE_TH.md) และ
+`output/api854-20261004/champ-ready-results-audit-v1` ก่อนข้อมูลย้อนหลัง.
+Csv Messages/disabled-thinking conditionใหม่มี4validnative suites:
+CMA/FSCS30tests coverage31/37lines/faultfalse,Sonnet21tests36/37lines/Gemini18tests37/37lines;
+AIแต่ละตัวfixedสองรอบผ่านและbuggyfail1ตรงCRlinecounterpatch. DomainAIกว้างกว่าalgorithm;
+ยังไม่รับfullD4J/primary/GateA. มีfullD4Jreplaywrapperให้Beamใช้Java11/LinuxCPU1;ยังไม่executeในChamp.
+รวม2uniquebugs/12condition×bug×approachoutcomes; retainbaselineCsv/CliAIinvalidครบ.
+CliFSCSrawfaulttrueถูกindependentfour-runorderauditquarantine:options/values/argsเท่ากัน,
+ต่างiterationorderHashSet/HashMap. ขอAomซ่อมprospectiveoracle/regressCli16/newcondition.
+Messagesmodelactualanthropic/claude-sonnet-5/providerClaudePlatformonAWS/thinkingtokens0;
+guardlabelerrorของgenerationv1reconcileexistingresponseในv2โดยไม่ส่งSonnetซ้ำ.
+LatestobservedA01Sonnet64818/Gemini264424,A02Sonnet127539/Gemini303675;ไม่ใช่reset/expiryproof.
+Audit420newentries+receivedBeamv12packet1557entriesผ่าน; checkpoint100pinsคงเดิม.
+ผู้ใช้ยังไม่ได้แจ้งเพื่อนจนถึงข้อความล่าสุด:ส่งข้อความเปลี่ยนแผนและhashcommitชุดนี้ให้ออม/บีม.
+
 อัปเดตการทำงานจริง 4 ตุลาคม 2026: ผู้ใช้เลือก **เก็บผลจริงครบ4วิธีจากชุดพร้อมก่อน
 แล้วขยายจำนวนbugsตามเวลา24ชม.** อ่าน [ready results first](CHAMP_READY_RESULTS_FIRST_TH.md)
 ก่อน readiness history ด้านล่าง. Csv-1/native development มี4outcomesจริงแล้ว:

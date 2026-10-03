@@ -1,5 +1,9 @@
 # เก็บผลจริงก่อนขยาย — Csv-1 ครบสี่วิธีแล้ว
 
+เอกสารนี้เก็บbaselineแรกไว้. อ่าน [ผลและงานส่งต่อใหม่](CHAMP_READY_RESULTS_UPDATE_TH.md)
+สำหรับCsvMessagesconditionที่ทั้ง4วิธีผ่านfixed, ClioraclequarantineและfullD4Jreplaywrapper.
+ห้ามลบbaselineinvalidหรือpoolผลข้ามcondition.
+
 ผู้ใช้ยืนยันวันที่ 4 ตุลาคม 2026 ว่า **“เก็บผลจริงครบ 4 วิธีจากชุดที่พร้อมก่อน
 แล้วขยายจำนวน bugs ตามเวลาที่เหลือ”** และแจ้งเวลาเหลือ 24 ชั่วโมง.
 คำตอบนี้อนุญาตงานเก็บผลจริงและใช้ KKU credentials ที่ให้ไว้ในขอบเขตงาน;
