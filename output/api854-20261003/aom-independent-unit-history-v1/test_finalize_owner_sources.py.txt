@@ -1,0 +1,74 @@
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from scripts.study.api854.finalize_owner_sources import finalize
+
+
+class SourceRecoveryAccountingTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root=Path(self.temp.name)
+        self.old=self.root/'aom-owner-sources-v1'
+        self.new=self.root/'aom-owner-sources-v2'
+        self.old.mkdir();self.new.mkdir()
+        self.failed={'project':'Gson','bug_id':18,'owner':'aom','status':'source_failed',
+                     'source_prepared':False,'compile_status':'not_attempted','error':'offline unit fixture'}
+        self.passed={**self.failed,'status':'source_prepared','source_prepared':True,'compile_status':'passed'}
+        rows=[{'project':'UnitFixture','bug_id':n,'owner':'aom','status':'source_prepared',
+               'source_prepared':True,'compile_status':'passed'} for n in range(1,284)]
+        index={'owner':'aom','expected_bugs':284,'records':rows+[self.failed],
+               'primary_completed':0,'test_methods_generated':0,'real_kku_requests':0,'live_queue_mutations':0}
+        self.save(self.old/'index.json',index)
+        self.save(self.new/'index.json',{**index,'records':rows+[self.passed]})
+        self.save(self.new/'config.json',{'selected_bug_ids':['Gson-18']})
+        self.save(self.old/'Gson-18/record.json',self.failed)
+        self.save(self.new/'Gson-18/record.json',self.passed)
+
+    def save(self,path,data):
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(json.dumps(data))
+
+    def run_finalizer(self):
+        with patch('scripts.study.api854.finalize_owner_sources.audit',return_value={'scope':'unit fixture only'}):
+            return finalize(self.old,self.new,self.root/'final',self.root/'ownership',self.root/'installed',
+                            self.root/'interruptions')
+
+    def test_recovery_does_not_add_a_bug_or_primary_and_keeps_failed_record(self):
+        before=(self.old/'Gson-18/record.json').read_bytes()
+        result=self.run_finalizer()
+        self.assertEqual(result['expected_bugs'],284)
+        self.assertEqual(result['source_prepared'],284)
+        self.assertEqual(result['source_recovery_count'],1)
+        self.assertEqual(result['primary_completed'],0)
+        self.assertEqual((self.old/'Gson-18/record.json').read_bytes(),before)
+        final=json.loads((self.root/'final/index.json').read_text())
+        self.assertEqual(final['source_recovery_attempts'],1)
+        self.assertEqual(final['records'][-1]['evidence_folder'],'aom-owner-sources-v2/Gson-18')
+        self.assertEqual(len(final['retained_failure_history']),1)
+
+    def test_pending_recovery_cannot_be_finalized(self):
+        index=json.loads((self.new/'index.json').read_text())
+        index['records'][-1]={**self.failed,'status':'not_attempted'}
+        self.save(self.new/'index.json',index)
+        with self.assertRaises(AssertionError):self.run_finalizer()
+
+    def test_interrupted_attempt_counts_without_adding_a_bug(self):
+        self.save(self.root/'interruptions/Lang-53-session1/interruption.json',
+                  {'project':'Lang','bug_id':53,'status':'interrupted_exit_unknown'})
+        self.run_finalizer()
+        final=json.loads((self.root/'final/index.json').read_text())
+        self.assertEqual(len(final['records']),284)
+        self.assertEqual(final['source_preparation_attempts'],286)
+        self.assertEqual(final['interrupted_source_attempts'],1)
+        self.assertEqual(final['primary_completed'],0)
+        self.assertEqual(len(final['retained_interruption_history']),1)
+
+    def test_cannot_replace_an_already_prepared_bug(self):
+        index=json.loads((self.old/'index.json').read_text())
+        index['records'][-1]=self.passed
+        self.save(self.old/'index.json',index)
+        with self.assertRaises(AssertionError):self.run_finalizer()

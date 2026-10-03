@@ -1,0 +1,1341 @@
+## build.xml
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="commons-cli" default="package" basedir=".">
+
+  <!-- ====================================================================== -->
+  <!-- Import maven-build.xml into the current project                        -->
+  <!-- ====================================================================== -->
+
+  <import file="maven-build.xml"/>
+  
+  <!-- ====================================================================== -->
+  <!-- Help target                                                            -->
+  <!-- ====================================================================== -->
+
+  <target name="help">
+    <echo message="Please run: $ant -projecthelp"/>
+  </target>
+
+  <target name="compile" depends="commons-cli-from-maven.compile"> </target>
+  <target name="compile.tests" depends="commons-cli-from-maven.compile.tests"> </target>
+
+</project>
+
+```
+
+## pom.xml
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-parent</artifactId>
+    <version>15</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>commons-cli</groupId>
+  <artifactId>commons-cli</artifactId>
+  <version>1.3-SNAPSHOT</version>
+  <name>Commons CLI</name>
+
+  <inceptionYear>2002</inceptionYear>
+  <description>
+    Commons CLI provides a simple API for presenting, processing and validating a command line interface.
+  </description>
+
+  <url>http://commons.apache.org/cli/</url>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>http://issues.apache.org/jira/browse/CLI</url>
+  </issueManagement>
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/commons/proper/cli/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/commons/proper/cli/trunk/</developerConnection>
+    <url>http://svn.apache.org/viewvc/commons/proper/cli/trunk/</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>James Strachan</name>
+      <id>jstrachan</id>
+      <email>jstrachan@apache.org</email>
+      <organization>SpiritSoft, Inc.</organization>
+    </developer>
+    <developer>
+      <name>Bob McWhirter</name>
+      <id>bob</id>
+      <email>bob@werken.com</email>
+      <organization>Werken</organization>
+      <roles>
+        <role>contributed ideas and code from werken.opt</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>John Keyes</name>
+      <id>jkeyes</id>
+      <email>jbjk@mac.com</email>
+      <organization>integral Source</organization>
+      <roles>
+        <role>contributed ideas and code from Optz</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Rob Oxspring</name>
+      <id>roxspring</id>
+      <email>roxspring@imapmail.org</email>
+      <organization>Indigo Stone</organization>
+      <roles>
+        <role>designed CLI2</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Emmanuel Bourg</name>
+      <id>ebourg</id>
+      <email>ebourg@apache.org</email>
+      <organization>Ariane Software</organization>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Peter Donald</name>
+      <roles>
+        <role>contributed ideas and code from Avalon Excalibur's cli package</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Brian Egge</name>
+      <roles>
+        <role>made the 1.1 release happen</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Berin Loritsch</name>
+      <email>bloritsch@apache.org</email>
+      <roles>
+        <role>helped in the Avalon CLI merge</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Peter Maddocks</name>
+      <email>peter_maddocks@hp.com</email>
+      <organization>Hewlett-Packard</organization>
+      <roles>
+        <role>supplied patch</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Andrew Shirley</name>
+      <roles>
+        <role>lots of fixes for 1.1</role>
+      </roles>
+    </contributor>
+    
+  </contributors>
+
+  <dependencies>
+    <!-- used for unit tests -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit-addons</groupId>
+      <artifactId>junit-addons</artifactId>
+      <version>1.4</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>xerces</groupId>
+          <artifactId>xmlParserAPIs</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <maven.compile.source>1.4</maven.compile.source>
+    <maven.compile.target>1.4</maven.compile.target>
+    <commons.componentid>cli</commons.componentid>
+    <commons.release.version>1.2</commons.release.version>
+    <commons.release.name>commons-cli-${commons.release.version}</commons.release.name>
+    <commons.osgi.symbolicName>org.apache.commons.cli</commons.osgi.symbolicName>
+    <commons.jira.id>CLI</commons.jira.id>
+    <commons.jira.pid>12310463</commons.jira.pid>
+    <!-- The RC version used in the staging repository URL. -->
+    <commons.rc.version>RC1</commons.rc.version>    
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/bin.xml</descriptor>
+            <descriptor>src/assembly/src.xml</descriptor>
+          </descriptors>
+          <tarLongFileMode>gnu</tarLongFileMode>
+        </configuration>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ant-plugin</artifactId>
+        <version>2.1.1-SNAPSHOT</version>
+      </plugin>
+      -->
+    </plugins>
+  </build>
+
+  <reporting>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <configuration>
+            <linksource>true</linksource>
+            <links>
+              <link>http://java.sun.com/javase/6/docs/api</link>
+            </links>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-changes-plugin</artifactId>
+          <version>2.0</version>
+          <configuration>
+            <xmlPath>${basedir}/src/changes/changes.xml</xmlPath>
+            <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
+          </configuration>
+          <reportSets>
+            <reportSet>
+              <reports>
+                 <report>changes-report</report>
+              </reports>
+            </reportSet>
+          </reportSets>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>2.1</version>
+          <configuration>
+            <configLocation>${basedir}/src/conf/checkstyle.xml</configLocation>
+            <enableRulesSummary>false</enableRulesSummary>
+            <headerFile>${basedir}/src/conf/HEADER.txt</headerFile>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>1.2</version>
+          <configuration>
+            <threshold>Normal</threshold>
+            <effort>Default</effort>
+         </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>clirr-maven-plugin</artifactId>
+          <version>2.2.1</version>
+          <configuration>
+            <comparisonVersion>1.2</comparisonVersion>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+        </plugin>
+      </plugins>
+  </reporting>
+
+  <profiles>
+    <!-- Profile to let Gump choose the name of the jar file generated -->
+    <profile>
+      <id>gump</id>
+      <activation>
+        <property>
+          <name>maven.final.name</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+              <finalName>${maven.final.name}</finalName>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>rc</id>
+      <distributionManagement>
+        <!-- Cannot define in parent ATM, see COMMONSSITE-26 -->
+        <site>
+          <id>apache.website</id>
+          <name>Apache Commons Release Candidate Staging Site</name>
+          <url>${commons.deployment.protocol}://people.apache.org/www/people.apache.org/builds/commons/${commons.componentid}/${commons.release.version}/${commons.rc.version}/site</url>
+        </site>
+      </distributionManagement>
+    </profile>
+  </profiles>
+
+</project>
+
+```
+
+## src/main/java/org/apache/commons/cli/HelpFormatter.java
+
+```
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.cli;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
+/** 
+ * A formatter of help messages for the current command line options
+ *
+ * @author Slawek Zachcial
+ * @author John Keyes (john at integralsource.com)
+ * @version $Revision$, $Date$
+ */
+public class HelpFormatter
+{
+    // --------------------------------------------------------------- Constants
+
+    /** default number of characters per line */
+    public static final int DEFAULT_WIDTH = 74;
+
+    /** default padding to the left of each line */
+    public static final int DEFAULT_LEFT_PAD = 1;
+
+    /**
+     * the number of characters of padding to be prefixed
+     * to each description line
+     */
+    public static final int DEFAULT_DESC_PAD = 3;
+
+    /** the string to display at the beginning of the usage statement */
+    public static final String DEFAULT_SYNTAX_PREFIX = "usage: ";
+
+    /** default prefix for shortOpts */
+    public static final String DEFAULT_OPT_PREFIX = "-";
+
+    /** default prefix for long Option */
+    public static final String DEFAULT_LONG_OPT_PREFIX = "--";
+
+    /** default separator displayed between a long Option and its value */
+    public static final String DEFAULT_LONG_OPT_SEPARATOR = " ";
+
+    /** default name for an argument */
+    public static final String DEFAULT_ARG_NAME = "arg";
+
+    // -------------------------------------------------------------- Attributes
+
+    /**
+     * number of characters per line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setWidth methods instead.
+     */
+    public int defaultWidth = DEFAULT_WIDTH;
+
+    /**
+     * amount of padding to the left of each line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setLeftPadding methods instead.
+     */
+    public int defaultLeftPad = DEFAULT_LEFT_PAD;
+
+    /**
+     * the number of characters of padding to be prefixed
+     * to each description line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setDescPadding methods instead.
+     */
+    public int defaultDescPad = DEFAULT_DESC_PAD;
+
+    /**
+     * the string to display at the begining of the usage statement
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setSyntaxPrefix methods instead.
+     */
+    public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX;
+
+    /**
+     * the new line string
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setNewLine methods instead.
+     */
+    public String defaultNewLine = System.getProperty("line.separator");
+
+    /**
+     * the shortOpt prefix
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setOptPrefix methods instead.
+     */
+    public String defaultOptPrefix = DEFAULT_OPT_PREFIX;
+
+    /**
+     * the long Opt prefix
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setLongOptPrefix methods instead.
+     */
+    public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX;
+
+    /** The separator displayed between the long option and its value. */
+    private String longOptSeparator = DEFAULT_LONG_OPT_SEPARATOR;
+
+    /**
+     * the name of the argument
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setArgName methods instead.
+     */
+    public String defaultArgName = DEFAULT_ARG_NAME;
+
+    /**
+     * Comparator used to sort the options when they output in help text
+     * 
+     * Defaults to case-insensitive alphabetical sorting by option key
+     */
+    protected Comparator optionComparator = new OptionComparator();
+    
+    /**
+     * Sets the 'width'.
+     *
+     * @param width the new value of 'width'
+     */
+    public void setWidth(int width)
+    {
+        this.defaultWidth = width;
+    }
+
+    /**
+     * Returns the 'width'.
+     *
+     * @return the 'width'
+     */
+    public int getWidth()
+    {
+        return defaultWidth;
+    }
+
+    /**
+     * Sets the 'leftPadding'.
+     *
+     * @param padding the new value of 'leftPadding'
+     */
+    public void setLeftPadding(int padding)
+    {
+        this.defaultLeftPad = padding;
+    }
+
+    /**
+     * Returns the 'leftPadding'.
+     *
+     * @return the 'leftPadding'
+     */
+    public int getLeftPadding()
+    {
+        return defaultLeftPad;
+    }
+
+    /**
+     * Sets the 'descPadding'.
+     *
+     * @param padding the new value of 'descPadding'
+     */
+    public void setDescPadding(int padding)
+    {
+        this.defaultDescPad = padding;
+    }
+
+    /**
+     * Returns the 'descPadding'.
+     *
+     * @return the 'descPadding'
+     */
+    public int getDescPadding()
+    {
+        return defaultDescPad;
+    }
+
+    /**
+     * Sets the 'syntaxPrefix'.
+     *
+     * @param prefix the new value of 'syntaxPrefix'
+     */
+    public void setSyntaxPrefix(String prefix)
+    {
+        this.defaultSyntaxPrefix = prefix;
+    }
+
+    /**
+     * Returns the 'syntaxPrefix'.
+     *
+     * @return the 'syntaxPrefix'
+     */
+    public String getSyntaxPrefix()
+    {
+        return defaultSyntaxPrefix;
+    }
+
+    /**
+     * Sets the 'newLine'.
+     *
+     * @param newline the new value of 'newLine'
+     */
+    public void setNewLine(String newline)
+    {
+        this.defaultNewLine = newline;
+    }
+
+    /**
+     * Returns the 'newLine'.
+     *
+     * @return the 'newLine'
+     */
+    public String getNewLine()
+    {
+        return defaultNewLine;
+    }
+
+    /**
+     * Sets the 'optPrefix'.
+     *
+     * @param prefix the new value of 'optPrefix'
+     */
+    public void setOptPrefix(String prefix)
+    {
+        this.defaultOptPrefix = prefix;
+    }
+
+    /**
+     * Returns the 'optPrefix'.
+     *
+     * @return the 'optPrefix'
+     */
+    public String getOptPrefix()
+    {
+        return defaultOptPrefix;
+    }
+
+    /**
+     * Sets the 'longOptPrefix'.
+     *
+     * @param prefix the new value of 'longOptPrefix'
+     */
+    public void setLongOptPrefix(String prefix)
+    {
+        this.defaultLongOptPrefix = prefix;
+    }
+
+    /**
+     * Returns the 'longOptPrefix'.
+     *
+     * @return the 'longOptPrefix'
+     */
+    public String getLongOptPrefix()
+    {
+        return defaultLongOptPrefix;
+    }
+
+    /**
+     * Set the separator displayed between a long option and its value.
+     * Ensure that the separator specified is supported by the parser used,
+     * typically ' ' or '='.
+     * 
+     * @param longOptSeparator the separator, typically ' ' or '='.
+     * @since 1.3
+     */
+    public void setLongOptSeparator(String longOptSeparator)
+    {
+        this.longOptSeparator = longOptSeparator;
+    }
+
+    /**
+     * Returns the separator displayed between a long option and its value.
+     * 
+     * @return the separator
+     * @since 1.3
+     */
+    public String getLongOptSeparator()
+    {
+        return longOptSeparator;
+    }
+
+    /**
+     * Sets the 'argName'.
+     *
+     * @param name the new value of 'argName'
+     */
+    public void setArgName(String name)
+    {
+        this.defaultArgName = name;
+    }
+
+    /**
+     * Returns the 'argName'.
+     *
+     * @return the 'argName'
+     */
+    public String getArgName()
+    {
+        return defaultArgName;
+    }
+
+    /**
+     * Comparator used to sort the options when they output in help text.
+     * Defaults to case-insensitive alphabetical sorting by option key.
+     * 
+     * @since 1.2
+     */
+    public Comparator getOptionComparator()
+    {
+        return optionComparator;
+    }
+
+    /**
+     * Set the comparator used to sort the options when they output in help text.
+     * Passing in a null parameter will set the ordering to the default mode.
+     * 
+     * @since 1.2
+     */
+    public void setOptionComparator(Comparator comparator)
+    {
+        if (comparator == null)
+        {
+            this.optionComparator = new OptionComparator();
+        }
+        else
+        {
+            this.optionComparator = comparator;
+        }
+    }
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param options the Options instance
+     */
+    public void printHelp(String cmdLineSyntax, Options options)
+    {
+        printHelp(defaultWidth, cmdLineSyntax, null, options, null, false);
+    }
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to 
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param options the Options instance
+     * @param autoUsage whether to print an automatically generated
+     * usage statement
+     */
+    public void printHelp(String cmdLineSyntax, Options options, boolean autoUsage)
+    {
+        printHelp(defaultWidth, cmdLineSyntax, null, options, null, autoUsage);
+    }
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     */
+    public void printHelp(String cmdLineSyntax, String header, Options options, String footer)
+    {
+        printHelp(cmdLineSyntax, header, options, footer, false);
+    }
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to 
+     * System.out.
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated
+     * usage statement
+     */
+    public void printHelp(String cmdLineSyntax, String header, Options options, String footer, boolean autoUsage)
+    {
+        printHelp(defaultWidth, cmdLineSyntax, header, options, footer, autoUsage);
+    }
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the beginning of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     */
+    public void printHelp(int width, String cmdLineSyntax, String header, Options options, String footer)
+    {
+        printHelp(width, cmdLineSyntax, header, options, footer, false);
+    }
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.
+     *
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated 
+     * usage statement
+     */
+    public void printHelp(int width, String cmdLineSyntax, String header,
+                          Options options, String footer, boolean autoUsage)
+    {
+        PrintWriter pw = new PrintWriter(System.out);
+
+        printHelp(pw, width, cmdLineSyntax, header, options, defaultLeftPad, defaultDescPad, footer, autoUsage);
+        pw.flush();
+    }
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.
+     *
+     * @param pw the writer to which the help will be written
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     * @param footer the banner to display at the end of the help
+     *
+     * @throws IllegalStateException if there is no room to print a line
+     */
+    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax, 
+                          String header, Options options, int leftPad, 
+                          int descPad, String footer)
+    {
+        printHelp(pw, width, cmdLineSyntax, header, options, leftPad, descPad, footer, false);
+    }
+
+
+    /**
+     * Print the help for <code>options</code> with the specified
+     * command line syntax.
+     *
+     * @param pw the writer to which the help will be written
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated
+     * usage statement
+     *
+     * @throws IllegalStateException if there is no room to print a line
+     */
+    public void printHelp(PrintWriter pw, int width, String cmdLineSyntax,
+                          String header, Options options, int leftPad,
+                          int descPad, String footer, boolean autoUsage)
+    {
+        if ((cmdLineSyntax == null) || (cmdLineSyntax.length() == 0))
+        {
+            throw new IllegalArgumentException("cmdLineSyntax not provided");
+        }
+
+        if (autoUsage)
+        {
+            printUsage(pw, width, cmdLineSyntax, options);
+        }
+        else
+        {
+            printUsage(pw, width, cmdLineSyntax);
+        }
+
+        if ((header != null) && (header.trim().length() > 0))
+        {
+            printWrapped(pw, width, header);
+        }
+
+        printOptions(pw, width, options, leftPad, descPad);
+
+        if ((footer != null) && (footer.trim().length() > 0))
+        {
+            printWrapped(pw, width, footer);
+        }
+    }
+
+    /**
+     * Prints the usage statement for the specified application.
+     *
+     * @param pw The PrintWriter to print the usage statement 
+     * @param width The number of characters to display per line
+     * @param app The application name
+     * @param options The command line Options
+     */
+    public void printUsage(PrintWriter pw, int width, String app, Options options)
+    {
+        // initialise the string buffer
+        StringBuffer buff = new StringBuffer(defaultSyntaxPrefix).append(app).append(" ");
+
+        // create a list for processed option groups
+        final Collection processedGroups = new ArrayList();
+
+        // temp variable
+        Option option;
+
+        List optList = new ArrayList(options.getOptions());
+        Collections.sort(optList, getOptionComparator());
+        // iterate over the options
+        for (Iterator i = optList.iterator(); i.hasNext();)
+        {
+            // get the next Option
+            option = (Option) i.next();
+
+            // check if the option is part of an OptionGroup
+            OptionGroup group = options.getOptionGroup(option);
+
+            // if the option is part of a group 
+            if (group != null)
+            {
+                // and if the group has not already been processed
+                if (!processedGroups.contains(group))
+                {
+                    // add the group to the processed list
+                    processedGroups.add(group);
+
+
+                    // add the usage clause
+                    appendOptionGroup(buff, group);
+                }
+
+                // otherwise the option was displayed in the group
+                // previously so ignore it.
+            }
+
+            // if the Option is not part of an OptionGroup
+            else
+            {
+                appendOption(buff, option, option.isRequired());
+            }
+
+            if (i.hasNext())
+            {
+                buff.append(" ");
+            }
+        }
+
+
+        // call printWrapped
+        printWrapped(pw, width, buff.toString().indexOf(' ') + 1, buff.toString());
+    }
+
+    /**
+     * Appends the usage clause for an OptionGroup to a StringBuffer.  
+     * The clause is wrapped in square brackets if the group is required.
+     * The display of the options is handled by appendOption
+     * @param buff the StringBuffer to append to
+     * @param group the group to append
+     * @see #appendOption(StringBuffer,Option,boolean)
+     */
+    private void appendOptionGroup(final StringBuffer buff, final OptionGroup group)
+    {
+        if (!group.isRequired())
+        {
+            buff.append("[");
+        }
+
+        List optList = new ArrayList(group.getOptions());
+        Collections.sort(optList, getOptionComparator());
+        // for each option in the OptionGroup
+        for (Iterator i = optList.iterator(); i.hasNext();)
+        {
+            // whether the option is required or not is handled at group level
+            appendOption(buff, (Option) i.next(), true);
+
+            if (i.hasNext())
+            {
+                buff.append(" | ");
+            }
+        }
+
+        if (!group.isRequired())
+        {
+            buff.append("]");
+        }
+    }
+
+    /**
+     * Appends the usage clause for an Option to a StringBuffer.  
+     *
+     * @param buff the StringBuffer to append to
+     * @param option the Option to append
+     * @param required whether the Option is required or not
+     */
+    private void appendOption(final StringBuffer buff, final Option option, final boolean required)
+    {
+        if (!required)
+        {
+            buff.append("[");
+        }
+
+        if (option.getOpt() != null)
+        {
+            buff.append("-").append(option.getOpt());
+        }
+        else
+        {
+            buff.append("--").append(option.getLongOpt());
+        }
+        
+        // if the Option has a value and a non blank argname
+        if (option.hasArg() && (option.getArgName() == null || option.getArgName().length() != 0))
+        {
+            buff.append(option.getOpt() == null ? longOptSeparator : " ");
+            buff.append("<").append(option.getArgName() != null ? option.getArgName() : getArgName()).append(">");
+        }
+        
+        // if the Option is not a required option
+        if (!required)
+        {
+            buff.append("]");
+        }
+    }
+    
+    /**
+     * Print the cmdLineSyntax to the specified writer, using the
+     * specified width.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters per line for the usage statement.
+     * @param cmdLineSyntax The usage statement.
+     */
+    public void printUsage(PrintWriter pw, int width, String cmdLineSyntax)
+    {
+        int argPos = cmdLineSyntax.indexOf(' ') + 1;
+
+        printWrapped(pw, width, defaultSyntaxPrefix.length() + argPos, defaultSyntaxPrefix + cmdLineSyntax);
+    }
+
+    /**
+     * Print the help for the specified Options to the specified writer, 
+     * using the specified width, left padding and description padding.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters to display per line
+     * @param options The command line Options
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     */
+    public void printOptions(PrintWriter pw, int width, Options options, 
+                             int leftPad, int descPad)
+    {
+        StringBuffer sb = new StringBuffer();
+
+        renderOptions(sb, width, options, leftPad, descPad);
+        pw.println(sb.toString());
+    }
+
+    /**
+     * Print the specified text to the specified PrintWriter.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters to display per line
+     * @param text The text to be written to the PrintWriter
+     */
+    public void printWrapped(PrintWriter pw, int width, String text)
+    {
+        printWrapped(pw, width, 0, text);
+    }
+
+    /**
+     * Print the specified text to the specified PrintWriter.
+     *
+     * @param pw The printWriter to write the help to
+     * @param width The number of characters to display per line
+     * @param nextLineTabStop The position on the next line for the first tab.
+     * @param text The text to be written to the PrintWriter
+     */
+    public void printWrapped(PrintWriter pw, int width, int nextLineTabStop, String text)
+    {
+        StringBuffer sb = new StringBuffer(text.length());
+
+        renderWrappedText(sb, width, nextLineTabStop, text);
+        pw.println(sb.toString());
+    }
+
+    // --------------------------------------------------------------- Protected
+
+    /**
+     * Render the specified Options and return the rendered Options
+     * in a StringBuffer.
+     *
+     * @param sb The StringBuffer to place the rendered Options into.
+     * @param width The number of characters to display per line
+     * @param options The command line Options
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     *
+     * @return the StringBuffer with the rendered Options contents.
+     */
+    protected StringBuffer renderOptions(StringBuffer sb, int width, Options options, int leftPad, int descPad)
+    {
+        final String lpad = createPadding(leftPad);
+        final String dpad = createPadding(descPad);
+
+        // first create list containing only <lpad>-a,--aaa where 
+        // -a is opt and --aaa is long opt; in parallel look for 
+        // the longest opt string this list will be then used to 
+        // sort options ascending
+        int max = 0;
+        StringBuffer optBuf;
+        List prefixList = new ArrayList();
+
+        List optList = options.helpOptions();
+
+        Collections.sort(optList, getOptionComparator());
+
+        for (Iterator i = optList.iterator(); i.hasNext();)
+        {
+            Option option = (Option) i.next();
+            optBuf = new StringBuffer();
+            
+            if (option.getOpt() == null)
+            {
+                optBuf.append(lpad).append("   " + defaultLongOptPrefix).append(option.getLongOpt());
+            }
+            else
+            {
+                optBuf.append(lpad).append(defaultOptPrefix).append(option.getOpt());
+
+                if (option.hasLongOpt())
+                {
+                    optBuf.append(',').append(defaultLongOptPrefix).append(option.getLongOpt());
+                }
+            }
+
+            if (option.hasArg())
+            {
+                String argName = option.getArgName();
+                if (argName != null && argName.length() == 0)
+                {
+                    // if the option has a blank argname
+                    optBuf.append(' ');
+                }
+                else
+                {
+                    optBuf.append(option.hasLongOpt() ? longOptSeparator : " ");
+                    optBuf.append("<").append(argName != null ? option.getArgName() : getArgName()).append(">");
+                }
+            }
+
+            prefixList.add(optBuf);
+            max = (optBuf.length() > max) ? optBuf.length() : max;
+        }
+
+        int x = 0;
+
+        for (Iterator i = optList.iterator(); i.hasNext();)
+        {
+            Option option = (Option) i.next();
+            optBuf = new StringBuffer(prefixList.get(x++).toString());
+
+            if (optBuf.length() < max)
+            {
+                optBuf.append(createPadding(max - optBuf.length()));
+            }
+
+            optBuf.append(dpad);
+
+            int nextLineTabStop = max + descPad;
+
+            if (option.getDescription() != null)
+            {
+                optBuf.append(option.getDescription());
+            }
+
+            renderWrappedText(sb, width, nextLineTabStop, optBuf.toString());
+
+            if (i.hasNext())
+            {
+                sb.append(defaultNewLine);
+            }
+        }
+
+        return sb;
+    }
+
+    /**
+     * Render the specified text and return the rendered Options
+     * in a StringBuffer.
+     *
+     * @param sb The StringBuffer to place the rendered text into.
+     * @param width The number of characters to display per line
+     * @param nextLineTabStop The position on the next line for the first tab.
+     * @param text The text to be rendered.
+     *
+     * @return the StringBuffer with the rendered Options contents.
+     */
+    protected StringBuffer renderWrappedText(StringBuffer sb, int width, 
+                                             int nextLineTabStop, String text)
+    {
+        int pos = findWrapPos(text, width, 0);
+
+        if (pos == -1)
+        {
+            sb.append(rtrim(text));
+
+            return sb;
+        }
+        sb.append(rtrim(text.substring(0, pos))).append(defaultNewLine);
+
+        if (nextLineTabStop >= width)
+        {
+            // stops infinite loop happening
+            nextLineTabStop = 1;
+        }
+
+        // all following lines must be padded with nextLineTabStop space characters
+        final String padding = createPadding(nextLineTabStop);
+
+        while (true)
+        {
+            text = padding + text.substring(pos).trim();
+            pos = findWrapPos(text, width, 0);
+
+            if (pos == -1)
+            {
+                sb.append(text);
+
+                return sb;
+            }
+            
+            if ((text.length() > width) && (pos == nextLineTabStop - 1))
+            {
+                pos = width;
+            }
+
+            sb.append(rtrim(text.substring(0, pos))).append(defaultNewLine);
+        }
+    }
+
+    /**
+     * Finds the next text wrap position after <code>startPos</code> for the
+     * text in <code>text</code> with the column width <code>width</code>.
+     * The wrap point is the last position before startPos+width having a 
+     * whitespace character (space, \n, \r). If there is no whitespace character
+     * before startPos+width, it will return startPos+width.
+     *
+     * @param text The text being searched for the wrap position
+     * @param width width of the wrapped text
+     * @param startPos position from which to start the lookup whitespace
+     * character
+     * @return postion on which the text must be wrapped or -1 if the wrap
+     * position is at the end of the text
+     */
+    protected int findWrapPos(String text, int width, int startPos)
+    {
+        int pos;
+        
+        // the line ends before the max wrap pos or a new line char found
+        if (((pos = text.indexOf('\n', startPos)) != -1 && pos <= width)
+                || ((pos = text.indexOf('\t', startPos)) != -1 && pos <= width))
+        {
+            return pos + 1;
+        }
+        else if (startPos + width >= text.length())
+        {
+            return -1;
+        }
+
+
+        // look for the last whitespace character before startPos+width
+        pos = startPos + width;
+
+        char c;
+
+        while ((pos >= startPos) && ((c = text.charAt(pos)) != ' ')
+                && (c != '\n') && (c != '\r'))
+        {
+            --pos;
+        }
+
+        // if we found it - just return
+        if (pos > startPos)
+        {
+            return pos;
+        }
+        
+        // if we didn't find one, simply chop at startPos+width
+        pos = startPos + width;
+        
+        return pos == text.length() ? -1 : pos;
+    }
+
+    /**
+     * Return a String of padding of length <code>len</code>.
+     *
+     * @param len The length of the String of padding to create.
+     *
+     * @return The String of padding
+     */
+    protected String createPadding(int len)
+    {
+        char[] padding = new char[len];
+        Arrays.fill(padding, ' ');
+        
+        return new String(padding);
+    }
+
+    /**
+     * Remove the trailing whitespace from the specified String.
+     *
+     * @param s The String to remove the trailing padding from.
+     *
+     * @return The String of without the trailing padding
+     */
+    protected String rtrim(String s)
+    {
+        if ((s == null) || (s.length() == 0))
+        {
+            return s;
+        }
+
+        int pos = s.length();
+
+        while ((pos > 0) && Character.isWhitespace(s.charAt(pos - 1)))
+        {
+            --pos;
+        }
+
+        return s.substring(0, pos);
+    }
+
+    // ------------------------------------------------------ Package protected
+    // ---------------------------------------------------------------- Private
+    // ---------------------------------------------------------- Inner classes
+    /**
+     * This class implements the <code>Comparator</code> interface
+     * for comparing Options.
+     */
+    private static class OptionComparator implements Comparator
+    {
+
+        /**
+         * Compares its two arguments for order. Returns a negative
+         * integer, zero, or a positive integer as the first argument
+         * is less than, equal to, or greater than the second.
+         *
+         * @param o1 The first Option to be compared.
+         * @param o2 The second Option to be compared.
+         * @return a negative integer, zero, or a positive integer as
+         *         the first argument is less than, equal to, or greater than the
+         *         second.
+         */
+        public int compare(Object o1, Object o2)
+        {
+            Option opt1 = (Option) o1;
+            Option opt2 = (Option) o2;
+
+            return opt1.getKey().compareToIgnoreCase(opt2.getKey());
+        }
+    }
+
+}
+
+```

@@ -2,6 +2,13 @@
 
 Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Shared v5 currently prepares five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 
+Aom's independent fixed-source/build preparation, local recovery rehearsal,
+progress page, draft slides and report/demo drafts are described in
+[AOM_INDEPENDENT_PREPARATION_TH.md](docs/api854/AOM_INDEPENDENT_PREPARATION_TH.md).
+The combined source index retains all 284 owned bug IDs, with fixed source and
+compile prerequisites passed for all 284. Original failures and retries are preserved.
+These prerequisite checks do not count as primary experiments or Gate A approval.
+
 # API854 — Aom preparation, 3 October 2026
 
 Read [START_HERE](docs/api854/START_HERE.md) for the current 48-hour plan.
