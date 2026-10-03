@@ -90,12 +90,20 @@ POLICY_V12 = {**POLICY_V11, 'contract':'aom-beam-prepare-v12-development',
     'graphics_scope':'Real headless AWT64x64 white TYPE_INT_RGB, AA off/stroke normalize; exact default AreaRenderer inherited methods. Twenty-four bounded analytic pixel/state/return/exception oracles. Separate lifecycle preserves existing Chart eight; initialise setup never invokes target. Fixed and buggy observations are development evidence, not algorithm fault results.'}
 
 
+POLICY_V13 = {**POLICY_V12, 'contract':'aom-beam-prepare-v13-development',
+    'context_policy_id':'modified-java-root-build-receivers-factories-codec-v13-development',
+    'prompt_policy_id':'shared-fixed-bounded-codec-junit4-v13-development',
+    'fixture_policy':'aom-beam-champ-codec-fixtures-v13-development',
+    'scope':'v12 retained plus exactly five jointly accepted Codec identities after shared integration; remaining exclusions and final team acceptance pending',
+    'codec_scope':'43 predeclared bounded reference cases. Real fresh StringBuffer and default Metaphone/maxCodeLen4; private exact reflection. Static difference with real Metaphone StringEncoder and presealed literal codes. Boolean/integer/exact exception and unchanged full buffer contents/length/capacity/maxCodeLen oracle. No arbitrary encoder/maxCodeLen/null buffer/needle/encoder/non-ASCII/overflow or full public-caller approval.'}
+
+
 def explicit_context(contract):
-    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract'], POLICY_V8['contract'], POLICY_V10['contract'], POLICY_V11['contract'], POLICY_V12['contract']}
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract'], POLICY_V8['contract'], POLICY_V10['contract'], POLICY_V11['contract'], POLICY_V12['contract'], POLICY_V13['contract']}
 
 
 def explicit_scope(policy):
-    if policy in (POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12):
+    if policy in (POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12, POLICY_V13):
         return {tuple(row) for row in policy['development_bugs']}
     original = {('Closure', 176), ('JxPath', 1)}
     return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
@@ -106,7 +114,7 @@ def shared_context(contract):
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12, POLICY_V13):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")
@@ -137,7 +145,7 @@ def java_mapping(manifest, metadata):
     if not isinstance(fixed, dict) or not fixed or any(java.get(p) != h for p, h in fixed.items()):
         raise ValueError("Modified fixed-source mapping differs")
     additional = {p: h for p, h in java.items() if p not in fixed}
-    if metadata.get('prepare_contract') in {POLICY_V8['contract'], POLICY_V10['contract'], POLICY_V11['contract'], POLICY_V12['contract']}:
+    if metadata.get('prepare_contract') in {POLICY_V8['contract'], POLICY_V10['contract'], POLICY_V11['contract'], POLICY_V12['contract'], POLICY_V13['contract']}:
         supplemental = FRACTION_FACTORY_SOURCES if (manifest.get('project'),manifest.get('bug_id')) == ('Math',1) else {}
         if (metadata.get('additional_fixture_source_sha256') != supplemental or set(supplemental) & set(fixed)
                 or any(additional.get(p) != h for p,h in supplemental.items())):
@@ -224,8 +232,8 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
                or fixture_classes is None or any(not re.fullmatch(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*", c) for c in fixtures)):
         raise ValueError("V3 requires modified-source mapping and declaration-only fixture inventory")
     additional = {p: h for p, h in sources.items() if p not in (modified_sources or sources)}
-    supplemental = FRACTION_FACTORY_SOURCES if policy in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12) and (manifest['project'],manifest['bug_id']) == ('Math',1) else {}
-    if policy in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12):
+    supplemental = FRACTION_FACTORY_SOURCES if policy in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12, POLICY_V13) and (manifest['project'],manifest['bug_id']) == ('Math',1) else {}
+    if policy in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12, POLICY_V13):
         if any(additional.get(p) != h for p,h in supplemental.items()):
             raise ValueError('Reviewed factory context is required')
         additional = {p:h for p,h in additional.items() if p not in supplemental}
@@ -282,7 +290,7 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
                         fixture_class_count=len(fixtures), fixture_classes_sha256=digest(encoded(fixtures)))
     if explicit:
         metadata.update(fixture_policy_id=policy['fixture_policy'], fixture_recipes_sha256=digest(encoded(fixture_recipe)))
-    if policy in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12):
+    if policy in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12, POLICY_V13):
         metadata['additional_fixture_source_sha256'] = supplemental
     if v3:
         validate(manifest, metadata, prompt, targets_bytes, encoded(policy), fixture_recipe=fixture_recipe)
@@ -312,7 +320,7 @@ def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=Fa
             or metadata.get("context_policy_id") != selected["context_policy_id"] or metadata.get("context_selection") != selected["context_policy_id"]
             or metadata.get("prompt_policy_id") != selected["prompt_policy_id"] or json.loads(policy) != selected):
         raise ValueError("Preparation policy differs")
-    if selected in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12):
+    if selected in (POLICY_V8, POLICY_V10, POLICY_V11, POLICY_V12, POLICY_V13):
         text = prompt.decode('utf-8')
         for source in files:
             header = '## ' + source['path'] + '\n\n'

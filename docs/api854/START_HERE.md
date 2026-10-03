@@ -1,3 +1,5 @@
+Latest Aom: [Codec5 shared development v13](AOM_CODEC_V13_HANDOFF_TH.md). 20 bugs / 408 selected / 283 exclusions /691. Use preparation/protocol/readiness v2 and integration/preserved v3. Local offline checks complete; final peer/host/provider/reserve/team approval pending, Gate A/live closed.
+
 Next Aom agent: [continuation handoff — v12 baseline and jointly accepted Codec packet](AOM_NEXT_AGENT_HANDOFF_TH.md). Codec shared integration has not started; live/Gate A remain closed.
 
 Latest Aom composition: [shared Graphics2D v12 development inputs](AOM_GRAPHICS_V12_HANDOFF_TH.md). 20 bugs; 403 selected / 288 exclusions of 691. Current proof v5; v11 preserved. Historical v10 scoped acceptance closed; final semantic/host/provider/team gate decision pending, pilot closed.

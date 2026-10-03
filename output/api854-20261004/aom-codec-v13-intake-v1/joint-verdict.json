@@ -1,0 +1,145 @@
+{
+  "base_aom_commit": "a4880fb2fde574e77705841f62f302273be7dcd9",
+  "base_condition": "api854-20261003-joint-recipes-v10-development",
+  "candidate_policy_id": "beam-codec-stringbuffer-metaphone-encoder-candidate-v1-development",
+  "candidates": [
+    {
+      "target": {
+        "class": "org.apache.commons.codec.language.Metaphone",
+        "constructor_types": "",
+        "method": "isNextChar",
+        "parameter_types": "java.lang.StringBuffer,int,char"
+      },
+      "descriptor": "(Ljava/lang/StringBuffer;IC)Z",
+      "declaring_class": "org.apache.commons.codec.language.Metaphone",
+      "beam_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "shared_integration_approved": false,
+      "candidate_cases": 8,
+      "proposed_preconditions": "Fresh non-null declared uppercase ASCII StringBuffer; indices-1..length, char A/B/C, default Metaphone().",
+      "proposed_oracle": "Predeclared adjacent-next Boolean, false boundary results, unchanged full buffer contents/length/capacity and maxCodeLen4.",
+      "agreed_preconditions": "Fresh non-null declared uppercase ASCII StringBuffer; indices-1..length, char A/B/C, default Metaphone().",
+      "agreed_oracle": "Predeclared adjacent-next Boolean, false boundary results, unchanged full buffer contents/length/capacity and maxCodeLen4.",
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.codec.language.Metaphone",
+        "constructor_types": "",
+        "method": "isPreviousChar",
+        "parameter_types": "java.lang.StringBuffer,int,char"
+      },
+      "descriptor": "(Ljava/lang/StringBuffer;IC)Z",
+      "declaring_class": "org.apache.commons.codec.language.Metaphone",
+      "beam_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "shared_integration_approved": false,
+      "candidate_cases": 8,
+      "proposed_preconditions": "Fresh non-null declared uppercase ASCII StringBuffer; indices-1..length, char A/B/C, default Metaphone().",
+      "proposed_oracle": "Predeclared adjacent-previous Boolean, false boundary results, unchanged full buffer contents/length/capacity and maxCodeLen4.",
+      "agreed_preconditions": "Fresh non-null declared uppercase ASCII StringBuffer; indices-1..length, char A/B/C, default Metaphone().",
+      "agreed_oracle": "Predeclared adjacent-previous Boolean, false boundary results, unchanged full buffer contents/length/capacity and maxCodeLen4.",
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.codec.language.Metaphone",
+        "constructor_types": "",
+        "method": "isVowel",
+        "parameter_types": "java.lang.StringBuffer,int"
+      },
+      "descriptor": "(Ljava/lang/StringBuffer;I)Z",
+      "declaring_class": "org.apache.commons.codec.language.Metaphone",
+      "beam_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "shared_integration_approved": false,
+      "candidate_cases": 9,
+      "proposed_preconditions": "Fresh non-null AEIOUB buffer with indices0..5; separate empty/negative/at-length exception cases.",
+      "proposed_oracle": "True for A/E/I/O/U, false for B; exact StringIndexOutOfBoundsException class at invalid index, unchanged buffer/maxCodeLen state.",
+      "agreed_preconditions": "Fresh non-null AEIOUB buffer with indices0..5; separate empty/negative/at-length exception cases.",
+      "agreed_oracle": "True for A/E/I/O/U, false for B; exact StringIndexOutOfBoundsException class at invalid index, unchanged buffer/maxCodeLen state.",
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.codec.language.Metaphone",
+        "constructor_types": "",
+        "method": "regionMatch",
+        "parameter_types": "java.lang.StringBuffer,int,java.lang.String"
+      },
+      "descriptor": "(Ljava/lang/StringBuffer;ILjava/lang/String;)Z",
+      "declaring_class": "org.apache.commons.codec.language.Metaphone",
+      "beam_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "shared_integration_approved": false,
+      "candidate_cases": 9,
+      "proposed_preconditions": "Fresh non-null ABCA/empty StringBuffer, bounded indices-1..5, non-null declared AB/BC/A/BA/empty needle.",
+      "proposed_oracle": "Exact bounded region Boolean including empty needle at end/empty buffer and false beyond-end/too-long/negative cases; unchanged buffer/maxCodeLen state.",
+      "agreed_preconditions": "Fresh non-null ABCA/empty StringBuffer, bounded indices-1..5, non-null declared AB/BC/A/BA/empty needle.",
+      "agreed_oracle": "Exact bounded region Boolean including empty needle at end/empty buffer and false beyond-end/too-long/negative cases; unchanged buffer/maxCodeLen state.",
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.codec.language.SoundexUtils",
+        "constructor_types": "",
+        "method": "difference",
+        "parameter_types": "org.apache.commons.codec.StringEncoder,java.lang.String,java.lang.String"
+      },
+      "descriptor": "(Lorg/apache/commons/codec/StringEncoder;Ljava/lang/String;Ljava/lang/String;)I",
+      "declaring_class": "org.apache.commons.codec.language.SoundexUtils",
+      "beam_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "shared_integration_approved": false,
+      "candidate_cases": 9,
+      "proposed_preconditions": "Reflective production SoundexUtils() identity for static method; real fresh default Metaphone StringEncoder/maxCodeLen4. Strings only null/empty/A/a/E/B/AB.",
+      "proposed_oracle": "Exact integer positional similarity from sealed literal encoded references before invocation; actual real encoder encodings match references and maxCodeLen stays4. No null encoder/arbitrary encoder/EncoderException propagation approval.",
+      "agreed_preconditions": "Reflective production SoundexUtils() identity for static method; real fresh default Metaphone StringEncoder/maxCodeLen4. Strings only null/empty/A/a/E/B/AB.",
+      "agreed_oracle": "Exact integer positional similarity from sealed literal encoded references before invocation; actual real encoder encodings match references and maxCodeLen stays4. No null encoder/arbitrary encoder/EncoderException propagation approval.",
+      "accepted_into_shared_inputs": false
+    }
+  ],
+  "evidence": [
+    {
+      "path": "output/api854-20261004/beam-codec-candidate-v1/receipt.json",
+      "sha256": "78fa7bf2d7d2481cd9643feed678bc1a53ff9775efdbf41442f44505494ba259"
+    },
+    {
+      "path": "output/api854-20261004/beam-codec-candidate-v1/policy.json",
+      "sha256": "95a2e7649cc00dfdf1f52e668ac43f38e17b6ec55f77323e88d055ce53cbd221"
+    },
+    {
+      "path": "output/api854-20261004/beam-codec-candidate-v1/native-v1/receipt.json",
+      "sha256": "4b5af57228be654770fee3c5394695bdeb084e95fc0a4d745e668872a0ab6945"
+    },
+    {
+      "path": "output/api854-20261004/beam-codec-candidate-v1/native-v1/checksums.json",
+      "sha256": "441cf1d9edc7d91dda255dbeaacff8acd67899c129178cea776cea783a35d0d1"
+    }
+  ],
+  "joint_acceptance_complete": true,
+  "shared_integration_approved": false,
+  "actual_selected": 390,
+  "actual_exclusions": 301,
+  "possible_codec_only_next_condition": {
+    "selected": 395,
+    "exclusions": 296,
+    "implemented": false
+  },
+  "prospective_integration_requirements": [
+    "Provide real fresh StringBuffer arguments and a real Metaphone StringEncoder; preserve exact default receiver/signatures.",
+    "Bind legal-domain mapping and meaningful scalar/exception/buffer/encoder-state oracles in shared helper.",
+    "Review impact on existing13 selected Codec targets, including setter/getter state; preserve accepted setter/JDOM/Math/Buffer/Lang recipes.",
+    "Give identical source/context/fixtures/oracle knowledge to all four approaches; seal new condition/preparation/protocol/runner/runtime/prompts.",
+    "Rerun shared integration/fixed twice/buggy/exact entry and consumer/host checks, then remeasure provider reserve for the chosen condition.",
+    "No automatic union with Graphics/Chronology or historical coverage/fault relabeling."
+  ],
+  "full_legal_domain_approval": false,
+  "candidate_fault_detected": false,
+  "gate_a_approved": false,
+  "primary_added": 0,
+  "kku_requests": 0,
+  "review_status": "beam_champ_bounded_codec_joint_accepted_shared_integration_pending",
+  "beam_commit": "a44f796f6b72281b0bd39d3f26bfc80519e00710",
+  "prospective_shared_implementation_and_testing_can_proceed": true
+}

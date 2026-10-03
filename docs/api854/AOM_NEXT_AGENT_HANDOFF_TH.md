@@ -1,3 +1,19 @@
+# Current checkpoint: Codec5 shared v13 completed locally
+
+อ่าน [AOM_CODEC_V13_HANDOFF_TH.md](AOM_CODEC_V13_HANDOFF_TH.md) และ
+[ข้อความส่งทีม](AOM_TO_TEAM_MESSAGE_TH.md) ก่อน. Branch aom.
+20bugs/408selected/283exclusions/691. Codec5 integrationเสร็จแล้ว ไม่เริ่มซ้ำจากv12.
+ใช้ prepare/protocol/readiness suffixv2 และ integration/preserved-runtime suffixv3.
+Final paths/hashes/testsจาก completion receipt/final checksums; Gate A/liveยังปิด,reserve null.
+งานต่อคือรับ/ตรวจ final-condition receiptsจากBeam/Champ, owner-hostและprovider/reserve,
+และคำตัดสินprimary691หรือแยกboundeddevelopmentpilotร่วมทีม. อย่าโอนv12approvalหรือแก้flagsเปิดlive.
+Superseded attempts retained; ไม่rerunproducerใส่outputเดิมหรือแก้หลักฐานย้อนหลัง.
+โฟลเดอร์บนเครื่องเก่าในบันทึกด้านล่างเป็นประวัติ ให้ใช้checkoutจริงจาก environment/status.
+
+---
+
+## Historical pre-Codec handoff (retained for provenance)
+
 # Handoff สำหรับผู้ทำ branch aom ต่อ — 4 ตุลาคม 2026
 
 ## อ่านก่อนเริ่ม
