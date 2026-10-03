@@ -1,4 +1,40 @@
-# ข้อความล่าสุดจากออม — Csv Messages ครบสี่วิธีใน Defects4J
+# ข้อความล่าสุดจากออม — Cli oracle ใหม่และสอง algorithms ครบ Defects4J
+
+## ส่งให้แชมป์
+
+ออมทำ Cli unordered-options condition ใหม่ต่อจาก Champ d98fccee แล้วครับ ใช้ frozen v12
+แยก runtime รักษา helper/ผลเดิมครบ. Oracle controls15 ผ่าน, reference32 cases/64 fixed observations
+ครบ16 signatures; old-policy behaviour เท่าเดิม32 cases. CMA/FSCS fresh suites30/30
+ผ่าน fixedสองรอบ/buggy/coverage และ counters30/0/30ทุกstage ไม่พบfault.
+Coverage43/45 lines14/16 branches และ42/45 lines12/16 branches ตามลำดับ.
+อ่าน docs/api854/AOM_CLI_UNORDERED_RESULTS_TH.md และ preparation v2 ใต้ output/api854-20261004.
+ขอรับตรวจ prompt/recipe/worksheetสองคู่ แล้วเก็บ Sonnet5+Gemini3.5FlashLite ผ่านKKU
+สำหรับ conditionใหม่ โดยรักษา raw outcomes/invalids ไม่ใช้ resultsเก่ามาเติมครับ.
+PromptSHA7dbe11213e2c3608ee5f9ade657691438e52c1541575c293ee98cc1dbc587439,
+170764 UTF8bytes ไม่ใช่tokens; helperSHAd40b49631d9d5318027a1249c7cfeaa16fc208c203c53bfd19fd3bf8cd7372db.
+ใช้ scoped development producer ที่ bind contract ใหม่และ provider receiptsจริง;
+genericliveworkerยังไม่รองรับ อย่าflip flagsเพื่อข้ามguard. Reserveยังnull, GateAfalse/primary0.
+ActualCli-1b sourceต่างnativeสองไฟล์ จึงแยก D4Jconditionไว้. รอบแรกขาดHamcrestก่อนเริ่มmethods
+เก็บfailureแล้ว replay archivesเดิมในv2 พร้อม framework dependencyrepairและrestoreexactly.
+AIชุดใหม่กลับมาให้ออมรันfullD4Jต่อครับ; รอบออมไม่มีKKU/queue mutation.
+
+## ส่งให้บีม
+
+ขอรับตรวจ Cli prospective oracle ที่ docs/api854/AOM_CLI_UNORDERED_RESULTS_TH.md ครับ
+prepared packet/runtime ใช้ aom-cli-unordered-preparation-v2; controls/reference/generation และ
+failed environment attemptอยู่ aom-cli-unordered-d4j-v1; completedreplayอยู่ aom-cli-unordered-d4j-v2.
+สองalgorithms30testsผ่านทุกstageพร้อม counters30/0/30, faultfalse; AI conditionใหม่ยังpending.
+ขอ scoped verdict ของ unordered options แต่ ordered values/args, 16 signatures, source/prompt/
+protocol hashes และ aom-pc1CPU1 bindings ตามreceipts. ผลFSCSเดิมยังquarantine ไม่แก้assertionsย้อนหลัง.
+CliJUnitframeworkบนเครื่องนี้ขาดHamcrest; v2ใช้bundledjarและrestoreไฟล์เดิมแล้ว
+(before/restored SHA a04de90cfb72816d929923b831b588e83d3dccfc959c373b61cd4c71f94c1a66).
+หากต้องreplayให้ประกาศenvironmentconditionและเก็บfailures ไม่ลบguardหรือแก้productionเงียบๆ.
+รายงานล่าสุด aom-ready-results-report-v3 แยกเก่า/ใหม่และpendingครบ. เดินreadybugsของบีมต่อได้;
+ไม่ต้องกลับไปcandidatecomposition และไม่จำเป็นrerunCsvที่ตรวจreceiptผ่านแล้วครับ.
+
+---
+
+# Historical message — Csv Messages ครบสี่วิธีใน Defects4J
 
 ## ส่งให้แชมป์
 

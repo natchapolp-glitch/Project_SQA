@@ -1,0 +1,90 @@
+--- v12/SqaProbe.java
++++ cli-unordered/SqaProbe.java
+@@ -55,6 +55,7 @@
+     // Diagnostic scope only, serialized by observeChronology. Empty during all
+     // receiver setup/projection calls, so JDI cannot count setup as target entry.
+     public static String chronologyActiveCase = "";
++    public static final String CLI_UNORDERED_FIXTURES = "aom-cli-unordered-options-v1-development";
+     private static final ThreadLocal<FixtureSession> FIXTURES = new ThreadLocal<FixtureSession>();
+     private static final ThreadLocal<Boolean> INVOKED = new ThreadLocal<Boolean>();
+ 
+@@ -94,6 +95,7 @@
+         final boolean fractionField;
+         final boolean langHelpers;
+         final boolean reviewed;
++        final boolean cliUnordered;
+         Object validationInput;
+         boolean constructing;
+         Object compiler, registry, scope, cfg, reverse, flow, closureNode, receiver;
+@@ -196,7 +198,8 @@
+         FixtureSession(String targetClass, String method, String policy) {
+             this.targetClass = targetClass;
+             this.method = method;
+-            this.reviewed = JOINT_FIXTURES.equals(policy) || CHRONOLOGY_FIXTURES.equals(policy) || GRAPHICS_FIXTURES.equals(policy);
++            this.cliUnordered = CLI_UNORDERED_FIXTURES.equals(policy);
++            this.reviewed = cliUnordered || JOINT_FIXTURES.equals(policy) || CHRONOLOGY_FIXTURES.equals(policy) || GRAPHICS_FIXTURES.equals(policy);
+             this.langHelpers = LANG_HELPER_FIXTURES.equals(policy) || reviewed;
+             this.bufferSlices = BUFFER_FIXTURES.equals(policy) || langHelpers;
+             this.fractionField = FRACTION_FIELD_FIXTURES.equals(policy) || langHelpers;
+@@ -647,6 +650,22 @@
+             throw new NoSuchFieldException(name);
+         }
+ 
++
++        // Option membership has no ordering contract. Values inside each option do.
++        String unorderedOptions(java.util.List<Object> options, int depth) throws ReflectiveOperationException {
++            if (options.size() > 256) throw new FixtureFailure("Oracle options limit exceeded", null);
++            java.util.List<String> items = new java.util.ArrayList<String>();
++            for (Object option : options) {
++                if (option == null || !option.getClass().getName().equals("org.apache.commons.cli.Option"))
++                    throw new FixtureFailure("Unexpected non-Option in unordered option collection", null);
++                items.add(projection(option, depth + 1));
++            }
++            java.util.Collections.sort(items);
++            StringBuilder out = new StringBuilder("options-multiset[");
++            for (String item : items) out.append(item).append(';');
++            return out.append(']').toString();
++        }
++
+         String projection(Object result, int depth) throws ReflectiveOperationException {
+             if (depth > 8) throw new FixtureFailure("Oracle projection depth exceeded", null);
+             if (result == null) return "null";
+@@ -683,6 +702,25 @@
+                 return "invocation:" + projection(call(result, "getMethod", new Class<?>[]{}), depth + 1)
+                     + ':' + projection(call(result, "getArguments", new Class<?>[]{}), depth + 1)
+                     + ":verified=" + call(result, "isVerified", new Class<?>[]{});
++            if (cliUnordered && targetClass.equals("org.apache.commons.cli.CommandLine")
++                    && result.getClass().isArray()
++                    && result.getClass().getComponentType().getName().equals("org.apache.commons.cli.Option")) {
++                int length = Array.getLength(result);
++                if (length > 256) throw new FixtureFailure("Oracle options limit exceeded", null);
++                java.util.List<Object> options = new java.util.ArrayList<Object>();
++                for (int i = 0; i < length; i++) options.add(Array.get(result, i));
++                return unorderedOptions(options, depth);
++            }
++            if (cliUnordered && targetClass.equals("org.apache.commons.cli.CommandLine")
++                    && method.equals("iterator") && result instanceof java.util.Iterator) {
++                java.util.List<Object> options = new java.util.ArrayList<Object>();
++                java.util.Iterator<?> iterator = (java.util.Iterator<?>)result;
++                while (iterator.hasNext()) {
++                    if (options.size() >= 256) throw new FixtureFailure("Oracle options limit exceeded", null);
++                    options.add(iterator.next());
++                }
++                return unorderedOptions(options, depth);
++            }
+             if (pilot && result.getClass().isArray()) {
+                 int length = Array.getLength(result);
+                 if (length > 100000) throw new FixtureFailure("Oracle array limit exceeded", null);
+@@ -1109,8 +1147,11 @@
+         if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy)
+                 && !PILOT_FIXTURES.equals(policy) && !BUFFER_FIXTURES.equals(policy)
+                 && !FRACTION_FIELD_FIXTURES.equals(policy) && !LANG_HELPER_FIXTURES.equals(policy) && !JOINT_FIXTURES.equals(policy)
+-                && !CHRONOLOGY_FIXTURES.equals(policy) && !GRAPHICS_FIXTURES.equals(policy))
++                && !CHRONOLOGY_FIXTURES.equals(policy) && !GRAPHICS_FIXTURES.equals(policy)
++                && !CLI_UNORDERED_FIXTURES.equals(policy))
+             throw new IllegalArgumentException("Unknown explicit fixture policy");
++        if (CLI_UNORDERED_FIXTURES.equals(policy) && !className.equals("org.apache.commons.cli.CommandLine"))
++            throw new IllegalArgumentException("Cli-only unordered option condition");
+         FIXTURES.set(new FixtureSession(className, methodName, policy));
+         try {
+             if (GRAPHICS_FIXTURES.equals(policy) && graphicsIdentity(className, constructorTypes, methodName, methodTypes))

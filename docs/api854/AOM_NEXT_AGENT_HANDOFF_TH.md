@@ -1,4 +1,34 @@
-# Current task: ready results first, frozen v12 evaluation baseline
+# Current checkpoint: scoped Cli oracle and full Defects4J algorithms completed
+
+อ่าน [AOM_CLI_UNORDERED_RESULTS_TH.md](AOM_CLI_UNORDERED_RESULTS_TH.md) และ
+[ข้อความส่งทีม](AOM_TO_TEAM_MESSAGE_TH.md) ก่อน. Branch aom, checkoutจริงดูenvironment.
+แผนผู้ใช้จากChamp d98fccee: ready bugs/ผลจริง4วิธี, พักcandidates, ใช้frozenv12และทำreportควบคู่.
+ออมทำ Cli-only prospective oracle ในruntimeแยกแล้ว; rootv12/v13/helper/rawsealedoutputsไม่เปลี่ยน.
+Preparation authoritativeคือ aom-cli-unordered-preparation-v2; v1rejectedก่อนexecutionเก็บครบ.
+Controls15 + reference32cases/64fixedobservationsครบ16targetsผ่าน; oldpolicyเท่าv12ทุก32cases.
+CMA/FSCS30testsจากfixedใหม่ ผ่านfullD4Jใน aom-cli-unordered-d4j-v2, counters30/0/30ทุกstage,
+faultfalse, classcoverage43/45lines14/16branches และ42/45lines12/16branches.
+Generation/archivesอยู่ d4j-v1; failureattemptHamcrestก่อนเริ่มmethodsอยู่v1เหมือนเดิม.
+v2replayarchivesเดิมพร้อมframeworkJUnitjarrepairชั่วคราวและrestoreexactbytesภายใต้CPU1lock.
+Actualbenchmarkbuggyต่างnativeCommandLine/Option; ห้ามstripguardsหรือแก้productionให้ตรง.
+OldFSCSoptionorderrawfaultยังquarantine; diagnosticเวกเตอร์เดิมไม่ใช่scientifictrialหรือAIfeedback.
+
+งานถัดไป: รับ peer review จากบีม/แชมป์ และส่ง scoped prepared/Cli-1 prompt+worksheetสองคู่
+ให้แชมป์เก็บผลKKUSonnet5/Gemini3.5FlashLiteตามcontractใหม่. AIใหม่ยังpendingทั้งสอง;
+ออมไม่ได้เรียกKKUหรือmutatequeue. Token/framing/reserveยังnull, GateAfalse,primary0.
+Genericworkerไม่รองรับcontractใหม่โดยอัตโนมัติ อย่าflip generation_ready/enabled_stages.
+เมื่อได้unchangedAIarchives/exactpinsให้รันfullD4Jในfreshoutputพร้อมreceiptของconditionใหม่.
+พร้อมกันรับreadybugsอื่นที่ทีมส่งแล้วตรวจhash/conditionก่อนevaluate; ไม่rerunJsoup/Csvซ้ำโดยไม่อ่านpeerreceipt.
+รายงานlatest aom-ready-results-report-v3 มี12D4Jconditionrows/2uniquebugs (8complete,
+2priorinvalid,2environmentfailed) และ Cli latest4methodsที่สองAIpending.
+ตาราง80แถวที่pendingหมายถึงยังไม่รับเข้ารายงานออม ไม่ใช่เพื่อนยังไม่ทำ.
+Report/slides/demoยังต้องเตรียมจากผลที่วัดจริงและข้อจำกัด ไม่อ้างครบ854หรือsemanticทั้ง403.
+ห้ามrerunproducersใส่outputเดิม/แก้sealedfiles; ใช้newcondition/newattemptpathเสมอ.
+ประวัติด้านล่างคงไว้เพื่อprovenanceเท่านั้น.
+
+---
+
+# Historical checkpoint: ready results first, frozen v12 evaluation baseline
 
 อ่าน [AOM_READY_RESULTS_UPDATE_TH.md](AOM_READY_RESULTS_UPDATE_TH.md) เป็นสถานะล่าสุด แล้ว
 [AOM_READY_RESULTS_FIRST_TH.md](AOM_READY_RESULTS_FIRST_TH.md) สำหรับ baseline และ
