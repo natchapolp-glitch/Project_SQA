@@ -9,9 +9,9 @@ from scripts.study.api854.common import ROOT, read_json, sha256
 from scripts.study.api854.gate_a import inspect
 from scripts.study.api854.preparation import encoded
 
-PROTOCOL = 'output/api854-20261003/aom-continuation-v7-development/protocol.proposal.json'
-RUNNER = 'output/api854-20261003/aom-continuation-v7-development/runner-plan.json'
-PREP = 'output/api854-20261003/prepare-v7-twenty-bug-development'
+PROTOCOL = 'output/api854-20261003/aom-continuation-v8-development/protocol.proposal.json'
+RUNNER = 'output/api854-20261003/aom-continuation-v8-development/runner-plan.json'
+PREP = 'output/api854-20261003/prepare-v8-twenty-bug-development'
 DISCOVERY = 'output/api854-20261003/prepare-v3'
 
 
@@ -51,7 +51,7 @@ class SelectedGateTests(unittest.TestCase):
         for name in ('protocol_runner_binding', 'runtime_source_binding', 'shared_policy', 'fixture_recipe_binding'):
             self.assertEqual(checks[name]['status'], 'pass')
         self.assertEqual(checks['fixture_recipe_binding']['validated_recipe_bugs'], 20)
-        self.assertEqual(checks['all_common_declarations']['selected_declarations'], 377)
+        self.assertEqual(checks['all_common_declarations']['selected_declarations'], 378)
         self.assertEqual(checks['prepare_contract']['bugs'], 20)
         self.assertEqual(checks['prepare_contract']['issues'], [])
         self.assertEqual(checks['prepare_contract']['status'], 'pass')
@@ -60,6 +60,14 @@ class SelectedGateTests(unittest.TestCase):
         self.assertFalse(result['generation_authorized'])
         self.assertEqual(result['live_requests'], 0)
         self.assertEqual(result['queue_mutations'], 0)
+
+    def test_retained_v7_does_not_certify_the_new_recipe_runtime(self):
+        result = inspect(ROOT,
+            protocol_path='output/api854-20261003/aom-continuation-v7-development/protocol.proposal.json',
+            runner_path='output/api854-20261003/aom-continuation-v7-development/runner-plan.json')
+        checks = {row['id']:row for row in result['checklist']}
+        self.assertEqual(checks['runtime_source_binding']['status'],'blocked')
+        self.assertFalse(result['gate_a_passed'])
 
     def test_old_runner_with_complete_routes_still_fails_pair_binding(self):
         result, checks = self.run_gate('experiments/configs/api854-20261003/runner-plan.v1.json')
