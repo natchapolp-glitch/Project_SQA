@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "response_id": "genai-01a103b5-edff-737f-bd83-501682f7cfd5",
+    "requested_model_id": "gemini-3.5-flash-lite",
+    "requested_model_name": "gemini-3.5-flash-lite",
+    "actual_model": "gemini-3.5-flash-lite",
+    "actual_provider": "Gemini",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 45999,
+      "completion_tokens": 1002,
+      "total_tokens": 47001
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 47006,
+      "daily_remaining_tokens": 302994
+    }
+  },
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T21:40:12.173342+00:00",
+    "ended_at_utc": "2026-10-03T21:40:16.967707+00:00",
+    "raw_body_sha256": "66840a6bceac4a78d654aacf84e09cae1ff4daed91220a8c7bc0b16e733fad0c",
+    "body": {
+      "id": "genai-01a103b5-edff-737f-bd83-501682f7cfd5",
+      "object": "chat.completion",
+      "created": 1791063617,
+      "model": "gemini-3.5-flash-lite",
+      "provider": "Gemini",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```java\npackage org.apache.commons.compress.archivers.cpio;\n\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\npublic class CpioArchiveOutputStreamTest {\n\n    @Test\n    public void testConstructorAndFinish() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);\n        cpioOut.finish();\n        cpioOut.close();\n        assertTrue(out.size() > 0);\n    }\n\n    @Test\n    public void testConstructorWithFormat() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out, CpioConstants.FORMAT_NEW);\n        cpioOut.finish();\n        cpioOut.close();\n        assertNotNull(out);\n    }\n\n    @Test\n    public void testPutNextEntryAndWrite() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"testfile.txt\");\n        String content = \"hello\";\n        entry.setFileSize(content.length());\n        cpioOut.putNextEntry(entry);\n        cpioOut.write(content.getBytes());\n        cpioOut.closeArchiveEntry();\n        cpioOut.finish();\n        cpioOut.close();\n        assertTrue(out.size() > 0);\n    }\n\n    @Test\n    public void testWriteSingleInt() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"single.txt\");\n        entry.setFileSize(1);\n        cpioOut.putNextEntry(entry);\n        cpioOut.write((int) 'A');\n        cpioOut.closeArchiveEntry();\n        cpioOut.finish();\n        cpioOut.close();\n        assertTrue(out.size() > 0);\n    }\n\n    @Test\n    public void testWriteCString() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"cstring.txt\");\n        entry.setFileSize(0);\n        cpioOut.putNextEntry(entry);\n        cpioOut.closeArchiveEntry();\n        cpioOut.finish();\n        cpioOut.close();\n        assertNotNull(cpioOut);\n    }\n\n    @Test\n    public void testPutArchiveEntry() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"archive-entry.txt\");\n        entry.setFileSize(0);\n        cpioOut.putArchiveEntry(entry);\n        cpioOut.closeArchiveEntry();\n        cpioOut.finish();\n        cpioOut.close();\n        assertTrue(out.size() > 0);\n    }\n\n    @Test\n    public void testEnsureOpen() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);\n        cpioOut.close();\n        boolean thrown = false;\n        try {\n            CpioArchiveEntry entry = new CpioArchiveEntry(\"closed.txt\");\n            cpioOut.putNextEntry(entry);\n        } catch (IOException e) {\n            thrown = true;\n        }\n        assertTrue(thrown);\n    }\n\n    @Test(expected = IOException.class)\n    public void testInvalidEntrySizeThrowsException() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"mismatch.txt\");\n        entry.setFileSize(10);\n        cpioOut.putNextEntry(entry);\n        cpioOut.write(\"short\".getBytes());\n        cpioOut.closeArchiveEntry();\n    }\n}\n```",
+            "reasoning": ""
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45999,
+        "completion_tokens": 1002,
+        "total_tokens": 47001
+      },
+      "model_quota": {
+        "daily_quota_tokens": 350000,
+        "daily_usage_tokens": 47006,
+        "daily_remaining_tokens": 302994
+      }
+    },
+    "headers": {
+      "x-request-id": "cx9l3okvqmkhe0jbxwwik66q",
+      "date": "Sat, 03 Oct 2026 21:40:17 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  },
+  "outcome": "response_received"
+}

@@ -1,0 +1,234 @@
+Looking at the fixed `TypeInfoFactory` source, I can derive deterministic behavior through reflection (since all methods are private/package-private and the class is final with a private constructor). I'll use reflection to invoke the methods directly with meaningful generic-type fixtures, mirroring the fixture recipe's use of `GenericFixture<T>` subclasses.
+
+```java
+package com.google.gson;
+
+import org.junit.Test;
+import org.junit.Before;
+import static org.junit.Assert.*;
+
+import java.lang.reflect.*;
+import java.util.List;
+
+public class TypeInfoFactoryTest {
+
+    // Generic fixture types mirroring the fixture recipe's GenericFixture<T>
+    public static class GenericFixture<T> {
+        public T value;
+        public T[] array;
+        public List<T> items;
+    }
+    public static class StringBinding extends GenericFixture<String> { }
+    public static class IntegerBinding extends GenericFixture<Integer> { }
+
+    private Method getActualType;
+    private Method extractRealTypes;
+    private Method getIndex;
+    private Method getTypeInfoForArray;
+    private Method getTypeInfoForField;
+
+    @Before
+    public void setUp() throws Exception {
+        Class<?> clazz = Class.forName("com.google.gson.TypeInfoFactory");
+
+        getActualType = clazz.getDeclaredMethod("getActualType", Type.class, Type.class, Class.class);
+        getActualType.setAccessible(true);
+
+        extractRealTypes = clazz.getDeclaredMethod("extractRealTypes", Type[].class, Type.class, Class.class);
+        extractRealTypes.setAccessible(true);
+
+        getIndex = clazz.getDeclaredMethod("getIndex", TypeVariable[].class, TypeVariable.class);
+        getIndex.setAccessible(true);
+
+        getTypeInfoForArray = clazz.getDeclaredMethod("getTypeInfoForArray", Type.class);
+        getTypeInfoForArray.setAccessible(true);
+
+        getTypeInfoForField = clazz.getDeclaredMethod("getTypeInfoForField", Field.class, Type.class);
+        getTypeInfoForField.setAccessible(true);
+    }
+
+    // ---- getTypeInfoForArray ----
+
+    @Test
+    public void getTypeInfoForArray_stringArray_returnsTypeInfoArrayWithSameType() throws Exception {
+        Object typeInfoArray = getTypeInfoForArray.invoke(null, String[].class);
+        assertNotNull(typeInfoArray);
+        assertTrue(typeInfoArray instanceof TypeInfoArray);
+
+        Method getActualTypeMethod = TypeInfo.class.getMethod("getActualType");
+        Object actualType = getActualTypeMethod.invoke(typeInfoArray);
+        assertEquals(String[].class, actualType);
+    }
+
+    @Test
+    public void getTypeInfoForArray_integerArray_returnsTypeInfoArrayWithSameType() throws Exception {
+        Object typeInfoArray = getTypeInfoForArray.invoke(null, Integer[].class);
+        assertNotNull(typeInfoArray);
+
+        Method getActualTypeMethod = TypeInfo.class.getMethod("getActualType");
+        Object actualType = getActualTypeMethod.invoke(typeInfoArray);
+        assertEquals(Integer[].class, actualType);
+    }
+
+    @Test(expected = InvocationTargetException.class)
+    public void getTypeInfoForArray_nonArrayType_throwsIllegalArgument() throws Exception {
+        // String.class is not an array type; Preconditions.checkArgument should fail
+        getTypeInfoForArray.invoke(null, String.class);
+    }
+
+    // ---- getIndex ----
+
+    @Test
+    public void getIndex_findsMatchingTypeVariable_atIndexZero() throws Exception {
+        TypeVariable<?>[] typeVariables = GenericFixture.class.getTypeParameters();
+        assertEquals(1, typeVariables.length);
+        int index = (Integer) getIndex.invoke(null, typeVariables, typeVariables[0]);
+        assertEquals(0, index);
+    }
+
+    @Test(expected = InvocationTargetException.class)
+    public void getIndex_missingTypeVariable_throwsIllegalState() throws Exception {
+        TypeVariable<?>[] typeVariables = GenericFixture.class.getTypeParameters();
+        // Use a type variable from a different, unrelated generic declaration
+        TypeVariable<?>[] otherVariables = java.util.Map.class.getTypeParameters();
+        getIndex.invoke(null, typeVariables, otherVariables[0]);
+    }
+
+    // ---- extractRealTypes ----
+
+    @Test
+    public void extractRealTypes_classTypeArgument_returnsSameClass() throws Exception {
+        Type[] input = new Type[] { String.class };
+        Type parentType = StringBinding.class.getGenericSuperclass();
+        Object result = extractRealTypes.invoke(null, input, parentType, GenericFixture.class);
+        Type[] resultTypes = (Type[]) result;
+        assertEquals(1, resultTypes.length);
+        assertEquals(String.class, resultTypes[0]);
+    }
+
+    @Test
+    public void extractRealTypes_typeVariableArgument_resolvesToActualType() throws Exception {
+        Field valueField = GenericFixture.class.getField("value");
+        Type fieldType = valueField.getGenericType(); // this is T, a TypeVariable
+        Type[] input = new Type[] { fieldType };
+        Type parentType = StringBinding.class.getGenericSuperclass(); // GenericFixture<String>
+
+        Object result = extractRealTypes.invoke(null, input, parentType, GenericFixture.class);
+        Type[] resultTypes = (Type[]) result;
+        assertEquals(1, resultTypes.length);
+        assertEquals(String.class, resultTypes[0]);
+    }
+
+    @Test
+    public void extractRealTypes_typeVariableArgument_resolvesToIntegerForIntegerBinding() throws Exception {
+        Field valueField = GenericFixture.class.getField("value");
+        Type fieldType = valueField.getGenericType();
+        Type[] input = new Type[] { fieldType };
+        Type parentType = IntegerBinding.class.getGenericSuperclass(); // GenericFixture<Integer>
+
+        Object result = extractRealTypes.invoke(null, input, parentType, GenericFixture.class);
+        Type[] resultTypes = (Type[]) result;
+        assertEquals(1, resultTypes.length);
+        assertEquals(Integer.class, resultTypes[0]);
+    }
+
+    @Test
+    public void extractRealTypes_multipleTypeArguments_resolvesAll() throws Exception {
+        Type[] input = new Type[] { String.class, Integer.class };
+        Type parentType = StringBinding.class.getGenericSuperclass();
+        Object result = extractRealTypes.invoke(null, input, parentType, GenericFixture.class);
+        Type[] resultTypes = (Type[]) result;
+        assertEquals(2, resultTypes.length);
+        assertEquals(String.class, resultTypes[0]);
+        assertEquals(Integer.class, resultTypes[1]);
+    }
+
+    // ---- getActualType ----
+
+    @Test
+    public void getActualType_classType_returnsSameClass() throws Exception {
+        Type result = (Type) getActualType.invoke(null, String.class, StringBinding.class.getGenericSuperclass(), GenericFixture.class);
+        assertEquals(String.class, result);
+    }
+
+    @Test
+    public void getActualType_typeVariable_resolvesViaParameterizedParent_toString() throws Exception {
+        Field valueField = GenericFixture.class.getField("value");
+        Type fieldType = valueField.getGenericType();
+        Type parentType = StringBinding.class.getGenericSuperclass();
+
+        Type result = (Type) getActualType.invoke(null, fieldType, parentType, GenericFixture.class);
+        assertEquals(String.class, result);
+    }
+
+    @Test
+    public void getActualType_typeVariable_resolvesViaParameterizedParent_toInteger() throws Exception {
+        Field valueField = GenericFixture.class.getField("value");
+        Type fieldType = valueField.getGenericType();
+        Type parentType = IntegerBinding.class.getGenericSuperclass();
+
+        Type result = (Type) getActualType.invoke(null, fieldType, parentType, GenericFixture.class);
+        assertEquals(Integer.class, result);
+    }
+
+    @Test
+    public void getActualType_parameterizedType_resolvesListOfString() throws Exception {
+        Field itemsField = GenericFixture.class.getField("items");
+        Type fieldType = itemsField.getGenericType(); // List<T>
+        Type parentType = StringBinding.class.getGenericSuperclass();
+
+        Type result = (Type) getActualType.invoke(null, fieldType, parentType, GenericFixture.class);
+        assertTrue(result instanceof ParameterizedType);
+        ParameterizedType parameterized = (ParameterizedType) result;
+        assertEquals(List.class, parameterized.getRawType());
+        assertEquals(String.class, parameterized.getActualTypeArguments()[0]);
+    }
+
+    @Test
+    public void getActualType_parameterizedType_resolvesListOfInteger() throws Exception {
+        Field itemsField = GenericFixture.class.getField("items");
+        Type fieldType = itemsField.getGenericType();
+        Type parentType = IntegerBinding.class.getGenericSuperclass();
+
+        Type result = (Type) getActualType.invoke(null, fieldType, parentType, GenericFixture.class);
+        assertTrue(result instanceof ParameterizedType);
+        ParameterizedType parameterized = (ParameterizedType) result;
+        assertEquals(List.class, parameterized.getRawType());
+        assertEquals(Integer.class, parameterized.getActualTypeArguments()[0]);
+    }
+
+    @Test
+    public void getActualType_genericArrayType_resolvesToClassArray() throws Exception {
+        Field arrayField = GenericFixture.class.getField("array");
+        Type fieldType = arrayField.getGenericType(); // T[]
+        Type parentType = StringBinding.class.getGenericSuperclass();
+
+        Type result = (Type) getActualType.invoke(null, fieldType, parentType, GenericFixture.class);
+        assertEquals(String[].class, result);
+    }
+
+    @Test
+    public void getActualType_genericArrayType_resolvesToIntegerArray() throws Exception {
+        Field arrayField = GenericFixture.class.getField("array");
+        Type fieldType = arrayField.getGenericType();
+        Type parentType = IntegerBinding.class.getGenericSuperclass();
+
+        Type result = (Type) getActualType.invoke(null, fieldType, parentType, GenericFixture.class);
+        assertEquals(Integer[].class, result);
+    }
+
+    @Test(expected = InvocationTargetException.class)
+    public void getActualType_unresolvedTypeVariable_rawParentType_throwsUnsupportedOperation() throws Exception {
+        Field valueField = GenericFixture.class.getField("value");
+        Type fieldType = valueField.getGenericType(); // TypeVariable T
+        // Passing the raw class (not parameterized) as parentType causes the
+        // TypeVariable branch to fail to resolve via ParameterizedType, and
+        // extractTypeForHierarchy also fails to find a match, leading to
+        // UnsupportedOperationException.
+        getActualType.invoke(null, fieldType, GenericFixture.class, GenericFixture.class);
+    }
+
+    // ---- getTypeInfoForField ----
+
+    @Test
+    public void getTypeInfoForField_val

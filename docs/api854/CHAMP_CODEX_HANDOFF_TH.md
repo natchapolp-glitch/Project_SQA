@@ -1,5 +1,26 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
+ล่าสุดรับ Beam `2c0e92fc`: อ่าน [Beam results และ Compress return](CHAMP_BEAM_RESULTS_AND_COMPRESS_RETURN_TH.md)
+และ `champ-ready-progress-audit-v1` / `champ-ready-results-return-index-v4.json` ก่อนประวัติ.
+ReviewBeam-v5ผ่าน1387manifestentries/24JUnitXML/officialpatchderivation/frameworkrestore:
+Csv4validfullD4J,Jsoup2algorithms; AIJsoupinvalidเดิม. Nativeparentต่างisolatedbug;
+CsvGNUpatchเปลี่ยนCRLFเป็นLFจึงใช้GNU exactbytes,ไม่ปลดguardหรือเปลี่ยนproductionsource.
+เก็บreview-v1..v4reader/schema/tool-EOL/error-label failuresครบ.
+ขยายGson5targets/a04และCompress8targets/a05; nativeรวม5bugs/24outcomesรวมinvalid.
+GsonCMAfixedfail11/FSCS8จากParameterizedTypeImplidentityoracle,Sonnettruncated,
+Gemini6testscompilefail(SqaProbepackage);กักทั้ง4outcomes รอAomprospectiveTypeoracle/newcondition.
+CompressCMA/FSCS30fixed2/coverageผ่าน98/165lines,branch35.59%,buggyfail1/5สัมพันธ์closeไม่มีfinish;
+ส่ง2validarchivesให้BeamfullD4Jต่อ. Sonnettruncated/Gemini8testscompilefail(setFileSizeAPIที่ไม่มี).
+เก็บcoverage-v1missingCpioConstants;v2originalfixedclassesfallbackหลังinstrumented,sourceCMAเดิม.
+Newnativebuggyderivefixed+officialpatchก่อนAPI; A05ตรวจ8zerovectorsfreshJVM2รอบก่อนcalls.
+WrapperรองรับnewisolatedGson/Compressและ `--counted` ใช้receivedBeamobserverSHA b74ec139...
+ภายใต้CPUlock/restorefinally;AST/Windowsguard/forcedexceptionrestorationผ่าน แต่ยังไม่executeLinux.
+Audit479entries/checkpoint100pins;callsรวม23 (gen12/calibration11),primary0/GateAfalse.
+CsvMessagesยังเป็นconditionเดียวที่4validnative/fullD4Jmethods. Aom4334c2abCsvอีกhostรับรู้ยังไม่auditรวม.
+ข้อความพร้อมส่งBeam/Aomและคำสั่งCompressอยู่ในเอกสารใหม่;ส่งcommit/path/hashตามreturnindexv4.
+
+บันทึก milestone ก่อนรับ Beam/ขยาย Gson-Compress:
+
 ล่าสุดอ่าน [Jsoup ready results](CHAMP_JSOUP_READY_RESULTS_TH.md) และ
 `champ-ready-results-audit-v2` / `champ-ready-results-return-index-v3.json` ก่อนบันทึกเก่า.
 ขยาย nativeผลจริงเป็น3unique bugs/16outcomes: Jsoup CMA/FSCS30tests fixed2/buggy/coverageผ่าน

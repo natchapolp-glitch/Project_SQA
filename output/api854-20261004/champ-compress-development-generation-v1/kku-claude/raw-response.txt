@@ -1,0 +1,262 @@
+```java
+package org.apache.commons.compress.archivers.cpio;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.junit.Test;
+
+/**
+ * Deterministic JUnit 4 tests for CpioArchiveOutputStream (fixed revision 1f).
+ */
+public class CpioArchiveOutputStreamTest {
+
+    private CpioArchiveEntry entry(String name, long size) {
+        CpioArchiveEntry e = new CpioArchiveEntry(name);
+        e.setSize(size);
+        e.setTime(0L);
+        e.setMode(0100644L);
+        return e;
+    }
+
+    @Test
+    public void writeSingleByteSucceedsAfterPutNextEntry() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEntry(entry("fixture.txt", 1));
+        out.write('A');
+        out.closeArchiveEntry();
+        out.close();
+        assertTrue(baos.toByteArray().length > 0);
+    }
+
+    @Test
+    public void writeIntUsesLowOrderByte() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEntry(entry("fixture.txt", 1));
+        out.write(0x141); // low byte 'A'
+        out.closeArchiveEntry();
+        out.close();
+        byte[] bytes = baos.toByteArray();
+        // Header for new format is 6 bytes magic + fields; just check content byte present after header.
+        boolean found = false;
+        for (byte b : bytes) {
+            if (b == 'A') {
+                found = true;
+                break;
+            }
+        }
+        assertTrue(found);
+    }
+
+    @Test
+    public void closeCallsFinishAndWritesTrailer() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        byte[] bytes = baos.toByteArray();
+        String content = new String(bytes);
+        assertTrue(content.contains("TRAILER!!!"));
+    }
+
+    @Test
+    public void finishWritesTrailerWithoutClosingUnderlyingStream() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.finish();
+        byte[] bytes = baos.toByteArray();
+        String content = new String(bytes);
+        assertTrue(content.contains("TRAILER!!!"));
+        // Underlying stream still usable; writing more bytes should not throw.
+        baos.write('X');
+        assertEquals('X', baos.toByteArray()[baos.toByteArray().length - 1]);
+    }
+
+    @Test
+    public void finishCalledTwiceIsIdempotent() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.finish();
+        byte[] firstPass = baos.toByteArray();
+        out.finish();
+        byte[] secondPass = baos.toByteArray();
+        assertArrayEquals(firstPass, secondPass);
+    }
+
+    @Test
+    public void writeAfterCloseThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        try {
+            out.write('A');
+            fail("Expected IOException after stream closed");
+        } catch (IOException expected) {
+            assertEquals("Stream closed", expected.getMessage());
+        }
+    }
+
+    @Test
+    public void putNextEntryAfterCloseThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        try {
+            out.putNextEntry(entry("other.txt", 0));
+            fail("Expected IOException after stream closed");
+        } catch (IOException expected) {
+            assertEquals("Stream closed", expected.getMessage());
+        }
+    }
+
+    @Test
+    public void closeArchiveEntryAfterCloseThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        try {
+            out.closeArchiveEntry();
+            fail("Expected IOException after stream closed");
+        } catch (IOException expected) {
+            assertEquals("Stream closed", expected.getMessage());
+        }
+    }
+
+    @Test
+    public void finishAfterCloseThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        try {
+            out.finish();
+            fail("Expected IOException after stream closed");
+        } catch (IOException expected) {
+            assertEquals("Stream closed", expected.getMessage());
+        }
+    }
+
+    @Test
+    public void closeIsIdempotent() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        byte[] firstClose = baos.toByteArray();
+        out.close(); // should not throw and should not change state further
+        byte[] secondClose = baos.toByteArray();
+        assertArrayEquals(firstClose, secondClose);
+    }
+
+    @Test
+    public void closeArchiveEntryWithIncorrectWrittenSizeThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEntry(entry("fixture.txt", 2));
+        out.write('A'); // only 1 of 2 expected bytes written
+        try {
+            out.closeArchiveEntry();
+            fail("Expected IOException due to size mismatch");
+        } catch (IOException expected) {
+            assertTrue(expected.getMessage().contains("invalid entry size"));
+        }
+    }
+
+    @Test
+    public void putNextEntryWithDuplicateNameThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEntry(entry("dup.txt", 0));
+        out.closeArchiveEntry();
+        try {
+            out.putNextEntry(entry("dup.txt", 0));
+            fail("Expected IOException due to duplicate entry");
+        } catch (IOException expected) {
+            assertTrue(expected.getMessage().contains("duplicate entry"));
+        }
+    }
+
+    @Test
+    public void putNextEntryClosesPreviousOpenEntryAutomatically() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEntry(entry("first.txt", 1));
+        out.write('A');
+        // Not calling closeArchiveEntry() explicitly; putNextEntry should close it.
+        out.putNextEntry(entry("second.txt", 0));
+        out.closeArchiveEntry();
+        out.close();
+        String content = new String(baos.toByteArray());
+        assertTrue(content.contains("first.txt"));
+        assertTrue(content.contains("second.txt"));
+    }
+
+    @Test
+    public void putArchiveEntryDelegatesToPutNextEntry() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        ArchiveEntry archiveEntry = entry("archive.txt", 0);
+        out.putArchiveEntry(archiveEntry);
+        out.closeArchiveEntry();
+        out.close();
+        String content = new String(baos.toByteArray());
+        assertTrue(content.contains("archive.txt"));
+    }
+
+    @Test
+    public void entryNameAppearsInWrittenHeader() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEntry(entry("named-entry.bin", 0));
+        out.closeArchiveEntry();
+        out.close();
+        String content = new String(baos.toByteArray());
+        assertTrue(content.contains("named-entry.bin"));
+    }
+
+    @Test
+    public void newFormatMagicWrittenAtStreamStart() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEntry(entry("magic.txt", 0));
+        out.closeArchiveEntry();
+        out.close();
+        byte[] bytes = baos.toByteArray();
+        String magic = new String(bytes, 0, CpioConstants.MAGIC_NEW.length());
+        assertEquals(CpioConstants.MAGIC_NEW, magic);
+    }
+
+    @Test
+    public void oldAsciiFormatMagicWrittenAtStreamStart() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos, CpioConstants.FORMAT_OLD_ASCII);
+        CpioArchiveEntry e = entry("old.txt", 0);
+        out.putNextEntry(e);
+        out.closeArchiveEntry();
+        out.close();
+        byte[] bytes = baos.toByteArray();
+        String magic = new String(bytes, 0, CpioConstants.MAGIC_OLD_ASCII.length());
+        assertEquals(CpioConstants.MAGIC_OLD_ASCII, magic);
+    }
+
+    @Test
+    public void constructorWithUnknownFormatThrowsIllegalArgumentException() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            new CpioArchiveOutputStream(baos, (short) 9999);
+            fail("Expected IllegalArgumentException for unknown format");
+        } catch (IllegalArgumentException expected) {
+            assertEquals("Unknown header type", expected.getMessage());
+        }
+    }
+
+    @Test
+    public void writingPastEntrySizeThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.putNextEnt

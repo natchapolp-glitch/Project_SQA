@@ -1,5 +1,9 @@
 # แผนใหม่และชุดผลจริงพร้อมส่งออม/บีม
 
+ล่าสุด [รับผล Beam และส่ง Compress](CHAMP_BEAM_RESULTS_AND_COMPRESS_RETURN_TH.md):
+ตรวจรับCsv4/Jsoup2fullD4Jแล้ว; nativeรวม5bugs/24outcomesรวมinvalid.
+Compress2validarchivesพร้อมส่งBeam; Gsonต้องprospectiveTypeoracleก่อนทดลองใหม่.
+
 อัปเดตถัดมา: [Jsoup-1 ready results](CHAMP_JSOUP_READY_RESULTS_TH.md) เก็บครบ4outcomesเพิ่มแล้ว.
 รวม3unique bugs/16outcomes; algorithmsผ่าน/AIทั้งสองไม่ผ่าน fixed และเก็บ invalid ไว้ครบ.
 ตารางรวมล่าสุดคือ `champ-ready-results-audit-v2`; ข้อมูลด้านล่างเป็น milestone ก่อนขยาย Jsoup.
