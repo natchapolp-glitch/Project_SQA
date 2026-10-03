@@ -1,0 +1,2406 @@
+Generate a deterministic JUnit 4 Java suite using only the supplied fixed source, build context, shared target declarations and fixture policy. Return complete Java code fences with explicit package declarations, public test classes and imports. Use at most 30 @Test methods. Use meaningful assertions derived from fixed API behavior; avoid non-null-only or empty tests, randomness, time dependence and external services. Do not modify or shadow production code. No assertion repairs or feedback loop. Suites exceeding 30 methods are rejected entirely.
+
+Project: JxPath; fixed revision: 1f.
+Modified target classes:
+org.apache.commons.jxpath.ri.model.dom.DOMNodePointer
+org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer
+
+Fixture policy: common production types in fixed/buggy; simplest supported constructor selected by the shared probe. Use only the listed shared signatures and common fixture types.
+
+Shared target declarations:
+```json
+[
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "equalStrings",
+    "parameter_types": "java.lang.String,java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "getLocalName",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "getNamespaceURI",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "getPrefix",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "",
+    "method": "testNode",
+    "parameter_types": "org.w3c.dom.Node,org.apache.commons.jxpath.ri.compiler.NodeTest"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "asPath",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "attributeIterator",
+    "parameter_types": "org.apache.commons.jxpath.ri.QName"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "childIterator",
+    "parameter_types": "org.apache.commons.jxpath.ri.compiler.NodeTest,boolean,org.apache.commons.jxpath.ri.model.NodePointer"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "compareChildNodePointers",
+    "parameter_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.apache.commons.jxpath.ri.model.NodePointer"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "equals",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "escape",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getBaseValue",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getDefaultNamespaceURI",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getImmediateNode",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getLanguage",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getLength",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getName",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getNamespaceURI",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getNamespaceURI",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionByName",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionOfElement",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionOfPI",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getRelativePositionOfTextNode",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "getValue",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isActual",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isCollection",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isLanguage",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "isLeaf",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "namespaceIterator",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "namespacePointer",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "remove",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "setValue",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "stringValue",
+    "parameter_types": "org.w3c.dom.Node"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+    "constructor_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.w3c.dom.Node",
+    "method": "testNode",
+    "parameter_types": "org.apache.commons.jxpath.ri.compiler.NodeTest"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "",
+    "method": "equalStrings",
+    "parameter_types": "java.lang.String,java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "",
+    "method": "getLocalName",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "",
+    "method": "getNamespaceURI",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "",
+    "method": "getPrefix",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "",
+    "method": "testNode",
+    "parameter_types": "org.apache.commons.jxpath.ri.model.NodePointer,java.lang.Object,org.apache.commons.jxpath.ri.compiler.NodeTest"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "addContent",
+    "parameter_types": "java.util.List"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "asPath",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "attributeIterator",
+    "parameter_types": "org.apache.commons.jxpath.ri.QName"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "childIterator",
+    "parameter_types": "org.apache.commons.jxpath.ri.compiler.NodeTest,boolean,org.apache.commons.jxpath.ri.model.NodePointer"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "compareChildNodePointers",
+    "parameter_types": "org.apache.commons.jxpath.ri.model.NodePointer,org.apache.commons.jxpath.ri.model.NodePointer"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "equals",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "escape",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getBaseValue",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getImmediateNode",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getLanguage",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getLength",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getName",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getNamespaceURI",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getNamespaceURI",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getRelativePositionByName",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getRelativePositionOfElement",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getRelativePositionOfPI",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getRelativePositionOfTextNode",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "getValue",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "isCollection",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "isLanguage",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "isLeaf",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "namespaceIterator",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "namespacePointer",
+    "parameter_types": "java.lang.String"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "nodeParent",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "remove",
+    "parameter_types": ""
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "setValue",
+    "parameter_types": "java.lang.Object"
+  },
+  {
+    "class": "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+    "constructor_types": "java.lang.Object,java.util.Locale",
+    "method": "testNode",
+    "parameter_types": "org.apache.commons.jxpath.ri.compiler.NodeTest"
+  }
+]
+```
+
+Common compiled production fixture classes (eligibility only, not oracle approval):
+```json
+[
+  "org.apache.commons.jxpath.AbstractFactory",
+  "org.apache.commons.jxpath.BasicNodeSet",
+  "org.apache.commons.jxpath.BasicVariables",
+  "org.apache.commons.jxpath.ClassFunctions",
+  "org.apache.commons.jxpath.CompiledExpression",
+  "org.apache.commons.jxpath.Container",
+  "org.apache.commons.jxpath.DynamicPropertyHandler",
+  "org.apache.commons.jxpath.ExpressionContext",
+  "org.apache.commons.jxpath.Function",
+  "org.apache.commons.jxpath.FunctionLibrary",
+  "org.apache.commons.jxpath.Functions",
+  "org.apache.commons.jxpath.IdentityManager",
+  "org.apache.commons.jxpath.JXPathAbstractFactoryException",
+  "org.apache.commons.jxpath.JXPathBasicBeanInfo",
+  "org.apache.commons.jxpath.JXPathBeanInfo",
+  "org.apache.commons.jxpath.JXPathContext",
+  "org.apache.commons.jxpath.JXPathContextFactory",
+  "org.apache.commons.jxpath.JXPathContextFactoryConfigurationError",
+  "org.apache.commons.jxpath.JXPathException",
+  "org.apache.commons.jxpath.JXPathFunctionNotFoundException",
+  "org.apache.commons.jxpath.JXPathIntrospector",
+  "org.apache.commons.jxpath.JXPathInvalidAccessException",
+  "org.apache.commons.jxpath.JXPathInvalidSyntaxException",
+  "org.apache.commons.jxpath.JXPathNotFoundException",
+  "org.apache.commons.jxpath.JXPathTypeConversionException",
+  "org.apache.commons.jxpath.KeyManager",
+  "org.apache.commons.jxpath.MapDynamicPropertyHandler",
+  "org.apache.commons.jxpath.NodeSet",
+  "org.apache.commons.jxpath.PackageFunctions",
+  "org.apache.commons.jxpath.Pointer",
+  "org.apache.commons.jxpath.Variables",
+  "org.apache.commons.jxpath.XMLDocumentContainer",
+  "org.apache.commons.jxpath.functions.ConstructorFunction",
+  "org.apache.commons.jxpath.functions.MethodFunction",
+  "org.apache.commons.jxpath.ri.Compiler",
+  "org.apache.commons.jxpath.ri.EvalContext",
+  "org.apache.commons.jxpath.ri.InfoSetUtil",
+  "org.apache.commons.jxpath.ri.JXPathCompiledExpression",
+  "org.apache.commons.jxpath.ri.JXPathContextFactoryReferenceImpl",
+  "org.apache.commons.jxpath.ri.JXPathContextReferenceImpl",
+  "org.apache.commons.jxpath.ri.NamespaceResolver",
+  "org.apache.commons.jxpath.ri.Parser",
+  "org.apache.commons.jxpath.ri.QName",
+  "org.apache.commons.jxpath.ri.axes.AncestorContext",
+  "org.apache.commons.jxpath.ri.axes.AttributeContext",
+  "org.apache.commons.jxpath.ri.axes.ChildContext",
+  "org.apache.commons.jxpath.ri.axes.DescendantContext",
+  "org.apache.commons.jxpath.ri.axes.InitialContext",
+  "org.apache.commons.jxpath.ri.axes.NamespaceContext",
+  "org.apache.commons.jxpath.ri.axes.NodeSetContext",
+  "org.apache.commons.jxpath.ri.axes.ParentContext",
+  "org.apache.commons.jxpath.ri.axes.PrecedingOrFollowingContext",
+  "org.apache.commons.jxpath.ri.axes.PredicateContext",
+  "org.apache.commons.jxpath.ri.axes.RootContext",
+  "org.apache.commons.jxpath.ri.axes.SelfContext",
+  "org.apache.commons.jxpath.ri.axes.SimplePathInterpreter",
+  "org.apache.commons.jxpath.ri.axes.UnionContext",
+  "org.apache.commons.jxpath.ri.compiler.Constant",
+  "org.apache.commons.jxpath.ri.compiler.CoreFunction",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperation",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationAdd",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationAnd",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationCompare",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationDivide",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThan",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThanOrEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationLessThan",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationLessThanOrEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationMod",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationMultiply",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationNegate",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationNotEqual",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationOr",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationSubtract",
+  "org.apache.commons.jxpath.ri.compiler.CoreOperationUnion",
+  "org.apache.commons.jxpath.ri.compiler.Expression",
+  "org.apache.commons.jxpath.ri.compiler.ExpressionPath",
+  "org.apache.commons.jxpath.ri.compiler.ExtensionFunction",
+  "org.apache.commons.jxpath.ri.compiler.LocationPath",
+  "org.apache.commons.jxpath.ri.compiler.NameAttributeTest",
+  "org.apache.commons.jxpath.ri.compiler.NodeNameTest",
+  "org.apache.commons.jxpath.ri.compiler.NodeTest",
+  "org.apache.commons.jxpath.ri.compiler.NodeTypeTest",
+  "org.apache.commons.jxpath.ri.compiler.Operation",
+  "org.apache.commons.jxpath.ri.compiler.Path",
+  "org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest",
+  "org.apache.commons.jxpath.ri.compiler.Step",
+  "org.apache.commons.jxpath.ri.compiler.TreeCompiler",
+  "org.apache.commons.jxpath.ri.compiler.VariableReference",
+  "org.apache.commons.jxpath.ri.model.NodeIterator",
+  "org.apache.commons.jxpath.ri.model.NodePointer",
+  "org.apache.commons.jxpath.ri.model.NodePointerFactory",
+  "org.apache.commons.jxpath.ri.model.VariablePointer",
+  "org.apache.commons.jxpath.ri.model.beans.BeanAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.BeanPointer",
+  "org.apache.commons.jxpath.ri.model.beans.BeanPointerFactory",
+  "org.apache.commons.jxpath.ri.model.beans.BeanPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionAttributeNodeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionChildNodeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionNodeIterator",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionPointer",
+  "org.apache.commons.jxpath.ri.model.beans.CollectionPointerFactory",
+  "org.apache.commons.jxpath.ri.model.beans.LangAttributePointer",
+  "org.apache.commons.jxpath.ri.model.beans.NullElementPointer",
+  "org.apache.commons.jxpath.ri.model.beans.NullPointer",
+  "org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.beans.PropertyIterator",
+  "org.apache.commons.jxpath.ri.model.beans.PropertyOwnerPointer",
+  "org.apache.commons.jxpath.ri.model.beans.PropertyPointer",
+  "org.apache.commons.jxpath.ri.model.container.ContainerPointer",
+  "org.apache.commons.jxpath.ri.model.container.ContainerPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dom.DOMAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.dom.DOMAttributePointer",
+  "org.apache.commons.jxpath.ri.model.dom.DOMNamespaceIterator",
+  "org.apache.commons.jxpath.ri.model.dom.DOMNodeIterator",
+  "org.apache.commons.jxpath.ri.model.dom.DOMNodePointer",
+  "org.apache.commons.jxpath.ri.model.dom.DOMPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dom.NamespacePointer",
+  "org.apache.commons.jxpath.ri.model.dynabeans.DynaBeanPointer",
+  "org.apache.commons.jxpath.ri.model.dynabeans.DynaBeanPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dynabeans.DynaBeanPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPointer",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPointerFactory",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPropertyIterator",
+  "org.apache.commons.jxpath.ri.model.dynamic.DynamicPropertyPointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMAttributeIterator",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMAttributePointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNamespaceIterator",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNamespacePointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNodeIterator",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer",
+  "org.apache.commons.jxpath.ri.model.jdom.JDOMPointerFactory",
+  "org.apache.commons.jxpath.ri.parser.ParseException",
+  "org.apache.commons.jxpath.ri.parser.SimpleCharStream",
+  "org.apache.commons.jxpath.ri.parser.Token",
+  "org.apache.commons.jxpath.ri.parser.TokenMgrError",
+  "org.apache.commons.jxpath.ri.parser.XPathParser",
+  "org.apache.commons.jxpath.ri.parser.XPathParserConstants",
+  "org.apache.commons.jxpath.ri.parser.XPathParserTokenManager",
+  "org.apache.commons.jxpath.servlet.Constants",
+  "org.apache.commons.jxpath.servlet.HttpSessionAndServletContext",
+  "org.apache.commons.jxpath.servlet.HttpSessionHandler",
+  "org.apache.commons.jxpath.servlet.JXPathServletContexts",
+  "org.apache.commons.jxpath.servlet.KeywordVariables",
+  "org.apache.commons.jxpath.servlet.PageContextHandler",
+  "org.apache.commons.jxpath.servlet.PageScopeContext",
+  "org.apache.commons.jxpath.servlet.PageScopeContextHandler",
+  "org.apache.commons.jxpath.servlet.ServletContextHandler",
+  "org.apache.commons.jxpath.servlet.ServletRequestAndContext",
+  "org.apache.commons.jxpath.servlet.ServletRequestHandler",
+  "org.apache.commons.jxpath.util.BasicTypeConverter",
+  "org.apache.commons.jxpath.util.MethodLookupUtils",
+  "org.apache.commons.jxpath.util.TypeConverter",
+  "org.apache.commons.jxpath.util.TypeUtils",
+  "org.apache.commons.jxpath.util.ValueUtils",
+  "org.apache.commons.jxpath.xml.DOMParser",
+  "org.apache.commons.jxpath.xml.DocumentContainer",
+  "org.apache.commons.jxpath.xml.JDOMParser",
+  "org.apache.commons.jxpath.xml.XMLParser",
+  "org.apache.commons.jxpath.xml.XMLParser2"
+]
+```
+
+Reach the target with meaningful domain arguments. Do not substitute constructor exceptions, null-only inputs or empty collections for behavior assertions. No execution feedback or repair loop.
+
+Explicit fixture policy: beam-explicit-fixtures-v3-proposal. Use the reviewed capability recipes below instead of legacy recursive/null construction.
+## build.xml
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--build.xml generated by maven from project.xml version 1.2
+  on date June 28 2004, time 1759-->
+
+<project default="jar" name="commons-jxpath" basedir=".">
+  <property name="defaulttargetdir" value="${basedir}/target">
+  </property>
+  <property name="libdir" value="${basedir}/target/lib">
+  </property>
+  <property name="classes.dir" value="${basedir}/target/classes">
+  </property>
+  <property name="test.classes.dir" value="${basedir}/target/test-classes">
+  </property>
+  <property name="test.classes.dir" value="${basedir}/target/test-classes">
+  </property>
+  <property name="testreportdir" value="${basedir}/target/test-reports">
+  </property>
+  <property name="distdir" value="dist">
+  </property>
+  <property name="javadocdir" value="${basedir}/dist/docs/api">
+  </property>
+  <property name="final.name" value="commons-jxpath">
+  </property>
+  <target name="init" description="o Initializes some properties">
+    <mkdir dir="${libdir}">
+    </mkdir>
+    <condition property="noget">
+      <equals arg2="only" arg1="${build.sysclasspath}">
+      </equals>
+    </condition>
+  </target>
+  <target name="compile" description="o Compile the code" depends="get-deps">
+    <mkdir dir="${classes.dir}">
+    </mkdir>
+    <javac destdir="${classes.dir}" target="1.6" source="1.6" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="${basedir}/src/java">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+      </classpath>
+    </javac>
+    <copy todir="${test.classes.dir}">
+      <fileset dir="src/test">
+        <include name="**/*.xml">
+        </include>
+      </fileset>
+    </copy>
+  </target>
+  <target name="jar" description="o Create the jar" depends="compile,test">
+    <jar jarfile="${defaulttargetdir}/${final.name}.jar" excludes="**/package.html" basedir="${classes.dir}">
+    </jar>
+  </target>
+  <target name="clean" description="o Clean up the generated directories">
+    <delete dir="${defaulttargetdir}">
+    </delete>
+    <delete dir="${distdir}">
+    </delete>
+  </target>
+  <target name="dist" description="o Create a distribution" depends="jar, javadoc">
+    <mkdir dir="dist">
+    </mkdir>
+    <copy todir="dist">
+      <fileset dir="${defaulttargetdir}" includes="*.jar">
+      </fileset>
+      <fileset dir="${basedir}" includes="LICENSE*, README*">
+      </fileset>
+    </copy>
+  </target>
+  <target name="test" description="o Run the test cases" if="test.failure" depends="internal-test">
+    <fail message="There were test failures.">
+    </fail>
+  </target>
+  <target name="internal-test" depends="compile.tests">
+    <mkdir dir="${testreportdir}">
+    </mkdir>
+    <junit dir="./" failureproperty="test.failure" printSummary="yes" fork="true" haltonerror="true">
+      <sysproperty key="basedir" value=".">
+      </sysproperty>
+      <formatter type="xml">
+      </formatter>
+      <formatter usefile="false" type="plain">
+      </formatter>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+        <pathelement path="${test.classes.dir}">
+        </pathelement>
+        <pathelement path="${classes.dir}">
+        </pathelement>
+      </classpath>
+      <batchtest todir="${testreportdir}">
+        <fileset dir="src/test">
+          <include name="**/*Test.java">
+          </include>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+  <target name="compile.tests" depends="compile">
+    <mkdir dir="${test.classes.dir}">
+    </mkdir>
+    <javac destdir="${test.classes.dir}" target="1.6" source="1.6" deprecation="true" debug="true" optimize="false" excludes="**/package.html">
+      <src>
+        <pathelement location="${basedir}/src/test">
+        </pathelement>
+      </src>
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+        <pathelement path="${classes.dir}">
+        </pathelement>
+      </classpath>
+    </javac>
+    <copy todir="${test.classes.dir}">
+      <fileset dir="${basedir}/src\test">
+        <include name="**/*.xml">
+        </include>
+      </fileset>
+    </copy>
+  </target>
+  <target name="javadoc" description="o Generate javadoc">
+    <mkdir dir="${javadocdir}">
+    </mkdir>
+    <tstamp>
+      <format pattern="2001-yyyy" property="year">
+      </format>
+    </tstamp>
+    <property name="copyright" value="Copyright &amp;copy;  The Apache Software Foundation. All Rights Reserved.">
+    </property>
+    <property name="title" value="JXPath 1.2 API">
+    </property>
+    <javadoc use="true" private="true" destdir="${javadocdir}" author="true" version="true" sourcepath="src/java" packagenames="*">
+      <classpath>
+        <fileset dir="${libdir}">
+          <include name="*.jar">
+          </include>
+        </fileset>
+        <pathelement location="${defaulttargetdir}/${final.name}.jar">
+        </pathelement>
+      </classpath>
+    </javadoc>
+  </target>
+  <target name="get-deps" unless="noget" depends="init">
+    <get dest="${libdir}/xerces-1.2.3.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/xerces/xerces/1.2.3/xerces-1.2.3.jar">
+    </get>
+    <get dest="${libdir}/servletapi-2.2.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/servletapi/servletapi/2.2/servletapi-2.2.jar">
+    </get>
+    <get dest="${libdir}/junit-3.8.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/junit/junit/3.8/junit-3.8.jar">
+    </get>
+    <get dest="${libdir}/ant-optional-1.5.1.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/ant/ant-optional/1.5.1/ant-optional-1.5.1.jar">
+    </get>
+    <get dest="${libdir}/xml-apis-2.0.2.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/xml-apis/xml-apis/2.0.2/xml-apis-2.0.2.jar">
+    </get>
+    <get dest="${libdir}/jdom-1.0.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/jdom/jdom/1.0/jdom-1.0.jar">
+    </get>
+    <get dest="${libdir}/commons-beanutils-1.4.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/commons-beanutils/commons-beanutils/1.4/commons-beanutils-1.4.jar">
+    </get>
+    <get dest="${libdir}/commons-logging-1.0.4.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar">
+    </get>
+    <get dest="${libdir}/commons-collections-2.0.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/commons-collections/commons-collections/2.0/commons-collections-2.0.jar">
+    </get>
+    <get dest="${libdir}/junit-3.8.1.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/junit/junit/3.8.1/junit-3.8.1.jar">
+    </get>
+    <get dest="${libdir}/ant-1.5.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/ant/ant/1.5/ant-1.5.jar">
+    </get>
+    <get dest="${libdir}/ant-optional-1.5.jar" usetimestamp="true" ignoreerrors="true" src="file:///home/aomsin/sqa-round2/defects4j/framework/projects/JxPath/lib/ant/ant-optional/1.5/ant-optional-1.5.jar">
+    </get>
+  </target>
+  <target name="install-maven">
+    <get dest="${user.home}/maven-install-latest.jar" usetimestamp="true" src="${repo}/maven/maven-install-latest.jar">
+    </get>
+    <unjar dest="${maven.home}" src="${user.home}/maven-install-latest.jar">
+    </unjar>
+  </target>
+</project>
+```
+
+## project.properties
+
+```
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# 
+#      http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+##
+# Properties that override Maven build defaults
+##
+
+maven.repo.remote=http://repo1.maven.org/maven
+
+maven.changelog.factory=org.apache.maven.svnlib.SvnChangeLogFactory
+maven.changelog.range=120
+
+maven.checkstyle.properties=${basedir}/checkstyle.xml
+maven.checkstyle.excludes=**/parser/*
+maven.test.failure = false
+maven.junit.fork=true
+maven.linkcheck.enable=true
+
+maven.compile.source=1.3
+maven.compile.target=1.3
+
+# Jar Manifest Additional Attributes
+maven.jar.manifest.attributes.list=Implementation-Vendor-Id,X-Compile-Source-JDK,X-Compile-Target-JDK
+maven.jar.manifest.attribute.Implementation-Vendor-Id=org.apache
+maven.jar.manifest.attribute.X-Compile-Source-JDK=${maven.compile.source}
+maven.jar.manifest.attribute.X-Compile-Target-JDK=${maven.compile.target}
+
+# commons site L&F
+maven.xdoc.includeProjectDocumentation=no
+maven.xdoc.date=left
+maven.xdoc.poweredby.image=maven-feather.png
+maven.xdoc.version=${pom.currentVersion}
+maven.xdoc.developmentProcessUrl=http://jakarta.apache.org/commons/charter.html
+
+# Make the source distro unzip to a different directory
+maven.dist.src.assembly.dir=${maven.dist.assembly.dir}/src/${maven.final.name}-src
+
+#maven.proxy.host=
+#maven.proxy.port=80
+#maven.proxy.username=
+#maven.proxy.password=
+
+```
+
+## src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+
+```
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.model.dom;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.jxpath.AbstractFactory;
+import org.apache.commons.jxpath.JXPathAbstractFactoryException;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathException;
+import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest;
+import org.apache.commons.jxpath.ri.model.NodeIterator;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.apache.commons.jxpath.ri.model.beans.NullPointer;
+import org.apache.commons.jxpath.util.TypeUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Comment;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+
+/**
+ * A Pointer that points to a DOM node.
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class DOMNodePointer extends NodePointer {
+
+    private static final long serialVersionUID = -8751046933894857319L;
+    
+    private Node node;
+    private Map namespaces;
+    private String defaultNamespace;
+    private String id;
+
+    public static final String XML_NAMESPACE_URI = 
+            "http://www.w3.org/XML/1998/namespace";
+    public static final String XMLNS_NAMESPACE_URI = 
+            "http://www.w3.org/2000/xmlns/";
+
+    public DOMNodePointer(Node node, Locale locale) {
+        super(null, locale);
+        this.node = node;
+    }
+
+    public DOMNodePointer(Node node, Locale locale, String id) {
+        super(null, locale);
+        this.node = node;
+        this.id = id;
+    }
+
+    public DOMNodePointer(NodePointer parent, Node node) {
+        super(parent);
+        this.node = node;
+    }
+    
+    public boolean testNode(NodeTest test) {
+        return testNode(node, test);
+    }
+
+    public static boolean testNode(Node node, NodeTest test) {
+        if (test == null) {
+            return true;
+        }
+        else if (test instanceof NodeNameTest) {
+            if (node.getNodeType() != Node.ELEMENT_NODE) {
+                return false;
+            }
+
+            NodeNameTest nodeNameTest = (NodeNameTest) test;
+            QName testName = nodeNameTest.getNodeName();
+            String namespaceURI = nodeNameTest.getNamespaceURI();
+            boolean wildcard = nodeNameTest.isWildcard();
+            String testPrefix = testName.getPrefix();
+            if (wildcard && testPrefix == null) {
+                return true;
+            }
+
+            if (wildcard
+                || testName.getName()
+                        .equals(DOMNodePointer.getLocalName(node))) {
+                String nodeNS = DOMNodePointer.getNamespaceURI(node);
+                return equalStrings(namespaceURI, nodeNS);
+            }
+        }
+        else if (test instanceof NodeTypeTest) {
+            int nodeType = node.getNodeType();
+            switch (((NodeTypeTest) test).getNodeType()) {
+                case Compiler.NODE_TYPE_NODE :
+                    return nodeType == Node.ELEMENT_NODE
+                            || nodeType == Node.DOCUMENT_NODE;
+                case Compiler.NODE_TYPE_TEXT :
+                    return nodeType == Node.CDATA_SECTION_NODE
+                        || nodeType == Node.TEXT_NODE;
+                case Compiler.NODE_TYPE_COMMENT :
+                    return nodeType == Node.COMMENT_NODE;
+                case Compiler.NODE_TYPE_PI :
+                    return nodeType == Node.PROCESSING_INSTRUCTION_NODE;
+            }
+            return false;
+        }
+        else if (test instanceof ProcessingInstructionTest) {
+            if (node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE) {
+                String testPI = ((ProcessingInstructionTest) test).getTarget();
+                String nodePI = ((ProcessingInstruction) node).getTarget();
+                return testPI.equals(nodePI);
+            }
+        }
+        return false;
+    }
+
+    private static boolean equalStrings(String s1, String s2) {
+        if (s1 == null) {
+            return s2 == null || s2.trim().length() == 0;
+        }
+        
+        if (s2 == null) {
+            return s1 == null || s1.trim().length() == 0;
+        }
+
+        if (s1 != null && !s1.trim().equals(s2.trim())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public QName getName() {
+        String ln = null;
+        String ns = null;
+        int type = node.getNodeType();
+        if (type == Node.ELEMENT_NODE) {
+            ns = DOMNodePointer.getPrefix(node);
+            ln = DOMNodePointer.getLocalName(node);
+        }
+        else if (type == Node.PROCESSING_INSTRUCTION_NODE) {
+            ln = ((ProcessingInstruction) node).getTarget();
+        }
+        return new QName(ns, ln);
+    }
+
+    public String getNamespaceURI() {
+        return getNamespaceURI(node);
+    }
+
+    public NodeIterator childIterator(
+        NodeTest test,
+        boolean reverse,
+        NodePointer startWith) 
+    {
+        return new DOMNodeIterator(this, test, reverse, startWith);
+    }
+
+    public NodeIterator attributeIterator(QName name) {
+        return new DOMAttributeIterator(this, name);
+    }
+
+    public NodePointer namespacePointer(String prefix) {
+        return new NamespacePointer(this, prefix);
+    }
+
+    public NodeIterator namespaceIterator() {
+        return new DOMNamespaceIterator(this);
+    }
+
+    public String getNamespaceURI(String prefix) {
+        if (prefix == null || prefix.equals("")) {
+            return getDefaultNamespaceURI();
+        }
+
+        if (prefix.equals("xml")) {
+            return XML_NAMESPACE_URI;
+        }
+
+        if (prefix.equals("xmlns")) {
+            return XMLNS_NAMESPACE_URI;
+        }
+
+        String namespace = null;
+        if (namespaces == null) {
+            namespaces = new HashMap();
+        }
+        else {
+            namespace = (String) namespaces.get(prefix);
+        }
+
+        if (namespace == null) {
+            String qname = "xmlns:" + prefix;
+            Node aNode = node;
+            if (aNode instanceof Document) {
+                aNode = ((Document)aNode).getDocumentElement();
+            }
+            while (aNode != null) {
+                if (aNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Attr attr = ((Element) aNode).getAttributeNode(qname);
+                    if (attr != null) {
+                        namespace = attr.getValue();
+                        break;
+                    }
+                }
+                aNode = aNode.getParentNode();
+            }
+            if (namespace == null || namespace.equals("")) {
+                namespace = NodePointer.UNKNOWN_NAMESPACE;
+            }
+        }
+
+        namespaces.put(prefix, namespace);
+        if (namespace == UNKNOWN_NAMESPACE) {
+            return null;
+        }
+        
+        // TBD: We are supposed to resolve relative URIs to absolute ones.
+        return namespace;
+    }
+
+    public String getDefaultNamespaceURI() {
+        if (defaultNamespace == null) {
+            Node aNode = node;
+            if (aNode instanceof Document) {
+                aNode = ((Document) aNode).getDocumentElement();
+            }
+            while (aNode != null) {
+                if (aNode.getNodeType() == Node.ELEMENT_NODE) {
+                    Attr attr = ((Element) aNode).getAttributeNode("xmlns");
+                    if (attr != null) {
+                        defaultNamespace = attr.getValue();
+                        break;
+                    }
+                }
+                aNode = aNode.getParentNode();
+            }
+        }
+        if (defaultNamespace == null) {
+            defaultNamespace = "";
+        }
+        // TBD: We are supposed to resolve relative URIs to absolute ones.
+        return defaultNamespace.equals("") ? null : defaultNamespace;
+    }
+
+    public Object getBaseValue() {
+        return node;
+    }
+
+    public Object getImmediateNode() {
+        return node;
+    }
+
+    public boolean isActual() {
+        return true;
+    }
+
+    public boolean isCollection() {
+        return false;
+    }
+
+    public int getLength() {
+        return 1;
+    }
+
+    public boolean isLeaf() {
+        return !node.hasChildNodes();
+    }
+
+    /**
+     * Returns true if the xml:lang attribute for the current node
+     * or its parent has the specified prefix <i>lang</i>.
+     * If no node has this prefix, calls <code>super.isLanguage(lang)</code>.
+     */
+    public boolean isLanguage(String lang) {
+        String current = getLanguage();
+        if (current == null) {
+            return super.isLanguage(lang);
+        }
+        return current.toUpperCase().startsWith(lang.toUpperCase());
+    }
+
+    protected String getLanguage() {
+        Node n = node;
+        while (n != null) {
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                Element e = (Element) n;
+                String attr = e.getAttribute("xml:lang");
+                if (attr != null && !attr.equals("")) {
+                    return attr;
+                }
+            }
+            n = n.getParentNode();
+        }
+        return null;
+    }
+
+    /**
+     * Sets contents of the node to the specified value. If the value is
+     * a String, the contents of the node are replaced with this text.
+     * If the value is an Element or Document, the children of the
+     * node are replaced with the children of the passed node.
+     */
+    public void setValue(Object value) {
+        if (node.getNodeType() == Node.TEXT_NODE
+            || node.getNodeType() == Node.CDATA_SECTION_NODE) {
+            String string = (String) TypeUtils.convert(value, String.class);
+            if (string != null && !string.equals("")) {
+                node.setNodeValue(string);
+            }
+            else {
+                node.getParentNode().removeChild(node);
+            }
+        }
+        else {
+            NodeList children = node.getChildNodes();
+            int count = children.getLength();
+            for (int i = count; --i >= 0;) {
+                Node child = children.item(i);
+                node.removeChild(child);
+            }
+
+            if (value instanceof Node) {
+                Node valueNode = (Node) value;
+                if (valueNode instanceof Element
+                    || valueNode instanceof Document) {
+                    children = valueNode.getChildNodes();
+                    for (int i = 0; i < children.getLength(); i++) {
+                        Node child = children.item(i);
+                        node.appendChild(child.cloneNode(true));
+                    }
+                }
+                else {
+                    node.appendChild(valueNode.cloneNode(true));
+                }
+            }
+            else {
+                String string = (String) TypeUtils.convert(value, String.class);
+                if (string != null && !string.equals("")) {
+                    Node textNode =
+                        node.getOwnerDocument().createTextNode(string);
+                    node.appendChild(textNode);
+                }
+            }
+        }
+    }
+    
+    public NodePointer createChild(
+        JXPathContext context,
+        QName name,
+        int index) 
+    {
+        if (index == WHOLE_COLLECTION) {
+            index = 0;
+        }
+        boolean success =
+            getAbstractFactory(context).createObject(
+                context,
+                this,
+                node,
+                name.toString(),
+                index);
+        if (success) {
+            NodeTest nodeTest;
+            String prefix = name.getPrefix();
+            String namespaceURI = prefix != null 
+                ? context.getNamespaceURI(prefix) 
+                : context.getDefaultNamespaceURI();
+            nodeTest = new NodeNameTest(name, namespaceURI);
+
+            NodeIterator it = childIterator(nodeTest, false, null);
+            if (it != null && it.setPosition(index + 1)) {
+                return it.getNodePointer();
+            }
+        }
+        throw new JXPathAbstractFactoryException(
+                "Factory could not create a child node for path: " + asPath()
+                        + "/" + name + "[" + (index + 1) + "]");
+    }
+
+    public NodePointer createChild(JXPathContext context, 
+                QName name, int index, Object value)
+    {
+        NodePointer ptr = createChild(context, name, index);
+        ptr.setValue(value);
+        return ptr;
+    }
+
+    public NodePointer createAttribute(JXPathContext context, QName name) {
+        if (!(node instanceof Element)) {
+            return super.createAttribute(context, name);
+        }
+        Element element = (Element) node;
+        String prefix = name.getPrefix();
+        if (prefix != null) {
+            String ns = getNamespaceURI(prefix);
+            if (ns == null) {
+                throw new JXPathException(
+                    "Unknown namespace prefix: " + prefix);
+            }
+            element.setAttributeNS(ns, name.toString(), "");
+        }
+        else {
+            if (!element.hasAttribute(name.getName())) {
+                element.setAttribute(name.getName(), "");
+            }
+        }
+        NodeIterator it = attributeIterator(name);
+        it.setPosition(1);
+        return it.getNodePointer();
+    }
+
+    public void remove() {
+        Node parent = node.getParentNode();
+        if (parent == null) {
+            throw new JXPathException("Cannot remove root DOM node");
+        }
+        parent.removeChild(node);
+    }
+
+    public String asPath() {
+        if (id != null) {
+            return "id('" + escape(id) + "')";
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        if (parent != null) {
+            buffer.append(parent.asPath());
+        }
+        switch (node.getNodeType()) {
+            case Node.ELEMENT_NODE :
+                // If the parent pointer is not a DOMNodePointer, it is
+                // the parent's responsibility to produce the node test part
+                // of the path
+                if (parent instanceof DOMNodePointer) {
+                    if (buffer.length() == 0
+                            || buffer.charAt(buffer.length() - 1) != '/') {
+                        buffer.append('/');
+                    }
+                    String ln = DOMNodePointer.getLocalName(node);
+                    String nsURI = getNamespaceURI();
+                    if (equalStrings(nsURI, 
+                            getNamespaceResolver().getDefaultNamespaceURI())) {
+                        buffer.append(ln);
+                        buffer.append('[');
+                        buffer.append(getRelativePositionByName()).append(']');
+                    }
+                    else {
+                        String prefix = getNamespaceResolver().getPrefix(nsURI);
+                        if (prefix != null) {
+                            buffer.append(prefix);
+                            buffer.append(':');
+                            buffer.append(ln);
+                            buffer.append('[');
+                            buffer.append(getRelativePositionByName());
+                            buffer.append(']');
+                        }
+                        else {
+                            buffer.append("node()");
+                            buffer.append('[');
+                            buffer.append(getRelativePositionOfElement());
+                            buffer.append(']');
+                        }
+                    }
+                }
+            break;
+            case Node.TEXT_NODE :
+            case Node.CDATA_SECTION_NODE :
+                buffer.append("/text()");
+                buffer.append('[');
+                buffer.append(getRelativePositionOfTextNode()).append(']');
+                break;
+            case Node.PROCESSING_INSTRUCTION_NODE :
+                String target = ((ProcessingInstruction) node).getTarget();
+                buffer.append("/processing-instruction(\'");
+                buffer.append(target).append("')");
+                buffer.append('[');
+                buffer.append(getRelativePositionOfPI(target)).append(']');
+                break;
+            case Node.DOCUMENT_NODE :
+                // That'll be empty
+        }
+        return buffer.toString();
+    }
+
+    private String escape(String string) {
+        int index = string.indexOf('\'');
+        while (index != -1) {
+            string =
+                string.substring(0, index)
+                    + "&apos;"
+                    + string.substring(index + 1);
+            index = string.indexOf('\'');
+        }
+        index = string.indexOf('\"');
+        while (index != -1) {
+            string =
+                string.substring(0, index)
+                    + "&quot;"
+                    + string.substring(index + 1);
+            index = string.indexOf('\"');
+        }
+        return string;
+    }
+
+    private int getRelativePositionByName() {
+        int count = 1;
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                String nm = n.getNodeName();
+                if (nm.equals(node.getNodeName())) {
+                    count++;
+                }
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+    
+    private int getRelativePositionOfElement() {
+        int count = 1;
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.ELEMENT_NODE) {
+                count++;
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+
+    private int getRelativePositionOfTextNode() {
+        int count = 1;
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.TEXT_NODE
+                || n.getNodeType() == Node.CDATA_SECTION_NODE) {
+                count++;
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+
+    private int getRelativePositionOfPI(String target) {
+        int count = 1;
+        Node n = node.getPreviousSibling();
+        while (n != null) {
+            if (n.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE
+                && ((ProcessingInstruction) n).getTarget().equals(target)) {
+                count++;
+            }
+            n = n.getPreviousSibling();
+        }
+        return count;
+    }
+
+    public int hashCode() {
+        return System.identityHashCode(node);
+    }
+
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (!(object instanceof DOMNodePointer)) {
+            return false;
+        }
+
+        DOMNodePointer other = (DOMNodePointer) object;
+        return node == other.node;
+    }
+
+    public static String getPrefix(Node node) {
+        String prefix = node.getPrefix();
+        if (prefix != null) {
+            return prefix;
+        }
+
+        String name = node.getNodeName();
+        int index = name.lastIndexOf(':');
+        if (index == -1) {
+            return null;
+        }
+
+        return name.substring(0, index);
+    }
+
+    public static String getLocalName(Node node) {
+        String localName = node.getLocalName();
+        if (localName != null) {
+            return localName;
+        }
+
+        String name = node.getNodeName();
+        int index = name.lastIndexOf(':');
+        if (index == -1) {
+            return name;
+        }
+
+        return name.substring(index + 1);
+    }
+    
+    public static String getNamespaceURI(Node node) {
+        if (node instanceof Document) {
+            node = ((Document) node).getDocumentElement();
+        }
+
+        Element element = (Element) node;
+
+        String uri = element.getNamespaceURI();
+        if (uri != null) {
+            return uri;
+        }
+
+        String qname;
+        String prefix = getPrefix(node);
+        if (prefix == null) {
+            qname = "xmlns";
+        }
+        else {
+            qname = "xmlns:" + prefix;
+        }
+
+        Node aNode = node;
+        while (aNode != null) {
+            if (aNode.getNodeType() == Node.ELEMENT_NODE) {
+                Attr attr = ((Element) aNode).getAttributeNode(qname);
+                if (attr != null) {
+                    return attr.getValue();
+                }
+            }
+            aNode = aNode.getParentNode();
+        }
+        return null;
+    }
+
+    public Object getValue() {
+        return stringValue(node);
+    }
+
+    private String stringValue(Node node) {
+        int nodeType = node.getNodeType();
+        if (nodeType == Node.COMMENT_NODE) {
+            String text = ((Comment) node).getData();
+            return text == null ? "" : text.trim();
+        }
+        else if (
+            nodeType == Node.TEXT_NODE
+                || nodeType == Node.CDATA_SECTION_NODE) {
+            String text = node.getNodeValue();
+            return text == null ? "" : text.trim();
+        }
+        else if (nodeType == Node.PROCESSING_INSTRUCTION_NODE) {
+            String text = ((ProcessingInstruction) node).getData();
+            return text == null ? "" : text.trim();
+        }
+        else {
+            NodeList list = node.getChildNodes();
+            StringBuffer buf = new StringBuffer(16);
+            for (int i = 0; i < list.getLength(); i++) {
+                Node child = list.item(i);
+                if (child.getNodeType() == Node.TEXT_NODE) {
+                    buf.append(child.getNodeValue());
+                }
+                else {
+                    buf.append(stringValue(child));
+                }
+            }
+            return buf.toString().trim();
+        }
+    }
+
+    /**
+     * Locates a node by ID.
+     */
+    public Pointer getPointerByID(JXPathContext context, String id) {
+        Document document;
+        if (node.getNodeType() == Node.DOCUMENT_NODE) {
+            document = (Document) node;
+        }
+        else {
+            document = node.getOwnerDocument();
+        }
+        Element element = document.getElementById(id);
+        if (element != null) {
+            return new DOMNodePointer(element, getLocale(), id);
+        }
+        else {
+            return new NullPointer(getLocale(), id);
+        }
+    }
+
+    private AbstractFactory getAbstractFactory(JXPathContext context) {
+        AbstractFactory factory = context.getFactory();
+        if (factory == null) {
+            throw new JXPathException(
+                "Factory is not set on the JXPathContext - "
+                    + "cannot create path: "
+                    + asPath());
+        }
+        return factory;
+    }
+
+    public int compareChildNodePointers(
+            NodePointer pointer1, NodePointer pointer2)
+    {
+        Node node1 = (Node) pointer1.getBaseValue();
+        Node node2 = (Node) pointer2.getBaseValue();
+        if (node1 == node2) {
+            return 0;
+        }
+
+        int t1 = node1.getNodeType();
+        int t2 = node2.getNodeType();
+        if (t1 == Node.ATTRIBUTE_NODE && t2 != Node.ATTRIBUTE_NODE) {
+            return -1;
+        }
+        else if (t1 != Node.ATTRIBUTE_NODE && t2 == Node.ATTRIBUTE_NODE) {
+            return 1;
+        }
+        else if (t1 == Node.ATTRIBUTE_NODE && t2 == Node.ATTRIBUTE_NODE) {
+            NamedNodeMap map = ((Node) getNode()).getAttributes();
+            int length = map.getLength();
+            for (int i = 0; i < length; i++) {
+                Node n = map.item(i);
+                if (n == node1) {
+                    return -1;
+                }
+                else if (n == node2) {
+                    return 1;
+                }
+            }
+            return 0; // Should not happen
+        }
+
+        Node current = node.getFirstChild();
+        while (current != null) {
+            if (current == node1) {
+                return -1;
+            }
+            else if (current == node2) {
+                return 1;
+            }
+            current = current.getNextSibling();
+        }
+
+        return 0;
+    }
+}
+```
+
+## src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
+
+```
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.model.jdom;
+
+import java.util.List;
+import java.util.Locale;
+
+import org.apache.commons.jxpath.AbstractFactory;
+import org.apache.commons.jxpath.JXPathAbstractFactoryException;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathException;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.compiler.ProcessingInstructionTest;
+import org.apache.commons.jxpath.ri.model.NodeIterator;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.apache.commons.jxpath.util.TypeUtils;
+import org.jdom.Attribute;
+import org.jdom.CDATA;
+import org.jdom.Comment;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.ProcessingInstruction;
+import org.jdom.Text;
+
+/**
+ * A Pointer that points to a DOM node.
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class JDOMNodePointer extends NodePointer {
+    private static final long serialVersionUID = -6346532297491082651L;
+    
+    private Object node;
+    private String id;
+
+    public static final String XML_NAMESPACE_URI =
+            "http://www.w3.org/XML/1998/namespace";
+    public static final String XMLNS_NAMESPACE_URI =
+            "http://www.w3.org/2000/xmlns/";
+
+    public JDOMNodePointer(Object node, Locale locale) {
+        super(null, locale);
+        this.node = node;
+    }
+
+    public JDOMNodePointer(Object node, Locale locale, String id) {
+        super(null, locale);
+        this.node = node;
+        this.id = id;
+    }
+
+    public JDOMNodePointer(NodePointer parent, Object node) {
+        super(parent);
+        this.node = node;
+    }
+
+    public NodeIterator childIterator(
+        NodeTest test,
+        boolean reverse,
+        NodePointer startWith) 
+    {
+        return new JDOMNodeIterator(this, test, reverse, startWith);
+    }
+
+    public NodeIterator attributeIterator(QName name) {
+        return new JDOMAttributeIterator(this, name);
+    }
+
+    public NodeIterator namespaceIterator() {
+        return new JDOMNamespaceIterator(this);
+    }
+
+    public NodePointer namespacePointer(String prefix) {
+        return new JDOMNamespacePointer(this, prefix);
+    }
+
+    public String getNamespaceURI() {
+        return getNamespaceURI(node);
+    }
+    
+    private static String getNamespaceURI(Object node) {
+        if (node instanceof Element) {
+            Element element = (Element) node;
+            String ns = element.getNamespaceURI();
+            if (ns != null && ns.equals("")) {
+                ns = null;
+            }
+            return ns;
+        }
+        return null;
+    }
+
+    public String getNamespaceURI(String prefix) {
+        if (node instanceof Document) {
+            Element element = ((Document)node).getRootElement(); 
+            Namespace ns = element.getNamespace(prefix);
+            if (ns != null) {
+                return ns.getURI();
+            }
+        }        
+        else if (node instanceof Element) {
+            Element element = (Element) node;
+            Namespace ns = element.getNamespace(prefix);
+            if (ns != null) {
+                return ns.getURI();
+            }
+        }
+        return null;
+    }
+
+    public int compareChildNodePointers(
+        NodePointer pointer1,
+        NodePointer pointer2) 
+    {
+        Object node1 = pointer1.getBaseValue();
+        Object node2 = pointer2.getBaseValue();
+        if (node1 == node2) {
+            return 0;
+        }
+
+        if ((node1 instanceof Attribute) && !(node2 instanceof Attribute)) {
+            return -1;
+        }
+        else if (
+            !(node1 instanceof Attribute) && (node2 instanceof Attribute)) {
+            return 1;
+        }
+        else if (
+            (node1 instanceof Attribute) && (node2 instanceof Attribute)) {
+            List list = ((Element) getNode()).getAttributes();
+            int length = list.size();
+            for (int i = 0; i < length; i++) {
+                Object n = list.get(i);
+                if (n == node1) {
+                    return -1;
+                }
+                else if (n == node2) {
+                    return 1;
+                }
+            }
+            return 0; // Should not happen
+        }
+
+        if (!(node instanceof Element)) {
+            throw new RuntimeException(
+                "JXPath internal error: "
+                    + "compareChildNodes called for "
+                    + node);
+        }
+
+        List children = ((Element) node).getContent();
+        int length = children.size();
+        for (int i = 0; i < length; i++) {
+            Object n = children.get(i);
+            if (n == node1) {
+                return -1;
+            }
+            else if (n == node2) {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+
+    /**
+     * @see org.apache.commons.jxpath.ri.model.NodePointer#getBaseValue()
+     */
+    public Object getBaseValue() {
+        return node;
+    }
+
+    public boolean isCollection() {
+        return false;
+    }
+    
+    public int getLength() {
+        return 1;
+    }    
+
+    public boolean isLeaf() {
+        if (node instanceof Element) {
+            return ((Element) node).getContent().size() == 0;
+        }
+        else if (node instanceof Document) {
+            return ((Document) node).getContent().size() == 0;
+        }
+        return true;
+    }
+
+    /**
+     * @see org.apache.commons.jxpath.ri.model.NodePointer#getName()
+     */
+    public QName getName() {
+        String ns = null;
+        String ln = null;
+        if (node instanceof Element) {
+            ns = ((Element) node).getNamespacePrefix();
+            if (ns != null && ns.equals("")) {
+                ns = null;
+            }
+            ln = ((Element) node).getName();
+        }
+        else if (node instanceof ProcessingInstruction) {
+            ln = ((ProcessingInstruction) node).getTarget();
+        }
+        return new QName(ns, ln);
+    }
+
+    /**
+     * @see org.apache.commons.jxpath.ri.model.NodePointer#getNode()
+     */
+    public Object getImmediateNode() {
+        return node;
+    }
+
+    public Object getValue() {
+        if (node instanceof Element) {
+            return ((Element) node).getTextTrim();
+        }
+        else if (node instanceof Comment) {
+            String text = ((Comment) node).getText();
+            if (text != null) {
+                text = text.trim();
+            }
+            return text;
+        }
+        else if (node instanceof Text) {
+            return ((Text) node).getTextTrim();
+        }
+        else if (node instanceof CDATA) {
+            return ((CDATA) node).getTextTrim();
+        }
+        else if (node instanceof ProcessingInstruction) {
+            String text = ((ProcessingInstruction) node).getData();
+            if (text != null) {
+                text = text.trim();
+            }
+            return text;
+        }
+        return null;
+    }
+
+    public void setValue(Object value) {
+        if (node instanceof Text) {
+            String string = (String) TypeUtils.convert(value, String.class);
+            if (string != null && !string.equals("")) {
+                ((Text) node).setText(string);
+            }
+            else {
+                nodeParent(node).removeContent((Text) node);
+            }
+        }
+        else {
+            Element element = (Element) node;
+            element.getContent().clear();
+
+            if (value instanceof Element) {
+                Element valueElement = (Element) value;
+                addContent(valueElement.getContent());
+            }
+            else if (value instanceof Document) {
+                Document valueDocument = (Document) value;
+                addContent(valueDocument.getContent());
+            }
+            else if (value instanceof Text || value instanceof CDATA) {
+                String string = ((Text) value).getText();
+                element.addContent(new Text(string));
+            }
+            else if (value instanceof ProcessingInstruction) {
+                ProcessingInstruction pi =
+                    (ProcessingInstruction) ((ProcessingInstruction) value)
+                        .clone();
+                element.addContent(pi);
+            }
+            else if (value instanceof Comment) {
+                Comment comment = (Comment) ((Comment) value).clone();
+                element.addContent(comment);
+            }
+            else {
+                String string = (String) TypeUtils.convert(value, String.class);
+                if (string != null && !string.equals("")) {
+                    element.addContent(new Text(string));
+                }
+            }
+        }
+    } 
+      
+    private void addContent(List content) {
+        Element element = (Element) node;
+        int count = content.size();
+
+        for (int i = 0; i < count; i++) {
+            Object child = content.get(i);
+            if (child instanceof Element) {
+                child = ((Element) child).clone();
+                element.addContent((Element) child);
+            }
+            else if (child instanceof Text) {
+                child = ((Text) child).clone();
+                element.addContent((Text) child);
+            }
+            else if (node instanceof CDATA) {
+                child = ((CDATA) child).clone();
+                element.addContent((CDATA) child);
+            }
+            else if (node instanceof ProcessingInstruction) {
+                child = ((ProcessingInstruction) child).clone();
+                element.addContent((ProcessingInstruction) child);
+            }
+            else if (node instanceof Comment) {
+                child = ((Comment) child).clone();
+                element.addContent((Comment) child);
+            }
+        }
+    }
+    
+    public boolean testNode(NodeTest test) {
+        return testNode(this, node, test);
+    }
+    
+    public static boolean testNode(
+        NodePointer pointer,
+        Object node,
+        NodeTest test) 
+    {
+        if (test == null) {
+            return true;
+        }
+        else if (test instanceof NodeNameTest) {
+            if (!(node instanceof Element)) {
+                return false;
+            }
+
+            NodeNameTest nodeNameTest = (NodeNameTest) test;
+            QName testName = nodeNameTest.getNodeName();
+            String namespaceURI = nodeNameTest.getNamespaceURI();
+            boolean wildcard = nodeNameTest.isWildcard();
+            String testPrefix = testName.getPrefix();
+            if (wildcard && testPrefix == null) {
+                return true;
+            }
+
+            if (wildcard
+                || testName.getName()
+                        .equals(JDOMNodePointer.getLocalName(node))) {
+                String nodeNS = JDOMNodePointer.getNamespaceURI(node);
+                return equalStrings(namespaceURI, nodeNS);
+            }
+
+        }
+        else if (test instanceof NodeTypeTest) {
+            switch (((NodeTypeTest) test).getNodeType()) {
+                case Compiler.NODE_TYPE_NODE :
+                    return (node instanceof Element) || (node instanceof Document);
+                case Compiler.NODE_TYPE_TEXT :
+                    return (node instanceof Text) || (node instanceof CDATA);
+                case Compiler.NODE_TYPE_COMMENT :
+                    return node instanceof Comment;
+                case Compiler.NODE_TYPE_PI :
+                    return node instanceof ProcessingInstruction;
+            }
+            return false;
+        }
+        else if (test instanceof ProcessingInstructionTest) {
+            if (node instanceof ProcessingInstruction) {
+                String testPI = ((ProcessingInstructionTest) test).getTarget();
+                String nodePI = ((ProcessingInstruction) node).getTarget();
+                return testPI.equals(nodePI);
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean equalStrings(String s1, String s2) {
+        if (s1 == null && s2 != null) {
+            return false;
+        }
+        if (s1 != null && s2 == null) {
+            return false;
+        }
+
+        if (s1 != null && !s1.trim().equals(s2.trim())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static String getPrefix(Object node) {
+        if (node instanceof Element) {
+            String prefix = ((Element) node).getNamespacePrefix();
+            return (prefix == null || prefix.equals("")) ? null : prefix;
+        }
+        else if (node instanceof Attribute) {
+            String prefix = ((Attribute) node).getNamespacePrefix();
+            return (prefix == null || prefix.equals("")) ? null : prefix;
+        }
+        return null;
+    }
+    
+    public static String getLocalName(Object node) {
+        if (node instanceof Element) {
+            return ((Element) node).getName();
+        }
+        else if (node instanceof Attribute) {
+            return ((Attribute) node).getName();
+        }
+        return null;
+    }
+
+    /**
+     * Returns true if the xml:lang attribute for the current node
+     * or its parent has the specified prefix <i>lang</i>.
+     * If no node has this prefix, calls <code>super.isLanguage(lang)</code>.
+     */
+    public boolean isLanguage(String lang) {
+        String current = getLanguage();
+        if (current == null) {
+            return super.isLanguage(lang);
+        }
+        return current.toUpperCase().startsWith(lang.toUpperCase());
+    }
+
+    protected String getLanguage() {
+        Object n = node;
+        while (n != null) {
+            if (n instanceof Element) {
+                Element e = (Element) n;
+                String attr =
+                    e.getAttributeValue("lang", Namespace.XML_NAMESPACE);
+                if (attr != null && !attr.equals("")) {
+                    return attr;
+                }
+            }
+            n = nodeParent(n);
+        }
+        return null;
+    }
+    
+    private Element nodeParent(Object node) {
+        if (node instanceof Element) {
+            Object parent = ((Element) node).getParent();
+            if (parent instanceof Element) {
+                return (Element) parent;
+            }
+        }
+        else if (node instanceof Text) {
+            return (Element) ((Text) node).getParent();
+        }
+        else if (node instanceof CDATA) {
+            return (Element) ((CDATA) node).getParent();
+        }
+        else if (node instanceof ProcessingInstruction) {
+            return (Element) ((ProcessingInstruction) node).getParent();
+        }
+        else if (node instanceof Comment) {
+            return (Element) ((Comment) node).getParent();
+        }
+        return null;
+    }
+
+    public NodePointer createChild(
+        JXPathContext context,
+        QName name,
+        int index) 
+    {
+        if (index == WHOLE_COLLECTION) {
+            index = 0;
+        }
+        boolean success =
+            getAbstractFactory(context).createObject(
+                context,
+                this,
+                node,
+                name.toString(),
+                index);
+        if (success) {
+            NodeTest nodeTest;
+            String prefix = name.getPrefix();
+            String namespaceURI = prefix != null 
+                ? context.getNamespaceURI(prefix) 
+                : context.getDefaultNamespaceURI();
+            nodeTest = new NodeNameTest(name, namespaceURI);
+
+            NodeIterator it =
+                childIterator(nodeTest, false, null);
+            if (it != null && it.setPosition(index + 1)) {
+                return it.getNodePointer();
+            }
+        }
+        throw new JXPathAbstractFactoryException("Factory could not create "
+                + "a child node for path: " + asPath() + "/" + name + "["
+                + (index + 1) + "]");
+    }
+
+    public NodePointer createChild(
+            JXPathContext context, QName name, int index, Object value)
+    {
+        NodePointer ptr = createChild(context, name, index);
+        ptr.setValue(value);
+        return ptr;
+    }
+
+    public NodePointer createAttribute(JXPathContext context, QName name) {
+        if (!(node instanceof Element)) {
+            return super.createAttribute(context, name);
+        }
+
+        Element element = (Element) node;
+        String prefix = name.getPrefix();
+        if (prefix != null) {
+            Namespace ns = element.getNamespace(prefix);
+            if (ns == null) {
+                throw new JXPathException(
+                    "Unknown namespace prefix: " + prefix);
+            }
+            Attribute attr = element.getAttribute(name.getName(), ns);
+            if (attr == null) {
+                element.setAttribute(name.getName(), "", ns);
+            }
+        }
+        else {
+            Attribute attr = element.getAttribute(name.getName());
+            if (attr == null) {
+                element.setAttribute(name.getName(), "");
+            }
+        }
+        NodeIterator it = attributeIterator(name);
+        it.setPosition(1);
+        return it.getNodePointer();
+    }
+
+    public void remove() {
+        Element parent = nodeParent(node);
+        if (parent == null) {
+            throw new JXPathException("Cannot remove root JDOM node");
+        }
+        parent.getContent().remove(node);
+    }
+
+    public String asPath() {
+        if (id != null) {
+            return "id('" + escape(id) + "')";
+        }
+
+        StringBuffer buffer = new StringBuffer();
+        if (parent != null) {
+            buffer.append(parent.asPath());
+        }
+        if (node instanceof Element) {
+            // If the parent pointer is not a JDOMNodePointer, it is
+            // the parent's responsibility to produce the node test part
+            // of the path
+            if (parent instanceof JDOMNodePointer) {
+                if (buffer.length() == 0
+                    || buffer.charAt(buffer.length() - 1) != '/') {
+                    buffer.append('/');
+                }
+                String nsURI = getNamespaceURI();
+                String ln = JDOMNodePointer.getLocalName(node);
+                
+                if (equalStrings(nsURI, 
+                        getNamespaceResolver().getDefaultNamespaceURI())) {
+                    buffer.append(ln);
+                    buffer.append('[');
+                    buffer.append(getRelativePositionByName()).append(']');
+                }
+                else {
+                    String prefix = getNamespaceResolver().getPrefix(nsURI);
+                    if (prefix != null) {
+                        buffer.append(prefix);
+                        buffer.append(':');
+                        buffer.append(ln);
+                        buffer.append('[');
+                        buffer.append(getRelativePositionByName());
+                        buffer.append(']');
+                    }
+                    else {
+                        buffer.append("node()");
+                        buffer.append('[');
+                        buffer.append(getRelativePositionOfElement());
+                        buffer.append(']');
+                    }
+                }
+
+            }
+        }
+        else if (node instanceof Text || node instanceof CDATA) {
+            buffer.append("/text()");
+            buffer.append('[').append(getRelativePositionOfTextNode()).append(
+                ']');
+        }
+        else if (node instanceof ProcessingInstruction) {
+            String target = ((ProcessingInstruction) node).getTarget();
+            buffer.append("/processing-instruction(\'").append(target).append(
+                "')");
+            buffer.append('[').append(getRelativePositionOfPI(target)).append(
+                ']');
+        }
+        return buffer.toString();
+    }
+
+    private String escape(String string) {
+        int index = string.indexOf('\'');
+        while (index != -1) {
+            string =
+                string.substring(0, index)
+                    + "&apos;"
+                    + string.substring(index + 1);
+            index = string.indexOf('\'');
+        }
+        index = string.indexOf('\"');
+        while (index != -1) {
+            string =
+                string.substring(0, index)
+                    + "&quot;"
+                    + string.substring(index + 1);
+            index = string.indexOf('\"');
+        }
+        return string;
+    }
+
+    private int getRelativePositionByName() {
+        if (node instanceof Element) {
+            Object parent = ((Element) node).getParent();
+            if (!(parent instanceof Element)) {
+                return 1;
+            }
+            
+            List children = ((Element)parent).getContent();
+            int count = 0;
+            String name = ((Element) node).getQualifiedName();
+            for (int i = 0; i < children.size(); i++) {
+                Object child = children.get(i);
+                if ((child instanceof Element)
+                    && ((Element) child).getQualifiedName().equals(name)) {
+                    count++;
+                }
+                if (child == node) {
+                    break;
+                }
+            }
+            return count;
+        }
+        return 1;
+    }
+    
+    private int getRelativePositionOfElement() {
+        Object parent = ((Element) node).getParent();
+        if (parent == null) {
+            return 1;
+        }
+        List children;
+        if (parent instanceof Element) {
+            children = ((Element) parent).getContent();
+        }
+        else {
+            children = ((Document) parent).getContent();
+        }
+        int count = 0;
+        for (int i = 0; i < children.size(); i++) {
+            Object child = children.get(i);
+            if (child instanceof Element) {
+                count++;
+            }
+            if (child == node) {
+                break;
+            }
+        }
+        return count;
+    }
+
+    private int getRelativePositionOfTextNode() {
+        Element parent;
+        if (node instanceof Text) {
+            parent = (Element) ((Text) node).getParent();
+        }
+        else {
+            parent = (Element) ((CDATA) node).getParent();
+        }
+        if (parent == null) {
+            return 1;
+        }
+        List children = parent.getContent();
+        int count = 0;
+        for (int i = 0; i < children.size(); i++) {
+            Object child = children.get(i);
+            if (child instanceof Text || child instanceof CDATA) {
+                count++;
+            }
+            if (child == node) {
+                break;
+            }
+        }
+        return count;
+    }
+
+    private int getRelativePositionOfPI(String target) {
+        Element parent = (Element) ((ProcessingInstruction) node).getParent();
+        if (parent == null) {
+            return 1;
+        }
+        List children = parent.getContent();
+        int count = 0;
+        for (int i = 0; i < children.size(); i++) {
+            Object child = children.get(i);
+            if (child instanceof ProcessingInstruction
+                && (target == null
+                    || target.equals(
+                        ((ProcessingInstruction) child).getTarget()))) {
+                count++;
+            }
+            if (child == node) {
+                break;
+            }
+        }
+        return count;
+    }
+
+    public int hashCode() {
+        return System.identityHashCode(node);
+    }
+
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (!(object instanceof JDOMNodePointer)) {
+            return false;
+        }
+
+        JDOMNodePointer other = (JDOMNodePointer) object;
+        return node == other.node;
+    }
+    private AbstractFactory getAbstractFactory(JXPathContext context) {
+        AbstractFactory factory = context.getFactory();
+        if (factory == null) {
+            throw new JXPathException(
+                "Factory is not set on the JXPathContext - cannot create path: "
+                    + asPath());
+        }
+        return factory;
+    }
+}
+```
+
+
+Explicit fixture recipe definitions (generation support, separate from production source):
+Use the same construction/projection knowledge across all four approaches. Setup failures are not target observations. Use valid receiver/dependency graphs and node kinds.
+```json
+{
+  "fixture_policy_id": "beam-explicit-fixtures-v3-proposal",
+  "schema_version": 1,
+  "scope": "Same fixture construction/projection knowledge for all four approaches; no execution feedback",
+  "source_sha256": {
+    "algorithms/java/SqaProbe.java": "bcb91938a0a369bd8d998966aae4549abc112803c3a190ebe974c1957ee5e90e",
+    "scripts/study/api854/fixture_policy.py": "cc2f60dbf2c0aec8ddad8ef328ed9fa41138f8b8781e43360a2db617d01d8ff4"
+  },
+  "sources": {
+    "algorithms/java/SqaProbe.java": "import java.lang.reflect.Array;\nimport java.lang.reflect.Constructor;\nimport java.lang.reflect.InvocationTargetException;\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Modifier;\nimport java.nio.charset.StandardCharsets;\nimport java.nio.file.Files;\nimport java.nio.file.Paths;\nimport java.security.MessageDigest;\nimport java.security.NoSuchAlgorithmException;\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Base64;\nimport java.util.Comparator;\nimport java.util.List;\n\n/** Fixed-revision observations for explicitly supported, deterministic Java APIs.\n * No buggy source, patch, or triggering test is used during input generation.\n * The same source is packaged with the generated JUnit suite.\n */\npublic final class SqaProbe {\n    private static final String[] STRINGS = {\n        \"\", \"0\", \"1\", \"-1\", \"null\", \"true\", \"false\", \"abc\", \"ABC\", \" \",\n        \"0x0\", \"0x1\", \"0xFFFFFFFF\", \"1.0\", \"1e3\", \"NaN\", \"Infinity\",\n        \"{}\", \"[]\", \"[1]\", \"{\\\"a\\\":1}\", \"a=b\", \"--help\", \"-x\", \"a,b\",\n        \"1970-01-01\", \"a\\\\nb\", \"a\\nb\", \"a\\tb\", \"\\u0e17\\u0e14\\u0e2a\\u0e2d\\u0e1a\"\n    };\n    private static final long[] NUMBERS = {0, 1, -1, 2, -2, 10, -10, 127, 128,\n        255, 256, 32767, -32768, Integer.MAX_VALUE, Integer.MIN_VALUE};\n\n    private SqaProbe() { }\n\n    public static final String EXPLICIT_FIXTURES = \"beam-explicit-fixtures-v3-proposal\";\n    private static final ThreadLocal<FixtureSession> FIXTURES = new ThreadLocal<FixtureSession>();\n    private static final ThreadLocal<Boolean> INVOKED = new ThreadLocal<Boolean>();\n\n    /** A setup failure is never an observation of an uncalled target method. */\n    private static final class FixtureFailure extends RuntimeException {\n        FixtureFailure(String message, Throwable cause) { super(message, cause); }\n    }\n\n    // Production factories only: no dataset test classes, patches or buggy results.\n    // Reflection keeps the helper compilable without project-specific dependencies.\n    private static Object call(Object receiver, String name, Class<?>[] parameterTypes, Object... values)\n            throws ReflectiveOperationException {\n        Class<?> declaring = receiver instanceof Class ? (Class<?>)receiver : receiver.getClass();\n        while (declaring != null) {\n            try {\n                Method method = declaring.getDeclaredMethod(name, parameterTypes);\n                method.setAccessible(true);\n                return method.invoke(receiver instanceof Class ? null : receiver, values);\n            } catch (NoSuchMethodException missing) { declaring = declaring.getSuperclass(); }\n        }\n        throw new NoSuchMethodException(name);\n    }\n\n    private static Object construct(String name, Class<?>[] parameterTypes, Object... values)\n            throws ReflectiveOperationException {\n        Constructor<?> ctor = Class.forName(name).getDeclaredConstructor(parameterTypes);\n        ctor.setAccessible(true);\n        return ctor.newInstance(values);\n    }\n\n    private static final class FixtureSession {\n        final String targetClass;\n        final String method;\n        boolean constructing;\n        Object compiler, registry, scope, cfg, reverse, flow, closureNode, receiver;\n        org.w3c.dom.Element domRoot;\n        org.w3c.dom.Node domChild;\n        Object jdomRoot, jdomChild;\n\n        FixtureSession(String targetClass, String method) {\n            this.targetClass = targetClass;\n            this.method = method;\n        }\n\n        @SuppressWarnings({\"unchecked\", \"rawtypes\"})\n        Object nativeType(String name, boolean object) throws ReflectiveOperationException {\n            Class<?> nativeClass = Class.forName(\"com.google.javascript.rhino.jstype.JSTypeNative\");\n            Object key = Enum.valueOf((Class)nativeClass, name);\n            return call(registry, object ? \"getNativeObjectType\" : \"getNativeType\", new Class<?>[]{nativeClass}, key);\n        }\n\n        void closure(double a) throws ReflectiveOperationException {\n            if (compiler != null) return;\n            Class<?> node = Class.forName(\"com.google.javascript.rhino.Node\");\n            Class<?> scopeClass = Class.forName(\"com.google.javascript.jscomp.Scope\");\n            Class<?> abstractCompiler = Class.forName(\"com.google.javascript.jscomp.AbstractCompiler\");\n            compiler = construct(\"com.google.javascript.jscomp.Compiler\", new Class<?>[]{});\n            Object options = construct(\"com.google.javascript.jscomp.CompilerOptions\", new Class<?>[]{});\n            call(compiler, \"initOptions\", new Class<?>[]{options.getClass()}, options);\n            registry = call(compiler, \"getTypeRegistry\", new Class<?>[]{});\n            String expression = a < 0 ? \"x + 1\" : \"x + 's'\";\n            if (method.contains(\"And\") || method.contains(\"ShortCircuit\")) expression = \"x && true\";\n            if (method.contains(\"Or\")) expression = \"x || false\";\n            if (method.equals(\"traverseArrayLiteral\")) expression = \"[x, 1]\";\n            if (method.equals(\"traverseObjectLiteral\")) expression = \"({p:x})\";\n            if (method.equals(\"traverseHook\")) expression = \"x ? 1 : 2\";\n            if (method.equals(\"traverseAssign\")) expression = \"x = 2\";\n            if (method.equals(\"traverseGetElem\")) expression = \"x['p']\";\n            if (method.equals(\"traverseGetProp\") || method.contains(\"Property\")) expression = \"x.p\";\n            if (method.equals(\"traverseName\") || method.equals(\"redeclareSimpleVar\")\n                    || method.equals(\"narrowScope\") || method.equals(\"updateScopeForTypeChange\")) expression = \"x\";\n            Object script = call(compiler, \"parseTestCode\", new Class<?>[]{String.class},\n                    \"function fixture(x) { return \" + expression + \"; }\");\n            Object function = call(script, \"getFirstChild\", new Class<?>[]{});\n            Object global = call(scopeClass, \"createGlobalScope\", new Class<?>[]{node}, script);\n            scope = construct(scopeClass.getName(), new Class<?>[]{scopeClass, node}, global, function);\n            Object astParameters = call(call(function, \"getFirstChild\", new Class<?>[]{}), \"getNext\", new Class<?>[]{});\n            Object name = call(astParameters, \"getFirstChild\", new Class<?>[]{});\n            call(scope, \"declare\", new Class<?>[]{String.class, node,\n                    Class.forName(\"com.google.javascript.rhino.jstype.JSType\"),\n                    Class.forName(\"com.google.javascript.jscomp.CompilerInput\")}, \"x\", name, nativeType(\"UNKNOWN_TYPE\", false), null);\n            Object body = call(function, \"getLastChild\", new Class<?>[]{});\n            Object returnNode = call(body, \"getFirstChild\", new Class<?>[]{});\n            closureNode = method.equals(\"traverseReturn\") || method.equals(\"branchedFlowThrough\")\n                    ? returnNode : call(returnNode, \"getFirstChild\", new Class<?>[]{});\n            if (method.equals(\"traverseObjectLiteral\"))\n                call(closureNode, \"setJSType\", new Class<?>[]{Class.forName(\"com.google.javascript.rhino.jstype.JSType\")}, nativeType(\"OBJECT_TYPE\", true));\n            Object analysis = construct(\"com.google.javascript.jscomp.ControlFlowAnalysis\",\n                    new Class<?>[]{abstractCompiler, boolean.class, boolean.class}, compiler, false, true);\n            call(analysis, \"process\", new Class<?>[]{node, node}, null, function);\n            cfg = call(analysis, \"getCfg\", new Class<?>[]{});\n            Object convention = call(compiler, \"getCodingConvention\", new Class<?>[]{});\n            reverse = construct(\"com.google.javascript.jscomp.type.SemanticReverseAbstractInterpreter\",\n                    new Class<?>[]{Class.forName(\"com.google.javascript.jscomp.CodingConvention\"), registry.getClass()}, convention, registry);\n            flow = call(Class.forName(\"com.google.javascript.jscomp.LinkedFlowScope\"), \"createEntryLattice\",\n                    new Class<?>[]{scopeClass}, scope);\n            call(flow, \"inferSlotType\", new Class<?>[]{String.class, Class.forName(\"com.google.javascript.rhino.jstype.JSType\")},\n                    \"x\", nativeType(a < 0 ? \"NUMBER_TYPE\" : \"STRING_TYPE\", false));\n        }\n\n        void dom(double a) throws Exception {\n            if (domRoot != null) return;\n            javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();\n            factory.setNamespaceAware(true);\n            org.w3c.dom.Document document = factory.newDocumentBuilder().newDocument();\n            domRoot = document.createElementNS(\"urn:sqa:root\", \"r:root\");\n            document.appendChild(domRoot);\n            domRoot.setAttributeNS(\"http://www.w3.org/2000/xmlns/\", \"xmlns:r\", \"urn:sqa:root\");\n            domRoot.setAttributeNS(\"http://www.w3.org/XML/1998/namespace\", \"xml:lang\", \"en\");\n            org.w3c.dom.Element element = document.createElementNS(\"urn:sqa:item\", \"i:item\");\n            domChild = element;\n            element.setAttributeNS(\"http://www.w3.org/2000/xmlns/\", \"xmlns:i\", \"urn:sqa:item\");\n            element.setAttribute(\"id\", a < 0 ? \"left\" : \"right\");\n            domChild.appendChild(document.createTextNode(a < 0 ? \"alpha\" : \"beta\"));\n            org.w3c.dom.Element grandchild = document.createElementNS(\"urn:sqa:item\", \"i:item\");\n            grandchild.appendChild(document.createTextNode(\"nested\"));\n            domChild.appendChild(grandchild);\n            org.w3c.dom.Element last = document.createElementNS(\"urn:sqa:item\", \"i:item\");\n            last.appendChild(document.createTextNode(\"nested-last\"));\n            domChild.appendChild(last);\n            if (method.equals(\"getRelativePositionOfPI\")) {\n                domRoot.appendChild(document.createProcessingInstruction(\"fixture\", \"before\"));\n                domChild = document.createProcessingInstruction(\"fixture\", a < 0 ? \"alpha\" : \"beta\");\n            } else if (method.equals(\"getRelativePositionOfTextNode\")) {\n                domRoot.appendChild(document.createCDATASection(\"before\"));\n                domChild = document.createTextNode(a < 0 ? \"alpha\" : \"beta\");\n            }\n            domRoot.appendChild(domChild);\n        }\n\n        void jdom(double a) throws ReflectiveOperationException {\n            if (jdomRoot != null) return;\n            Class<?> element = Class.forName(\"org.jdom.Element\");\n            jdomRoot = construct(element.getName(), new Class<?>[]{String.class}, \"root\");\n            jdomChild = construct(element.getName(), new Class<?>[]{String.class}, \"item\");\n            call(jdomChild, \"setText\", new Class<?>[]{String.class}, a < 0 ? \"alpha\" : \"beta\");\n            call(jdomChild, \"setAttribute\", new Class<?>[]{String.class, String.class}, \"id\", a < 0 ? \"left\" : \"right\");\n            Object grandchild = construct(element.getName(), new Class<?>[]{String.class}, \"item\");\n            call(grandchild, \"setText\", new Class<?>[]{String.class}, \"nested\");\n            call(jdomChild, \"addContent\", new Class<?>[]{Class.forName(\"org.jdom.Content\")}, grandchild);\n            Object last = construct(element.getName(), new Class<?>[]{String.class}, \"item\");\n            call(last, \"setText\", new Class<?>[]{String.class}, \"nested-last\");\n            call(jdomChild, \"addContent\", new Class<?>[]{Class.forName(\"org.jdom.Content\")}, last);\n            if (method.equals(\"getRelativePositionOfPI\")) {\n                Object before = construct(\"org.jdom.ProcessingInstruction\", new Class<?>[]{String.class, String.class}, \"fixture\", \"before\");\n                call(jdomRoot, \"addContent\", new Class<?>[]{Class.forName(\"org.jdom.Content\")}, before);\n                jdomChild = construct(\"org.jdom.ProcessingInstruction\", new Class<?>[]{String.class, String.class}, \"fixture\", a < 0 ? \"alpha\" : \"beta\");\n            } else if (method.equals(\"getRelativePositionOfTextNode\")) {\n                Object before = construct(\"org.jdom.CDATA\", new Class<?>[]{String.class}, \"before\");\n                call(jdomRoot, \"addContent\", new Class<?>[]{Class.forName(\"org.jdom.Content\")}, before);\n                jdomChild = construct(\"org.jdom.Text\", new Class<?>[]{String.class}, a < 0 ? \"alpha\" : \"beta\");\n            }\n            call(jdomRoot, \"addContent\", new Class<?>[]{Class.forName(\"org.jdom.Content\")}, jdomChild);\n        }\n\n        void configurePointer(Object pointer) throws ReflectiveOperationException {\n            Class<?> resolverClass = Class.forName(\"org.apache.commons.jxpath.ri.NamespaceResolver\");\n            Object resolver = construct(resolverClass.getName(), new Class<?>[]{resolverClass}, new Object[]{null});\n            call(resolver, \"registerNamespace\", new Class<?>[]{String.class, String.class}, \"i\", \"urn:sqa:item\");\n            call(resolver, \"registerNamespace\", new Class<?>[]{String.class, String.class}, \"r\", \"urn:sqa:root\");\n            call(resolver, \"setNamespaceContextPointer\", new Class<?>[]{Class.forName(\"org.apache.commons.jxpath.ri.model.NodePointer\")}, pointer);\n            call(pointer, \"setNamespaceResolver\", new Class<?>[]{resolverClass}, resolver);\n        }\n\n        Object argument(Class<?> type, double a, double b, double c, int depth) {\n            try {\n                if (depth > 2) throw new FixtureFailure(\"Fixture recursion limit: \" + type.getName(), null);\n                if (scalar(type)) {\n                    if (type == String.class && method.equals(\"getRelativePositionOfPI\")) return a < 0 ? \"fixture\" : \"other\";\n                    if (type == String.class && (method.equals(\"namespacePointer\") || method.equals(\"getNamespaceURI\")))\n                        return a < 0 ? \"r\" : \"i\";\n                    return legacyArgument(type, Math.max(-0.95, a), b, c, depth);\n                }\n                if (type.isArray()) {\n                    Object array = Array.newInstance(type.getComponentType(), bucket(c, 5));\n                    for (int i = 0; i < Array.getLength(array); i++)\n                        Array.set(array, i, argument(type.getComponentType(), a, b, c, depth + 1));\n                    return array;\n                }\n                String name = type.getName();\n                if (name.startsWith(\"com.google.javascript.\")) {\n                    closure(a);\n                    if (name.endsWith(\".AbstractCompiler\")) return compiler;\n                    if (name.endsWith(\".ControlFlowGraph\")) return cfg;\n                    if (name.endsWith(\".ReverseAbstractInterpreter\")) return reverse;\n                    if (name.endsWith(\".Scope\")) return scope;\n                    if (name.endsWith(\".Scope$Var\")) return call(scope, \"getVar\", new Class<?>[]{String.class}, \"x\");\n                    if (name.endsWith(\".FlowScope\")) return flow;\n                    if (name.endsWith(\".Node\")) return closureNode;\n                    if (name.endsWith(\".JSType\")) return nativeType(a < 0 ? \"NUMBER_TYPE\" : \"STRING_TYPE\", false);\n                    if (name.endsWith(\".ObjectType\")) return nativeType(\"OBJECT_TYPE\", true);\n                }\n                if (name.startsWith(\"org.w3c.dom.\")) {\n                    dom(a);\n                    if (type.isInstance(domChild)) return domChild;\n                    if (type.isInstance(domChild.getOwnerDocument())) return domChild.getOwnerDocument();\n                }\n                if (type == java.util.Locale.class) return java.util.Locale.ROOT;\n                if (name.equals(\"org.apache.commons.jxpath.ri.QName\"))\n                    return construct(name, new Class<?>[]{String.class}, method.equals(\"attributeIterator\") ? \"id\" : \"item\");\n                if (name.equals(\"org.apache.commons.jxpath.ri.compiler.NodeTest\"))\n                    return construct(\"org.apache.commons.jxpath.ri.compiler.NodeNameTest\",\n                            new Class<?>[]{Class.forName(\"org.apache.commons.jxpath.ri.QName\"), String.class},\n                            targetClass.contains(\".jdom.\")\n                                ? construct(\"org.apache.commons.jxpath.ri.QName\", new Class<?>[]{String.class}, \"item\")\n                                : construct(\"org.apache.commons.jxpath.ri.QName\", new Class<?>[]{String.class, String.class}, \"i\", \"item\"),\n                            targetClass.contains(\".jdom.\") ? null : \"urn:sqa:item\");\n                if (name.equals(\"org.apache.commons.jxpath.ri.model.NodePointer\")) {\n                    if (targetClass.contains(\".jdom.\")) {\n                        jdom(a);\n                        if (!constructing && (method.equals(\"childIterator\") || method.equals(\"compareChildNodePointers\"))) {\n                            List<?> children = (List<?>)call(jdomChild, \"getContent\", new Class<?>[]{});\n                            Object anchor = children.get(a < 0 ? 0 : children.size() - 1);\n                            Object pointer = construct(targetClass, new Class<?>[]{type, Object.class}, receiver, anchor);\n                            configurePointer(pointer);\n                            return pointer;\n                        }\n                        Object pointer = construct(\"org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer\",\n                                new Class<?>[]{Object.class, java.util.Locale.class}, jdomRoot, java.util.Locale.ROOT);\n                        configurePointer(pointer);\n                        return pointer;\n                    }\n                    dom(a);\n                    if (!constructing && (method.equals(\"childIterator\") || method.equals(\"compareChildNodePointers\"))) {\n                        org.w3c.dom.Node anchor = a < 0 ? domChild.getFirstChild() : domChild.getLastChild();\n                        Object pointer = construct(targetClass, new Class<?>[]{type, org.w3c.dom.Node.class}, receiver, anchor);\n                        configurePointer(pointer);\n                        return pointer;\n                    }\n                    Object pointer = construct(\"org.apache.commons.jxpath.ri.model.dom.DOMNodePointer\",\n                            new Class<?>[]{org.w3c.dom.Node.class, java.util.Locale.class}, domRoot, java.util.Locale.ROOT);\n                    configurePointer(pointer);\n                    return pointer;\n                }\n                if (type == Object.class && targetClass.contains(\".jdom.\")\n                        && (constructing || !method.equals(\"setValue\"))) { jdom(a); return jdomChild; }\n                if (type == java.util.Iterator.class) return new ArrayList<Object>().iterator();\n                if (type == java.util.List.class || type == java.util.Collection.class || type == Iterable.class)\n                    return new ArrayList<Object>();\n                if (type == java.util.Set.class) return new java.util.HashSet<Object>();\n                if (type == java.util.Map.class) return new java.util.HashMap<Object,Object>();\n                if (type == Object.class || type == Number.class || type == java.util.Date.class)\n                    return legacyArgument(type, Math.max(-0.95, a), b, c, depth);\n                throw new FixtureFailure(\"No explicit recipe: \" + name, null);\n            } catch (FixtureFailure failure) { throw failure; }\n            catch (Exception failure) { throw new FixtureFailure(\"Fixture recipe failed: \" + type.getName()\n                    + \":\" + failure.getClass().getName() + \":\" + failure.getMessage(), failure); }\n        }\n\n        String nodeSnapshot(org.w3c.dom.Node node, int depth) {\n            if (depth > 8) return \"depth-limit\";\n            StringBuilder out = new StringBuilder(\"node:\").append(node.getNodeType()).append(':')\n                    .append(quote(node.getNodeName())).append(':').append(quote(String.valueOf(node.getNodeValue())));\n            org.w3c.dom.NamedNodeMap attributes = node.getAttributes();\n            List<String> attrs = new ArrayList<String>();\n            if (attributes != null) for (int i = 0; i < attributes.getLength(); i++)\n                attrs.add(nodeSnapshot(attributes.item(i), depth + 1));\n            java.util.Collections.sort(attrs);\n            out.append(attrs.toString()).append('[');\n            org.w3c.dom.NodeList children = node.getChildNodes();\n            for (int i = 0; i < Math.min(256, children.getLength()); i++) out.append(nodeSnapshot(children.item(i), depth + 1));\n            return out.append(\"]children:\").append(children.getLength()).toString();\n        }\n\n        Object field(Object value, String name) throws ReflectiveOperationException {\n            java.lang.reflect.Field field = value.getClass().getDeclaredField(name);\n            field.setAccessible(true);\n            return field.get(value);\n        }\n\n        String projection(Object result, int depth) throws ReflectiveOperationException {\n            if (depth > 8) throw new FixtureFailure(\"Oracle projection depth exceeded\", null);\n            if (result == null) return \"null\";\n            String name = result.getClass().getName();\n            if (result instanceof org.w3c.dom.Node) return nodeSnapshot((org.w3c.dom.Node)result, 0);\n            if (name.equals(\"org.jdom.Element\") || name.equals(\"org.jdom.ProcessingInstruction\")\n                    || name.equals(\"org.jdom.Text\") || name.equals(\"org.jdom.CDATA\")) {\n                Object writer = construct(\"org.jdom.output.XMLOutputter\", new Class<?>[]{});\n                return \"xml:\" + call(writer, \"outputString\", new Class<?>[]{result.getClass()}, result);\n            }\n            if (name.equals(\"org.apache.commons.jxpath.ri.QName\")) return \"qname:\" + result.toString();\n            if (name.startsWith(\"com.google.javascript.rhino.jstype.\")) return \"js-type:\" + result.toString();\n            if (name.equals(\"com.google.javascript.jscomp.LinkedFlowScope\")) {\n                Object slot = call(result, \"getSlot\", new Class<?>[]{String.class}, \"x\");\n                return \"flow:x=\" + (slot == null ? \"absent\" : projection(call(slot, \"getType\", new Class<?>[]{}), depth + 1));\n            }\n            if (name.endsWith(\"TypeInference$BooleanOutcomePair\"))\n                return \"boolean-pair:\" + field(result, \"toBooleanOutcomes\") + ':' + field(result, \"booleanValues\")\n                    + \":left=\" + projection(field(result, \"leftScope\"), depth + 1)\n                    + \":right=\" + projection(field(result, \"rightScope\"), depth + 1);\n            if (result instanceof List) {\n                StringBuilder out = new StringBuilder(\"list[\");\n                if (((List<?>)result).size() > 256) throw new FixtureFailure(\"Oracle collection limit exceeded\", null);\n                for (Object item : (List<?>)result) out.append(projection(item, depth + 1)).append(';');\n                return out.append(']').toString();\n            }\n            if (name.startsWith(\"org.apache.commons.jxpath.ri.model.\")) {\n                Class<?> pointer = Class.forName(\"org.apache.commons.jxpath.ri.model.NodePointer\");\n                if (pointer.isInstance(result))\n                    return \"pointer:\" + projection(call(result, \"getImmediateNode\", new Class<?>[]{}), depth + 1);\n                if (Class.forName(\"org.apache.commons.jxpath.ri.model.NodeIterator\").isInstance(result)) {\n                    StringBuilder out = new StringBuilder(\"iterator[\");\n                    for (int i = 1; i <= 9; i++) {\n                        boolean present = (Boolean)call(result, \"setPosition\", new Class<?>[]{int.class}, i);\n                        if (!present) return out.append(']').toString();\n                        if (i == 9) throw new FixtureFailure(\"Oracle iterator limit exceeded\", null);\n                        out.append(projection(call(result, \"getNodePointer\", new Class<?>[]{}), depth + 1)).append(';');\n                    }\n                }\n            }\n            String simple = value(result);\n            if (simple.startsWith(\"object-type:\")) throw new FixtureFailure(\"No structural oracle: \" + name, null);\n            return simple;\n        }\n\n        String state() throws ReflectiveOperationException {\n            if (compiler != null) {\n                Object jsType = call(closureNode, \"getJSType\", new Class<?>[]{});\n                return \"ast:\" + call(closureNode, \"toStringTree\", new Class<?>[]{})\n                    + \":ast-type=\" + projection(jsType, 0) + ':' + projection(flow, 0);\n            }\n            if (domRoot != null) return nodeSnapshot(domRoot, 0) + \":child=\" + nodeSnapshot(domChild, 0)\n                    + \":attached=\" + (domChild.getParentNode() != null);\n            if (jdomRoot != null) return projection(jdomRoot, 0) + \":child=\" + projection(jdomChild, 0)\n                    + \":attached=\" + (call(jdomChild, \"getParent\", new Class<?>[]{}) != null);\n            return \"stateless-scalars\";\n        }\n    }\n\n    private static String quote(String value) {\n        StringBuilder out = new StringBuilder(\"\\\"\");\n        for (char c : value.toCharArray()) {\n            if (c == '\"' || c == '\\\\') out.append('\\\\').append(c);\n            else if (c < 32) out.append(String.format(\"\\\\u%04x\", (int)c));\n            else out.append(c);\n        }\n        return out.append('\"').toString();\n    }\n\n    private static String typeNames(Class<?>[] types) {\n        List<String> names = new ArrayList<String>();\n        for (Class<?> type : types) names.add(type.getName());\n        return String.join(\",\", names);\n    }\n\n    private static boolean scalar(Class<?> type) {\n        return type.isPrimitive() || type == String.class || type == Boolean.class\n            || type == Character.class || type == Byte.class || type == Short.class\n            || type == Integer.class || type == Long.class || type == Float.class\n            || type == Double.class || type.isEnum();\n    }\n\n    private static boolean supported(Class<?> type) {\n        return scalar(type) || (type.isArray() && scalar(type.getComponentType()));\n    }\n\n    private static boolean supportedParameters(Class<?>[] types) {\n        if (types.length > 6) return false;\n        for (Class<?> type : types) if (type == void.class) return false;\n        return true;\n    }\n\n    private static Class<?> type(String name) throws ClassNotFoundException {\n        if (name.equals(\"boolean\")) return boolean.class;\n        if (name.equals(\"byte\")) return byte.class;\n        if (name.equals(\"short\")) return short.class;\n        if (name.equals(\"int\")) return int.class;\n        if (name.equals(\"long\")) return long.class;\n        if (name.equals(\"float\")) return float.class;\n        if (name.equals(\"double\")) return double.class;\n        if (name.equals(\"char\")) return char.class;\n        return Class.forName(name);\n    }\n\n    private static Class<?>[] types(String names) throws ClassNotFoundException {\n        if (names.length() == 0) return new Class<?>[0];\n        String[] split = names.split(\",\", -1);\n        Class<?>[] result = new Class<?>[split.length];\n        for (int i = 0; i < split.length; i++) result[i] = type(split[i]);\n        return result;\n    }\n\n    private static int bucket(double coordinate, int size) {\n        double unit = Math.max(0, Math.min(1, (coordinate + 1) / 2));\n        return Math.min(size - 1, (int)(unit * size));\n    }\n\n    private static Object argument(Class<?> type, double a, double b, double c) {\n        return argument(type, a, b, c, 0);\n    }\n\n    private static Object argument(Class<?> type, double a, double b, double c, int depth) {\n        FixtureSession session = FIXTURES.get();\n        return session == null ? legacyArgument(type, a, b, c, depth) : session.argument(type, a, b, c, depth);\n    }\n\n    private static Object legacyArgument(Class<?> type, double a, double b, double c, int depth) {\n        if (depth > 2) return null;\n        if (type.isArray()) {\n            int length = bucket(c, 5);\n            Object array = Array.newInstance(type.getComponentType(), length);\n            for (int i = 0; i < length; i++) {\n                Array.set(array, i, argument(type.getComponentType(),\n                    Math.max(-1, Math.min(1, a + i * 0.17)), b, c, depth + 1));\n            }\n            return array;\n        }\n        if (!type.isPrimitive() && a < -0.96) return null;\n        if (type == String.class) {\n            int selection = bucket(a, STRINGS.length + 4);\n            if (selection < STRINGS.length) return STRINGS[selection];\n            int length = bucket(c, 33);\n            char character = \"0123456789abcdefXYZ +-_.\".charAt(bucket(b, 23));\n            char[] value = new char[length];\n            Arrays.fill(value, character);\n            return new String(value);\n        }\n        if (type == boolean.class || type == Boolean.class) return a >= 0;\n        if (type == char.class || type == Character.class) return (char)bucket(a, 128);\n        if (type.isEnum()) {\n            Object[] values = type.getEnumConstants();\n            return values.length == 0 ? null : values[bucket(a, values.length)];\n        }\n        long integer = b < 0 ? NUMBERS[bucket(a, NUMBERS.length)] : Math.round(a * 10000);\n        if (type == byte.class || type == Byte.class) return (byte)integer;\n        if (type == short.class || type == Short.class) return (short)integer;\n        if (type == int.class || type == Integer.class) return (int)integer;\n        if (type == long.class || type == Long.class) return integer;\n        double real = b < 0 ? integer : a * 1000;\n        if (type == float.class || type == Float.class) return (float)real;\n        if (type == double.class || type == Double.class) return real;\n        if (type == Number.class) return Double.valueOf(real);\n        if (type == Object.class) return b < 0 ? STRINGS[bucket(a, STRINGS.length)] : Long.valueOf(integer);\n        if (type == java.util.Date.class) return new java.util.Date(integer);\n        if (type == java.util.List.class || type == java.util.Collection.class || type == Iterable.class)\n            return new java.util.ArrayList<Object>();\n        if (type == java.util.Set.class) return new java.util.HashSet<Object>();\n        if (type == java.util.Map.class) return new java.util.HashMap<Object,Object>();\n        if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers()) && !type.getName().startsWith(\"java.\")) {\n            Constructor<?>[] constructors = type.getDeclaredConstructors();\n            Arrays.sort(constructors, new Comparator<Constructor<?>>() {\n                public int compare(Constructor<?> left, Constructor<?> right) {\n                    int count = left.getParameterCount() - right.getParameterCount();\n                    return count != 0 ? count : left.toString().compareTo(right.toString());\n                }\n            });\n            for (Constructor<?> constructor : constructors) {\n                if (constructor.getParameterCount() > 3) continue;\n                try {\n                    constructor.setAccessible(true);\n                    Class<?>[] parameters = constructor.getParameterTypes();\n                    Object[] values = new Object[parameters.length];\n                    for (int i = 0; i < values.length; i++) values[i] = argument(parameters[i], a, b, c, depth + 1);\n                    return constructor.newInstance(values);\n                } catch (ReflectiveOperationException error) {\n                    // Failed fixture construction yields an explicit null boundary input.\n                } catch (RuntimeException error) {\n                    // Encapsulated/unconstructible fixture yields the same null boundary.\n                }\n            }\n        }\n        return null;\n    }\n\n    private static Object[] arguments(Class<?>[] types, double[] vector, int offset) {\n        Object[] values = new Object[types.length];\n        for (int i = 0; i < types.length; i++) {\n            int start = offset + 3 * i;\n            values[i] = argument(types[i], vector[start % vector.length],\n                vector[(start + 1) % vector.length], vector[(start + 2) % vector.length]);\n        }\n        return values;\n    }\n\n    private static String value(Object value) {\n        if (value == null) return \"null\";\n        Class<?> type = value.getClass();\n        if (type.isArray()) {\n            StringBuilder out = new StringBuilder(type.getName()).append('[');\n            int length = Array.getLength(value);\n            if (length > 100000) throw new IllegalStateException(\"SQA_HARNESS oversized outcome\");\n            for (int i = 0; i < length; i++) out.append(value(Array.get(value, i))).append(';');\n            return out.append(']').toString();\n        }\n        if (value instanceof Class) return \"class:\" + ((Class<?>)value).getName();\n        if (!scalar(type) && !(value instanceof Number)) return \"object-type:\" + type.getName();\n        String text = value instanceof Enum ? ((Enum<?>) value).name() : String.valueOf(value);\n        return type.getName() + \":\" + Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));\n    }\n\n    private static String snapshot(String observed) {\n        // JVM string constants are limited to 65,535 encoded bytes. Long exact\n        // observations use a deterministic digest rather than enormous literals.\n        if (observed.length() <= 16000) return observed;\n        byte[] bytes = observed.getBytes(StandardCharsets.UTF_8);\n        try {\n            byte[] digest = MessageDigest.getInstance(\"SHA-256\").digest(bytes);\n            StringBuilder hex = new StringBuilder();\n            for (byte item : digest) hex.append(String.format(\"%02x\", item & 255));\n            return \"sha256:\" + hex + \":bytes:\" + bytes.length;\n        } catch (NoSuchAlgorithmException error) {\n            throw new IllegalStateException(\"SQA_HARNESS SHA-256 unavailable\", error);\n        }\n    }\n\n    public static String observe(String className, String constructorTypes, String methodName,\n                                 String methodTypes, double[] vector) {\n        INVOKED.set(false);\n        if (vector.length == 0) throw new IllegalArgumentException(\"SQA_HARNESS empty vector\");\n        try {\n            Class<?> target = Class.forName(className);\n            Class<?>[] ctorTypes = types(constructorTypes);\n            Class<?>[] parameterTypes = types(methodTypes);\n            Object receiver = null;\n            Method method = null;\n            if (!methodName.equals(\"<init>\")) {\n                Class<?> declaring = target;\n                while (declaring != null) {\n                    try { method = declaring.getDeclaredMethod(methodName, parameterTypes); break; }\n                    catch (NoSuchMethodException missing) { declaring = declaring.getSuperclass(); }\n                }\n                if (method == null) throw new NoSuchMethodException(methodName);\n                method.setAccessible(true);\n            }\n            if (method == null || !Modifier.isStatic(method.getModifiers())) {\n                Constructor<?> ctor = target.getDeclaredConstructor(ctorTypes);\n                ctor.setAccessible(true);\n                FixtureSession session = FIXTURES.get();\n                if (session != null) session.constructing = true;\n                try {\n                    Object[] values = arguments(ctorTypes, vector, 0);\n                    if (method == null) INVOKED.set(true);\n                    receiver = ctor.newInstance(values);\n                    if (session != null) session.receiver = receiver;\n                    if (session != null && className.startsWith(\"org.apache.commons.jxpath.ri.model.\")) session.configurePointer(receiver);\n                } catch (InvocationTargetException error) {\n                    if (session != null && method != null)\n                        throw new FixtureFailure(\"Receiver constructor failed before method invocation\", error.getCause());\n                    throw error;\n                } finally { if (session != null) session.constructing = false; }\n            }\n            if (method == null) {\n                if (FIXTURES.get() == null) return \"constructed:\" + target.getName();\n                try { return snapshot(\"constructed:\" + target.getName() + \":state=\" + FIXTURES.get().state()); }\n                catch (ReflectiveOperationException failure) { throw new FixtureFailure(\"Constructor state oracle failed\", failure); }\n            }\n            Object[] values = arguments(parameterTypes, vector, ctorTypes.length * 3);\n            INVOKED.set(true);\n            Object result = method.invoke(receiver, values);\n            if (FIXTURES.get() != null) {\n                FixtureSession session = FIXTURES.get();\n                try {\n                    return snapshot((method.getReturnType() == void.class ? \"void\" : \"value:\" + session.projection(result, 0))\n                            + \"|state=\" + session.state());\n                } catch (ReflectiveOperationException failure) { throw new FixtureFailure(\"Structural oracle failed\", failure); }\n            }\n            return method.getReturnType() == void.class ? \"void\" : snapshot(\"value:\" + value(result));\n        } catch (InvocationTargetException error) {\n            Throwable cause = error.getCause();\n            if (cause instanceof VirtualMachineError || cause instanceof LinkageError || cause instanceof ThreadDeath)\n                throw new IllegalStateException(\"SQA_HARNESS JVM failure\", cause);\n            return \"exception:\" + cause.getClass().getName();\n        } catch (ReflectiveOperationException error) {\n            throw new IllegalStateException(\"SQA_HARNESS reflection failure\", error);\n        } catch (LinkageError error) {\n            throw new IllegalStateException(\"SQA_HARNESS linkage failure\", error);\n        }\n    }\n\n    public static String observeWithPolicy(String className, String constructorTypes, String methodName,\n            String methodTypes, double[] vector, String policy) {\n        if (!EXPLICIT_FIXTURES.equals(policy)) throw new IllegalArgumentException(\"Unknown explicit fixture policy\");\n        FIXTURES.set(new FixtureSession(className, methodName));\n        try { return observe(className, constructorTypes, methodName, methodTypes, vector); }\n        finally { FIXTURES.remove(); }\n    }\n\n    public static boolean targetInvoked() { return Boolean.TRUE.equals(INVOKED.get()); }\n\n    private static String descriptor(String className, String ctor, String method, String params, int count) {\n        return \"{\\\"class\\\":\" + quote(className) + \",\\\"constructor_types\\\":\" + quote(ctor)\n            + \",\\\"method\\\":\" + quote(method) + \",\\\"parameter_types\\\":\" + quote(params)\n            + \",\\\"dimensions\\\":\" + Math.max(3, count * 3) + \"}\";\n    }\n\n    private static void discover(String[] classes, List<String> fixtureClasses) {\n        List<String> targets = new ArrayList<String>();\n        List<String> errors = new ArrayList<String>();\n        for (String className : classes) {\n            try {\n                Class<?> target = Class.forName(className, false, SqaProbe.class.getClassLoader());\n                Class<?> receiverType = target;\n                if (Modifier.isAbstract(target.getModifiers())) {\n                    for (String name : fixtureClasses) {\n                        try {\n                            Class<?> candidate = Class.forName(name, false, SqaProbe.class.getClassLoader());\n                            if (!Modifier.isAbstract(candidate.getModifiers()) && target.isAssignableFrom(candidate)\n                                    && candidate.getDeclaredConstructors().length > 0) {\n                                receiverType = candidate;\n                                break;\n                            }\n                        } catch (ClassNotFoundException ignored) { } catch (LinkageError ignored) { }\n                    }\n                }\n                List<Constructor<?>> constructors = new ArrayList<Constructor<?>>();\n                if (!Modifier.isAbstract(receiverType.getModifiers()) && !receiverType.isEnum()) {\n                    Constructor<?>[] all = receiverType.getDeclaredConstructors();\n                    Arrays.sort(all, new Comparator<Constructor<?>>() {\n                        public int compare(Constructor<?> a, Constructor<?> b) { return a.toString().compareTo(b.toString()); }\n                    });\n                    for (Constructor<?> ctor : all) {\n                        if (supportedParameters(ctor.getParameterTypes())) constructors.add(ctor);\n                    }\n                    // Select a constructor before generating inputs; prefer the simplest fixture.\n                    java.util.Collections.sort(constructors, new Comparator<Constructor<?>>() {\n                        public int compare(Constructor<?> a, Constructor<?> b) { return a.getParameterCount() - b.getParameterCount(); }\n                    });\n                }\n                Method[] methods = target.getDeclaredMethods();\n                Arrays.sort(methods, new Comparator<Method>() {\n                    public int compare(Method a, Method b) { return a.toString().compareTo(b.toString()); }\n                });\n                for (Method method : methods) {\n                    if (method.isSynthetic() || method.getName().equals(\"main\")\n                        || method.isBridge() || !supportedParameters(method.getParameterTypes())\n                        ) continue;\n                    if (Modifier.isStatic(method.getModifiers())) {\n                        targets.add(descriptor(className, \"\", method.getName(),\n                            typeNames(method.getParameterTypes()), method.getParameterCount()));\n                    } else if (!constructors.isEmpty()) {\n                        Constructor<?> ctor = constructors.get(0);\n                        targets.add(descriptor(receiverType.getName(), typeNames(ctor.getParameterTypes()), method.getName(),\n                            typeNames(method.getParameterTypes()), ctor.getParameterCount() + method.getParameterCount()));\n                    }\n                }\n                for (Constructor<?> ctor : constructors) {\n                    if (ctor.getParameterCount() > 0)\n                        targets.add(descriptor(receiverType.getName(), typeNames(ctor.getParameterTypes()), \"<init>\", \"\", ctor.getParameterCount()));\n                }\n            } catch (Throwable error) {\n                if (error instanceof VirtualMachineError || error instanceof ThreadDeath) throw (Error)error;\n                errors.add(quote(className + \":\" + error.getClass().getName()));\n            }\n        }\n        System.out.println(\"{\\\"targets\\\":[\" + String.join(\",\", targets) + \"],\\\"errors\\\":[\" + String.join(\",\", errors) + \"]}\");\n    }\n\n    public static void main(String[] args) throws Exception {\n        if (args.length > 0 && args[0].equals(\"discover\")) {\n            int start = 1;\n            List<String> fixtures = new ArrayList<String>();\n            if (args.length > 2 && args[1].equals(\"--fixtures\")) {\n                fixtures = Files.readAllLines(Paths.get(args[2]), StandardCharsets.UTF_8);\n                start = 3;\n            }\n            discover(Arrays.copyOfRange(args, start, args.length), fixtures);\n            return;\n        }\n        if ((args.length != 6 && args.length != 7) || !args[0].equals(\"observe\"))\n            throw new IllegalArgumentException(\"SQA_HARNESS expected discover classes or observe class ctor method types vector\");\n        String[] pieces = args[5].split(\",\");\n        double[] vector = new double[pieces.length];\n        for (int i = 0; i < pieces.length; i++) {\n            vector[i] = Double.parseDouble(pieces[i]);\n            if (!Double.isFinite(vector[i]))\n                throw new IllegalArgumentException(\"SQA_HARNESS nonfinite vector\");\n        }\n        String outcome;\n        try {\n            outcome = args.length == 7 ? observeWithPolicy(args[1], args[2], args[3], args[4], vector, args[6])\n                : observe(args[1], args[2], args[3], args[4], vector);\n        } catch (FixtureFailure failure) {\n            System.out.println(\"SQA_FIXTURE_FAILURE:\" + Base64.getEncoder().encodeToString(failure.getMessage().getBytes(StandardCharsets.UTF_8)));\n            return;\n        }\n        System.out.println(\"SQA_TRACE:{\\\"target_invoked\\\":\" + Boolean.TRUE.equals(INVOKED.get()) + \"}\");\n        System.out.println(\"SQA_RESULT:\" + Base64.getEncoder().encodeToString(outcome.getBytes(StandardCharsets.UTF_8)));\n    }\n}\n",
+    "scripts/study/api854/fixture_policy.py": "\"\"\"Predeclared explicit fixture capability filter, never selected by buggy outcomes.\"\"\"\nPOLICY = 'beam-explicit-fixtures-v3-proposal'\nRECIPE_SOURCES = ('algorithms/java/SqaProbe.java', 'scripts/study/api854/fixture_policy.py')\n\n\ndef recipe_document(source_hashes):\n    from .common import ROOT, sha256\n    expected = {name: source_hashes[name] for name in RECIPE_SOURCES}\n    if any(sha256(ROOT / name) != value for name, value in expected.items()):\n        raise ValueError('Explicit recipe source differs from protocol')\n    return {'schema_version': 1, 'fixture_policy_id': POLICY, 'source_sha256': expected,\n        'sources': {name: (ROOT / name).read_bytes().decode('utf-8') for name in RECIPE_SOURCES},\n        'scope': 'Same fixture construction/projection knowledge for all four approaches; no execution feedback'}\n\n\ndef validate_recipe(recipe, source_hashes=None):\n    from .preparation import digest\n    if (not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != POLICY\n            or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(RECIPE_SOURCES)\n            or not isinstance(recipe.get('source_sha256'), dict) or set(recipe['source_sha256']) != set(RECIPE_SOURCES)\n            or any(not isinstance(recipe['sources'][name], str)\n                   or digest(recipe['sources'][name].encode('utf-8')) != recipe['source_sha256'][name] for name in RECIPE_SOURCES)):\n        raise ValueError('Explicit recipe source bytes/hash differ')\n    if source_hashes is not None and any(source_hashes.get(name) != recipe['source_sha256'][name] for name in RECIPE_SOURCES):\n        raise ValueError('Explicit recipe source differs from frozen protocol')\n    return True\n\nSCALARS = {'boolean', 'byte', 'short', 'int', 'long', 'float', 'double', 'char',\n           'java.lang.String', 'java.lang.Boolean', 'java.lang.Byte', 'java.lang.Short',\n           'java.lang.Integer', 'java.lang.Long', 'java.lang.Float', 'java.lang.Double',\n           'java.lang.Character', 'java.lang.Object', 'java.lang.Number', 'java.util.Date',\n           'java.util.Locale', 'java.util.List', 'java.util.Collection', 'java.lang.Iterable',\n           'java.util.Iterator', 'java.util.Map', 'java.util.Set'}\nCLOSURE = {'com.google.javascript.jscomp.AbstractCompiler', 'com.google.javascript.jscomp.ControlFlowGraph',\n           'com.google.javascript.jscomp.type.ReverseAbstractInterpreter', 'com.google.javascript.jscomp.Scope',\n           'com.google.javascript.jscomp.Scope$Var', 'com.google.javascript.jscomp.type.FlowScope',\n           'com.google.javascript.rhino.Node', 'com.google.javascript.rhino.jstype.JSType',\n           'com.google.javascript.rhino.jstype.ObjectType', 'com.google.javascript.rhino.jstype.JSTypeNative',\n           'com.google.javascript.rhino.jstype.BooleanLiteralSet'}\nJXPATH = {'org.w3c.dom.Node', 'org.w3c.dom.Document', 'org.w3c.dom.Element',\n          'org.apache.commons.jxpath.ri.QName', 'org.apache.commons.jxpath.ri.compiler.NodeTest',\n          'org.apache.commons.jxpath.ri.model.NodePointer'}\n# Methods requiring specialized AST parent/sibling/call metadata have no reviewed\n# recipe yet. This list is a structural restriction, not an outcome-based prune.\nCLOSURE_METHODS = {'createEntryLattice', 'createInitialEstimateLattice', 'flowThrough',\n    'branchedFlowThrough', 'isAddedAsNumber', 'isUnflowable', 'newBooleanOutcomePair',\n    'traverseAnd', 'traverseOr', 'traverseShortCircuitingBinOp', 'traverseWithinShortCircuitingBinOp',\n    'narrowScope', 'traverse', 'traverseAdd', 'traverseArrayLiteral', 'traverseAssign',\n    'traverseChildren', 'traverseGetElem', 'traverseGetProp', 'traverseHook', 'traverseName',\n    'traverseObjectLiteral', 'traverseReturn', 'getJSType', 'getNativeType',\n    'redeclareSimpleVar', 'updateScopeForTypeChange', 'getBooleanOutcomes'}\n\n\ndef select(targets, policy):\n    if policy is None:\n        return targets, []\n    if policy != POLICY:\n        raise ValueError('Unknown explicit fixture policy')\n    selected, excluded = [], []\n    for target in targets:\n        name = target['class']\n        family = CLOSURE if name == 'com.google.javascript.jscomp.TypeInference' else JXPATH if name in {\n            'org.apache.commons.jxpath.ri.model.dom.DOMNodePointer',\n            'org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer'} else set()\n        reason = None\n        if not family:\n            reason = 'explicit_project_recipe_not_reviewed'\n        elif target['method'] in {'<init>', 'hashCode'}:\n            reason = 'constructor_or_identity_oracle_not_reviewed'\n        elif family is CLOSURE and target['method'] not in CLOSURE_METHODS:\n            reason = 'specialized_ast_recipe_not_reviewed'\n        else:\n            required = set(filter(None, (target['constructor_types'] + ',' + target['parameter_types']).split(',')))\n            missing = required - SCALARS - family\n            if missing:\n                reason = 'explicit_argument_recipe_missing:' + ','.join(sorted(missing))\n        if reason:\n            excluded.append({'target': target, 'reason': reason})\n        else:\n            selected.append(target)\n    return selected, excluded\n"
+  }
+}
+```

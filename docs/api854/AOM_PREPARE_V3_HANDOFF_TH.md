@@ -4,6 +4,10 @@
 policy v3, Chart receiver partition, CPU/API input binding, runner coverage และ Gate A evidence.
 เป็น proposal สำหรับทีมตรวจรับ ยังไม่ใช่ frozen primary protocol และยังไม่เปิด live pilot.
 
+อัปเดตหลังรับ Beam `3ff1a6a4`: [AOM_BEAM_FIXTURE_REVIEW_TH.md](AOM_BEAM_FIXTURE_REVIEW_TH.md).
+v3 artifacts เดิมคง bytes; shared explicit recipe v4 เป็น two-bug development proposal
+มี prompt สูงสุด 174,475 bytes และยังไม่ใช้แทน primary ครบ 20 bugs.
+
 ข้อความส่งต่อแยกผู้รับ: [AOM_TO_TEAM_MESSAGE_TH.md](AOM_TO_TEAM_MESSAGE_TH.md).
 
 ## ไฟล์ที่ให้เพื่อนดึง

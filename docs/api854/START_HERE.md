@@ -72,3 +72,7 @@ shared prepare v2 + callable resolver + runner guards รวมแล้ว; rec
 ชุดส่งมอบใหม่ล่าสุด: [AOM_PREPARE_V3_HANDOFF_TH.md](AOM_PREPARE_V3_HANDOFF_TH.md) —
 import discovery ครบ 20 bugs/691 targets แล้ว พร้อม receiver partition/shared fixtures,
 CPU/API binding และงานต่อสำหรับแชมป์/บีม. Primary/provider/semantic/host Gate A ยัง pending.
+
+รับ fixture รอบใหม่บีม `3ff1a6a4`: [AOM_BEAM_FIXTURE_REVIEW_TH.md](AOM_BEAM_FIXTURE_REVIEW_TH.md) —
+four development suites ของ Closure-176/JxPath-1 และ eligibility import ตรง v3 ครบ 20 bugs;
+shared recipe development v4 compose แล้วเฉพาะสอง bugs. อีก 18 recipes/team acceptance/API evidence ยัง pending.

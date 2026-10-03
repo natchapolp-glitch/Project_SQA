@@ -61,9 +61,9 @@ class FrozenSettings:
             raise WorkerBlocked("model_selection_not_frozen")
         generation = protocol.get("generation") or {}
         prepare_contract = generation.get("prepare_contract", "champ-v1")
-        if prepare_contract not in {"champ-v1", "aom-beam-prepare-v2", "aom-beam-prepare-v3"}:
+        if prepare_contract not in {"champ-v1", "aom-beam-prepare-v2", "aom-beam-prepare-v3", "aom-beam-prepare-v4", "aom-beam-prepare-v5"}:
             raise WorkerBlocked("prepare_contract_not_frozen")
-        if prepare_contract in {"aom-beam-prepare-v2", "aom-beam-prepare-v3"}:
+        if prepare_contract in {"aom-beam-prepare-v2", "aom-beam-prepare-v3", "aom-beam-prepare-v4", "aom-beam-prepare-v5"}:
             from .preparation import policy_for, encoded, digest as prepare_digest
             policy = policy_for(prepare_contract)
             if (generation.get("context_policy_id") != policy["context_policy_id"]
@@ -71,6 +71,11 @@ class FrozenSettings:
                     or generation.get("handoff_contract") != "beam-v1"
                     or protocol.get("prepare_policy_sha256") != prepare_digest(encoded(policy))):
                 raise WorkerBlocked("shared_prepare_policy_not_frozen")
+            explicit = prepare_contract in {'aom-beam-prepare-v4', 'aom-beam-prepare-v5'}
+            if (bool(protocol.get('fixture_policy_id')) != explicit or
+                    (explicit and (protocol.get('fixture_policy_id') != policy['fixture_policy']
+                                   or generation.get('fixture_policy_id') != policy['fixture_policy']))):
+                raise WorkerBlocked('shared_fixture_policy_not_frozen')
         handoff_contract = generation.get("handoff_contract", "champ-v1")
         if handoff_contract not in {"champ-v1", "beam-v1"}:
             raise WorkerBlocked("handoff_contract_not_frozen")
@@ -180,7 +185,7 @@ def resolve_prepared_job(client, job: dict, settings: FrozenSettings, *, owner=N
         raise WorkerBlocked("prompt_exceeds_frozen_conservative_bound")
     if getattr(settings, "handoff_contract", "champ-v1") == "beam-v1":
         fixed_sources = {row["path"]: row["sha256"] for row in files if row.get("path", "").endswith(".java")}
-        if settings.prepare_contract == "aom-beam-prepare-v3":
+        if settings.prepare_contract in {"aom-beam-prepare-v3", "aom-beam-prepare-v4", "aom-beam-prepare-v5"}:
             from .preparation import java_mapping
             try:
                 fixed_sources, _ = java_mapping(manifest, metadata)
@@ -189,16 +194,17 @@ def resolve_prepared_job(client, job: dict, settings: FrozenSettings, *, owner=N
         if (not fixed_sources or metadata.get("fixed_source_sha256") != fixed_sources
                 or metadata.get("context_source_hash") != source_hash):
             raise WorkerBlocked("beam_preparation_lineage_mismatch")
-    if getattr(settings, "prepare_contract", "champ-v1") in {"aom-beam-prepare-v2", "aom-beam-prepare-v3"}:
+    if getattr(settings, "prepare_contract", "champ-v1") in {"aom-beam-prepare-v2", "aom-beam-prepare-v3", "aom-beam-prepare-v4", "aom-beam-prepare-v5"}:
         from .preparation import validate
         try:
+            recipe = json.loads(download('fixture-recipes.json')) if settings.prepare_contract in {'aom-beam-prepare-v4', 'aom-beam-prepare-v5'} else None
             validate(manifest, metadata, prompt_bytes, download("targets.json"),
-                     download("prepare-policy.json"), require_eligible=True)
+                     download("prepare-policy.json"), require_eligible=True, fixture_recipe=recipe)
         except ValueError:
             raise WorkerBlocked("shared_preparation_not_ready") from None
         if metadata["policy_sha256"] != settings.protocol.get("prepare_policy_sha256"):
             raise WorkerBlocked("shared_preparation_policy_not_frozen")
-        if settings.prepare_contract == "aom-beam-prepare-v3":
+        if settings.prepare_contract in {"aom-beam-prepare-v3", "aom-beam-prepare-v4", "aom-beam-prepare-v5"}:
             from .prepared_inputs import load as load_shared
             try:
                 load_shared(client, job, settings.protocol)

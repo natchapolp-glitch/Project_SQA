@@ -1,5 +1,8 @@
 # แชมป์รับงาน Beam 3c7c62b8: เครื่องเดียวและ local review 5/20
 
+> สถานะล่าสุด: [รับ Aom 76b88e25 / shared v5 และ real KKU settings calibration](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
+> เอกสารด้านล่างเป็น checkpoint ก่อน shared-v5 และก่อนการถอน aom-pc2 จาก runner proposal ใหม่
+
 รวม `beam 3c7c62b8` ต่อจาก `champ 64418ca0` ในช่วง offline
 รับหลักฐานใหม่ Codec-1, Collections-1 และ Csv-1 พร้อมแผน `beam-pc1` เครื่องเดียว CPU 1 slot
 ยังไม่มีการตรวจรับ semantic/shared contract ร่วมทีม ไม่เปิด live pilot และไม่มี KKU API request

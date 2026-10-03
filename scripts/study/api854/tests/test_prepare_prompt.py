@@ -9,43 +9,6 @@ from scripts.study.api854.fixture_policy import POLICY
 
 
 class PreparePromptTests(unittest.TestCase):
-    def test_explicit_worker_exports_recipe_instead_of_shared_legacy_prompt(self):
-        from scripts.study.api854.configuration import proposal
-        import json
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            fixed = root / 'fixed'
-            source = 'src/com/google/javascript/jscomp/TypeInference.java'
-            (fixed / source).parent.mkdir(parents=True)
-            (fixed / source).write_bytes(b'package com.google.javascript.jscomp; public class TypeInference {}')
-            (fixed / '.defects4j.config').write_bytes(b'pid=Closure\nvid=176f\n')
-            protocol = proposal()
-            protocol.update(context_selection=CONTEXT_POLICY, fixture_policy_id=POLICY,
-                generation={'context_policy_id':CONTEXT_POLICY, 'prompt_policy_id':EXPLICIT_PROMPT_POLICY,
-                            'fixture_policy_id':POLICY})
-            target = {'class':'com.google.javascript.jscomp.TypeInference', 'constructor_types':'',
-                'method':'getBooleanOutcomes', 'parameter_types':'boolean'}
-            job = {'run_id':'beam-development-prepare-merge', 'protocol_hash':'a'*64, 'project':'Closure',
-                   'bug_id':176, 'approach':'kku-claude', 'attempt_id':'fixture-prepare'}
-            def adapter(d4j, job, trees, output, timeout, **options):
-                self.assertEqual(options['fixture_policy'], POLICY)
-                output.mkdir()
-                (output / 'dir.src.classes.txt').write_text('src')
-                (output / 'classes.modified.txt').write_text(target['class'])
-                (output / 'targets.fixture-policy.json').write_text(json.dumps({'targets':[target]}))
-                return {'fixed_worktree':str(fixed), 'classes_file':str(output/'classes.modified.txt'),
-                    'targets_sha256':sha256(output/'targets.fixture-policy.json'),
-                    'targets_file':str(output/'targets.fixture-policy.json')}, [target]
-            with patch('scripts.study.api854.prepare_worker.inspect_environment', return_value={'ready':True}), \
-                    patch('scripts.study.api854.prepare_worker.prepare_adapter', side_effect=adapter):
-                result = execute(job, protocol, root/'results', root/'trees', 'offline-only')
-            self.assertEqual(result['observed_outcome'], 'prepared', result.get('error'))
-            self.assertIsNone(result['preparation'])
-            self.assertEqual(result['prompt']['prompt_policy_id'], EXPLICIT_PROMPT_POLICY)
-            self.assertEqual(result['prompt']['fixture_policy_id'], POLICY)
-            recipe = root/'results'/job['run_id']/job['protocol_hash']/'Closure'/'176'/'kku-claude'/job['attempt_id']/'prepare/context/fixture-recipes.json'
-            self.assertEqual(sha256(recipe), result['prompt']['fixture_recipes_sha256'])
-
     def test_shared_v3_cannot_be_silently_relabelled_as_explicit_fixture_policy(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -84,6 +47,43 @@ class PreparePromptTests(unittest.TestCase):
             self.assertEqual(result['observed_outcome'], 'prepared')
             self.assertEqual(result['prompt']['fixture_policy_id'], POLICY)
             self.assertTrue((root / 'context/fixture-recipes.json').exists())
+    def test_explicit_worker_exports_recipe_instead_of_shared_legacy_prompt(self):
+        from scripts.study.api854.configuration import proposal
+        import json
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixed = root / 'fixed'
+            source = 'src/com/google/javascript/jscomp/TypeInference.java'
+            (fixed / source).parent.mkdir(parents=True)
+            (fixed / source).write_bytes(b'package com.google.javascript.jscomp; public class TypeInference {}')
+            (fixed / '.defects4j.config').write_bytes(b'pid=Closure\nvid=176f\n')
+            protocol = proposal()
+            protocol.update(context_selection=CONTEXT_POLICY, fixture_policy_id=POLICY,
+                generation={'context_policy_id':CONTEXT_POLICY, 'prompt_policy_id':EXPLICIT_PROMPT_POLICY,
+                            'fixture_policy_id':POLICY})
+            target = {'class':'com.google.javascript.jscomp.TypeInference', 'constructor_types':'',
+                'method':'getBooleanOutcomes', 'parameter_types':'boolean'}
+            job = {'run_id':'beam-development-prepare-merge', 'protocol_hash':'a'*64, 'project':'Closure',
+                   'bug_id':176, 'approach':'kku-claude', 'attempt_id':'fixture-prepare'}
+            def adapter(d4j, job, trees, output, timeout, **options):
+                self.assertEqual(options['fixture_policy'], POLICY)
+                output.mkdir()
+                (output / 'dir.src.classes.txt').write_text('src')
+                (output / 'classes.modified.txt').write_text(target['class'])
+                (output / 'targets.fixture-policy.json').write_text(json.dumps({'targets':[target]}))
+                return {'fixed_worktree':str(fixed), 'classes_file':str(output/'classes.modified.txt'),
+                    'targets_sha256':sha256(output/'targets.fixture-policy.json'),
+                    'targets_file':str(output/'targets.fixture-policy.json')}, [target]
+            with patch('scripts.study.api854.prepare_worker.inspect_environment', return_value={'ready':True}), \
+                    patch('scripts.study.api854.prepare_worker.prepare_adapter', side_effect=adapter):
+                result = execute(job, protocol, root/'results', root/'trees', 'offline-only')
+            self.assertEqual(result['observed_outcome'], 'prepared', result.get('error'))
+            self.assertIsNone(result['preparation'])
+            self.assertEqual(result['prompt']['prompt_policy_id'], EXPLICIT_PROMPT_POLICY)
+            self.assertEqual(result['prompt']['fixture_policy_id'], POLICY)
+            recipe = root/'results'/job['run_id']/job['protocol_hash']/'Closure'/'176'/'kku-claude'/job['attempt_id']/'prepare/context/fixture-recipes.json'
+            self.assertEqual(sha256(recipe), result['prompt']['fixture_recipes_sha256'])
+
     def test_explicit_recipes_are_hash_bound_and_shared_with_ai_inputs(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

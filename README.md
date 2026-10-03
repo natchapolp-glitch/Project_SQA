@@ -1,3 +1,7 @@
+# Current Aom continuation: 854 active bugs, one repeat per approach
+
+Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Shared v5 currently prepares five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
+
 # API854 — Aom preparation, 3 October 2026
 
 Read [START_HERE](docs/api854/START_HERE.md) for the current 48-hour plan.

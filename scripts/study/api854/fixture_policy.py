@@ -1,5 +1,31 @@
 """Predeclared explicit fixture capability filter, never selected by buggy outcomes."""
 POLICY = 'beam-explicit-fixtures-v3-proposal'
+RECIPE_SOURCES = ('algorithms/java/SqaProbe.java', 'scripts/study/api854/fixture_policy.py')
+
+
+def recipe_document(source_hashes, policy=POLICY):
+    from .common import ROOT, sha256
+    expected = {name: source_hashes[name] for name in RECIPE_SOURCES}
+    if any(sha256(ROOT / name) != value for name, value in expected.items()):
+        raise ValueError('Explicit recipe source differs from protocol')
+    if policy not in {POLICY, POLICY_V4}:
+        raise ValueError('Unknown explicit fixture policy')
+    return {'schema_version': 1, 'fixture_policy_id': policy, 'source_sha256': expected,
+        'sources': {name: (ROOT / name).read_bytes().decode('utf-8') for name in RECIPE_SOURCES},
+        'scope': 'Same fixture construction/projection knowledge for all four approaches; no execution feedback'}
+
+
+def validate_recipe(recipe, source_hashes=None, policy=POLICY):
+    from .preparation import digest
+    if (policy not in {POLICY, POLICY_V4} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
+            or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(RECIPE_SOURCES)
+            or not isinstance(recipe.get('source_sha256'), dict) or set(recipe['source_sha256']) != set(RECIPE_SOURCES)
+            or any(not isinstance(recipe['sources'][name], str)
+                   or digest(recipe['sources'][name].encode('utf-8')) != recipe['source_sha256'][name] for name in RECIPE_SOURCES)):
+        raise ValueError('Explicit recipe source bytes/hash differ')
+    if source_hashes is not None and any(source_hashes.get(name) != recipe['source_sha256'][name] for name in RECIPE_SOURCES):
+        raise ValueError('Explicit recipe source differs from frozen protocol')
+    return True
 POLICY_V4 = 'beam-explicit-fixtures-v4-proposal'
 
 # Added capability recipes are fixed before any buggy evaluation. Mutators need

@@ -1,5 +1,11 @@
 # ข้อความส่งต่อจากออม
 
+อัปเดตหลังรับ Beam `3ff1a6a4`: อ่าน [AOM_BEAM_FIXTURE_REVIEW_TH.md](AOM_BEAM_FIXTURE_REVIEW_TH.md)
+ก่อนข้อความ v3 ด้านล่าง. Shared explicit recipes compose เป็น v4 development เฉพาะ Closure-176/JxPath-1;
+prompt สูงสุดสอง bugs 174,475 bytes. อีก 18 recipes และ team/provider/host acceptance ยัง pending.
+บีมตรวจ shared recipe/capability version และส่งส่วนที่เหลือ; แชมป์คำนวณ reserve จาก prompt รุ่นสุดท้าย
+พร้อม framing/limits/quota. ยังไม่เปิด live pilot และไม่แทน frozen core ด้วย draft นี้.
+
 ออม push ชุด shared prepare v3 บน branch aom แล้ว ให้ดึง commit ล่าสุดพร้อม
 [บันทึกส่งมอบ](AOM_PREPARE_V3_HANDOFF_TH.md). มี artifacts 20 bugs, targets 691 รายการ,
 exclusions 3 รายการ และ Chart receiver partition พร้อม CPU/API/bridge/evaluator binding.
