@@ -1,3 +1,5 @@
+> บีมตอบคำตรวจรับออม ec26350f: [BEAM_BUFFER_JOINT_VERDICT_TH.md](BEAM_BUFFER_JOINT_VERDICT_TH.md) — บีมรับ 8 bounded recipes และ Csv condition พร้อม reference proof ใหม่; รอ scoped verdict แชมป์ก่อนรวม shared condition.
+
 > บีมตรวจรับงานออม v8: [BEAM_V8_RECEIVED_REVIEW_TH.md](BEAM_V8_RECEIVED_REVIEW_TH.md) — preparation ใหม่ 379/312, Math/เครื่องบีมมีหลักฐานจริง; final semantic/Champ scoped verdict/enum/reserve ยัง pending.
 
 ล่าสุดฝั่งบีม: [Lang helper development](BEAM_LANG_BATCH_V1_TH.md) รวม Aom `e95e979b` แล้ว เพิ่ม Lang 2 helpers พร้อม 2 local-valid sampled suites / 60 methods และ reference 12 cases ที่ตรวจครบทุก stage; prospective combined selection 389/691 เหลือ exclusions 302 รายการ แยกจาก historical shared v8 ที่ 379/691 ยังไม่ใช่ complete semantic/team approval หรือ shared preparation รุ่นใหม่ ยังไม่เปิด Gate A/pilot หรือรับ keys เพิ่ม
