@@ -1,6 +1,25 @@
+Latest Champ candidate decision: [accept two Math getField candidates for shared composition](docs/api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
+
+Latest Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](docs/api854/CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+
+Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](docs/api854/CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+
+Latest Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](docs/api854/CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
+
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
-Latest integration: [Champ 7e09a5fe repair intake and twenty-bug shared development v7](docs/api854/AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md).
+Historical Champ integration: [Aom b11b379a and freshly bound twenty-bug v6 inputs](docs/api854/CHAMP_AOMB11_V6_INTEGRATION_TH.md).
+The development candidate retains 377 selected / 314 excluded declarations; final acceptance remains pending. Account intake is paused.
+Received Aom checkpoint: [twenty-bug v6 development](docs/api854/AOM_CHAMP8E_V6_DEVELOPMENT_TH.md).
+
+Previous Champ integration: [Aom 4a0e699c, recipe/runtime binding and Windows stage creation](docs/api854/CHAMP_AOM4A_INTEGRATION_TH.md).
+The historical shared v5 pair still covers five bugs / 124 of 691 declarations;
+its old runtime pins are blocked against the latest merged code. Account intake is paused.
+
+Received Aom checker update: [Aom acceptance of Champ b6051367 and selected Gate A inputs](docs/api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md).
+Gate A requires an explicit protocol/runner pair and validates its fixture recipes.
+The five-bug bindings passed at Aom's received checkpoint; final shared inputs and team/provider approval remain pending.
+Received Aom integration: [Champ 7e09a5fe repair intake and twenty-bug shared development v7](docs/api854/AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md).
 The current candidate retains 377 selected / 314 unsupported declarations, with a complete worklist and unchanged maximum prompt of 250,315 bytes. Offline integration: 302 passed / 1 skipped. Gate A and primary generation remain closed.
 
 Checker introduction (historical): [Aom acceptance of Champ b6051367 and selected Gate A inputs](docs/api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md).
@@ -11,6 +30,7 @@ Historical provider receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](
 Request settings and historical quota observations are verified; final limits,
 framing, reset/expiry and the final shared pilot condition remain pending.
 
+Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Historical shared v5 prepared five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md) for the original runner proposal. Its five-bug preparation is historical; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 
 Aom's independent fixed-source/build preparation, local recovery rehearsal,

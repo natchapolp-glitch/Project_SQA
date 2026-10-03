@@ -6,6 +6,7 @@ from pathlib import Path
 
 from .common import ROOT, read_json, sha256, contained, implementation_hashes
 from .preparation import validate, policy_for, encoded, digest, clean_targets, explicit_context
+from .fixture_policy import validate_recipe
 from .team_queue import assignment
 
 
@@ -81,9 +82,6 @@ def inspect(root=ROOT, *, protocol_path=None, runner_path=None):
                     or any(row.get(key) != value for key,value in metadata.items())):
                 raise ValueError('Index identity/metadata or selected protocol contract differs')
             recipe = read_json(folder/'fixture-recipes.json') if explicit_context(policy['contract']) else None
-            if recipe is not None:
-                from .fixture_policy import validate_recipe
-                validate_recipe(recipe, protocol.get('source_sha256', {}), policy=policy['fixture_policy'])
             prompt = (folder/'prompt.md').read_bytes()
             prompt_sizes.append(len(prompt))
             if metadata['prompt_utf8_bytes'] != len(prompt) or manifest['revision'] != str(row['bug_id'])+'f':
@@ -91,6 +89,9 @@ def inspect(root=ROOT, *, protocol_path=None, runner_path=None):
             validate(manifest, metadata,
                      prompt, (folder / "targets.json").read_bytes(),
                      (folder / "prepare-policy.json").read_bytes(), require_eligible=True, fixture_recipe=recipe)
+            if recipe is not None:
+                validate_recipe(recipe, source_hashes=protocol.get('source_sha256', {}),
+                                policy=policy['fixture_policy'])
             for source in manifest['source_files']:
                 name = 'fixed-source/' + source['path']
                 file = contained(folder, name)

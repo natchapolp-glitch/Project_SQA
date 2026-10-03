@@ -157,9 +157,23 @@ def job_relative(job):
     return Path(job["run_id"], job["protocol_hash"], job["project"], str(job["bug_id"]), job["approach"], job["attempt_id"])
 
 
+def _resolved_path(path):
+    path = Path(path).resolve()
+    # Windows can retain the extended-path prefix while another thread creates
+    # missing descendants. Normalize equivalent drive/UNC spellings only after
+    # resolving links, so the containment check still rejects actual escapes.
+    if sys.platform == "win32":
+        value = str(path)
+        if value.startswith("\\\\?\\UNC\\"):
+            return Path("\\\\" + value[8:])
+        if re.match(r"^\\\\\?\\[A-Za-z]:\\", value):
+            return Path(value[4:])
+    return path
+
+
 def contained(root, relative):
-    root = Path(root).resolve()
-    result = (root / relative).resolve()
+    root = _resolved_path(root)
+    result = _resolved_path(root / relative)
     if not result.is_relative_to(root) or result == root:
         raise ValueError("Path escapes root")
     return result

@@ -1,5 +1,23 @@
+Latest Champ candidate decision: [accept two Math getField candidates for shared composition](CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
+
+Latest Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+
+Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+
+Latest Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
+
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
+**Integration รุ่นก่อน:** [แชมป์รับ Aom b11b379a / build และวัด prompt v6 ใหม่หลังรวม](CHAMP_AOMB11_V6_INTEGRATION_TH.md)
+ร่างครบ 20 bugs แต่ selected 377/691; ยังรออีก 314 declarations และ semantic/shared acceptance
+รับงานบีมรอบแก้จาก champ 7e09a5fe และ integration e5d4a66b แล้ว; งานรับ keys ยังพักไว้
+Checkpoint ที่รับจากออม: [shared development v6](AOM_CHAMP8E_V6_DEVELOPMENT_TH.md)
+
+**Integration ก่อนหน้า:** [แชมป์รับ Aom 4a0e699c และตรวจ recipe ↔ protocol runtime](CHAMP_AOM4A_INTEGRATION_TH.md)
+คู่ shared-v5 เดิมยัง 5/20 bugs และ 124/691 declarations; runtime pins เก่าถูก blocked เมื่อเทียบกับโค้ดที่รวมล่าสุด
+งานรับ keys พักไว้ตามคำขอผู้ใช้; limits/framing/bucket/reset/expiry และ final 20-bug reserve ยัง pending
+
+**Checker ที่รับจากออม:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
 **Integration ล่าสุดของออม:** [รับ Champ 7e09a5fe / repair audit และ shared development v7 ครบ 20 inputs](AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md)
 ตรวจ combined 15 bugs / 30 local-valid suites; candidate ยังรองรับ subset 377/691 declarations
 มี worklist อีก 314 รายการ; max prompt 250,315 bytes; offline tests ผ่าน 302 ข้าม 1; ยังไม่เปิด Gate A/pilot
@@ -24,7 +42,9 @@ runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ 
 
 ## อ่านตามลำดับ
 
-เริ่มจาก [แชมป์รับ Beam 3ae6f2fb: รอบแก้ครบและการรับข้อมูล 10 บัญชี](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
+เริ่มจาก [แชมป์รับ Aom b11b379a](CHAMP_AOMB11_V6_INTEGRATION_TH.md)
+Checkpoint ก่อนหน้า: [แชมป์ตรวจ integration Aom 4a0e699c](CHAMP_AOM4A_INTEGRATION_TH.md)
+สถานะบีมที่รับก่อนหน้า: [แชมป์รับ Beam 3ae6f2fb: รอบแก้และขั้นตอนรับบัญชีที่พักไว้](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
 และ [ขั้นตอน/template รับบัญชีแบบส่วนตัว](CHAMP_ACCOUNT_INTAKE_TH.md)
 ผลรอบแรก: [แชมป์ตรวจ Beam 68b81b0e](CHAMP_BEAM68_ACCEPTANCE_TH.md)
 และ [checkpoint สถานะบีมเดิม / รายการเทียบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)

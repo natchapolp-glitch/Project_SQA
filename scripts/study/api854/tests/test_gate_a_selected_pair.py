@@ -5,7 +5,8 @@ import shutil
 import tempfile
 import unittest
 
-from scripts.study.api854.common import ROOT, read_json, sha256
+from scripts.study.api854.common import ROOT, read_json, sha256, implementation_hashes
+from scripts.study.api854.build_prepare_v7_development import build
 from scripts.study.api854.gate_a import inspect
 from scripts.study.api854.preparation import encoded
 
@@ -22,18 +23,23 @@ class SelectedGateTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
         self.protocol = read_json(ROOT/PROTOCOL)
+        self.protocol['source_sha256'] = implementation_hashes()
         names = [PROTOCOL, RUNNER, 'experiments/configs/api854-20261003/protocol.core-frozen.json',
                  'experiments/configs/api854-20261003/ownership.json',
                  'experiments/configs/api854-20261003/runner-plan.v1.json', DISCOVERY+'/index.json']
         names += list(self.protocol['source_sha256'])
-        for row in read_json(ROOT/(PREP+'/index.json'))['records']:
-            for name in ('targets.json', 'prepare-metadata.json', 'checksums.json', 'revision-proof.json'):
-                names.append(DISCOVERY+f"/{row['project']}-{row['bug_id']}/"+name)
         for name in names:
             destination = self.root/name
             destination.parent.mkdir(parents=True, exist_ok=True)
             destination.write_bytes((ROOT/name).read_bytes())
-        shutil.copytree(ROOT/PREP, self.root/PREP)
+        # Compose current recipes only in this isolated fixture. Copying an old
+        # immutable proposal beside a newer runtime would deliberately be stale.
+        for row in read_json(ROOT/(PREP+'/index.json'))['records']:
+            name = f"{row['project']}-{row['bug_id']}"
+            shutil.copytree(ROOT/DISCOVERY/name, self.root/DISCOVERY/name)
+        build(self.root/DISCOVERY, self.root/PREP)
+        self.protocol['preparation_import_evidence']['sha256'] = sha256(self.root/PREP/'index.json')
+        self.write_protocol()
 
     def run_gate(self, runner=RUNNER):
         result = inspect(self.root, protocol_path=PROTOCOL, runner_path=runner)
@@ -104,6 +110,18 @@ class SelectedGateTests(unittest.TestCase):
         _, checks = self.run_gate()
         self.assertEqual(checks['runtime_source_binding']['status'], 'blocked')
 
+    def test_repinning_runtime_without_regenerating_embedded_recipe_is_blocked(self):
+        name = 'algorithms/java/SqaProbe.java'
+        path = self.root/name
+        path.write_bytes(path.read_bytes()+b'\n// new isolated runtime version\n')
+        self.protocol['source_sha256'][name] = sha256(path)
+        self.write_protocol()
+        result, checks = self.run_gate()
+        self.assertEqual(checks['runtime_source_binding']['status'], 'pass')
+        self.assertEqual(checks['fixture_recipe_binding']['status'], 'blocked')
+        self.assertTrue(any('recipe source differs' in row['reason'].lower()
+                            for row in checks['prepare_contract']['issues']))
+        self.assertFalse(result['gate_a_passed'])
     def test_retained_v6_pair_does_not_certify_the_post_repair_runtime(self):
         result = inspect(ROOT,
             protocol_path='output/api854-20261003/aom-continuation-v6-development/protocol.proposal.json',
