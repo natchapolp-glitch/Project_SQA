@@ -1,0 +1,620 @@
+{
+  "reviewer": "Codex local development review",
+  "fixture_policy_id": "beam-explicit-fixtures-v5-proposal",
+  "scope": "Retained development suites only; not all declarations or shared-contract/team approval",
+  "method_preconditions": "Production parser/compiler/Normalize pass produces normalized script and empty externs; call-site modification disabled; AST structure after target execution is compared.",
+  "cases": [
+    {
+      "case_id": 1,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 2,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 2.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 3,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 4,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 5,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 6,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 7,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 3.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 8,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 3.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 9,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 10,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 11,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 12,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 2.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 13,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 14,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 2.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 15,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 16,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 17,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 18,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 19,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 2.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 20,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 3.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 21,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 22,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 23,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 24,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 25,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 3.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 26,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 27,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "traverseAndRemoveUnusedReferences",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 15
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 28,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,boolean,boolean,boolean",
+        "method": "process",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "outcome": "void|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 29,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 3.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 30,
+      "target": {
+        "class": "com.google.javascript.jscomp.RemoveUnusedVars",
+        "constructor_types": "",
+        "method": "getFunctionArgList",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 3
+      },
+      "outcome": "value:ast:PARAM_LIST 1 [source_file: [testcode]]\n    NAME x 1 [source_file: [testcode]]\n|state=cleanup:SCRIPT 1 [synthetic: 1] [source_file: [testcode]] [input_id: InputId: [testcode]]\n    VAR 1 [source_file: [testcode]]\n        NAME unused 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n    FUNCTION fixture 1 [source_file: [testcode]]\n        NAME fixture 1 [source_file: [testcode]]\n        PARAM_LIST 1 [source_file: [testcode]]\n            NAME x 1 [source_file: [testcode]]\n        BLOCK 1 [source_file: [testcode]]\n            VAR 1 [source_file: [testcode]]\n                NAME local 1 [source_file: [testcode]]\n                    NUMBER 3.0 1 [source_file: [testcode]]\n            RETURN 1 [source_file: [testcode]]\n                NAME x 1 [source_file: [testcode]]\n    EXPR_RESULT 1 [source_file: [testcode]]\n        CALL 1 [free_call: 1] [source_file: [testcode]]\n            NAME fixture 1 [source_file: [testcode]]\n            NUMBER 1.0 1 [source_file: [testcode]]\n",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.google.javascript.jscomp.RemoveUnusedVars",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    }
+  ],
+  "fixed_source_sha256": {
+    "src/com/google/javascript/jscomp/RemoveUnusedVars.java": "44bd2549d04080c856a63d8f5258e4235c6692c820ecd9937a33be0528448a86"
+  },
+  "suite_sha256": "0224711d355ba2a12e61a6fe0efabb67a51a86d4dc11a4d846b9478bf4125082",
+  "observations_sha256": "0770db7a1228ca8b5ef4fa031126cf9d232f0fbf3086af140425cea63e63a3da",
+  "limitations": [
+    "Sampled suite validity does not establish complete target coverage.",
+    "Partial projections do not prove full object equivalence; bounded deterministic domains are development recipes.",
+    "Vectors can decode to repeated inputs; exception class assertions do not compare messages.",
+    "Coverage includes fixture setup and state queries; target invocation is independently checked per test.",
+    "No assertion repair or pruning based on buggy/fixed failures; all original observations/results retained."
+  ]
+}

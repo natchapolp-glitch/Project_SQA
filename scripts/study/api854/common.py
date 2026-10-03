@@ -95,7 +95,7 @@ def validate_protocol(protocol):
         raise ValueError("This adapter implements only shared-declaration-signatures-v1")
     if protocol.get("compatibility_policy") != "none":
         raise ValueError("This worker makes no compatibility or semantic repairs")
-    if protocol.get('fixture_policy_id') not in {None, 'beam-explicit-fixtures-v3-proposal', 'beam-explicit-fixtures-v4-proposal'}:
+    if protocol.get('fixture_policy_id') not in {None, 'beam-explicit-fixtures-v3-proposal', 'beam-explicit-fixtures-v4-proposal', 'beam-explicit-fixtures-v5-proposal'}:
         raise ValueError('Unknown fixture policy')
     from .preparation import explicit_context, policy_for, shared_context
     contract = protocol.get('generation', {}).get('prepare_contract')
@@ -119,7 +119,7 @@ def implementation_hashes():
                "evaluate_worker", "fixture_policy", "make_job", "pack_suite", "queue_client", "queue_connection", "validity", "worker",
                "ai_handoff", "champ_bridge", "beam_queue", "core_preflight", "prepare_worker", "queue_worker", "suite_resolver",
                "champ_queue", "context_export", "generate_worker", "kku_client", "lease", "models", "quota",
-               "preparation", "prepared_inputs", "team_queue", "api_worker")
+               "preparation", "prepared_inputs", "team_queue", "api_worker", "target_coverage")
     names += [f"scripts/study/api854/{name}.py" for name in modules]
     names += ["experiments/configs/api854-20261003/model-selection.json"]
     return {name: sha256(ROOT / name) for name in names}

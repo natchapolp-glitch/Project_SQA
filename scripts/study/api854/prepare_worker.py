@@ -14,11 +14,12 @@ CONTEXT_POLICY = "modified-java-and-root-build-v1"
 PROMPT_POLICY = "beam-fixed-targets-junit4-v1"
 EXPLICIT_PROMPT_POLICY = 'beam-fixed-targets-explicit-fixtures-v3-junit4-proposal'
 SCALAR_PROMPT_POLICY = 'beam-fixed-targets-explicit-fixtures-v4-junit4-proposal'
+PILOT_PROMPT_POLICY = 'beam-fixed-targets-explicit-fixtures-v5-junit4-proposal'
 
 
 def explicit_prompt_policy(fixture_policy):
-    from .fixture_policy import POLICY, POLICY_V4
-    return {POLICY: EXPLICIT_PROMPT_POLICY, POLICY_V4: SCALAR_PROMPT_POLICY}[fixture_policy]
+    from .fixture_policy import POLICY, POLICY_V4, POLICY_V5
+    return {POLICY: EXPLICIT_PROMPT_POLICY, POLICY_V4: SCALAR_PROMPT_POLICY, POLICY_V5: PILOT_PROMPT_POLICY}[fixture_policy]
 
 
 def export_prompt(job, protocol, targets, context_dir):
@@ -109,7 +110,7 @@ def execute(job, protocol, results, worktrees, d4j):
                 recipe = recipe_document(protocol['source_sha256'], protocol['fixture_policy_id']) if explicit else None
                 preparation = compose(output / "context", classes=classes, targets=targets, policy=policy_for(contract),
                     modified_sources=sources, fixture_classes=fixture_classes, fixture_recipe=recipe)
-            elif protocol.get("generation", {}).get("prompt_policy_id") in {PROMPT_POLICY, EXPLICIT_PROMPT_POLICY, SCALAR_PROMPT_POLICY}:
+            elif protocol.get("generation", {}).get("prompt_policy_id") in {PROMPT_POLICY, EXPLICIT_PROMPT_POLICY, SCALAR_PROMPT_POLICY, PILOT_PROMPT_POLICY}:
                 prompt = export_prompt(job, protocol, targets, output / "context")
             else:
                 preparation = compose(output / "context", classes=classes, targets=targets)

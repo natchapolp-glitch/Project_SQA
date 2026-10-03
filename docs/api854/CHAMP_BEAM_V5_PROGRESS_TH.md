@@ -1,5 +1,8 @@
 # รับสถานะบีม v5 และเตรียมตรวจครบ 691 declarations
 
+รับ commit/packet รอบแรกภายหลังแล้ว: [ผลตรวจ Beam 68b81b0e และสถานะรอบแก้](CHAMP_BEAM68_ACCEPTANCE_TH.md)
+ข้อความและ receipt ด้านล่างเป็น checkpoint ก่อนรับชุดนั้น ไม่ใช่สถานะปัจจุบัน
+
 วันที่ 3 ตุลาคม 2569 ผู้ใช้ส่งต่อสถานะจากบีม: รันบนเครื่องเดียว `beam-pc1` เสร็จ 27/40 suites
 บีมแจ้งว่า suites ที่จบมี fixed สองรอบ, buggy และ coverage ครบแล้ว
 `Cli-1` ติด environment dependency Hamcrest จึงยังไม่นับผลบั๊ก

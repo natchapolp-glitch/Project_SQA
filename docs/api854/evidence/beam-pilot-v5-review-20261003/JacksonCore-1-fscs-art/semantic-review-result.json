@@ -1,0 +1,85 @@
+{
+  "job": {
+    "schema_version": 1,
+    "run_id": "beam-development-pilot-fixtures-v5-1",
+    "project": "JacksonCore",
+    "bug_id": 1,
+    "approach": "fscs-art",
+    "protocol_hash": "86a21f2a92163a813b955f6c1306ecf1048d75f9de3819dd1d069505b099f765",
+    "repeat_index": 1,
+    "attempt_id": "fixture-eval-JacksonCore-1-fscs-art-1"
+  },
+  "evaluation_result_sha256": "1b7e700bc7408159386addc64bd4d6e03fbc616ae5df600188552496bd2350a9",
+  "status": "valid",
+  "usable": true,
+  "review_sha256": "def513e5ff9adf2b98e76454c3f8696fa2ca606897a5c4bcea04554c3183b7ab",
+  "review": {
+    "reviewer": "Codex local development review",
+    "suite_sha256": "0d1c633a81ef249d8de71046f1dc7071b21007d5b38caeb11f75a15728ee2c33",
+    "fixed_source_sha256": {
+      "src/main/java/com/fasterxml/jackson/core/io/NumberInput.java": "3cd025e914432e58605ac0ee504eac0ecb1de91a06fa79bd3c75e57bb4758f41",
+      "src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java": "74aee08fbb35a2446cf324328a4e8bbec95d30c91b08270cd5fb50ec0db18c52"
+    },
+    "verdict": "valid",
+    "target_execution_evidence": [
+      {
+        "path": "measurement/coverage/coverage.xml",
+        "sha256": "28dca9727affdffad65de713bdf70cc0b6944be7d73133c288895b0a4a312fd2"
+      },
+      {
+        "path": "semantic-evidence/fixture-oracle-review.json",
+        "sha256": "c8e3e96961ddc12395d9becd4c9a21f8927bdd4b7a317968d1656d3dbaa72310"
+      }
+    ],
+    "fixture_oracle_review": {
+      "scope": "local development only",
+      "reviewed_case_count": 30,
+      "recipe_proof": "NumberInput receives decimal integer strings. TextBuffer receives a non-null recycler and resetWithCopy allocates initialized private storage before append.",
+      "team_or_primary_approval": false,
+      "helper_sha256": "34afc661b87eda73f45c2ef36a430bada46990fc29a54a5096b14ac66e594b84"
+    },
+    "weak_oracles": {
+      "invalid_case_ids": [],
+      "expected_boundary_exception_case_ids": [],
+      "partial_projection_limitations_disclosed": true
+    },
+    "stage_counts": {
+      "fixed-1": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/fixed-1/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "fixed-2": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/fixed-2/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "buggy": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/buggy/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "coverage": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/coverage/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      }
+    }
+  }
+}
