@@ -1,0 +1,131 @@
+{
+  "status": "oracle_order_false_positive_quarantined",
+  "condition": "api854-20261004-cli-sixteen-target-native-development-v1",
+  "raw_native_fault_flag_retained": true,
+  "raw_buggy_failed_tests": 1,
+  "confirmed_semantic_fault": false,
+  "observations": {
+    "fixed-1": {
+      "raw": "void|state=cli:array[option:x:array[java.lang.String:YWxwaGE=;];option:extra:array[java.lang.String:bGVmdA==;];]:array[java.lang.String:cG9zaXRpb25hbA==;]",
+      "decoded": {
+        "ordered_options": [
+          [
+            "x",
+            "alpha"
+          ],
+          [
+            "extra",
+            "left"
+          ]
+        ],
+        "option_content": [
+          [
+            "extra",
+            "left"
+          ],
+          [
+            "x",
+            "alpha"
+          ]
+        ],
+        "positional_arguments": [
+          "positional"
+        ]
+      }
+    },
+    "fixed-2": {
+      "raw": "void|state=cli:array[option:x:array[java.lang.String:YWxwaGE=;];option:extra:array[java.lang.String:bGVmdA==;];]:array[java.lang.String:cG9zaXRpb25hbA==;]",
+      "decoded": {
+        "ordered_options": [
+          [
+            "x",
+            "alpha"
+          ],
+          [
+            "extra",
+            "left"
+          ]
+        ],
+        "option_content": [
+          [
+            "extra",
+            "left"
+          ],
+          [
+            "x",
+            "alpha"
+          ]
+        ],
+        "positional_arguments": [
+          "positional"
+        ]
+      }
+    },
+    "buggy-1": {
+      "raw": "void|state=cli:array[option:extra:array[java.lang.String:bGVmdA==;];option:x:array[java.lang.String:YWxwaGE=;];]:array[java.lang.String:cG9zaXRpb25hbA==;]",
+      "decoded": {
+        "ordered_options": [
+          [
+            "extra",
+            "left"
+          ],
+          [
+            "x",
+            "alpha"
+          ]
+        ],
+        "option_content": [
+          [
+            "extra",
+            "left"
+          ],
+          [
+            "x",
+            "alpha"
+          ]
+        ],
+        "positional_arguments": [
+          "positional"
+        ]
+      }
+    },
+    "buggy-2": {
+      "raw": "void|state=cli:array[option:extra:array[java.lang.String:bGVmdA==;];option:x:array[java.lang.String:YWxwaGE=;];]:array[java.lang.String:cG9zaXRpb25hbA==;]",
+      "decoded": {
+        "ordered_options": [
+          [
+            "extra",
+            "left"
+          ],
+          [
+            "x",
+            "alpha"
+          ]
+        ],
+        "option_content": [
+          [
+            "extra",
+            "left"
+          ],
+          [
+            "x",
+            "alpha"
+          ]
+        ],
+        "positional_arguments": [
+          "positional"
+        ]
+      }
+    }
+  },
+  "finding": "Only option iteration order differs; mappings/values/arguments match. Fixed uses HashSet and buggy HashMap; target source promises no option order.",
+  "decision": "Do not count this failure as a detected bug. Quarantine Cli fault comparison until a prospective oracle condition handles unordered options.",
+  "unchanged_original_suites": true,
+  "primary_results_added": 0,
+  "kku_requests": 0,
+  "queue_mutations": 0,
+  "limitations": [
+    "This disproves semantic-fault interpretation of this assertion only, not existence of Cli-1 bug",
+    "Independent comparison covers the sealed two-option fixture, not arbitrary option states"
+  ]
+}

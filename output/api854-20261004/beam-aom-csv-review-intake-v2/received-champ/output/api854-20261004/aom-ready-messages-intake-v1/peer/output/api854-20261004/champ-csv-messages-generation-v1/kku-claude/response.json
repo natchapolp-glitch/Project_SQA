@@ -1,0 +1,61 @@
+{
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T19:49:56.144592+00:00",
+    "ended_at_utc": "2026-10-03T19:50:22.395812+00:00",
+    "raw_body_sha256": "b2ab8eb0c9e7f32a3a1eb3f98fe00e7face5e1216dae340d20630277c85b9568",
+    "body": {
+      "id": "gen-1791056996-U4sP6RULlKQBMH5AcPxR",
+      "type": "message",
+      "role": "assistant",
+      "container": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.*;\n\nimport java.io.IOException;\nimport java.io.Reader;\nimport java.io.StringReader;\n\nimport org.junit.Test;\n\n/**\n * Deterministic JUnit 4 tests for org.apache.commons.csv.ExtendedBufferedReader.\n *\n * These tests exercise the fixed production source directly via the package-private\n * ExtendedBufferedReader(Reader) constructor and its public/package methods:\n * read(), read(char[], int, int), readAgain(), readLine(), lookAhead(), getLineNumber().\n */\npublic class ExtendedBufferedReaderTest {\n\n    @Test\n    public void readSingleCharReturnsFirstCharacter() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\nBC\\nDE\"));\n        int c = br.read();\n        assertEquals('A', c);\n        assertEquals('A', br.readAgain());\n    }\n\n    @Test\n    public void readAgainBeforeAnyReadIsUndefined() {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"abc\"));\n        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());\n    }\n\n    @Test\n    public void readAtEndOfStreamReturnsMinusOne() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"\"));\n        int c = br.read();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, c);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());\n    }\n\n    @Test\n    public void lineNumberIncrementsOnNewline() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\nBC\\nDE\"));\n        assertEquals(0, br.getLineNumber());\n        br.read(); // A\n        assertEquals(0, br.getLineNumber());\n        br.read(); // \\n\n        assertEquals(1, br.getLineNumber());\n        br.read(); // B\n        br.read(); // C\n        br.read(); // \\n\n        assertEquals(2, br.getLineNumber());\n    }\n\n    @Test\n    public void lineNumberDoesNotDoubleCountCRLF() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\r\\nB\"));\n        br.read(); // A\n        assertEquals(0, br.getLineNumber());\n        br.read(); // \\r\n        assertEquals(1, br.getLineNumber());\n        br.read(); // \\n -- should not increment again since lastChar was \\r\n        assertEquals(1, br.getLineNumber());\n        br.read(); // B\n        assertEquals(1, br.getLineNumber());\n    }\n\n    @Test\n    public void lookAheadReturnsNextCharWithoutConsumingIt() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"12\\n345\\n\"));\n        int ahead = br.lookAhead();\n        assertEquals('1', ahead);\n        // lookAhead must not consume: read() should still return the same first char\n        int actual = br.read();\n        assertEquals('1', actual);\n    }\n\n    @Test\n    public void lookAheadAtEndOfStreamReturnsMinusOne() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"\"));\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.lookAhead());\n    }\n\n    @Test\n    public void readCharArrayFillsBufferAndReturnsLength() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"12\\n345\\n\"));\n        char[] buf = new char[8];\n        java.util.Arrays.fill(buf, '~');\n        int len = br.read(buf, 2, 4);\n        assertEquals(4, len);\n        assertEquals('1', buf[2]);\n        assertEquals('2', buf[3]);\n        assertEquals('\\n', buf[4]);\n        assertEquals('3', buf[5]);\n        // untouched positions remain the fill char\n        assertEquals('~', buf[0]);\n        assertEquals('~', buf[1]);\n        assertEquals('~', buf[6]);\n        assertEquals('~', buf[7]);\n    }\n\n    @Test\n    public void readCharArraySetsLastCharToLastReadCharacter() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"12\\n345\\n\"));\n        char[] buf = new char[8];\n        int len = br.read(buf, 2, 4);\n        assertEquals(4, len);\n        assertEquals(buf[2 + len - 1], br.readAgain());\n    }\n\n    @Test\n    public void readCharArrayUpdatesLineCounterForNewlineInBuffer() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"12\\n345\\n\"));\n        char[] buf = new char[8];\n        int len = br.read(buf, 0, 7);\n        assertEquals(7, len);\n        // Two newline characters in \"12\\n345\\n\"\n        assertEquals(2, br.getLineNumber());\n    }\n\n    @Test\n    public void readCharArrayZeroLengthReturnsZeroWithoutConsuming() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"12\\n345\\n\"));\n        char[] buf = new char[8];\n        int len = br.read(buf, 0, 0);\n        assertEquals(0, len);\n        // first real read should still see the first character\n        assertEquals('1', br.read());\n    }\n\n    @Test\n    public void readCharArrayAtEndOfStreamReturnsMinusOneAndSetsLastChar() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"\"));\n        char[] buf = new char[4];\n        int len = br.read(buf, 0, 4);\n        assertEquals(-1, len);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());\n    }\n\n    @Test\n    public void readLineReturnsLineWithoutTerminator() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\nBC\\nDE\"));\n        String line = br.readLine();\n        assertEquals(\"A\", line);\n    }\n\n    @Test\n    public void readLineIncrementsLineCounter() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\nBC\\nDE\"));\n        br.readLine();\n        assertEquals(1, br.getLineNumber());\n        br.readLine();\n        assertEquals(2, br.getLineNumber());\n    }\n\n    @Test\n    public void readLineSetsLastCharToLastCharacterOfLine() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"ABC\\nDE\"));\n        br.readLine();\n        assertEquals('C', br.readAgain());\n    }\n\n    @Test\n    public void readLineReturnsNullAtEndOfStreamAndSetsLastCharToEOF() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"\"));\n        String line = br.readLine();\n        assertNull(line);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());\n    }\n\n    @Test\n    public void readLineOnEmptyLineDoesNotChangeLastChar() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"\\nBC\"));\n        // last char begins as UNDEFINED\n        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());\n        String line = br.readLine();\n        assertEquals(\"\", line);\n        // empty line leaves lastChar unchanged, since line.length() == 0\n        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());\n        assertEquals(1, br.getLineNumber());\n    }\n\n    @Test\n    public void readAllCharactersSequentiallyFromMultilineInput() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\nBC\\nDE\"));\n        StringBuilder sb = new StringBuilder();\n        int c;\n        while ((c = br.read()) != -1) {\n            sb.append((char) c);\n        }\n        assertEquals(\"A\\nBC\\nDE\", sb.toString());\n        assertEquals(2, br.getLineNumber());\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());\n    }\n\n    @Test\n    public void mixedReadAndReadLineTracksLastChar() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\nBC\\nDE\"));\n        int first = br.read();\n        assertEquals('A', first);\n        // consume the newline via read, then the rest of stream via readLine\n        int second = br.read();\n        assertEquals('\\n', second);\n        String line = br.readLine();\n        assertEquals(\"BC\", line);\n        assertEquals('C', br.readAgain());\n    }\n\n    @Test\n    public void lookAheadAfterPartialReadReflectsNextChar() throws IOException {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"12\\n345\\n\"));\n        br.read(); // consume '1'\n        int ahead = br.lookAhead();\n        assertEquals('2', ahead);\n        assertEquals('1', br.readAgain());\n    }\n\n    @Test\n    public void constructorDoesNotAdvanceLineNumberOrLastChar() {\n        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(\"A\\nBC\\nDE\"));\n        assertEquals(0, br.getLineNumber());\n        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());\n    }\n}\n```",
+          "citations": []
+        }
+      ],
+      "model": "anthropic/claude-sonnet-5",
+      "stop_reason": "end_turn",
+      "stop_details": null,
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 63672,
+        "output_tokens": 3636,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "server_tool_use": null,
+        "service_tier": "standard",
+        "speed": "standard",
+        "cost": 0.163704,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.163704,
+          "upstream_inference_prompt_cost": 0.127344,
+          "upstream_inference_completions_cost": 0.03636
+        }
+      },
+      "context_management": null,
+      "provider": "Claude Platform on AWS",
+      "model_quota": {
+        "daily_quota_tokens": 200000,
+        "daily_usage_tokens": 135182,
+        "daily_remaining_tokens": 64818
+      }
+    },
+    "headers": {
+      "x-request-id": "fowx986q014m4ttxvuaxavsw",
+      "date": "Sat, 03 Oct 2026 19:50:22 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  }
+}

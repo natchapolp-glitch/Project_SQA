@@ -1,0 +1,227 @@
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+
+import org.junit.Test;
+
+/**
+ * Deterministic JUnit 4 tests for org.apache.commons.csv.ExtendedBufferedReader.
+ *
+ * These tests exercise the fixed production source directly via the package-private
+ * ExtendedBufferedReader(Reader) constructor and its public/package methods:
+ * read(), read(char[], int, int), readAgain(), readLine(), lookAhead(), getLineNumber().
+ */
+public class ExtendedBufferedReaderTest {
+
+    @Test
+    public void readSingleCharReturnsFirstCharacter() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\nBC\nDE"));
+        int c = br.read();
+        assertEquals('A', c);
+        assertEquals('A', br.readAgain());
+    }
+
+    @Test
+    public void readAgainBeforeAnyReadIsUndefined() {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("abc"));
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+    }
+
+    @Test
+    public void readAtEndOfStreamReturnsMinusOne() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(""));
+        int c = br.read();
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, c);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+    }
+
+    @Test
+    public void lineNumberIncrementsOnNewline() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\nBC\nDE"));
+        assertEquals(0, br.getLineNumber());
+        br.read(); // A
+        assertEquals(0, br.getLineNumber());
+        br.read(); // \n
+        assertEquals(1, br.getLineNumber());
+        br.read(); // B
+        br.read(); // C
+        br.read(); // \n
+        assertEquals(2, br.getLineNumber());
+    }
+
+    @Test
+    public void lineNumberDoesNotDoubleCountCRLF() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\r\nB"));
+        br.read(); // A
+        assertEquals(0, br.getLineNumber());
+        br.read(); // \r
+        assertEquals(1, br.getLineNumber());
+        br.read(); // \n -- should not increment again since lastChar was \r
+        assertEquals(1, br.getLineNumber());
+        br.read(); // B
+        assertEquals(1, br.getLineNumber());
+    }
+
+    @Test
+    public void lookAheadReturnsNextCharWithoutConsumingIt() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("12\n345\n"));
+        int ahead = br.lookAhead();
+        assertEquals('1', ahead);
+        // lookAhead must not consume: read() should still return the same first char
+        int actual = br.read();
+        assertEquals('1', actual);
+    }
+
+    @Test
+    public void lookAheadAtEndOfStreamReturnsMinusOne() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(""));
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.lookAhead());
+    }
+
+    @Test
+    public void readCharArrayFillsBufferAndReturnsLength() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("12\n345\n"));
+        char[] buf = new char[8];
+        java.util.Arrays.fill(buf, '~');
+        int len = br.read(buf, 2, 4);
+        assertEquals(4, len);
+        assertEquals('1', buf[2]);
+        assertEquals('2', buf[3]);
+        assertEquals('\n', buf[4]);
+        assertEquals('3', buf[5]);
+        // untouched positions remain the fill char
+        assertEquals('~', buf[0]);
+        assertEquals('~', buf[1]);
+        assertEquals('~', buf[6]);
+        assertEquals('~', buf[7]);
+    }
+
+    @Test
+    public void readCharArraySetsLastCharToLastReadCharacter() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("12\n345\n"));
+        char[] buf = new char[8];
+        int len = br.read(buf, 2, 4);
+        assertEquals(4, len);
+        assertEquals(buf[2 + len - 1], br.readAgain());
+    }
+
+    @Test
+    public void readCharArrayUpdatesLineCounterForNewlineInBuffer() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("12\n345\n"));
+        char[] buf = new char[8];
+        int len = br.read(buf, 0, 7);
+        assertEquals(7, len);
+        // Two newline characters in "12\n345\n"
+        assertEquals(2, br.getLineNumber());
+    }
+
+    @Test
+    public void readCharArrayZeroLengthReturnsZeroWithoutConsuming() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("12\n345\n"));
+        char[] buf = new char[8];
+        int len = br.read(buf, 0, 0);
+        assertEquals(0, len);
+        // first real read should still see the first character
+        assertEquals('1', br.read());
+    }
+
+    @Test
+    public void readCharArrayAtEndOfStreamReturnsMinusOneAndSetsLastChar() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(""));
+        char[] buf = new char[4];
+        int len = br.read(buf, 0, 4);
+        assertEquals(-1, len);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+    }
+
+    @Test
+    public void readLineReturnsLineWithoutTerminator() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\nBC\nDE"));
+        String line = br.readLine();
+        assertEquals("A", line);
+    }
+
+    @Test
+    public void readLineIncrementsLineCounter() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\nBC\nDE"));
+        br.readLine();
+        assertEquals(1, br.getLineNumber());
+        br.readLine();
+        assertEquals(2, br.getLineNumber());
+    }
+
+    @Test
+    public void readLineSetsLastCharToLastCharacterOfLine() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("ABC\nDE"));
+        br.readLine();
+        assertEquals('C', br.readAgain());
+    }
+
+    @Test
+    public void readLineReturnsNullAtEndOfStreamAndSetsLastCharToEOF() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader(""));
+        String line = br.readLine();
+        assertNull(line);
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+    }
+
+    @Test
+    public void readLineOnEmptyLineDoesNotChangeLastChar() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("\nBC"));
+        // last char begins as UNDEFINED
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+        String line = br.readLine();
+        assertEquals("", line);
+        // empty line leaves lastChar unchanged, since line.length() == 0
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+        assertEquals(1, br.getLineNumber());
+    }
+
+    @Test
+    public void readAllCharactersSequentiallyFromMultilineInput() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\nBC\nDE"));
+        StringBuilder sb = new StringBuilder();
+        int c;
+        while ((c = br.read()) != -1) {
+            sb.append((char) c);
+        }
+        assertEquals("A\nBC\nDE", sb.toString());
+        assertEquals(2, br.getLineNumber());
+        assertEquals(ExtendedBufferedReader.END_OF_STREAM, br.readAgain());
+    }
+
+    @Test
+    public void mixedReadAndReadLineTracksLastChar() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\nBC\nDE"));
+        int first = br.read();
+        assertEquals('A', first);
+        // consume the newline via read, then the rest of stream via readLine
+        int second = br.read();
+        assertEquals('\n', second);
+        String line = br.readLine();
+        assertEquals("BC", line);
+        assertEquals('C', br.readAgain());
+    }
+
+    @Test
+    public void lookAheadAfterPartialReadReflectsNextChar() throws IOException {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("12\n345\n"));
+        br.read(); // consume '1'
+        int ahead = br.lookAhead();
+        assertEquals('2', ahead);
+        assertEquals('1', br.readAgain());
+    }
+
+    @Test
+    public void constructorDoesNotAdvanceLineNumberOrLastChar() {
+        ExtendedBufferedReader br = new ExtendedBufferedReader(new StringReader("A\nBC\nDE"));
+        assertEquals(0, br.getLineNumber());
+        assertEquals(ExtendedBufferedReader.UNDEFINED, br.readAgain());
+    }
+}
+```

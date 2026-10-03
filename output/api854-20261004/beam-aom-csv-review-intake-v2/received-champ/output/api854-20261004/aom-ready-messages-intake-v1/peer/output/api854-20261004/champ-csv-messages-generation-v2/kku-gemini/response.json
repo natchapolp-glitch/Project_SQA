@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "response_id": "genai-01a10353-2775-77a6-8d7b-69ddb076059b",
+    "requested_model_id": "gemini-3.5-flash-lite",
+    "requested_model_name": "gemini-3.5-flash-lite",
+    "actual_model": "gemini-3.5-flash-lite",
+    "actual_provider": "Gemini",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 41314,
+      "completion_tokens": 1655,
+      "total_tokens": 42969
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 85576,
+      "daily_remaining_tokens": 264424
+    }
+  },
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T19:52:17.093119+00:00",
+    "ended_at_utc": "2026-10-03T19:52:23.538476+00:00",
+    "raw_body_sha256": "ca622fd3c59cf639cf7957a4aa8b7f31da1c23d3413a76c2ef605a7f5d0089ae",
+    "body": {
+      "id": "genai-01a10353-2775-77a6-8d7b-69ddb076059b",
+      "object": "chat.completion",
+      "created": 1791057143,
+      "model": "gemini-3.5-flash-lite",
+      "provider": "Gemini",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```java\npackage org.apache.commons.csv;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport java.io.IOException;\nimport java.io.StringReader;\n\npublic class ExtendedBufferedReaderTest {\n\n    @Test\n    public void testGetLineNumberInitial() {\n        StringReader reader = new StringReader(\"line1\\nline2\\n\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertEquals(0, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testGetLineNumberAfterRead() throws IOException {\n        StringReader reader = new StringReader(\"a\\nb\\n\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        ebr.read();\n        ebr.read();\n        assertEquals(1, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testLookAheadBasic() throws IOException {\n        StringReader reader = new StringReader(\"XYZ\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertEquals('X', ebr.lookAhead());\n        assertEquals('X', ebr.read());\n        assertEquals('Y', ebr.lookAhead());\n    }\n\n    @Test\n    public void testLookAheadAtEof() throws IOException {\n        StringReader reader = new StringReader(\"\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.lookAhead());\n    }\n\n    @Test\n    public void testReadSingleChar() throws IOException {\n        StringReader reader = new StringReader(\"AB\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertEquals('A', ebr.read());\n        assertEquals('B', ebr.read());\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.read());\n    }\n\n    @Test\n    public void testReadAgainInitial() {\n        StringReader reader = new StringReader(\"A\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertEquals(ExtendedBufferedReader.UNDEFINED, ebr.readAgain());\n    }\n\n    @Test\n    public void testReadAgainAfterRead() throws IOException {\n        StringReader reader = new StringReader(\"A\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        ebr.read();\n        assertEquals('A', ebr.readAgain());\n    }\n\n    @Test\n    public void testReadLineBasic() throws IOException {\n        StringReader reader = new StringReader(\"line1\\nline2\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertEquals(\"line1\", ebr.readLine());\n        assertEquals(\"line2\", ebr.readLine());\n        assertNull(ebr.readLine());\n    }\n\n    @Test\n    public void testReadLineEmptyFile() throws IOException {\n        StringReader reader = new StringReader(\"\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertNull(ebr.readLine());\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.readAgain());\n    }\n\n    @Test\n    public void testReadLineIncrementsLineNumber() throws IOException {\n        StringReader reader = new StringReader(\"one\\ntwo\\nthree\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        ebr.readLine();\n        assertEquals(1, ebr.getLineNumber());\n        ebr.readLine();\n        assertEquals(2, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testReadArrayZeroLength() throws IOException {\n        StringReader reader = new StringReader(\"content\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        char[] buf = new char[5];\n        int len = ebr.read(buf, 0, 0);\n        assertEquals(0, len);\n    }\n\n    @Test\n    public void testReadArrayWithOffset() throws IOException {\n        StringReader reader = new StringReader(\"ABCDE\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        char[] buf = new char[10];\n        int len = ebr.read(buf, 2, 3);\n        assertEquals(3, len);\n        assertEquals('A', buf[2]);\n        assertEquals('B', buf[3]);\n        assertEquals('C', buf[4]);\n        assertEquals('C', ebr.readAgain());\n    }\n\n    @Test\n    public void testReadArrayEof() throws IOException {\n        StringReader reader = new StringReader(\"\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        char[] buf = new char[5];\n        int len = ebr.read(buf, 0, 5);\n        assertEquals(-1, len);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.readAgain());\n    }\n\n    @Test\n    public void testCarriageReturnLineNumber() throws IOException {\n        StringReader reader = new StringReader(\"a\\rb\\nc\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        ebr.read(); // 'a'\n        ebr.read(); // '\\r' -> lineCounter = 1\n        ebr.read(); // 'b'\n        ebr.read(); // '\\n' -> lineCounter = 2 (not preceded by \\r since last was \\n)\n        assertEquals(2, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testCrLfLineNumber() throws IOException {\n        StringReader reader = new StringReader(\"a\\r\\nb\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        ebr.read(); // 'a'\n        ebr.read(); // '\\r' -> lineCounter = 1\n        ebr.read(); // '\\n' -> lastChar was '\\r', so lineCounter does not increment again for '\\n'\n        assertEquals(1, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testLookAheadDoesNotConsume() throws IOException {\n        StringReader reader = new StringReader(\"123\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        assertEquals('1', ebr.lookAhead());\n        assertEquals('1', ebr.lookAhead());\n        assertEquals('1', ebr.read());\n        assertEquals('2', ebr.read());\n    }\n\n    @Test\n    public void testReadArrayLineCounting() throws IOException {\n        StringReader reader = new StringReader(\"a\\nb\\r\\nc\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        char[] buf = new char[10];\n        int len = ebr.read(buf, 0, 10);\n        assertEquals(6, len);\n        assertEquals(2, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testReadLineLastChar() throws IOException {\n        StringReader reader = new StringReader(\"hello\\nworld\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n        ebr.readLine();\n        assertEquals('o', ebr.readAgain());\n        ebr.readLine();\n        assertEquals('d', ebr.readAgain());\n        ebr.readLine();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.readAgain());\n    }\n\n}\n```",
+            "reasoning": ""
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 41314,
+        "completion_tokens": 1655,
+        "total_tokens": 42969
+      },
+      "model_quota": {
+        "daily_quota_tokens": 350000,
+        "daily_usage_tokens": 85576,
+        "daily_remaining_tokens": 264424
+      }
+    },
+    "headers": {
+      "x-request-id": "haovuzej8ucgg50id61taeot",
+      "date": "Sat, 03 Oct 2026 19:52:23 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  },
+  "outcome": "response_received"
+}
