@@ -1,0 +1,411 @@
+{
+  "policy_id": "beam-collections-bounded-real-map-v1-development",
+  "shared_condition": "api854-20261003-chronology-v11-development",
+  "shared_selected": 396,
+  "shared_excluded": 295,
+  "denominator": 691,
+  "targets": [
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "convertToMap",
+        "parameter_types": ""
+      },
+      "descriptor": "()V",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "createDelegateMap",
+        "parameter_types": ""
+      },
+      "descriptor": "()Lorg/apache/commons/collections/map/AbstractHashedMap;",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "entrySet",
+        "parameter_types": ""
+      },
+      "descriptor": "()Ljava/util/Set;",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "hashCode",
+        "parameter_types": ""
+      },
+      "descriptor": "()I",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "keySet",
+        "parameter_types": ""
+      },
+      "descriptor": "()Ljava/util/Set;",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "mapIterator",
+        "parameter_types": ""
+      },
+      "descriptor": "()Lorg/apache/commons/collections/MapIterator;",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "readObject",
+        "parameter_types": "java.io.ObjectInputStream"
+      },
+      "descriptor": "(Ljava/io/ObjectInputStream;)V",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "values",
+        "parameter_types": ""
+      },
+      "descriptor": "()Ljava/util/Collection;",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "",
+        "method": "writeObject",
+        "parameter_types": "java.io.ObjectOutputStream"
+      },
+      "descriptor": "(Ljava/io/ObjectOutputStream;)V",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.collections.map.Flat3Map",
+        "constructor_types": "java.util.Map",
+        "method": "<init>",
+        "parameter_types": ""
+      },
+      "descriptor": "(Ljava/util/Map;)V",
+      "preconditions": "Real non-subclass Flat3Map, String/null keys and values; native object serialization for hooks",
+      "scope": "Bounded real map semantics; no synthetic streams or identity/string-only oracle"
+    }
+  ],
+  "fixtures": {
+    "empty": [],
+    "one": [
+      [
+        "k0",
+        "v0"
+      ]
+    ],
+    "three": [
+      [
+        null,
+        "v0"
+      ],
+      [
+        "k1",
+        null
+      ],
+      [
+        "k2",
+        "v2"
+      ]
+    ],
+    "four": [
+      [
+        null,
+        "v0"
+      ],
+      [
+        "k1",
+        null
+      ],
+      [
+        "k2",
+        "v2"
+      ],
+      [
+        "k3",
+        "v3"
+      ]
+    ],
+    "null": null
+  },
+  "cases": [
+    {
+      "case": "convertToMap_empty",
+      "method": "convertToMap",
+      "descriptor": "()V",
+      "fixture": "empty"
+    },
+    {
+      "case": "convertToMap_one",
+      "method": "convertToMap",
+      "descriptor": "()V",
+      "fixture": "one"
+    },
+    {
+      "case": "convertToMap_three",
+      "method": "convertToMap",
+      "descriptor": "()V",
+      "fixture": "three"
+    },
+    {
+      "case": "createDelegateMap_empty",
+      "method": "createDelegateMap",
+      "descriptor": "()Lorg/apache/commons/collections/map/AbstractHashedMap;",
+      "fixture": "empty"
+    },
+    {
+      "case": "createDelegateMap_one",
+      "method": "createDelegateMap",
+      "descriptor": "()Lorg/apache/commons/collections/map/AbstractHashedMap;",
+      "fixture": "one"
+    },
+    {
+      "case": "createDelegateMap_three",
+      "method": "createDelegateMap",
+      "descriptor": "()Lorg/apache/commons/collections/map/AbstractHashedMap;",
+      "fixture": "three"
+    },
+    {
+      "case": "createDelegateMap_four",
+      "method": "createDelegateMap",
+      "descriptor": "()Lorg/apache/commons/collections/map/AbstractHashedMap;",
+      "fixture": "four"
+    },
+    {
+      "case": "entrySet_empty",
+      "method": "entrySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "empty"
+    },
+    {
+      "case": "entrySet_one",
+      "method": "entrySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "one"
+    },
+    {
+      "case": "entrySet_three",
+      "method": "entrySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "three"
+    },
+    {
+      "case": "entrySet_four",
+      "method": "entrySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "four"
+    },
+    {
+      "case": "hashCode_empty",
+      "method": "hashCode",
+      "descriptor": "()I",
+      "fixture": "empty"
+    },
+    {
+      "case": "hashCode_one",
+      "method": "hashCode",
+      "descriptor": "()I",
+      "fixture": "one"
+    },
+    {
+      "case": "hashCode_three",
+      "method": "hashCode",
+      "descriptor": "()I",
+      "fixture": "three"
+    },
+    {
+      "case": "hashCode_four",
+      "method": "hashCode",
+      "descriptor": "()I",
+      "fixture": "four"
+    },
+    {
+      "case": "keySet_empty",
+      "method": "keySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "empty"
+    },
+    {
+      "case": "keySet_one",
+      "method": "keySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "one"
+    },
+    {
+      "case": "keySet_three",
+      "method": "keySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "three"
+    },
+    {
+      "case": "keySet_four",
+      "method": "keySet",
+      "descriptor": "()Ljava/util/Set;",
+      "fixture": "four"
+    },
+    {
+      "case": "mapIterator_empty",
+      "method": "mapIterator",
+      "descriptor": "()Lorg/apache/commons/collections/MapIterator;",
+      "fixture": "empty"
+    },
+    {
+      "case": "mapIterator_one",
+      "method": "mapIterator",
+      "descriptor": "()Lorg/apache/commons/collections/MapIterator;",
+      "fixture": "one"
+    },
+    {
+      "case": "mapIterator_three",
+      "method": "mapIterator",
+      "descriptor": "()Lorg/apache/commons/collections/MapIterator;",
+      "fixture": "three"
+    },
+    {
+      "case": "mapIterator_four",
+      "method": "mapIterator",
+      "descriptor": "()Lorg/apache/commons/collections/MapIterator;",
+      "fixture": "four"
+    },
+    {
+      "case": "readObject_empty",
+      "method": "readObject",
+      "descriptor": "(Ljava/io/ObjectInputStream;)V",
+      "fixture": "empty"
+    },
+    {
+      "case": "readObject_one",
+      "method": "readObject",
+      "descriptor": "(Ljava/io/ObjectInputStream;)V",
+      "fixture": "one"
+    },
+    {
+      "case": "readObject_three",
+      "method": "readObject",
+      "descriptor": "(Ljava/io/ObjectInputStream;)V",
+      "fixture": "three"
+    },
+    {
+      "case": "readObject_four",
+      "method": "readObject",
+      "descriptor": "(Ljava/io/ObjectInputStream;)V",
+      "fixture": "four"
+    },
+    {
+      "case": "values_empty",
+      "method": "values",
+      "descriptor": "()Ljava/util/Collection;",
+      "fixture": "empty"
+    },
+    {
+      "case": "values_one",
+      "method": "values",
+      "descriptor": "()Ljava/util/Collection;",
+      "fixture": "one"
+    },
+    {
+      "case": "values_three",
+      "method": "values",
+      "descriptor": "()Ljava/util/Collection;",
+      "fixture": "three"
+    },
+    {
+      "case": "values_four",
+      "method": "values",
+      "descriptor": "()Ljava/util/Collection;",
+      "fixture": "four"
+    },
+    {
+      "case": "writeObject_empty",
+      "method": "writeObject",
+      "descriptor": "(Ljava/io/ObjectOutputStream;)V",
+      "fixture": "empty"
+    },
+    {
+      "case": "writeObject_one",
+      "method": "writeObject",
+      "descriptor": "(Ljava/io/ObjectOutputStream;)V",
+      "fixture": "one"
+    },
+    {
+      "case": "writeObject_three",
+      "method": "writeObject",
+      "descriptor": "(Ljava/io/ObjectOutputStream;)V",
+      "fixture": "three"
+    },
+    {
+      "case": "writeObject_four",
+      "method": "writeObject",
+      "descriptor": "(Ljava/io/ObjectOutputStream;)V",
+      "fixture": "four"
+    },
+    {
+      "case": "constructor_empty",
+      "method": "<init>",
+      "descriptor": "(Ljava/util/Map;)V",
+      "fixture": "empty"
+    },
+    {
+      "case": "constructor_one",
+      "method": "<init>",
+      "descriptor": "(Ljava/util/Map;)V",
+      "fixture": "one"
+    },
+    {
+      "case": "constructor_three",
+      "method": "<init>",
+      "descriptor": "(Ljava/util/Map;)V",
+      "fixture": "three"
+    },
+    {
+      "case": "constructor_four",
+      "method": "<init>",
+      "descriptor": "(Ljava/util/Map;)V",
+      "fixture": "four"
+    },
+    {
+      "case": "constructor_null",
+      "method": "<init>",
+      "descriptor": "(Ljava/util/Map;)V",
+      "fixture": "null"
+    }
+  ],
+  "oracle": "Independent Python map/multiset and Java String hash specification. Full keys/values, view-backed clear, iterator setValue, native serialize/deserialize content, copy independence and private conversion storage invariant.",
+  "serialization_scope": "Complete valid object graph of bounded String/null map. No malformed streams or serialization byte equality contract.",
+  "selection_used_buggy_outcomes": false,
+  "shared_integration_approved": false,
+  "full_legal_domain_approved": false,
+  "gate_a_approved": false,
+  "kku_requests": 0,
+  "queue_mutations": 0
+}

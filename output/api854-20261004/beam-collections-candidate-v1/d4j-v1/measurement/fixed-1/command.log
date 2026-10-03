@@ -1,0 +1,33 @@
+Extract test suite......................................................... OK
+Running ant (compile.gen.tests)............................................ FAIL
+Executed command:  cd /home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f && ant -f /home/beam/sqa-beam/defects4j/framework/projects/defects4j.build.xml -Dd4j.home=/home/beam/sqa-beam/defects4j -Dd4j.dir.projects=/home/beam/sqa-beam/defects4j/framework/projects -Dbasedir=/home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f -Dd4j.test.dir=/home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f/.test_suite compile.gen.tests 2>&1
+Buildfile: /home/beam/sqa-beam/defects4j/framework/projects/defects4j.build.xml
+
+init:
+     [echo] -------- commons-collections 3.3-SNAPSHOT --------
+
+prepare:
+
+compile:
+    [javac] /home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f/build.xml:127: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+compile.gen.tests:
+     [echo] classes.dir: build/classes
+     [echo] build.home: build
+    [mkdir] Created dir: /home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f/.classes_testgen
+    [javac] /home/beam/sqa-beam/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 2 source files to /home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f/.classes_testgen
+    [javac] /home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f/.test_suite/sqa/development/CollectionsCandidateTest.java:21: error: hashCode() in CollectionsCandidateTest cannot override hashCode() in Object
+    [javac] @org.junit.Test public void hashCode() throws Exception { group(new String[][]{new String[]{"hashCode_empty","hashCode","empty","()I","{\"value\":0,\"exception_class\":null,\"pre_map\":[],\"post_map\":[],\"source_unchanged\":true,\"distinct_result\":null,\"independent_result\":null,\"storage_before\":\"flat\",\"storage_after\":\"flat\",\"flat_slots_cleared\":null}"},new String[]{"hashCode_one","hashCode","one","()I","{\"value\":863,\"exception_class\":null,\"pre_map\":[[\"k0\",\"v0\"]],\"post_map\":[[\"k0\",\"v0\"]],\"source_unchanged\":true,\"distinct_result\":null,\"independent_result\":null,\"storage_before\":\"flat\",\"storage_after\":\"flat\",\"flat_slots_cleared\":null}"},new String[]{"hashCode_three","hashCode","three","()I","{\"value\":7931,\"exception_class\":null,\"pre_map\":[[null,\"v0\"],[\"k1\",null],[\"k2\",\"v2\"]],\"post_map\":[[null,\"v0\"],[\"k1\",null],[\"k2\",\"v2\"]],\"source_unchanged\":true,\"distinct_result\":null,\"independent_result\":null,\"storage_before\":\"flat\",\"storage_after\":\"flat\",\"flat_slots_cleared\":null}"},new String[]{"hashCode_four","hashCode","four","()I","{\"value\":8784,\"exception_class\":null,\"pre_map\":[[null,\"v0\"],[\"k1\",null],[\"k2\",\"v2\"],[\"k3\",\"v3\"]],\"post_map\":[[null,\"v0\"],[\"k1\",null],[\"k2\",\"v2\"],[\"k3\",\"v3\"]],\"source_unchanged\":true,\"distinct_result\":null,\"independent_result\":null,\"storage_before\":\"delegate\",\"storage_after\":\"delegate\",\"flat_slots_cleared\":null}"}}); }
+    [javac]                             ^
+    [javac]   return type void is not compatible with int
+    [javac] Note: /home/beam/sqa-beam/worktrees/beam-collections-evaluator-v1/Collections/1/f/.test_suite/sqa/development/CollectionsCandidateProbe.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] 1 error
+
+BUILD FAILED
+/home/beam/sqa-beam/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 1 second
+Cannot compile extracted test suite! at /home/beam/sqa-beam/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/beam/sqa-beam/defects4j/framework/bin/defects4j line 195.

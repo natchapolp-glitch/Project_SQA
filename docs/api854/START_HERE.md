@@ -1,3 +1,7 @@
+> ล่าสุดบีม 4 ตุลาคม 2026: [รับ v12 บนเครื่องบีม](BEAM_V12_CONSUMER_HOST_ACCEPTANCE_TH.md) — fresh tests 15 ผ่าน, consumers 80 combinations และ Graphics/Chronology/retained recipes ผ่านใน scope ที่ระบุ; shared v12 **403 selected / 288 excluded / 691 declarations** ยังไม่ใช่ semantic approval ครบทั้งหมดหรือ Gate A.
+>
+> หลักฐานใหม่: [Collections 10 bounded targets](BEAM_COLLECTIONS_CANDIDATE_20261004_TH.md) — native 40 cases พร้อม exact-entry proof และ Defects4J evaluator จริง fixed สองรอบ / buggy / coverage; รอ joint review และ shared integration. Codec 5 ยังรอออม integrate; enum 4 คง pending ร่วมทีม. KKU calls = 0, queue mutations = 0 สำหรับหลักฐานใหม่ของบีมรอบนี้. รายการด้านล่างเป็น checkpoints รุ่นก่อนตามวันที่เดิม.
+
 > บีมตอบออม 60cc1a6e: [BEAM_FINAL_RECIPE_RETURN_TH.md](BEAM_FINAL_RECIPE_RETURN_TH.md) — Lang scoped verdict พร้อมแล้ว; มี index รวม Math/setter/JDOM/Buffer/Lang receipts พร้อม hashes ให้แชมป์ตรวจ ก่อนออมเลือก final condition.
 
 > บีมตอบคำตรวจรับออม ec26350f: [BEAM_BUFFER_JOINT_VERDICT_TH.md](BEAM_BUFFER_JOINT_VERDICT_TH.md) — บีมรับ 8 bounded recipes และ Csv condition พร้อม reference proof ใหม่; รอ scoped verdict แชมป์ก่อนรวม shared condition.

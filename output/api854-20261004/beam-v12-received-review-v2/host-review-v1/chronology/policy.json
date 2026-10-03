@@ -1,0 +1,137 @@
+{
+  "cases": {
+    "arrays_bad_order": [
+      "arrays",
+      2
+    ],
+    "arrays_invalid_date": [
+      "arrays",
+      1
+    ],
+    "arrays_leap_iso": [
+      "arrays",
+      0
+    ],
+    "empty_iso_offset": [
+      "empty",
+      0
+    ],
+    "empty_null": [
+      "empty",
+      1
+    ],
+    "getfield_bad_index": [
+      "field",
+      1
+    ],
+    "getfield_buddhist": [
+      "field",
+      0
+    ],
+    "internal_iso": [
+      "internal",
+      0
+    ],
+    "single_hour_iso": [
+      "single",
+      0
+    ],
+    "single_invalid_hour": [
+      "single",
+      1
+    ],
+    "withchrono_buddhist": [
+      "retain",
+      0
+    ],
+    "withchrono_null": [
+      "retain",
+      2
+    ],
+    "withchrono_same": [
+      "retain",
+      1
+    ]
+  },
+  "descriptors": {
+    "arrays": [
+      "<init>",
+      "([Lorg/joda/time/DateTimeFieldType;[ILorg/joda/time/Chronology;)V"
+    ],
+    "empty": [
+      "<init>",
+      "(Lorg/joda/time/Chronology;)V"
+    ],
+    "field": [
+      "getField",
+      "(ILorg/joda/time/Chronology;)Lorg/joda/time/DateTimeField;"
+    ],
+    "internal": [
+      "<init>",
+      "(Lorg/joda/time/Chronology;[Lorg/joda/time/DateTimeFieldType;[I)V"
+    ],
+    "retain": [
+      "withChronologyRetainFields",
+      "(Lorg/joda/time/Chronology;)Lorg/joda/time/Partial;"
+    ],
+    "single": [
+      "<init>",
+      "(Lorg/joda/time/DateTimeFieldType;ILorg/joda/time/Chronology;)V"
+    ]
+  },
+  "fixture_policy_id": "aom-beam-champ-graphics-fixtures-v12-development",
+  "independent_expectations": {
+    "arrays_bad_order": "exception:java.lang.IllegalArgumentException",
+    "arrays_invalid_date": "exception:org.joda.time.IllegalFieldValueException",
+    "arrays_leap_iso": "partial:org.joda.time.chrono.ISOChronology:UTC:types=[year, monthOfYear, dayOfMonth]:values=[2024, 2, 29]:named=true:input-copy=true:output-copy=true",
+    "empty_iso_offset": "partial:org.joda.time.chrono.ISOChronology:UTC:types=[]:values=[]:named=true",
+    "empty_null": "partial:org.joda.time.chrono.ISOChronology:UTC:types=[]:values=[]:named=true",
+    "getfield_bad_index": "exception:java.lang.ArrayIndexOutOfBoundsException|receiver=partial:org.joda.time.chrono.ISOChronology:UTC:types=[year]:values=[2024]:named=true:unchanged=true",
+    "getfield_buddhist": "field:year:epoch=2513:supplied-identity=true:type-year=true|receiver=partial:org.joda.time.chrono.ISOChronology:UTC:types=[year]:values=[2024]:named=true:unchanged=true",
+    "internal_iso": "partial:org.joda.time.chrono.ISOChronology:UTC:types=[year, monthOfYear, dayOfMonth]:values=[2024, 2, 29]:named=true",
+    "single_hour_iso": "partial:org.joda.time.chrono.ISOChronology:UTC:types=[hourOfDay]:values=[10]:named=true",
+    "single_invalid_hour": "exception:org.joda.time.IllegalFieldValueException",
+    "withchrono_buddhist": "partial:org.joda.time.chrono.BuddhistChronology:UTC:types=[hourOfDay]:values=[10]:named=true:same=false|receiver=partial:org.joda.time.chrono.ISOChronology:UTC:types=[hourOfDay]:values=[10]:named=true:unchanged=true",
+    "withchrono_null": "partial:org.joda.time.chrono.ISOChronology:UTC:types=[hourOfDay]:values=[10]:named=true:same=false|receiver=partial:org.joda.time.chrono.BuddhistChronology:UTC:types=[hourOfDay]:values=[10]:named=true:unchanged=true",
+    "withchrono_same": "partial:org.joda.time.chrono.ISOChronology:UTC:types=[hourOfDay]:values=[10]:named=true:same=true|receiver=partial:org.joda.time.chrono.ISOChronology:UTC:types=[hourOfDay]:values=[10]:named=true:unchanged=true"
+  },
+  "scope": "Shared development integration; UTC/fixed +07 only; not full legal domain or primary approval",
+  "targets": [
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "",
+      "method": "getField",
+      "parameter_types": "int,org.joda.time.Chronology"
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "",
+      "method": "withChronologyRetainFields",
+      "parameter_types": "org.joda.time.Chronology"
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "[Lorg.joda.time.DateTimeFieldType;,[I,org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.Chronology,[Lorg.joda.time.DateTimeFieldType;,[I",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.DateTimeFieldType,int,org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    }
+  ]
+}
