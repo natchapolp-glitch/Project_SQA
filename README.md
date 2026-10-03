@@ -1,3 +1,5 @@
+Latest Aom intake: [Beam c125695a buffer/runtime review and exact tasks for Champ/Beam](docs/api854/AOM_BEAM_BUFFER_INTAKE_TH.md). 193 checksums verified; shared buffer composition awaits joint acceptance. Historical v7 retained; Gate A/pilot closed.
+
 Latest Aom waiting work: [host/input readiness, recovered prepare-only queue and exact tasks for Beam/Champ](docs/api854/AOM_V8_WAITING_WORK_TH.md). Shared v8 unchanged; Gate A/pilot remain closed.
 
 Latest Aom handoff: [shared v8 with the two accepted Math getField signatures](docs/api854/AOM_MATH_FIELD_V8_HANDOFF_TH.md). 20 bugs; 379 selected / 312 unsupported of 691; max prompt 257,515 bytes. Champ remeasures reserve; Beam and Champ continue joint review. Gate A/pilot remain closed. Earlier checkpoints below retain their original counts and evidence.

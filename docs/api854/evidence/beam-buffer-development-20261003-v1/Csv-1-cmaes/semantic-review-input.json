@@ -1,0 +1,68 @@
+{
+  "reviewer": "Codex local development review",
+  "suite_sha256": "ba7e2cf722068ceae004a80ba89c1e151fdb87ad0533c17004e605590a648585",
+  "fixed_source_sha256": {
+    "src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java": "b09b4e6ae43f1914f8e53e0bad7ba5f9483dc9b3e7ae8889c1d9d40c0de19508"
+  },
+  "verdict": "valid",
+  "target_execution_evidence": [
+    {
+      "path": "measurement/coverage/coverage.xml",
+      "sha256": "44d1edb6c7779ecd963208455b934c5d325b747e451d1289e85e749aaba1369f"
+    },
+    {
+      "path": "semantic-evidence/fixture-oracle-review.json",
+      "sha256": "1aa47d8d691cb90af00a5bdb045cb725c658a6eafb77a2d6ea02e3720454e27c"
+    }
+  ],
+  "fixture_oracle_review": {
+    "scope": "local development only",
+    "reviewed_case_count": 30,
+    "recipe_proof": "Real StringReader over deterministic line-separated text; character/line/EOF outputs and reader position are compared. v6-buffer: numeric digits and legal offset/length are coupled; TextBuffer slices use initialized storage; reader output includes written buffer and sentinel preservation.",
+    "team_or_primary_approval": false,
+    "helper_sha256": "ef93d698c8962cc32a215176420b7e224d98263deedd9c271e6d5c4f82434089"
+  },
+  "weak_oracles": {
+    "invalid_case_ids": [],
+    "expected_boundary_exception_case_ids": [],
+    "partial_projection_limitations_disclosed": true
+  },
+  "stage_counts": {
+    "fixed-1": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-1/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "fixed-2": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-2/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "buggy": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/buggy/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "coverage": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/coverage/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    }
+  }
+}
