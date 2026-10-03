@@ -1,0 +1,75 @@
+{
+  "reviewer": "Codex local development review",
+  "suite_sha256": "f6cc82a6df085e0d09bf504957bf8e79688728e2c5de4a0dae2266267e4ab2f0",
+  "fixed_source_sha256": {
+    "src/main/java/org/apache/commons/lang3/math/NumberUtils.java": "0374c7b486626927217ad42677e1a57fc60fc551218660316a0e7f4f8ea79477"
+  },
+  "verdict": "valid",
+  "target_execution_evidence": [
+    {
+      "path": "measurement/coverage/coverage.xml",
+      "sha256": "18e893ae66894b226b00d892f3bf7a5bd393cb32481574ef35830663c2e9e120"
+    },
+    {
+      "path": "semantic-evidence/fixture-oracle-review.json",
+      "sha256": "32ec46f4bd26a171e6d80698b651ae5cdf9cc82518e9ded3a3962eeaa68ec2bb"
+    }
+  ],
+  "fixture_oracle_review": {
+    "scope": "local development only",
+    "reviewed_case_count": 30,
+    "recipe_proof": "Non-null deterministic String boundaries; nonempty primitive arrays. NumberUtils create* documents NumberFormatException for invalid numeric text.",
+    "team_or_primary_approval": false,
+    "helper_sha256": "34afc661b87eda73f45c2ef36a430bada46990fc29a54a5096b14ac66e594b84"
+  },
+  "weak_oracles": {
+    "invalid_case_ids": [],
+    "expected_boundary_exception_case_ids": [
+      1,
+      11,
+      19,
+      22,
+      28,
+      29
+    ],
+    "partial_projection_limitations_disclosed": true
+  },
+  "stage_counts": {
+    "fixed-1": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-1/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "fixed-2": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-2/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "buggy": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/buggy/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "coverage": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/coverage/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    }
+  }
+}

@@ -30,8 +30,16 @@ public final class SqaProbe {
 
     private SqaProbe() { }
 
+    /** Schema scaffolding carried in the suite; no benchmark test classes. */
+    public static class GenericFixture<T> { public T value; public T[] array; public List<T> items; }
+    public static class StringBinding extends GenericFixture<String> { }
+    public static class IntegerBinding extends GenericFixture<Integer> { }
+    public static class FixtureBean { public String value = "fixture-value"; }
+    public interface FixtureMock { String accept(String value); }
+
     public static final String EXPLICIT_FIXTURES = "beam-explicit-fixtures-v3-proposal";
     public static final String SCALAR_FIXTURES = "beam-explicit-fixtures-v4-proposal";
+    public static final String PILOT_FIXTURES = "beam-explicit-fixtures-v5-proposal";
     private static final ThreadLocal<FixtureSession> FIXTURES = new ThreadLocal<FixtureSession>();
     private static final ThreadLocal<Boolean> INVOKED = new ThreadLocal<Boolean>();
 
@@ -65,15 +73,159 @@ public final class SqaProbe {
     private static final class FixtureSession {
         final String targetClass;
         final String method;
+        final boolean pilot;
         boolean constructing;
         Object compiler, registry, scope, cfg, reverse, flow, closureNode, receiver;
         org.w3c.dom.Element domRoot;
         org.w3c.dom.Node domChild;
         Object jdomRoot, jdomChild;
+        java.io.ByteArrayOutputStream archiveBytes;
+        Object mapper, parser, context, collectionType, collectionDeserializer;
+        Object mock, baseInvocation, actualInvocation;
+        Object chartDataset, chartPlot, chartAxis, cleanupScript, cleanupExterns;
+        int cleanupNodeIndex;
 
-        FixtureSession(String targetClass, String method) {
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        void unusedClosure(double a) throws ReflectiveOperationException {
+            if (compiler != null) return;
+            Class<?> node = Class.forName("com.google.javascript.rhino.Node");
+            Class<?> ac = Class.forName("com.google.javascript.jscomp.AbstractCompiler");
+            compiler = construct("com.google.javascript.jscomp.Compiler", new Class<?>[]{});
+            Object options = construct("com.google.javascript.jscomp.CompilerOptions", new Class<?>[]{});
+            call(compiler, "initOptions", new Class<?>[]{options.getClass()}, options);
+            cleanupExterns = call(compiler, "parseTestCode", new Class<?>[]{String.class}, "");
+            cleanupScript = call(compiler, "parseTestCode", new Class<?>[]{String.class},
+                "var unused = 1; function fixture(x) { var local = " + (a < 0 ? "2" : "3") + "; return x; } fixture(1);");
+            // Normalize traverses sibling roots and requires their common parent.
+            int block = Class.forName("com.google.javascript.rhino.Token").getField("BLOCK").getInt(null);
+            Object roots = construct(node.getName(), new Class<?>[]{int.class}, block);
+            call(roots, "addChildToBack", new Class<?>[]{node}, cleanupExterns);
+            call(roots, "addChildToBack", new Class<?>[]{node}, cleanupScript);
+            Object normalize = construct("com.google.javascript.jscomp.Normalize", new Class<?>[]{ac, boolean.class}, compiler, false);
+            call(normalize, "process", new Class<?>[]{node, node}, cleanupExterns, cleanupScript);
+            Class<?> lifecycle = Class.forName("com.google.javascript.jscomp.AbstractCompiler$LifeCycleStage");
+            call(compiler, "setLifeCycleStage", new Class<?>[]{lifecycle}, Enum.valueOf((Class)lifecycle, "NORMALIZED"));
+            closureNode = cleanupScript;
+        }
+
+        void chart(double a) throws ReflectiveOperationException {
+            if (chartDataset != null) return;
+            Class<?> dataset = Class.forName("org.jfree.data.category.CategoryDataset");
+            Class<?> axis = Class.forName("org.jfree.chart.axis.CategoryAxis");
+            Class<?> valueAxis = Class.forName("org.jfree.chart.axis.ValueAxis");
+            Class<?> renderer = Class.forName("org.jfree.chart.renderer.category.CategoryItemRenderer");
+            chartDataset = construct("org.jfree.data.category.DefaultCategoryDataset", new Class<?>[]{});
+            call(chartDataset, "addValue", new Class<?>[]{double.class, Comparable.class, Comparable.class}, a < 0 ? -2.0 : 2.0, "row-a", "column-a");
+            call(chartDataset, "addValue", new Class<?>[]{double.class, Comparable.class, Comparable.class}, 5.0, "row-b", "column-a");
+            chartAxis = construct(axis.getName(), new Class<?>[]{String.class}, "Domain");
+            Object rangeAxis = construct("org.jfree.chart.axis.NumberAxis", new Class<?>[]{String.class}, "Range");
+            chartPlot = construct("org.jfree.chart.plot.CategoryPlot", new Class<?>[]{dataset, axis, valueAxis, renderer},
+                chartDataset, chartAxis, rangeAxis, receiver);
+            java.awt.Graphics2D graphics = new java.awt.image.BufferedImage(16,16,java.awt.image.BufferedImage.TYPE_INT_RGB).createGraphics();
+            try {
+                call(receiver, "initialise", new Class<?>[]{java.awt.Graphics2D.class, java.awt.geom.Rectangle2D.class,
+                    chartPlot.getClass(), dataset, Class.forName("org.jfree.chart.plot.PlotRenderingInfo")},
+                    graphics, new java.awt.geom.Rectangle2D.Double(0,0,16,16), chartPlot, chartDataset, null);
+            } finally { graphics.dispose(); }
+        }
+
+        Object beanWriter() throws ReflectiveOperationException {
+            Object objectMapper = construct("com.fasterxml.jackson.databind.ObjectMapper", new Class<?>[]{});
+            Object provider = call(objectMapper, "getSerializerProvider", new Class<?>[]{});
+            provider = call(provider, "createInstance", new Class<?>[]{Class.forName("com.fasterxml.jackson.databind.SerializationConfig"),
+                Class.forName("com.fasterxml.jackson.databind.ser.SerializerFactory")},
+                call(objectMapper, "getSerializationConfig", new Class<?>[]{}), call(objectMapper, "getSerializerFactory", new Class<?>[]{}));
+            Object serializer = call(provider, "findValueSerializer", new Class<?>[]{Class.class, Class.forName("com.fasterxml.jackson.databind.BeanProperty")}, FixtureBean.class, null);
+            return Array.get(field(serializer, "_props"), 0);
+        }
+
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        void jacksonCollection(double a) throws ReflectiveOperationException {
+            if (mapper != null) return;
+            mapper = construct("com.fasterxml.jackson.databind.ObjectMapper", new Class<?>[]{});
+            Class<?> feature = Class.forName("com.fasterxml.jackson.databind.DeserializationFeature");
+            call(mapper, "configure", new Class<?>[]{feature, boolean.class}, Enum.valueOf((Class)feature, "ACCEPT_SINGLE_VALUE_AS_ARRAY"), true);
+            Object typeFactory = call(mapper, "getTypeFactory", new Class<?>[]{});
+            collectionType = call(typeFactory, "constructCollectionType", new Class<?>[]{Class.class, Class.class}, java.util.ArrayList.class, String.class);
+            Object factory = call(mapper, "getFactory", new Class<?>[]{});
+            String input = method.equals("handleNonArray") ? a < 0 ? "\"alpha\"" : "\"beta\""
+                : a < 0 ? "[\"alpha\",\"beta\"]" : "[\"left\",\"right\"]";
+            parser = call(factory, "createParser", new Class<?>[]{String.class}, input);
+            call(parser, "nextToken", new Class<?>[]{});
+            Object blueprint = call(mapper, "getDeserializationContext", new Class<?>[]{});
+            context = call(blueprint, "createInstance", new Class<?>[]{Class.forName("com.fasterxml.jackson.databind.DeserializationConfig"),
+                Class.forName("com.fasterxml.jackson.core.JsonParser"), Class.forName("com.fasterxml.jackson.databind.InjectableValues")},
+                call(mapper, "getDeserializationConfig", new Class<?>[]{}), parser, null);
+            collectionDeserializer = call(context, "findRootValueDeserializer", new Class<?>[]{Class.forName("com.fasterxml.jackson.databind.JavaType")}, collectionType);
+        }
+
+        void mockito(double a) throws ReflectiveOperationException {
+            if (mock != null) return;
+            mock = call(Class.forName("org.mockito.Mockito"), "mock", new Class<?>[]{Class.class}, FixtureMock.class);
+            call(mock, "accept", new Class<?>[]{String.class}, "alpha");
+            call(mock, "accept", new Class<?>[]{String.class}, a < 0 ? "alpha" : "beta");
+            Object util = construct("org.mockito.internal.util.MockUtil", new Class<?>[]{});
+            Object handler = call(util, "getMockHandler", new Class<?>[]{Object.class}, mock);
+            Object container = call(handler, "getInvocationContainer", new Class<?>[]{});
+            List<?> invocations = (List<?>)call(container, "getInvocations", new Class<?>[]{});
+            baseInvocation = invocations.get(0);
+            actualInvocation = invocations.get(1);
+        }
+
+        FixtureSession(String targetClass, String method, String policy) {
             this.targetClass = targetClass;
             this.method = method;
+            this.pilot = PILOT_FIXTURES.equals(policy);
+        }
+
+        Object option(String name, String text) throws ReflectiveOperationException {
+            Object option = construct("org.apache.commons.cli.Option",
+                    new Class<?>[]{String.class, boolean.class, String.class}, name, true, "fixture");
+            call(option, "setType", new Class<?>[]{Object.class}, String.class);
+            call(option, "addValue", new Class<?>[]{String.class}, text);
+            return option;
+        }
+
+        Object archiveEntry(String name, long size) throws ReflectiveOperationException {
+            Object entry = construct("org.apache.commons.compress.archivers.cpio.CpioArchiveEntry",
+                    new Class<?>[]{String.class}, name);
+            call(entry, "setSize", new Class<?>[]{long.class}, size);
+            call(entry, "setTime", new Class<?>[]{long.class}, 0L);
+            call(entry, "setMode", new Class<?>[]{long.class}, 0100644L);
+            return entry;
+        }
+
+        Object prepareReceiver(Object value, double a) throws ReflectiveOperationException {
+            if (!pilot) return value;
+            if (targetClass.equals("org.apache.commons.cli.CommandLine")) {
+                call(value, "addOption", new Class<?>[]{Class.forName("org.apache.commons.cli.Option")}, option("x", a < 0 ? "alpha" : "beta"));
+                call(value, "addArg", new Class<?>[]{String.class}, "positional");
+            } else if (targetClass.equals("com.fasterxml.jackson.core.util.TextBuffer")) {
+                char[] content = (a < 0 ? "123" : "45.5").toCharArray();
+                call(value, "resetWithCopy", new Class<?>[]{char[].class, int.class, int.class}, content, 0, content.length);
+            } else if (targetClass.equals("org.jsoup.nodes.Document")) {
+                Object html = call(value, "appendElement", new Class<?>[]{String.class}, "html");
+                call(html, "appendElement", new Class<?>[]{String.class}, "head");
+                Object body = call(html, "appendElement", new Class<?>[]{String.class}, "body");
+                call(body, "text", new Class<?>[]{String.class}, a < 0 ? "alpha" : "beta");
+                call(value, "title", new Class<?>[]{String.class}, "Fixture");
+            } else if (targetClass.endsWith("CpioArchiveOutputStream")) {
+                call(value, "putNextEntry", new Class<?>[]{Class.forName("org.apache.commons.compress.archivers.cpio.CpioArchiveEntry")},
+                        archiveEntry("fixture.txt", method.equals("write") ? 1 : 0));
+            } else if (targetClass.equals("org.joda.time.Partial")) {
+                return call(value, "with", new Class<?>[]{Class.forName("org.joda.time.DateTimeFieldType"), int.class},
+                        call(Class.forName("org.joda.time.DateTimeFieldType"), "hourOfDay", new Class<?>[]{}), 10);
+            } else if (targetClass.equals("org.jfree.chart.renderer.category.AreaRenderer")) {
+                receiver = value;
+                chart(a);
+            } else if (targetClass.equals("com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser")) {
+                // Real StAX input; getters start on a named leaf VALUE_STRING.
+                for (int i = 0; i < 8; i++) {
+                    Object token = call(value, "nextToken", new Class<?>[]{});
+                    if (token != null && token.toString().equals("VALUE_STRING")) break;
+                }
+            }
+            return value;
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
@@ -134,7 +286,9 @@ public final class SqaProbe {
 
         void dom(double a) throws Exception {
             if (domRoot != null) return;
-            javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+            javax.xml.parsers.DocumentBuilderFactory factory = pilot
+                ? javax.xml.parsers.DocumentBuilderFactory.newInstance("com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl", SqaProbe.class.getClassLoader())
+                : javax.xml.parsers.DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             org.w3c.dom.Document document = factory.newDocumentBuilder().newDocument();
             domRoot = document.createElementNS("urn:sqa:root", "r:root");
@@ -199,6 +353,112 @@ public final class SqaProbe {
         Object argument(Class<?> type, double a, double b, double c, int depth) {
             try {
                 if (depth > 2) throw new FixtureFailure("Fixture recursion limit: " + type.getName(), null);
+                String name = type.getName();
+                if (pilot) {
+                    if (targetClass.equals("com.google.gson.TypeInfoFactory")) {
+                        java.lang.reflect.Field value = GenericFixture.class.getField(a < 0 ? "value" : "items");
+                        if (type == java.lang.reflect.TypeVariable.class) return GenericFixture.class.getTypeParameters()[0];
+                        if (type == java.lang.reflect.Field.class) return value;
+                        if (type == Class.class) return GenericFixture.class;
+                        if (type == java.lang.reflect.Type.class) {
+                            if (method.equals("getTypeInfoForArray")) return a < 0 ? String[].class : Integer[].class;
+                            return a < 0 ? StringBinding.class.getGenericSuperclass() : IntegerBinding.class.getGenericSuperclass();
+                        }
+                    }
+                    if (targetClass.equals("com.google.javascript.jscomp.RemoveUnusedVars")) {
+                        unusedClosure(a);
+                        if (type == boolean.class) return false; // No call-site optimizer prerequisite.
+                        if (name.equals("com.google.javascript.jscomp.AbstractCompiler")) return compiler;
+                        if (name.equals("com.google.javascript.rhino.Node")) {
+                            if (method.equals("process")) return cleanupNodeIndex++ == 0 ? cleanupExterns : cleanupScript;
+                            if (method.equals("getFunctionArgList")) {
+                                Object child = call(cleanupScript, "getFirstChild", new Class<?>[]{});
+                                while (child != null && !(Boolean)call(child, "isFunction", new Class<?>[]{}))
+                                    child = call(child, "getNext", new Class<?>[]{});
+                                if (child == null) throw new FixtureFailure("Missing parsed function", null);
+                                return child;
+                            }
+                            return cleanupScript;
+                        }
+                    }
+                    if (targetClass.equals("org.jfree.chart.renderer.category.AreaRenderer")) {
+                        chart(a);
+                        if (name.equals("org.jfree.data.category.CategoryDataset")) return chartDataset;
+                        if (name.equals("org.jfree.chart.axis.CategoryAxis")) return chartAxis;
+                        if (type == Comparable.class) return a < 0 ? "row-a" : "column-a";
+                        if (type == java.awt.geom.Rectangle2D.class) return new java.awt.geom.Rectangle2D.Double(0,0,16,16);
+                        if (name.equals("org.jfree.chart.util.RectangleEdge")) return type.getField("BOTTOM").get(null);
+                        if (type == int.class) return 0;
+                    }
+                    if (targetClass.equals("com.fasterxml.jackson.databind.ser.BeanPropertyWriter")) {
+                        if (name.equals(targetClass)) return beanWriter();
+                        if (name.equals("com.fasterxml.jackson.databind.util.NameTransformer"))
+                            return call(type, "simpleTransformer", new Class<?>[]{String.class, String.class}, a < 0 ? "left_" : "right_", "_suffix");
+                        if (type == Object.class) return method.equals("get") ? new FixtureBean() : a < 0 ? "fixture-key" : "fixture-value";
+                    }
+                    if (targetClass.equals("com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer")) {
+                        jacksonCollection(a);
+                        if (name.equals("com.fasterxml.jackson.databind.JavaType")) return collectionType;
+                        if (name.equals("com.fasterxml.jackson.core.JsonParser")) return parser;
+                        if (name.equals("com.fasterxml.jackson.databind.DeserializationContext")) return context;
+                        if (name.equals("com.fasterxml.jackson.databind.deser.ValueInstantiator"))
+                            return call(collectionDeserializer, "getValueInstantiator", new Class<?>[]{});
+                        if (name.equals("com.fasterxml.jackson.databind.JsonDeserializer"))
+                            return Class.forName("com.fasterxml.jackson.databind.deser.std.StringDeserializer").getField("instance").get(null);
+                    }
+                    if (targetClass.equals("com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser")) {
+                        String xml = a < 0 ? "<root><item>123</item><other>alpha</other></root>" : "<root><item>45</item><other>beta</other></root>";
+                        if (type == int.class && constructing) return 0;
+                        if (name.equals("com.fasterxml.jackson.core.io.IOContext"))
+                            return construct(name, new Class<?>[]{Class.forName("com.fasterxml.jackson.core.util.BufferRecycler"), Object.class, boolean.class},
+                                construct("com.fasterxml.jackson.core.util.BufferRecycler", new Class<?>[]{}), xml, false);
+                        if (name.equals("com.fasterxml.jackson.core.ObjectCodec")) return construct("com.fasterxml.jackson.dataformat.xml.XmlMapper", new Class<?>[]{});
+                        if (type == javax.xml.stream.XMLStreamReader.class) {
+                            javax.xml.stream.XMLStreamReader reader = javax.xml.stream.XMLInputFactory.newInstance().createXMLStreamReader(new java.io.StringReader(xml));
+                            while (reader.hasNext() && reader.getEventType() != javax.xml.stream.XMLStreamConstants.START_ELEMENT) reader.next();
+                            return reader;
+                        }
+                    }
+                    if (targetClass.equals("org.mockito.internal.invocation.InvocationMatcher")) {
+                        mockito(a);
+                        if (name.equals("org.mockito.invocation.Invocation")) return constructing ? baseInvocation : actualInvocation;
+                    }
+                    if (targetClass.startsWith("org.apache.commons.math3.fraction.")) {
+                        int number = 1 + bucket(a, 8);
+                        if (type == double.class) return (a < 0 ? -1 : 1) * number / 4.0;
+                        if (type == int.class) return number;
+                        if (type == long.class) return (long)number;
+                        if (type == java.math.BigInteger.class) return java.math.BigInteger.valueOf(number);
+                        if (name.equals("org.apache.commons.math3.fraction.BigFraction") || name.equals("org.apache.commons.math3.fraction.Fraction"))
+                            return construct(name, new Class<?>[]{int.class, int.class}, number, 3);
+                    }
+                    if (targetClass.equals("org.apache.commons.cli.CommandLine")) {
+                        if (type == String.class) return constructing ? "fixture" : a < -0.33 ? "x" : a < 0.33 ? "missing" : "extra";
+                        if (type == char.class) return a < 0 ? 'x' : 'z';
+                        if (name.equals("org.apache.commons.cli.Option")) return option("extra", a < 0 ? "left" : "right");
+                    }
+                    if (targetClass.equals("org.jsoup.nodes.Document") && type == String.class)
+                        return constructing ? "https://fixture.invalid/" : method.equals("createElement") ? a < 0 ? "span" : "section"
+                            : STRINGS[bucket(a, STRINGS.length)];
+                    if (targetClass.equals("org.joda.time.Partial")) {
+                        if (type == int.class) return bucket(a, 24);
+                        if (name.equals("org.joda.time.DateTimeFieldType"))
+                            return call(type, "hourOfDay", new Class<?>[]{});
+                    }
+                    if (name.equals("org.joda.time.DurationFieldType")) return call(type, a < 0 ? "hours" : "days", new Class<?>[]{});
+                    if (name.equals("org.joda.time.DurationField")) return call(Class.forName("org.joda.time.field.UnsupportedDurationField"),
+                        "getInstance", new Class<?>[]{Class.forName("org.joda.time.DurationFieldType")},
+                        call(Class.forName("org.joda.time.DurationFieldType"), "hours", new Class<?>[]{}));
+                    if (name.equals("com.fasterxml.jackson.core.util.BufferRecycler")) return construct(name, new Class<?>[]{});
+                    if (type == java.io.OutputStream.class && targetClass.endsWith("CpioArchiveOutputStream")) {
+                        archiveBytes = new java.io.ByteArrayOutputStream();
+                        return archiveBytes;
+                    }
+                    if (name.equals("org.apache.commons.compress.archivers.ArchiveEntry") || name.equals("org.apache.commons.compress.archivers.cpio.CpioArchiveEntry"))
+                        return archiveEntry(a < 0 ? "next-left.txt" : "next-right.txt", 0);
+                    if (targetClass.equals("com.fasterxml.jackson.core.io.NumberInput") && type == String.class)
+                        return new String[]{"0", "1", "12", "2147483647"}[bucket(a, 4)];
+                }
                 if (scalar(type)) {
                     if (type == String.class && method.equals("getRelativePositionOfPI")) return a < 0 ? "fixture" : "other";
                     if (type == String.class && (method.equals("namespacePointer") || method.equals("getNamespaceURI")))
@@ -206,12 +466,11 @@ public final class SqaProbe {
                     return legacyArgument(type, Math.max(-0.95, a), b, c, depth);
                 }
                 if (type.isArray()) {
-                    Object array = Array.newInstance(type.getComponentType(), bucket(c, 5));
+                    Object array = Array.newInstance(type.getComponentType(), pilot && (targetClass.endsWith("NumberUtils") || targetClass.endsWith("TypeInfoFactory")) ? 1 + bucket(c, 4) : bucket(c, 5));
                     for (int i = 0; i < Array.getLength(array); i++)
                         Array.set(array, i, argument(type.getComponentType(), a, b, c, depth + 1));
                     return array;
                 }
-                String name = type.getName();
                 if (type == java.io.Reader.class && targetClass.equals("org.apache.commons.csv.ExtendedBufferedReader"))
                     return new java.io.StringReader(STRINGS[bucket(a, STRINGS.length)]);
                 if (name.startsWith("com.google.javascript.")) {
@@ -299,15 +558,76 @@ public final class SqaProbe {
         }
 
         Object field(Object value, String name) throws ReflectiveOperationException {
-            java.lang.reflect.Field field = value.getClass().getDeclaredField(name);
-            field.setAccessible(true);
-            return field.get(value);
+            for (Class<?> type = value.getClass(); type != null; type = type.getSuperclass()) {
+                try {
+                    java.lang.reflect.Field field = type.getDeclaredField(name);
+                    field.setAccessible(true);
+                    return field.get(value);
+                } catch (NoSuchFieldException missing) { }
+            }
+            throw new NoSuchFieldException(name);
         }
 
         String projection(Object result, int depth) throws ReflectiveOperationException {
             if (depth > 8) throw new FixtureFailure("Oracle projection depth exceeded", null);
             if (result == null) return "null";
             String name = result.getClass().getName();
+            if (pilot && result instanceof java.lang.reflect.Type) return "type:" + nestedTestName(((java.lang.reflect.Type)result).getTypeName());
+            if (pilot && result instanceof Method) return "method:" + nestedTestName(((Method)result).toGenericString());
+            if (pilot && name.startsWith("com.google.gson.TypeInfo"))
+                return "type-info:" + projection(call(result, "getActualType", new Class<?>[]{}), depth + 1);
+            if (pilot && name.equals("com.google.javascript.rhino.Node")) return "ast:" + call(result, "toStringTree", new Class<?>[]{});
+            if (pilot && name.equals("org.apache.commons.jxpath.ri.NamespaceResolver"))
+                return "namespaces:r=" + call(result, "getNamespaceURI", new Class<?>[]{String.class}, "r")
+                    + ":i=" + call(result, "getNamespaceURI", new Class<?>[]{String.class}, "i");
+            if (pilot && name.equals("org.jfree.data.Range"))
+                return "range:" + call(result, "getLowerBound", new Class<?>[]{}) + ':' + call(result, "getUpperBound", new Class<?>[]{});
+            if (pilot && name.equals("org.jfree.chart.LegendItem")) return "legend:" + call(result, "getLabel", new Class<?>[]{});
+            if (pilot && name.equals("org.jfree.chart.LegendItemCollection")) {
+                StringBuilder out = new StringBuilder("legends[");
+                int count = ((Number)call(result, "getItemCount", new Class<?>[]{})).intValue();
+                if (count > 256) throw new FixtureFailure("Legend limit exceeded", null);
+                for (int i = 0; i < count; i++) out.append(projection(call(result, "get", new Class<?>[]{int.class}, i), depth + 1)).append(';');
+                return out.append(']').toString();
+            }
+            if (pilot && name.startsWith("com.fasterxml.jackson.databind.type.")) return "java-type:" + call(result, "toCanonical", new Class<?>[]{});
+            if (pilot && name.equals("com.fasterxml.jackson.core.io.SerializedString")) return "serialized-name:" + call(result, "getValue", new Class<?>[]{});
+            if (pilot && name.equals("com.fasterxml.jackson.databind.ser.BeanPropertyWriter"))
+                return "property:" + call(result, "getName", new Class<?>[]{}) + ':' + projection(call(result, "getType", new Class<?>[]{}), depth + 1);
+            if (pilot && targetClass.equals("org.mockito.internal.invocation.InvocationMatcher")
+                    && Class.forName("org.mockito.invocation.Invocation").isInstance(result))
+                return "invocation:" + projection(call(result, "getMethod", new Class<?>[]{}), depth + 1)
+                    + ':' + projection(call(result, "getArguments", new Class<?>[]{}), depth + 1)
+                    + ":verified=" + call(result, "isVerified", new Class<?>[]{});
+            if (pilot && result.getClass().isArray()) {
+                int length = Array.getLength(result);
+                if (length > 100000) throw new FixtureFailure("Oracle array limit exceeded", null);
+                StringBuilder out = new StringBuilder("array[");
+                for (int i = 0; i < length; i++) out.append(projection(Array.get(result, i), depth + 1)).append(';');
+                return out.append(']').toString();
+            }
+            if (pilot && (name.equals("org.jsoup.nodes.Document") || name.equals("org.jsoup.nodes.Element")))
+                return "html:" + call(result, "outerHtml", new Class<?>[]{});
+            if (pilot && name.equals("org.apache.commons.cli.Option"))
+                return "option:" + call(result, "getOpt", new Class<?>[]{}) + ':' + projection(call(result, "getValues", new Class<?>[]{}), depth + 1);
+            if (pilot && result instanceof java.util.Iterator) {
+                StringBuilder out = new StringBuilder("iterator[");
+                java.util.Iterator<?> iterator = (java.util.Iterator<?>)result;
+                int count = 0;
+                while (iterator.hasNext()) {
+                    if (++count > 256) throw new FixtureFailure("Oracle iterator limit exceeded", null);
+                    out.append(projection(iterator.next(), depth + 1)).append(';');
+                }
+                return out.append(']').toString();
+            }
+            if (pilot && (name.equals("org.apache.commons.math3.fraction.BigFraction") || name.equals("org.apache.commons.math3.fraction.Fraction")))
+                return "fraction:" + call(result, "getNumerator", new Class<?>[]{}) + '/' + call(result, "getDenominator", new Class<?>[]{});
+            if (pilot && name.startsWith("org.joda.time.")) {
+                if (name.equals("org.joda.time.Partial")) return "partial:" + call(result, "toStringList", new Class<?>[]{});
+                if (Class.forName("org.joda.time.DurationFieldType").isInstance(result)) return "duration-type:" + call(result, "getName", new Class<?>[]{});
+                if (Class.forName("org.joda.time.DurationField").isInstance(result))
+                    return "duration:" + call(result, "getName", new Class<?>[]{}) + ':' + call(result, "isSupported", new Class<?>[]{});
+            }
             if (result instanceof org.w3c.dom.Node) return nodeSnapshot((org.w3c.dom.Node)result, 0);
             if (name.equals("org.jdom.Element") || name.equals("org.jdom.ProcessingInstruction")
                     || name.equals("org.jdom.Text") || name.equals("org.jdom.CDATA")) {
@@ -359,6 +679,28 @@ public final class SqaProbe {
         }
 
         String state() throws ReflectiveOperationException {
+            if (pilot && targetClass.equals("com.google.javascript.jscomp.RemoveUnusedVars"))
+                return "cleanup:" + call(cleanupScript, "toStringTree", new Class<?>[]{});
+            if (pilot && targetClass.equals("org.jfree.chart.renderer.category.AreaRenderer"))
+                return "chart:rows=" + call(chartDataset, "getRowCount", new Class<?>[]{}) + ":columns=" + call(chartDataset, "getColumnCount", new Class<?>[]{});
+            if (pilot && targetClass.equals("com.fasterxml.jackson.databind.ser.BeanPropertyWriter"))
+                return projection(receiver, 0) + ":setting=" + projection(call(receiver, "getInternalSetting", new Class<?>[]{Object.class}, "fixture-key"), 0);
+            if (pilot && targetClass.equals("com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer"))
+                return "json-token:" + call(parser, "getCurrentToken", new Class<?>[]{});
+            if (pilot && targetClass.equals("com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser"))
+                return "xml:closed=" + call(receiver, "isClosed", new Class<?>[]{}) + ":token=" + call(receiver, "getCurrentToken", new Class<?>[]{})
+                    + ":text=" + projection(field(receiver, "_currText"), 0);
+            if (pilot && targetClass.equals("org.mockito.internal.invocation.InvocationMatcher"))
+                return projection(baseInvocation, 0) + ":candidate=" + projection(actualInvocation, 0);
+            if (pilot && targetClass.equals("org.apache.commons.cli.CommandLine"))
+                return "cli:" + projection(call(receiver, "getOptions", new Class<?>[]{}), 0) + ':' + projection(call(receiver, "getArgs", new Class<?>[]{}), 0);
+            if (pilot && targetClass.equals("com.fasterxml.jackson.core.util.TextBuffer"))
+                return "text:" + call(receiver, "contentsAsString", new Class<?>[]{}) + ":size=" + call(receiver, "size", new Class<?>[]{});
+            if (pilot && targetClass.equals("org.jsoup.nodes.Document") && receiver != null) return projection(receiver, 0);
+            if (pilot && targetClass.endsWith("CpioArchiveOutputStream")) return "archive:" + value(archiveBytes.toByteArray());
+            if (pilot && targetClass.startsWith("org.apache.commons.math3.fraction.")) return projection(receiver, 0);
+            if (pilot && targetClass.equals("org.joda.time.Partial")) return projection(receiver, 0);
+            if (pilot && targetClass.equals("org.joda.time.field.UnsupportedDurationField") && receiver != null) return projection(receiver, 0);
             if (targetClass.equals("org.apache.commons.collections.map.Flat3Map")) return projection(receiver, 0);
             if (targetClass.equals("org.apache.commons.csv.ExtendedBufferedReader"))
                 return "reader:line=" + call(receiver, "getLineNumber", new Class<?>[]{})
@@ -518,6 +860,27 @@ public final class SqaProbe {
             values[i] = argument(types[i], vector[start % vector.length],
                 vector[(start + 1) % vector.length], vector[(start + 2) % vector.length]);
         }
+        FixtureSession session = FIXTURES.get();
+        if (session != null && session.pilot && !session.constructing) {
+            if (session.targetClass.equals("com.google.gson.TypeInfoFactory")) {
+                java.lang.reflect.Type parent = vector[0] < 0 ? StringBinding.class.getGenericSuperclass() : IntegerBinding.class.getGenericSuperclass();
+                try {
+                    if (session.method.equals("getActualType")) {
+                        values[0] = GenericFixture.class.getField("items").getGenericType();
+                        values[1] = parent;
+                        values[2] = GenericFixture.class;
+                    } else if (session.method.equals("extractRealTypes")) {
+                        values[0] = new java.lang.reflect.Type[]{GenericFixture.class.getField("value").getGenericType()};
+                        values[1] = parent;
+                        values[2] = GenericFixture.class;
+                    }
+                } catch (NoSuchFieldException failure) { throw new FixtureFailure("Generic schema field missing", failure); }
+            }
+            if (session.targetClass.equals("org.jfree.chart.renderer.category.AreaRenderer") && session.method.equals("getItemMiddle")) {
+                values[0] = "row-a";
+                values[1] = "column-a";
+            }
+        }
         return values;
     }
 
@@ -531,10 +894,18 @@ public final class SqaProbe {
             for (int i = 0; i < length; i++) out.append(value(Array.get(value, i))).append(';');
             return out.append(']').toString();
         }
-        if (value instanceof Class) return "class:" + ((Class<?>)value).getName();
+        if (value instanceof Class) return "class:" + nestedTestName(((Class<?>)value).getName());
         if (!scalar(type) && !(value instanceof Number)) return "object-type:" + type.getName();
         String text = value instanceof Enum ? ((Enum<?>) value).name() : String.valueOf(value);
         return type.getName() + ":" + Base64.getEncoder().encodeToString(text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    private static String nestedTestName(String text) {
+        // GeneratedStudyTest nests a copy of this helper, so probe-time
+        // "SqaProbe$FixtureMock" renders at test runtime as
+        // "GeneratedStudyTest$SqaProbe$FixtureMock". Oracles must compare
+        // the probe-time spelling in both phases; never edit old suites.
+        return text.replace("GeneratedStudyTest$SqaProbe$", "SqaProbe$");
     }
 
     private static String snapshot(String observed) {
@@ -580,6 +951,7 @@ public final class SqaProbe {
                     Object[] values = arguments(ctorTypes, vector, 0);
                     if (method == null) INVOKED.set(true);
                     receiver = ctor.newInstance(values);
+                    if (session != null) receiver = session.prepareReceiver(receiver, vector[0]);
                     if (session != null) session.receiver = receiver;
                     if (session != null && className.equals("org.apache.commons.collections.map.Flat3Map")) {
                         call(receiver, "put", new Class<?>[]{Object.class, Object.class}, "fixture-a", "value-a");
@@ -622,9 +994,9 @@ public final class SqaProbe {
 
     public static String observeWithPolicy(String className, String constructorTypes, String methodName,
             String methodTypes, double[] vector, String policy) {
-        if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy))
+        if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy) && !PILOT_FIXTURES.equals(policy))
             throw new IllegalArgumentException("Unknown explicit fixture policy");
-        FIXTURES.set(new FixtureSession(className, methodName));
+        FIXTURES.set(new FixtureSession(className, methodName, policy));
         try { return observe(className, constructorTypes, methodName, methodTypes, vector); }
         finally { FIXTURES.remove(); }
     }

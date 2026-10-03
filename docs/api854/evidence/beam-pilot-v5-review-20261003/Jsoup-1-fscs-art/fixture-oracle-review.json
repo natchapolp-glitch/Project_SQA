@@ -1,0 +1,620 @@
+{
+  "reviewer": "Codex local development review",
+  "fixture_policy_id": "beam-explicit-fixtures-v5-proposal",
+  "scope": "Retained development suites only; not all declarations or shared-contract/team approval",
+  "method_preconditions": "Production Document constructor followed by html/head/body shell and content; tag creation uses valid names; results and mutations compare actual HTML.",
+  "cases": [
+    {
+      "case_id": 1,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "createElement",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "value:html:<span></span>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 2,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "head",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:\n<head>\n <title>Fixture</title>\n</head>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 3,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "nodeName",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:I2RvY3VtZW50|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 4,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=html:<html>\n<head>\n <title>a\nb</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 5,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "",
+        "method": "createShell",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:html:<html>\n<head>\n</head>\n<body>\n</body>\n</html>|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 6,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:Rml4dHVyZQ==|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 7,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "body",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:\n<body>\n beta\n</body>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 8,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:Rml4dHVyZQ==|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 9,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=html:<html>\n<head>\n <title>0x0</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 10,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "text",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "value:html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n a\\nb\n</body>\n</html>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n a\\nb\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 11,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=html:<html>\n<head>\n <title>1</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 12,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "",
+        "method": "createShell",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:html:<html>\n<head>\n</head>\n<body>\n</body>\n</html>|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 13,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "outerHtml",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:PGh0bWw+CjxoZWFkPgogPHRpdGxlPkZpeHR1cmU8L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogYmV0YQo8L2JvZHk+CjwvaHRtbD4=|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 14,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "",
+        "method": "createShell",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:html:<html>\n<head>\n</head>\n<body>\n</body>\n</html>|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 15,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "head",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:\n<head>\n <title>Fixture</title>\n</head>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 16,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "nodeName",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:I2RvY3VtZW50|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 17,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:Rml4dHVyZQ==|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 18,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "normalise",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 19,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=html:<html>\n<head>\n <title>1970-01-01</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 20,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "head",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:\n<head>\n <title>Fixture</title>\n</head>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 21,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "body",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:\n<body>\n alpha\n</body>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 22,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "nodeName",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:I2RvY3VtZW50|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 23,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "normalise",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 24,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:Rml4dHVyZQ==|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 25,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "nodeName",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:I2RvY3VtZW50|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 26,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=html:<html>\n<head>\n <title>null</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 27,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "body",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:\n<body>\n alpha\n</body>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 28,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "nodeName",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:I2RvY3VtZW50|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 29,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "head",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:html:\n<head>\n <title>Fixture</title>\n</head>|state=html:<html>\n<head>\n <title>Fixture</title>\n</head>\n<body>\n beta\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 30,
+      "target": {
+        "class": "org.jsoup.nodes.Document",
+        "constructor_types": "java.lang.String",
+        "method": "title",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=html:<html>\n<head>\n <title>{}</title>\n</head>\n<body>\n alpha\n</body>\n</html>",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.jsoup.nodes.Document",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    }
+  ],
+  "fixed_source_sha256": {
+    "src/main/java/org/jsoup/nodes/Document.java": "80ad1c53572ff2d2b6435129db05bb21bf708d4c435260a1513aa15d3536c417"
+  },
+  "suite_sha256": "8c80986a39437b4a1bee71d779daa3adde6ed1d9559368c43479625713b0e66f",
+  "observations_sha256": "e64f80786a26077aec524cdc7d11e28ad9a827fe74962a4c4c68c6a3d1968783",
+  "limitations": [
+    "Sampled suite validity does not establish complete target coverage.",
+    "Partial projections do not prove full object equivalence; bounded deterministic domains are development recipes.",
+    "Vectors can decode to repeated inputs; exception class assertions do not compare messages.",
+    "Coverage includes fixture setup and state queries; target invocation is independently checked per test.",
+    "No assertion repair or pruning based on buggy/fixed failures; all original observations/results retained."
+  ]
+}

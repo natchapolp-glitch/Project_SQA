@@ -1,0 +1,621 @@
+{
+  "reviewer": "Codex local development review",
+  "fixture_policy_id": "beam-explicit-fixtures-v5-proposal",
+  "scope": "Retained development suites only; not all declarations or shared-contract/team approval",
+  "method_preconditions": "NumberInput receives decimal integer strings. TextBuffer receives a non-null recycler and resetWithCopy allocates initialized private storage before append.",
+  "cases": [
+    {
+      "case_id": 1,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "getCurrentSegmentSize",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:Mw==|state=text:123:size=3",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 2,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "size",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NA==|state=text:45.5:size=4",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 3,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "inLongRange",
+        "parameter_types": "java.lang.String,boolean",
+        "dimensions": 6
+      },
+      "outcome": "value:java.lang.Boolean:dHJ1ZQ==|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 4,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "resetWithString",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=text:1111111111111:size=13",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 5,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "append",
+        "parameter_types": "char",
+        "dimensions": 6
+      },
+      "outcome": "void|state=text:123T:size=4",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 6,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseInt",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 7,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseLong",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Long:MTI=|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 8,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseInt",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MTI=|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 9,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "resetWithString",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=text:0x1:size=3",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 10,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "toString",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:NDUuNQ==|state=text:45.5:size=4",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 11,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "resetWithString",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=text:-1:size=2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 12,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "append",
+        "parameter_types": "char",
+        "dimensions": 6
+      },
+      "outcome": "void|state=text:45.5N:size=5",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 13,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseDouble",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Double:MTIuMA==|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 14,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "toString",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:NDUuNQ==|state=text:45.5:size=4",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 15,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "getTextOffset",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=text:123:size=3",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 16,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseAsDouble",
+        "parameter_types": "java.lang.String,double",
+        "dimensions": 6
+      },
+      "outcome": "value:java.lang.Double:MC4w|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 17,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseInt",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MTI=|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 18,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseAsLong",
+        "parameter_types": "java.lang.String,long",
+        "dimensions": 6
+      },
+      "outcome": "value:java.lang.Long:MQ==|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 19,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "resetWithEmpty",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "void|state=text::size=0",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 20,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "getTextOffset",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=text:123:size=3",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 21,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "hasTextAsCharacters",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Boolean:dHJ1ZQ==|state=text:123:size=3",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 22,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "inLongRange",
+        "parameter_types": "java.lang.String,boolean",
+        "dimensions": 6
+      },
+      "outcome": "value:java.lang.Boolean:dHJ1ZQ==|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 23,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseAsLong",
+        "parameter_types": "java.lang.String,long",
+        "dimensions": 6
+      },
+      "outcome": "value:java.lang.Long:MTI=|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 24,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseBigDecimal",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:java.math.BigDecimal:MTI=|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 25,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseAsDouble",
+        "parameter_types": "java.lang.String,double",
+        "dimensions": 6
+      },
+      "outcome": "value:java.lang.Double:MC4w|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 26,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "resetWithString",
+        "parameter_types": "java.lang.String",
+        "dimensions": 6
+      },
+      "outcome": "void|state=text:true:size=4",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 27,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "parseLong",
+        "parameter_types": "java.lang.String",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Long:MA==|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 28,
+      "target": {
+        "class": "com.fasterxml.jackson.core.io.NumberInput",
+        "constructor_types": "",
+        "method": "inLongRange",
+        "parameter_types": "java.lang.String,boolean",
+        "dimensions": 6
+      },
+      "outcome": "value:java.lang.Boolean:dHJ1ZQ==|state=stateless-scalars",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.io.NumberInput",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 29,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "size",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NA==|state=text:45.5:size=4",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 30,
+      "target": {
+        "class": "com.fasterxml.jackson.core.util.TextBuffer",
+        "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+        "method": "resetWithEmpty",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "void|state=text::size=0",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    }
+  ],
+  "fixed_source_sha256": {
+    "src/main/java/com/fasterxml/jackson/core/io/NumberInput.java": "3cd025e914432e58605ac0ee504eac0ecb1de91a06fa79bd3c75e57bb4758f41",
+    "src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java": "74aee08fbb35a2446cf324328a4e8bbec95d30c91b08270cd5fb50ec0db18c52"
+  },
+  "suite_sha256": "0d1c633a81ef249d8de71046f1dc7071b21007d5b38caeb11f75a15728ee2c33",
+  "observations_sha256": "1984a65a810780e1d2d64c569e7f712877cd9f9f7b0bb120c9a1b03276655054",
+  "limitations": [
+    "Sampled suite validity does not establish complete target coverage.",
+    "Partial projections do not prove full object equivalence; bounded deterministic domains are development recipes.",
+    "Vectors can decode to repeated inputs; exception class assertions do not compare messages.",
+    "Coverage includes fixture setup and state queries; target invocation is independently checked per test.",
+    "No assertion repair or pruning based on buggy/fixed failures; all original observations/results retained."
+  ]
+}

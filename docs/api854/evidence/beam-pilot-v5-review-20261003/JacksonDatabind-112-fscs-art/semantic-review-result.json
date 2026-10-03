@@ -1,0 +1,84 @@
+{
+  "job": {
+    "schema_version": 1,
+    "run_id": "beam-development-pilot-fixtures-v5-1",
+    "project": "JacksonDatabind",
+    "bug_id": 112,
+    "approach": "fscs-art",
+    "protocol_hash": "86a21f2a92163a813b955f6c1306ecf1048d75f9de3819dd1d069505b099f765",
+    "repeat_index": 1,
+    "attempt_id": "fixture-eval-JacksonDatabind-112-fscs-art-1"
+  },
+  "evaluation_result_sha256": "944263ee2c18afa6fbecbee29c30f7bbe70c327776a3ad17958d8d40effdcb41",
+  "status": "valid",
+  "usable": true,
+  "review_sha256": "da17f15149539012c34836610381b9439f36527ecfb280b2ee730f9ad82abb77",
+  "review": {
+    "reviewer": "Codex local development review",
+    "suite_sha256": "4c728c9c24e6c834d496377a3ea385ad71788c339f74e4fa8f915e45a6cb5f9e",
+    "fixed_source_sha256": {
+      "src/main/java/com/fasterxml/jackson/databind/deser/std/StringCollectionDeserializer.java": "f9b47dbe5a46515ca6d30f8af6396f0ebe0c58c9babbf2c604b5bdc36e438fdf"
+    },
+    "verdict": "valid",
+    "target_execution_evidence": [
+      {
+        "path": "measurement/coverage/coverage.xml",
+        "sha256": "35aa6f0a8a7755f343a6d4fdd9e36b6c2eabdc6d4b75df0a747848de90b34ce5"
+      },
+      {
+        "path": "semantic-evidence/fixture-oracle-review.json",
+        "sha256": "3ec076e81d90d03ebdea0c8dcea770f26c75a217f52eb808a254dba7da80ef8d"
+      }
+    ],
+    "fixture_oracle_review": {
+      "scope": "local development only",
+      "reviewed_case_count": 30,
+      "recipe_proof": "Production ObjectMapper factories create property writers or collection deserializer dependencies. Writer renaming/settings compare property type/name/state; collection parser/context and string deserializer form one coherent graph.",
+      "team_or_primary_approval": false,
+      "helper_sha256": "34afc661b87eda73f45c2ef36a430bada46990fc29a54a5096b14ac66e594b84"
+    },
+    "weak_oracles": {
+      "invalid_case_ids": [],
+      "expected_boundary_exception_case_ids": [],
+      "partial_projection_limitations_disclosed": true
+    },
+    "stage_counts": {
+      "fixed-1": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/fixed-1/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "fixed-2": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/fixed-2/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "buggy": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/buggy/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      },
+      "coverage": {
+        "executed": 30,
+        "skipped": 0,
+        "target_checks": 30,
+        "evidence": {
+          "path": "measurement/coverage/sqa-stage-counts.json",
+          "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+        }
+      }
+    }
+  }
+}

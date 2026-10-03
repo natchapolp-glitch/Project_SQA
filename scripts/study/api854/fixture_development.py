@@ -5,22 +5,23 @@ from pathlib import Path
 
 from . import algorithm_worker, configuration, evaluate_worker
 from .common import ROOT, cpu_slot, sha256, write_json, read_json, job_relative, identifier
-from .fixture_policy import POLICY_V4, select
+from .fixture_policy import POLICY_V4, POLICY_V5, select
+from .target_coverage import measure as measure_target_coverage
 
 
-def run(bugs, output, worktrees, d4j):
+def run(bugs, output, worktrees, d4j, fixture_policy=POLICY_V4):
     known = {(r['project'], r['bug_id']) for r in read_json(ROOT / 'docs/api854/evidence/beam-aom-review-20261003/index.json')['bugs']}
     if not bugs or len(set(bugs)) != len(bugs) or not set(bugs) <= known:
         raise ValueError('Require unique reviewed pilot bugs')
     for project, bug in bugs:
         inventory = read_json(ROOT / f'docs/api854/evidence/beam-aom-review-20261003/declarations/{project}-{bug}/targets.json')
-        if not select(inventory['targets'], POLICY_V4)[0]:
+        if not select(inventory['targets'], fixture_policy)[0]:
             raise ValueError(f'{project}-{bug} has no explicit recipe in this version')
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     run_id = identifier('beam-development-' + output.name, 'run ID')
     protocol = configuration.proposal()
-    protocol.update(fixture_policy_id=POLICY_V4, status='development_fixture_review_not_primary',
+    protocol.update(fixture_policy_id=fixture_policy, status='development_fixture_review_not_primary',
                     beam_worker_id='beam-pc1', max_cpu_slots=1)
     protocol_path = output / 'protocol-proposal.json'
     write_json(protocol_path, protocol)
@@ -60,10 +61,15 @@ def run(bugs, output, worktrees, d4j):
                         stage_counts={stage: read_json(evaluation_folder / 'measurement' / stage / 'sqa-stage-counts.json')
                             if (evaluation_folder / 'measurement' / stage / 'sqa-stage-counts.json').is_file() else None
                             for stage in ['fixed-1', 'fixed-2', 'buggy', 'coverage']}, error=evaluated.get('error'))
+                    if evaluated['observed_outcome'] == 'complete' and project == 'Chart':
+                        targets = read_json(folder / 'setup/targets.fixture-policy.json')['targets']
+                        supplemental = measure_target_coverage(evaluation_folder, targets, d4j, generated['test_count'],
+                                                               protocol['command_timeout_seconds'])
+                        record['target_coverage_status'] = supplemental['status']
                 write_json(output / f'{name}-receipt.json', record)
                 records.append(record)
                 print('DONE', name, record.get('evaluation_outcome', record['generation_outcome']), flush=True)
-    write_json(output / 'index.json', {'primary': False, 'fixture_policy_id': POLICY_V4,
+    write_json(output / 'index.json', {'primary': False, 'fixture_policy_id': fixture_policy,
         'protocol_sha256': protocol_hash, 'worker_id': 'beam-pc1', 'cpu_slots': 1,
         'development_runner_sha256': sha256(__file__), 'real_kku_requests': 0, 'live_queue_mutations': 0,
         'semantic_validity': 'pending_review', 'records': records})
@@ -76,9 +82,10 @@ def main():
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--worktrees', required=True, type=Path)
     parser.add_argument('--d4j', default='defects4j')
+    parser.add_argument('--fixture-policy', choices=[POLICY_V4, POLICY_V5], default=POLICY_V4)
     args = parser.parse_args()
     bugs = [(p, int(b)) for p, b in (name.split(':') for name in args.bugs)]
-    run(bugs, args.output, args.worktrees, args.d4j)
+    run(bugs, args.output, args.worktrees, args.d4j, args.fixture_policy)
 
 
 if __name__ == '__main__':
