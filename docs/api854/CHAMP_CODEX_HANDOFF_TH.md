@@ -1,25 +1,25 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
-???????????? 4 ?????? 2026: ??? Aom `63ad1956` shared Graphics v12 ????.
-???? [v12 readiness review](CHAMP_V12_READINESS_REVIEW_TH.md),
+อัปเดตล่าสุด 4 ตุลาคม 2026: รับ Aom `63ad1956` shared Graphics v12 แล้ว.
+อ่าน [v12 readiness review](CHAMP_V12_READINESS_REVIEW_TH.md),
 [scoped receipt](../../output/api854-20261004/champ-v12-readiness-review-v2/receipt.json),
-[return index](../../output/api854-20261004/champ-v12-return-index-v1.json) ???
-[pilot proposal](CHAMP_V12_PILOT_PROPOSAL_TH.md) ?????????????????????????.
-Current peer v12 =20bugs/403selected/288exclusions/691; Graphics7???????? immutable v11,
-Chronology6???????; Codec5??????? standalone candidate ?????? integrate??v12.
-???? finalmanifest1068/runtime41/historical9390????????; snapshot focused15tests/skip0,
-80consumers/8bindingchecks ??? bounded Graphics/JDI/JUnit/Chart48pairs/errorcontrols????.
-Champ shared workingtree???v9/checkpoint100pins????; ??? transfer host/full semantic/GateA.
-Worksheet40pairs???v12?????????: max304787bytes, byteguard308883+unknownH, finalreservenull.
+[return index](../../output/api854-20261004/champ-v12-return-index-v1.json) และ
+[pilot proposal](CHAMP_V12_PILOT_PROPOSAL_TH.md) ก่อนใช้บันทึกเก่าด้านล่าง.
+Current peer v12 =20bugs/403selected/288exclusions/691; Graphics7เพิ่มจาก immutable v11,
+Chronology6รวมแล้ว; Codec5ยังเป็น standalone candidate ไม่ได้ integrateในv12.
+ตรวจ finalmanifest1068/runtime41/historical9390ไฟล์ผ่าน; snapshot focused15tests/skip0,
+80consumers/8bindingchecks และ bounded Graphics/JDI/JUnit/Chart48pairs/errorcontrolsผ่าน.
+Champ shared workingtreeยังv9/checkpoint100pinsเดิม; ไม่ transfer host/full semantic/GateA.
+Worksheet40pairsของv12คำนวณใหม่: max304787bytes, byteguard308883+unknownH, finalreservenull.
 KKU read-only metadata11requests (GETmodels a01-a10 + POSTmodels-list a01) HTTP200:
-current exact model IDs???????????? ??? effective settings/limits/tokens/framing/quota/reset/expiry???pending.
-????? generation request/livequeue/ledger/primary mutation. Metadata authentication??????expiry/quotaapproval.
-??????? pilot???: Chart Graphics7+Time Chronology6, 2bugs?4approaches?1run=8suites,
-4AIrequests/output cap16384tokens, input/reserve???null; ?????owner??????condition/checker/preparation????.
-?????????? primary GateA????pilot. ?? Beam v12 semantic/host receipt ??? Aom v12 CPUrouting/host/provider contract.
-Reviewer???metadata????????????????API???; ????v1 missing-directoryfailure???successfulv2??????.
+current exact model IDsสองตัวมีจริง แต่ effective settings/limits/tokens/framing/quota/reset/expiryยังpending.
+ไม่มี generation request/livequeue/ledger/primary mutation. Metadata authenticationไม่ใช่expiry/quotaapproval.
+ข้อเสนอ pilotแยก: Chart Graphics7+Time Chronology6, 2bugs×4approaches×1run=8suites,
+4AIrequests/output cap16384tokens, input/reserveยังnull; รอสามownerรับและcondition/checker/preparationใหม่.
+ยังไม่เปิด primary GateAหรือpilot. ขอ Beam v12 semantic/host receipt และ Aom v12 CPUrouting/host/provider contract.
+Reviewerใช้metadataที่เก็บไว้ไม่ส่งAPIซ้ำ; เก็บv1 missing-directoryfailureและsuccessfulv2แยกครบ.
 
-?????? checkpoint ???????????????????? (?????? condition/commit ???????):
+บันทึก checkpoint และการส่งคืนก่อนหน้า (ใช้ตาม condition/commit ที่ระบุ):
 
 บันทึก 3 ตุลาคม 2026 (Asia/Bangkok) เพื่อรับช่วงจากบัญชี/เครื่องของเพื่อนโดยอ่านสถานะจาก Git และไฟล์หลักฐาน
 อัปเดต 4 ตุลาคม 2026: รับ `beam a44f796f` Codec5 bounded joint verdictครบแล้ว:
