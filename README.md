@@ -1,6 +1,25 @@
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
+Latest Champ integration: [Aom 4a0e699c, recipe/runtime binding and Windows stage creation](docs/api854/CHAMP_AOM4A_INTEGRATION_TH.md).
+The historical shared v5 pair still covers five bugs / 124 of 691 declarations;
+its old runtime pins are blocked against the latest merged code. Account intake is paused.
+
+Received Aom checker update: [Aom acceptance of Champ b6051367 and selected Gate A inputs](docs/api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md).
+Gate A requires an explicit protocol/runner pair and validates its fixture recipes.
+The five-bug bindings passed at Aom's received checkpoint; final shared inputs and team/provider approval remain pending.
+
+Latest team receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md).
+Request settings and historical quota observations are verified; final limits,
+framing, reset/expiry and the final shared pilot condition remain pending.
+
 Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Shared v5 currently prepares five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
+
+Aom's independent fixed-source/build preparation, local recovery rehearsal,
+progress page, draft slides and report/demo drafts are described in
+[AOM_INDEPENDENT_PREPARATION_TH.md](docs/api854/AOM_INDEPENDENT_PREPARATION_TH.md).
+The combined source index retains all 284 owned bug IDs, with fixed source and
+compile prerequisites passed for all 284. Original failures and retries are preserved.
+These prerequisite checks do not count as primary experiments or Gate A approval.
 
 # API854 — Aom preparation, 3 October 2026
 

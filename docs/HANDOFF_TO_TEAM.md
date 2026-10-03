@@ -1,4 +1,12 @@
-Current checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests and will submit Classroom themselves.
+Latest Champ integration: [Aom 4a0e699c / selected pair, recipe sources and Windows stage creation](api854/CHAMP_AOM4A_INTEGRATION_TH.md). Shared-v5 is still five bugs / 124 of 691 declarations, with old runtime pins blocked against the merged code. Account intake is paused. No live pilot or KKU requests in this integration.
+
+Received Aom team acceptance: [Champ b6051367 / selected Gate A input checker](api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md). Protocol/runner and fixture recipe bindings are checked explicitly. Final shared inputs, limits/framing/reset/expiry and joint Gate A remain pending. Primary completion is still 0.
+
+Current Aom work (3 October 2026): read [AOM_CONTINUATION_V5_TH.md](api854/AOM_CONTINUATION_V5_TH.md) and [AOM_INDEPENDENT_PREPARATION_TH.md](api854/AOM_INDEPENDENT_PREPARATION_TH.md). The owner now requests branch `aom`, 854 active bugs, four approaches, one repeat per bug, and Claude Sonnet 5 / Gemini 3.5 Flash Lite through KKU only. New primary completion is **0**. Independent source/build preparation and recovery evidence do not approve Gate A.
+
+The 17-bug / 204-run checkpoints below are historical. Preserve their evidence separately from the new 854-bug cohort.
+
+Historical checkpoint: **181/204 completed, 23 pending**. Use artifacts ending `_20261002_HAIKU` and `docs/SUBMISSION_READY_20261002_HAIKU.md`. Earlier COMPLETE checkpoints below are historical (178 runs). Owner stopped further AI requests for that checkpoint and will submit Classroom themselves.
 
 > Current checkpoint: อ่าน docs/SUBMISSION_READY_20261002_COMPLETE.md และ delivery-status.json ก่อน เอกสารด้านล่างเป็น handoff/checkpoint เก่า เก็บไว้เป็นประวัติ
 

@@ -6,6 +6,7 @@ import tempfile
 import threading
 import unittest
 import zipfile
+from unittest.mock import patch
 from urllib import request, error
 
 from scripts.study.api854 import inventory, queue, report, service
@@ -60,6 +61,19 @@ class ServiceTests(unittest.TestCase):
         self.q.clock = lambda: late  # 5 Oct 01:00 Asia/Bangkok.
         self.assertIsNone(self.post("claim", {"stage": "generate", "worker_id": "w"}))
         self.assertEqual(report.summarize(self.q.snapshot())["terminal_outcomes"], 0)
+
+    def test_unauthorized_post_body_returns_401_without_parsing_or_claiming(self):
+        self.q.clock = lambda: 1000
+        before = self.q.snapshot()
+        with patch.object(self.q, "claim", side_effect=AssertionError("unauthorized queue access")):
+            for _ in range(5):
+                req = request.Request(self.url + "/claim", b"invalid JSON body\n" * 1024,
+                                      {"Authorization": "Bearer wrong", "Content-Type": "application/json"})
+                with self.assertRaises(error.HTTPError) as unauthorized:
+                    request.urlopen(req, timeout=5)
+                self.assertEqual(unauthorized.exception.code, 401)
+                unauthorized.exception.close()
+        self.assertEqual(self.q.snapshot(), before)
 
     def test_example_gate_never_activates_pilot(self):
         with self.assertRaises(ValueError):

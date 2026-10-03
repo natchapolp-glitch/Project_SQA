@@ -58,9 +58,10 @@ Local development review ไม่ใช่ shared primary/team semantic approva
 ออมรวม recipes ที่รับแล้วเป็น shared preparation รุ่นใหม่ให้ครบ 20 bugs ก่อนตรึง primary condition
 ต้องใช้ protocol/runner/source/recipe/prompt hashes ของรุ่นเดียวกัน และคงหลักฐานเก่าไว้
 
-ออมต้องผูก Gate A checklist กับคู่ protocol/runner ที่เลือกจริงด้วย
-ตัว `gate_a.py` ปัจจุบันยังอ่าน `protocol.json` / `runner-plan.v1.json` โดยตรง และการ validate ไม่ส่ง fixture recipe
-จึงยังไม่ใช่ตัวตรวจ v5 pair ที่ครบถ้วน ให้ตรวจแก้ส่วนนี้ก่อนใช้ checklist เป็นหลักฐาน Gate A
+ข้อสังเกต checker ใน checkpoint `b6051367`: ตอนนั้น `gate_a.py` ยังอ่าน `protocol.json` /
+`runner-plan.v1.json` โดยตรง และการ validate ไม่ส่ง fixture recipe
+ออมแก้ selected-pair checker ใน `4a0e699c` แล้ว แชมป์เพิ่ม recipe ↔ protocol source binding ตอนรวม;
+ใช้ [บันทึก integration ล่าสุด](CHAMP_AOM4A_INTEGRATION_TH.md) และระบุ `--protocol` / `--runner` เสมอ
 ในช่วงนี้ใช้ [v5 audit](../../output/api854-provider-preflight-20261003/champ-aom-v5-input-runner-audit-v1.json)
 และ [validation](../../output/api854-provider-preflight-20261003/champ-v5-validation-v1.json) ประกอบ review โดยไม่ถือว่า gate ผ่าน
 

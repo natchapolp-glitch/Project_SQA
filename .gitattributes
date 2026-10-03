@@ -1,7 +1,13 @@
 # Experimental evidence hashes refer to exact bytes. Disable checkout/add EOL conversion.
 * -text
 
+# Received Champ SHA sidecars retain Windows CRLF as part of exact evidence bytes.
+experiments/configs/api854-20261003/champ-*.json.sha256 whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
 # Immutable upstream source/context snapshots retain their original whitespace.
+output/api854-20261003/aom-* whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+output/api854-20261003/aom-*/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+output/api854-20261003/AOM_*.package.json whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 output/api854-20261003/prepare-v2/** -whitespace
 output/api854-20261003/prepare-v3/** -whitespace
 output/api854-20261003/prepare-v4-fixture-development/** -whitespace
@@ -18,3 +24,6 @@ docs/api854/evidence/beam-pilot-v5-review-20261003/** -whitespace
 docs/api854/evidence/beam-pilot-v5-repair-review-20261003/** -whitespace
 docs/api854/evidence/beam-pilot-v5-repair-handoff-20261003/** -whitespace
 output/api854-provider-preflight-20261003/champ-pilot-prompts-v1.csv -whitespace
+output/api854-20261003/aom-owner-sources-v1/** -whitespace
+output/api854-20261003/aom-owner-sources-v2/** -whitespace
+output/api854-20261003/aom-owner-sources-v3/** -whitespace

@@ -1,5 +1,11 @@
 # ตรวจรับ API worker ของแชมป์
 
+**Checker รุ่นใหม่:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
+
+**บันทึกล่าสุด:** [ออมรับ Champ 19ef7ae6 และ KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
+มี request-settings acceptance และ quota snapshot จริงแล้ว ส่วน effective limits/framing/reset/expiry
+และ final shared condition ยัง pending เอกสารด้านล่างเป็นประวัติการตรวจรับรุ่นแรก
+
 นำ worker commit 833b97fd พร้อม dependencies มาเชื่อมใน branch aom แล้ว
 ตรวจ offline ทั้ง Store ที่แชมป์ pin และ Store ปัจจุบันซึ่งมี stage gate
 ไม่ใช้ live API หรือ credentials ใน tests; mock suite resolver ยังไม่ใช่ evaluator ของบีม

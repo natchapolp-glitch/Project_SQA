@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tarfile
 import tempfile
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -81,6 +82,29 @@ class JobBoundaryTests(unittest.TestCase):
                 return False
         with ThreadPoolExecutor(max_workers=4) as pool:
             self.assertEqual(sum(pool.map(attempt, range(4))), 1)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows extended-path spellings")
+    def test_resolved_extended_paths_keep_the_same_containment_boundary(self):
+        root = self.root.resolve()
+        target = root / "child"
+        extended_root = Path("\\\\?\\" + str(root))
+        extended_target = Path("\\\\?\\" + str(target))
+        unc_root = Path("\\\\fixture-server\\share\\root")
+        unc_target = Path("\\\\?\\UNC\\fixture-server\\share\\root\\child")
+        for first, second, expected in ((root, extended_target, target),
+                                        (extended_root, target, target),
+                                        (unc_root, unc_target, unc_root / "child")):
+            with self.subTest(root=str(first)), patch.object(Path, "resolve", side_effect=[first, second]):
+                self.assertEqual(common.contained(root, "child"), expected)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows extended-path spellings")
+    def test_extended_path_normalization_still_rejects_outside_and_root_itself(self):
+        root = self.root.resolve()
+        for target in (root, root.parent / "outside"):
+            extended = Path("\\\\?\\" + str(target))
+            with self.subTest(target=str(target)), patch.object(Path, "resolve", side_effect=[root, extended]):
+                with self.assertRaisesRegex(ValueError, "Path escapes root"):
+                    common.contained(root, "child")
 
     def test_worktrees_are_isolated_and_interrupted_trees_cannot_be_reused(self):
         first = worker.new_worktrees(self.root / "trees", self.job, "generation")

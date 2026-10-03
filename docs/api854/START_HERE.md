@@ -1,5 +1,16 @@
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
+**Integration ล่าสุด:** [แชมป์รับ Aom 4a0e699c และตรวจ recipe ↔ protocol runtime](CHAMP_AOM4A_INTEGRATION_TH.md)
+คู่ shared-v5 เดิมยัง 5/20 bugs และ 124/691 declarations; runtime pins เก่าถูก blocked เมื่อเทียบกับโค้ดที่รวมล่าสุด
+งานรับ keys พักไว้ตามคำขอผู้ใช้; limits/framing/bucket/reset/expiry และ final 20-bug reserve ยัง pending
+
+**Checker ที่รับจากออม:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
+การใช้ gate_a ต้องระบุ --protocol และ --runner; worksheet/preflight ไม่ใช่การอนุมัติเปิด pilot
+
+**สถานะตรวจรับของออมล่าสุด:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
+runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ aom-pc1; ยังไม่เปิด primary/Gate A
+รายการทรัพยากรและข้อมูลไม่ยืนยันในแผนแรกด้านล่างให้เทียบกับ checkpoint ที่ตรวจรับรุ่นล่าสุดก่อนใช้งาน
+
 ## ข้อมูลปัจจุบัน
 
 - เริ่ม: 3 ตุลาคม 2569 เวลา 05:00 ประเทศไทย
@@ -13,7 +24,8 @@
 
 ## อ่านตามลำดับ
 
-เริ่มจาก [แชมป์รับ Beam 3ae6f2fb: รอบแก้ครบและการรับข้อมูล 10 บัญชี](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
+เริ่มจาก [แชมป์ตรวจ integration Aom 4a0e699c](CHAMP_AOM4A_INTEGRATION_TH.md)
+สถานะบีมที่รับก่อนหน้า: [แชมป์รับ Beam 3ae6f2fb: รอบแก้และขั้นตอนรับบัญชีที่พักไว้](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
 และ [ขั้นตอน/template รับบัญชีแบบส่วนตัว](CHAMP_ACCOUNT_INTAKE_TH.md)
 ผลรอบแรก: [แชมป์ตรวจ Beam 68b81b0e](CHAMP_BEAM68_ACCEPTANCE_TH.md)
 และ [checkpoint สถานะบีมเดิม / รายการเทียบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)

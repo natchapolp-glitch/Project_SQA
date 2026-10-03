@@ -66,6 +66,24 @@ def make_server(queue, host, port, token, artifact_root):
         def authorized(self):
             supplied = self.headers.get("Authorization", "")
             if not hmac.compare_digest(supplied.encode(), ("Bearer " + token).encode()):
+                # Closing with an unread POST body can reset the connection on
+                # Windows before the client receives its 401. Discard bounded
+                # bytes without parsing or executing an unauthenticated request.
+                if self.command == "POST":
+                    try:
+                        size = int(self.headers.get("Content-Length", "0"))
+                    except ValueError:
+                        size = 0
+                    if 0 < size <= MAX_BODY:
+                        self.connection.settimeout(5)
+                        try:
+                            while size:
+                                chunk = self.rfile.read(min(size, 65536))
+                                if not chunk:
+                                    break
+                                size -= len(chunk)
+                        except OSError:
+                            pass
                 self.respond(401, {"error": "unauthorized"})
                 return False
             return True
