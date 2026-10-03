@@ -1,5 +1,19 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
+อัปเดตการทำงานจริง 4 ตุลาคม 2026: ผู้ใช้เลือก **เก็บผลจริงครบ4วิธีจากชุดพร้อมก่อน
+แล้วขยายจำนวนbugsตามเวลา24ชม.** อ่าน [ready results first](CHAMP_READY_RESULTS_FIRST_TH.md)
+ก่อน readiness history ด้านล่าง. Csv-1/native development มี4outcomesจริงแล้ว:
+CMA-ES/FSCS-ART30testsต่อวิธี fixedสองรอบ/buggy/coverageผ่าน skip0,
+targetclass31/37lines/branches50%/fault=false; Sonnettruncated4096และcontentว่าง,
+Gemini15tests/fixedfail1ทั้งสองรอบ/ปฏิเสธทั้งsuite. ไม่แก้testsหรือretryAI.
+อ่าน `champ-csv-four-approach-summary-v1`, generation-v1 และ native-measurement-v4
+ใน output/api854-20261004; retain nativefailedattempts v1–v3 ตามharnesslabels.
+FullDefects4Jevaluation0/primaryresults0/GateAfalse; รอ peerhostรันarchivesและขยายreadycohort20.
+A01 actualgeneration quotaคงเหลือSonnet132213/Gemini307393 ณ responseเวลา;
+ไม่สืบทอดเป็นcurrentquota/expiry/resetหรือรวม10บัญชี. Buffer4096ไม่ใช่measuredframing.
+Beamล่าสุด92a3ee1bมีv12scopedconsumer/component/CPU1hostreceiptแล้ว;
+พักcandidate/conditionรุ่นใหม่ระหว่างเก็บผล. ส่งข้อความให้ออม/บีมจากเอกสารใหม่.
+
 อัปเดตล่าสุด 4 ตุลาคม 2026: รับ Aom `63ad1956` shared Graphics v12 แล้ว.
 อ่าน [v12 readiness review](CHAMP_V12_READINESS_REVIEW_TH.md),
 [scoped receipt](../../output/api854-20261004/champ-v12-readiness-review-v2/receipt.json),
