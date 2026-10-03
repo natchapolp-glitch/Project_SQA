@@ -1,5 +1,9 @@
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
+Latest checker update: [Aom acceptance of Champ b6051367 and selected Gate A inputs](docs/api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md).
+Gate A requires an explicit protocol/runner pair and validates its fixture recipes.
+The current five-bug input bindings pass; full-pilot completeness and team/provider approval remain pending.
+
 Latest team receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md).
 Request settings and historical quota observations are verified; final limits,
 framing, reset/expiry and the final shared pilot condition remain pending.

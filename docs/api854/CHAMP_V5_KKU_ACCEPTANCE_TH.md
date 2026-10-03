@@ -1,5 +1,7 @@
 # แชมป์ตรวจ Aom 76b88e25 / shared v5 และ KKU preflight
 
+งานที่เตรียมต่อก่อนรับหลักฐานครบ: [ตาราง 20 bugs และ reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)
+
 รวม `aom 76b88e25` ต่อจาก `champ a7964613` แล้ว ตรวจ API worker, shared preparation v5 และ assignment แบบ offline
 พร้อมเก็บ KKU model catalog และส่ง non-test settings calibration สองคำขอให้ตอบ `OK`
 ไม่มีคำขอสร้างโค้ด/เทส ไม่มี dispatch หรือ mutation ของ live queue และยังไม่เปิด live pilot

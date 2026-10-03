@@ -1,4 +1,4 @@
-Latest Aom team acceptance: [Champ 19ef7ae6 / KKU preflight](api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md). Request settings and historical quota are received; final limits/framing/reset/expiry and joint Gate A remain pending. Primary completion is still 0.
+Latest Aom team acceptance: [Champ b6051367 / selected Gate A input checker](api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md). Protocol/runner and fixture recipe bindings are checked explicitly. Final shared inputs, limits/framing/reset/expiry and joint Gate A remain pending. Primary completion is still 0.
 
 Current Aom work (3 October 2026): read [AOM_CONTINUATION_V5_TH.md](api854/AOM_CONTINUATION_V5_TH.md) and [AOM_INDEPENDENT_PREPARATION_TH.md](api854/AOM_INDEPENDENT_PREPARATION_TH.md). The owner now requests branch `aom`, 854 active bugs, four approaches, one repeat per bug, and Claude Sonnet 5 / Gemini 3.5 Flash Lite through KKU only. New primary completion is **0**. Independent source/build preparation and recovery evidence do not approve Gate A.
 

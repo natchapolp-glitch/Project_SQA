@@ -1,5 +1,8 @@
 # ออมตรวจรับ Champ 19ef7ae6 — KKU preflight และ shared v5
 
+**งานตรวจรับถัดมา:** [รับ b6051367 และแก้ Gate A input checker](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
+Receipt ด้านล่างคงอ้าง bytes ของ checkpoint 19ef7ae6 ณ เวลาที่ตรวจ ก่อนรับการเพิ่มเอกสารจาก b6051367
+
 รับ commit `19ef7ae61472ad0e1c6a853dd3f1d081804c03a4` เข้ากับงานออมหลัง `9419b0e6`
 ตรวจไฟล์จาก Git commit จริงก่อนสรุปผล ไม่ใช้ข้อความส่งต่อแทน receipt
 รอบนี้ไม่มีคำขอ KKU ใหม่ ไม่ import quota ledger ไม่ freeze protocol และไม่แก้ live queue

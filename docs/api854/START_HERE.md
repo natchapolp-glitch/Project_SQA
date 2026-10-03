@@ -1,5 +1,8 @@
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
+**Checker ล่าสุด:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
+การใช้ gate_a ต้องระบุ --protocol และ --runner; worksheet/preflight ไม่ใช่การอนุมัติเปิด pilot
+
 **สถานะตรวจรับของออมล่าสุด:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
 runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ aom-pc1; ยังไม่เปิด primary/Gate A
 รายการทรัพยากรและข้อมูลไม่ยืนยันในแผนแรกด้านล่างให้เทียบกับ checkpoint ที่ตรวจรับรุ่นล่าสุดก่อนใช้งาน
@@ -10,11 +13,16 @@ runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ 
 - ส่ง: 5 ตุลาคม 2569 เวลา 05:00 ประเทศไทย (48 ชั่วโมง)
 - เป้าหมาย: 854 active bugs × CMA-ES/FSCS-ART/KKU Claude Sonnet/KKU Gemini Flash Lite = 3,416 งาน รวมความล้มเหลวจากการทดลองจริงพร้อมหลักฐาน
 - โมเดลที่ผู้ใช้เลือกล่าสุด: `claude-sonnet-5` และ `gemini-3.5-flash-lite` ตาม [model-selection.json](../../experiments/configs/api854-20261003/model-selection.json) แทน Haiku ที่ระบุในแผนก่อนหน้า ต้องรวมคู่นี้เข้า frozen protocol ก่อน seed pilot; ห้าม fallback เป็น `claude-sonnet-5.5`
-- ทรัพยากรที่ผู้ใช้ยืนยัน: 10 บัญชี API-ready; บีม 3 เครื่อง แชมป์ 1 เครื่อง ออม 2 เครื่อง
+- Runner proposal ล่าสุด: champ-pc1 เป็น API coordinator, beam-pc1 CPU 1 slot และ aom-pc1 CPU 1 slot ตาม [v5 runner plan](../../output/api854-20261003/aom-continuation-v5/runner-plan.json); ยังรอตรวจรับร่วมทีม
+- บัญชีที่มี actual KKU preflight ในหลักฐานปัจจุบัน: a01; อีกบัญชีจากแผน 10 บัญชียังต้องตรวจ credentials/assignment/observed quota ก่อนใช้ ไม่ถือว่าโควตารวมพร้อมแล้ว
 - ต้องแจ้งผู้ใช้ก่อนสลับบัญชีเมื่อ quota หมด; ห้ามส่ง compile/test logs กลับ AI
 - งานไม่เคยส่ง/รันเพราะ quota/deadline ต้องคง not_attempted ไม่แต่งเป็น failure
 
 ## อ่านตามลำดับ
+
+เริ่มจาก [ผลตรวจ shared-v5 และ KKU preflight ล่าสุด](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
+และ [ตาราง 20 bugs / งานที่ยังรอ / reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)
+เอกสารแผน v1/v3 ด้านล่างใช้เป็นประวัติ; protocol/runner pair ที่จะใช้ต้องตรงกับ final shared input condition
 
 0. [คิวกลางที่เปิดและวิธีเชื่อมต่อของแชมป์/บีม](QUEUE_CONNECTION_TH.md) — worker token รับผ่านช่องทางส่วนตัว
 1. [แผนล่าสุดและเงื่อนไขที่ยืนยัน](../superpowers/plans/2026-10-03-sqa854-collaborative-48h.md)
