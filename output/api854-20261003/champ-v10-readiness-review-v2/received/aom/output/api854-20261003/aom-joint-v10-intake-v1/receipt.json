@@ -1,0 +1,199 @@
+{
+  "accepted_delta_count": 10,
+  "buffer_targets": [
+    {
+      "class": "com.fasterxml.jackson.core.io.NumberInput",
+      "constructor_types": "",
+      "method": "inLongRange",
+      "parameter_types": "[C,int,int,boolean"
+    },
+    {
+      "class": "com.fasterxml.jackson.core.io.NumberInput",
+      "constructor_types": "",
+      "method": "parseBigDecimal",
+      "parameter_types": "[C"
+    },
+    {
+      "class": "com.fasterxml.jackson.core.io.NumberInput",
+      "constructor_types": "",
+      "method": "parseBigDecimal",
+      "parameter_types": "[C,int,int"
+    },
+    {
+      "class": "com.fasterxml.jackson.core.io.NumberInput",
+      "constructor_types": "",
+      "method": "parseInt",
+      "parameter_types": "[C,int,int"
+    },
+    {
+      "class": "com.fasterxml.jackson.core.io.NumberInput",
+      "constructor_types": "",
+      "method": "parseLong",
+      "parameter_types": "[C,int,int"
+    },
+    {
+      "class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+      "method": "append",
+      "parameter_types": "[C,int,int"
+    },
+    {
+      "class": "com.fasterxml.jackson.core.util.TextBuffer",
+      "constructor_types": "com.fasterxml.jackson.core.util.BufferRecycler",
+      "method": "append",
+      "parameter_types": "java.lang.String,int,int"
+    },
+    {
+      "class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "constructor_types": "java.io.Reader",
+      "method": "read",
+      "parameter_types": "[C,int,int"
+    }
+  ],
+  "csv_agreed_condition": {
+    "existing_selected_methods": [
+      "getLineNumber()",
+      "lookAhead()",
+      "read()",
+      "readAgain()",
+      "readLine()"
+    ],
+    "fixture_policy_id": "beam-explicit-fixtures-v6-buffer-proposal",
+    "new_overload": "read(char[],int,int)",
+    "old_v5_behavior": "Must remain byte-exact in historical policy; no relabeling old stream results",
+    "receiver": "Fresh production StringReader and ExtendedBufferedReader for each target/case",
+    "scope": "prospective component agreement; Aom must create a new combined policy/condition ID",
+    "shared_knowledge_requirement": "All four approaches receive identical new stream recipes, source/context and prompts in a new combined condition",
+    "streams": {
+      "negative_vector_0": "A\nBC\nDE",
+      "nonnegative_vector_0": "12\n345\n"
+    }
+  },
+  "denominator": 691,
+  "expected_exclusions": 301,
+  "expected_selected": 390,
+  "final_condition_semantic_host_approved": false,
+  "final_reserve": null,
+  "gate_a_approved": false,
+  "lang_combined_component_verdicts": [
+    {
+      "beam_oracle": "Actual Boolean: null true, empty false, nonempty zero-only true, any other character false.",
+      "beam_preconditions": "Private static helper receives null/empty/zero-only/nonzero text. Bounded examples: null, empty, 0, 000, 001, 12, 00 0, -0. No receiver construction.",
+      "beam_verdict": "accepted_for_bounded_prospective_development_composition",
+      "champ_oracle": "Exact Boolean, null=true, empty=false, nonempty all-zero=true; otherwise false",
+      "champ_preconditions": "Private static helper invoked by reflection; bounded null/empty/zero/nonzero String cases",
+      "champ_verdict": "accepted_for_prospective_bounded_development_composition",
+      "scope": "private reflective helper; bounded null/String/int[] only",
+      "target": {
+        "bug_id": 1,
+        "class": "org.apache.commons.lang3.math.NumberUtils",
+        "constructor_types": "",
+        "method": "isAllZeros",
+        "parameter_types": "java.lang.String",
+        "project": "Lang"
+      }
+    },
+    {
+      "beam_oracle": "Null/empty rejection compares IllegalArgumentException class, exact message The Array must not be null / Array cannot be empty., and unchanged input state. Success compares void plus actual int[] contents; bare void/stateless is not accepted.",
+      "beam_preconditions": "Private static helper receives null, empty int[], int[]{0}, int[]{-1,0,7}. No non-array Object accepted as a legal fixture; other primitive/reference array types are outside this bounded recipe.",
+      "beam_verdict": "accepted_for_bounded_prospective_development_composition",
+      "champ_oracle": "null/empty: IllegalArgumentException with exact documented message and unchanged array state; success: void plus unchanged contents",
+      "champ_preconditions": "Private static helper invoked by reflection; null or int[] only, including empty/[0]/[-1,0,7]; no non-array Object",
+      "champ_verdict": "accepted_for_prospective_bounded_development_composition",
+      "scope": "private reflective helper; bounded null/String/int[] only",
+      "target": {
+        "bug_id": 1,
+        "class": "org.apache.commons.lang3.math.NumberUtils",
+        "constructor_types": "",
+        "method": "validateArray",
+        "parameter_types": "java.lang.Object",
+        "project": "Lang"
+      }
+    }
+  ],
+  "lang_targets": [
+    {
+      "class": "org.apache.commons.lang3.math.NumberUtils",
+      "constructor_types": "",
+      "method": "isAllZeros",
+      "parameter_types": "java.lang.String"
+    },
+    {
+      "class": "org.apache.commons.lang3.math.NumberUtils",
+      "constructor_types": "",
+      "method": "validateArray",
+      "parameter_types": "java.lang.Object"
+    }
+  ],
+  "live_kku_requests": 0,
+  "manifest_entries_verified": {
+    "output/api854-20261003/beam-final-recipe-return-v1": 10,
+    "output/api854-20261003/champ-six-message-joint-review-v3": 30
+  },
+  "preserve_v9_selected": 380,
+  "primary_results_added": 0,
+  "producer_sha256": "d243d66d58b42ceb5cf581935da6384e0b4d798f6bcf8db3b8dea74454846052",
+  "queue_mutations": 0,
+  "receiver_source_runtime": "Historical experiment bytes are not relabeled as the new composed runtime",
+  "recipe_component_acceptance_complete": true,
+  "schema_version": 1,
+  "setter_jdom_new_counts": 0,
+  "source_bindings": {
+    "beam-buffer-verdict.json": {
+      "commit": "bcb63277a24d4cb3141139ed946de5f3f82f5bd4",
+      "path": "output/api854-20261003/beam-buffer-joint-review-v1/beam-buffer-verdict.json",
+      "sha256": "3ed6c3dc6e26a54912494da9a95849748746f29f0ef9a41ff9a47352feb8e809"
+    },
+    "beam-lang-verdict.json": {
+      "commit": "bcb63277a24d4cb3141139ed946de5f3f82f5bd4",
+      "path": "output/api854-20261003/beam-final-recipe-return-v1/beam-lang-verdict.json",
+      "sha256": "c090231429b0a4e945c1389b4db3ea1e9fe3e01d3312bd1f2f6b3e1a984d69a1"
+    },
+    "beam-return-index.json": {
+      "commit": "bcb63277a24d4cb3141139ed946de5f3f82f5bd4",
+      "path": "output/api854-20261003/beam-final-recipe-return-v1/final-recipe-return-index.json",
+      "sha256": "16a65b22ae06dd69a394a46b826bbe36de59394d5c7ebb13a36e1fc764467a10"
+    },
+    "beam-setter-jdom-verdict.json": {
+      "commit": "bcb63277a24d4cb3141139ed946de5f3f82f5bd4",
+      "path": "output/api854-20261003/beam-v8-received-v1/joint-candidate-review.json",
+      "sha256": "4930da9860beeca376e0d0d7b98541841414a0619e035ac346b0b329bbecc817"
+    },
+    "champ-buffer-verdict.json": {
+      "commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+      "path": "output/api854-20261003/champ-six-message-joint-review-v3/champ-buffer-verdict.json",
+      "sha256": "daab697aec1a829a38853307547ac6251a56627ec0fb8e910b614518ed74129a"
+    },
+    "champ-lang-verdict.json": {
+      "commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+      "path": "output/api854-20261003/champ-six-message-joint-review-v3/champ-lang-verdict.json",
+      "sha256": "60f1efe2de83e312a5459c338d9bc049730a8c456be04c3d3198e09e398e9712"
+    },
+    "champ-setter-jdom-verdict.json": {
+      "commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+      "path": "output/api854-20261003/champ-six-message-joint-review-v3/champ-setter-jdom-verdict.json",
+      "sha256": "78c4fc7a18023bfad95d2f98e32dd8abb6cb384a5a0b967e271994390aa546e0"
+    },
+    "math-acceptance.json": {
+      "commit": "bcb63277a24d4cb3141139ed946de5f3f82f5bd4",
+      "path": "output/api854-provider-preflight-20261003/champ-math-field-candidate-acceptance-v1.json",
+      "sha256": "840c7e38050e5dbb3d696378eb71127271e6b794915ebe6898af3ae6708e3a08"
+    },
+    "v9-index.json": {
+      "commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+      "path": "output/api854-20261003/prepare-v9-twenty-bug-development/index.json",
+      "sha256": "0d7b2cf1bdf9af2a70bd45ddd0f4b2db677f7dd15044163e860702d43b651d65"
+    },
+    "v9-protocol.json": {
+      "commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+      "path": "output/api854-20261003/aom-continuation-v9-integrated/protocol.proposal.json",
+      "sha256": "ba2c6939136070d7bfbe39ce82ea4799e8363d3007badfcb84fc0b01001a5084"
+    },
+    "v9-runner-plan.json": {
+      "commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+      "path": "output/api854-20261003/aom-continuation-v9-integrated/runner-plan.json",
+      "sha256": "462f6196d81dfc9ed1bda31ce0ae81e59759341b6671cb7fc9d9301fe453e048"
+    }
+  },
+  "status": "component_verdicts_received_for_prospective_v10_composition"
+}

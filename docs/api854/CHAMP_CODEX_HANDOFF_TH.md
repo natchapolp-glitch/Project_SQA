@@ -1,6 +1,17 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
 บันทึก 3 ตุลาคม 2026 (Asia/Bangkok) เพื่อรับช่วงจากบัญชี/เครื่องของเพื่อนโดยอ่านสถานะจาก Git และไฟล์หลักฐาน
+ล่าสุดรับ `beam 8af29c16` และ `aom a4880fb2` แล้ว:
+อ่าน [Champ v10 readiness review](CHAMP_V10_READINESS_REVIEW_TH.md) และ
+[sealed review v2](../../output/api854-20261003/champ-v10-readiness-review-v2/receipt.json).
+Received Aom v10 ครบ20bugs/390selected/301exclusions/691; เพิ่มBuffer8+Lang2เท่านั้น.
+ตรวจconsumers80combinations, received7tests, nativefixed64cases/128observations และ Champnegative8testsผ่าน.
+40prompt/modelpairsครบ; max265937bytes, guard270033+unknownH, finaltokenreservenull.
+RequestedmodelIDs/settingsตรงprotocol แต่ currentproviderIDs/effectivesettings/limits/token-framing/quota-reset-expiryยังpending.
+ตรวจpublicdocsโดยไม่มีauthenticatedAPIcall; credentials10aliasesโหลดofflineได้และignored/untracked.
+Champworkingtree/sharedruntimeยังv9/380/311; v10executeจากpinnedAomsnapshotที่runtimeต่าง8ไฟล์.
+รอBeamfinalv10semantic/hostverdictและprovider/three-ownerGateAหลักฐาน. เก็บfailedcountguardv1ครบ.
+
 Shared development checkpoint อยู่ที่ `da878b54fc6e5ed5b0ec15d6853373346642c86c`;
 รับช่วง handoff `e742095d` แล้วสร้าง standalone Chronology candidate ต่อโดยไม่เปลี่ยน shared v9.
 อ่าน [Chronology continuation ล่าสุด](CHAMP_CHRONOLOGY_DEVELOPMENT_TH.md) และ
@@ -128,8 +139,9 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
 
 1. ตรวจ HEAD, source/evidence hashes และคู่ preparation/protocol/runner จาก receipt v2 ก่อน
    ถ้า remote ของออมหรือบีมมีงานใหม่ ให้ตรวจ intake กับ pins เดิมก่อนรวม; อย่าแทนคู่ปัจจุบันด้วยไฟล์คนละรุ่น
-   ปัจจุบันรับ `beam 477b4f8a` / `aom f753770d` แบบ isolated intake แล้ว.
-   Scoped Lang/Buffer-Csv/setter-JDOM joint verdicts พร้อม; รอ Aom combined preparation/pins ใหม่.
+   ปัจจุบันรับ `beam 8af29c16` / `aom a4880fb2` แบบ isolated intake แล้ว.
+   Aom v10 390/301/691 มี Champ offline bindings/fixed-runtime review และ worksheet40pairsพร้อม.
+   รอBeamfinalv10semantic/host และ currentprovider/limits/settings/token-framing/quota/reset/expiry.
    Buffer 8 + Lang 2 บน v9 เป็น proposed 390/301/691; เพิ่ม Chronology 6 หลัง shared integration ผ่านเป็น 396/295.
    ไม่ใช้ Beam-only 389/302 แทน final union
 2. ปิด bounded candidate fixture/oracle ฝั่งแชมป์จาก `Chronology` (6 affected targets) และ `Graphics2D` (7)
@@ -163,10 +175,12 @@ python -m unittest -v scripts.study.api854.tests.test_chronology_development
 python -m unittest -v scripts.study.api854.tests.test_joint_recipe_intake
 python -B -m unittest -v scripts.study.api854.tests.test_final_recipe_returns
 python -B -m unittest -v scripts.study.api854.tests.test_graphics_development
+python -B -m unittest -v scripts.study.api854.tests.test_v10_readiness_review
 python -c "from scripts.study.api854.audit_v9_shared_limits import inspect; r=inspect(); print({k:r[k] for k in ('shared_prepared_bugs','target_count','capability_exclusion_count','max_prompt_utf8_bytes','final_prompt_reserve','gate_a_passed')})"
 ```
 
-ห้า test modules ควรผ่าน 8 + 8 + 7 + 8 + 8 tests (รวม 39); shared audit ควรได้ 20 / 380 / 311 / 258914 / None / False
+ห้า test modules เดิมผ่าน39ที่checkpointก่อน; v10audit moduleใหม่ผ่าน8แยกกัน.
+ไม่ได้rerun39เดิมหรือfull351ในงานv10นี้; sharedv9auditยังควรได้20/380/311/258914/None/False.
 runtime 41 files และ source/evidence SHA-256 อยู่ใน continuation receipt v2 ให้ตรวจ bytes จริงกับ receipt
 ห้ามเขียนทับ output ที่ seal แล้ว ถ้าต้อง rerun verifier ให้ใช้ output directory รุ่นใหม่
 `verify_enum_boundary_development.py --defects4j <installation> --output <new-directory>`
@@ -181,5 +195,5 @@ verifier ที่ execute v3 ถูก snapshot ใน packet; verifier ปั�
 ## Prompt สำหรับ Codex คนถัดไป
 
 ```text
-รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md, CHAMP_FINAL_RECIPE_JOINT_RETURN_TH.md และ CHAMP_GRAPHICS2D_DEVELOPMENT_TH.md ตรวจ HEAD/status/current v9 100 pins และ candidate packets ก่อน มี scoped joint verdicts Lang2/Buffer8-Csv/setter-JDOM กับ bounded Chronology6พร้อม prospective implementation authorization Shared v9 actual380/311/691; proposed Buffer+Lang390/301หรือรวมChronologyเมื่อintegrationผ่าน396/295 รอ Aom final pins/promptsแล้วตรวจ40pairs/IDs/limits/settings/framing/current quota/reset/expiry/reserveรุ่นเดียวกัน Graphics2D standalone v3มี7 inherited signatures/24cases fixed/buggyซ้ำ+JDIผ่าน fault=false และ mutation sensitivity verified แต่รอ Beam joint scoped verdict/new Chart fixture knowledge/host review; รักษา Chart8เดิมและ finalงานออมที่กำลังทำ Focused39testsผ่าน เก็บ failed attempts v1/v2 และ sealed bytesครบ อย่าสร้าง branch/worktreeซ้ำ แตะPDF หรือแสดง/log/stage private credentials Chronology/Graphicsยังunsupportedจนshared integrationผ่าน empty-enum4คงเดิม GateAfalse/reservenull/primary0 ห้าม generation/livequeueจนgates/owner approvalsครบ สรุปผล/ข้อความบีมออมแล้วcommit/pushchampเมื่อพร้อม
+รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md และ CHAMP_V10_READINESS_REVIEW_TH.md ก่อน ตรวจ HEAD/status/current v9 100 pins และ sealed candidates รับBeam8af29c16/Aoma4880fb2แล้ว: receivedv10 20bugs390/301/691, consumers80, nativefixed64casesซ้ำ, received7tests/Champnegative8testsผ่าน; sealedchamp-v10-readiness-review-v2มี40pairs/max265937bytes/guard270033+unknownH/finalreservenull CurrentproviderIDs/effectivesettings/limits/token-framing/currentquota-reset-expiryยังpending credentials10aliasesโหลดofflineignoredได้ห้ามแสดงkey ไม่มีauthenticatedAPIcall/queue/ledger mutation Champsharedruntimeยังv9 380/311; อย่าใช้runtimeคนละรุ่น รอBeamfinalv10semantic/hostverdictกับprovider/three-ownerGateAหลักฐาน เก็บv1failedcountguard/oldreceiptsครบ Chronology6boundedjoint/Graphics7standaloneยังไม่adoptและemptyenum4unsupported ห้ามgeneration/livequeueจนgates/ownerapprovalsครบ อย่าสร้างbranch/worktreeซ้ำหรือแตะPDF สรุปผลพร้อมข้อความบีมออมแล้วcommit/pushchampเมื่อพร้อม
 ```
