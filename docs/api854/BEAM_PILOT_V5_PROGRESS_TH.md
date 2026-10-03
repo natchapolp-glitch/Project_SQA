@@ -1,3 +1,5 @@
+Checkpoint ใหม่: [buffer/slice batch](BEAM_BUFFER_BATCH_V1_TH.md) เพิ่ม prospective recipes 8 รายการ พร้อม bounded fixed review ครบทั้ง 8 และ 4 development suites; structural selection เป็น 385/691 เหลือ exclusions 306 รายการ ข้อมูล v5 ด้านล่างคงไว้เป็นประวัติของ condition เดิม ยังไม่รับรองครบ 691 หรือ Gate A
+
 # บีม: หลักฐานพัฒนา 15 bugs และ requirement ครบ 691 declarations
 
 ตรวจสถานะวันที่ 2026-10-03 จาก immutable receipts ของรอบแรกและรอบซ่อม

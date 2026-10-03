@@ -1,0 +1,620 @@
+{
+  "reviewer": "Codex local development review",
+  "fixture_policy_id": "beam-explicit-fixtures-v6-buffer-proposal",
+  "scope": "Retained development suites only; not all declarations or shared-contract/team approval",
+  "method_preconditions": "Real StringReader over deterministic line-separated text; character/line/EOF outputs and reader position are compared. v6-buffer: numeric digits and legal offset/length are coupled; TextBuffer slices use initialized storage; reader output includes written buffer and sentinel preservation.",
+  "cases": [
+    {
+      "case_id": 1,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "read",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NjU=|state=reader:line=0:last=65",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 2,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readAgain",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:LTI=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 3,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readLine",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:QQ==|state=reader:line=1:last=65",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 4,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "lookAhead",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NDk=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 5,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "lookAhead",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NDk=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 6,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readAgain",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:LTI=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 7,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "read",
+        "parameter_types": "[C,int,int",
+        "dimensions": 12
+      },
+      "outcome": "value:java.lang.Integer:Mg==|state=reader:line=1:last=10:buffer=[C[java.lang.Character:fg==;java.lang.Character:QQ==;java.lang.Character:Cg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;]",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 8,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readAgain",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:LTI=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 9,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "lookAhead",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NDk=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 10,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "read",
+        "parameter_types": "[C,int,int",
+        "dimensions": 12
+      },
+      "outcome": "value:java.lang.Integer:MQ==|state=reader:line=0:last=49:buffer=[C[java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:MQ==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;]",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 11,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "getLineNumber",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 12,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "getLineNumber",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 13,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readLine",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:QQ==|state=reader:line=1:last=65",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 14,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readLine",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:MTI=|state=reader:line=1:last=50",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 15,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "getLineNumber",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 16,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "read",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NDk=|state=reader:line=0:last=49",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 17,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readLine",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:QQ==|state=reader:line=1:last=65",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 18,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readLine",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:MTI=|state=reader:line=1:last=50",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 19,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "getLineNumber",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 20,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "read",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NDk=|state=reader:line=0:last=49",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 21,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "getLineNumber",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 22,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readAgain",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:LTI=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 23,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "read",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NjU=|state=reader:line=0:last=65",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 24,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readAgain",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:LTI=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 25,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "lookAhead",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NDk=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 26,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readAgain",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:LTI=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 27,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "read",
+        "parameter_types": "[C,int,int",
+        "dimensions": 12
+      },
+      "outcome": "value:java.lang.Integer:MQ==|state=reader:line=0:last=65:buffer=[C[java.lang.Character:fg==;java.lang.Character:QQ==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;java.lang.Character:fg==;]",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 28,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "getLineNumber",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:MA==|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 29,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "lookAhead",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.Integer:NjU=|state=reader:line=0:last=-2",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    },
+    {
+      "case_id": 30,
+      "target": {
+        "class": "org.apache.commons.csv.ExtendedBufferedReader",
+        "constructor_types": "java.io.Reader",
+        "method": "readLine",
+        "parameter_types": "",
+        "dimensions": 3
+      },
+      "outcome": "value:java.lang.String:QQ==|state=reader:line=1:last=65",
+      "two_fixed_observations_agree": true,
+      "target_invoked": true,
+      "declared_recipe_selected": true,
+      "coverage_declaring_class": "org.apache.commons.csv.ExtendedBufferedReader",
+      "target_method_covered": true,
+      "no_type_only_or_constructor_only_oracle": true,
+      "no_stateless_null_or_void_oracle": true,
+      "expected_boundary_exception": false,
+      "unexpected_exception": false
+    }
+  ],
+  "fixed_source_sha256": {
+    "src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java": "b09b4e6ae43f1914f8e53e0bad7ba5f9483dc9b3e7ae8889c1d9d40c0de19508"
+  },
+  "suite_sha256": "dbc45e6f4b05ea735fbe5d534cec8fc00ff6bd961b1a6cb7713c2719974cf75d",
+  "observations_sha256": "d7796b9e4656790cd3eb19dd8bc028248fea52c9d20c6bd7eb6287d3f0ac9a7c",
+  "limitations": [
+    "Sampled suite validity does not establish complete target coverage.",
+    "Partial projections do not prove full object equivalence; bounded deterministic domains are development recipes.",
+    "Vectors can decode to repeated inputs; exception class assertions do not compare messages.",
+    "Coverage includes fixture setup and state queries; target invocation is independently checked per test.",
+    "No assertion repair or pruning based on buggy/fixed failures; all original observations/results retained."
+  ]
+}

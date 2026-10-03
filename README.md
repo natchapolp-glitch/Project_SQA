@@ -1,4 +1,4 @@
-Beam integration in progress: Champ `2ac55e31` and Aom `c25faa5e` are being combined in an isolated Beam checkout. Preserve both historical preparation/source versions; primary and Gate A remain closed.
+Current Beam checkpoint: [buffer/slice batch of eight declarations](docs/api854/BEAM_BUFFER_BATCH_V1_TH.md). Integrated Champ `2ac55e31` and Aom `c25faa5e`; four development suites locally reviewed, 32 fixed reference examples passed. Prospective structural capability is 385/691 with 306 exclusions; this is not complete semantic/team acceptance. Offline checks: 308 passed / 1 skipped plus nine Java probe tests. Primary and Gate A remain closed; no KKU/queue requests.
 
 Champ integration reference: [twenty-bug v6 runtime/recipe guards](docs/api854/CHAMP_AOMB11_V6_INTEGRATION_TH.md).
 

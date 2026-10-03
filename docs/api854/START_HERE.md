@@ -1,4 +1,4 @@
-ฝั่งบีมกำลังรวม Champ `2ac55e31` กับ Aom `c25faa5e` ใน checkout แยก ก่อนทำ fixture/oracle development ใหม่ ยังไม่เปิด Gate A/pilot หรือรับ keys เพิ่ม
+ล่าสุดฝั่งบีม: [buffer/slice 8 declarations](BEAM_BUFFER_BATCH_V1_TH.md) รวม Champ `2ac55e31` กับ Aom `c25faa5e` แล้ว มี 4 local-valid development suites และ fixed reference 32 ตัวอย่างผ่านครบ; prospective selection 385/691 เหลือ exclusions 306 รายการ ยังไม่ใช่ complete semantic/team approval ยังไม่เปิด Gate A/pilot หรือรับ keys เพิ่ม
 
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
