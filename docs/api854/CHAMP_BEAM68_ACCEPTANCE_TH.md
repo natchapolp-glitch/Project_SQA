@@ -1,5 +1,8 @@
 # แชมป์รับ Beam 68b81b0e — หลักฐานรอบแรก 15 bugs / 30 suites
 
+รับ replacement packet ภายหลังแล้ว: [ผลตรวจ Beam 3ae6f2fb](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
+ผลรอบแรกด้านล่างคงเดิมตามหลักฐาน ไม่ใช่สถานะหลังรอบแก้
+
 รวม `beam 68b81b0ea8dd981bb31fd377e168c63aaade4475` ต่อจาก `champ 315a46fd` แบบ offline
 รับโค้ด fixture policy v5, prospective probe recipes, local reviewer/exporter,
 CLI framework dependency repair helper และ supplemental target coverage helper ของบีม

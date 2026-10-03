@@ -1,4 +1,4 @@
-Latest Aom checkpoint: [Champ 8e350c68 / twenty-bug v6 development candidate](api854/AOM_CHAMP8E_V6_DEVELOPMENT_TH.md). Received first-round evidence audited; fresh preparation has 20 bugs, 377 selected declarations and 314 unsupported declarations. Maximum prompt is 250,315 UTF-8 bytes. Offline integration ran 288 tests (287 passed, 1 symlink skip). Gate A is closed; no new KKU requests or primary experiments. Champ 7e09a5fe repair intake remains a separate next checkpoint requiring new runtime bindings.
+Latest Aom checkpoint: [Champ 7e09a5fe repair intake / twenty-bug v7 development candidate](api854/AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md). Repair/combined evidence audited; fresh preparation has 20 bugs, 377 selected declarations and 314 unsupported declarations with a full handoff worklist. Maximum prompt is 250,315 UTF-8 bytes. Offline integration ran 303 tests (302 passed, 1 symlink skip). Gate A is closed; no new KKU requests or primary experiments.
 
 Historical Aom acceptance: [Champ b6051367 / selected Gate A input checker](api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md). Its source pins and five-bug reserve worksheet are historical after the runtime change.
 

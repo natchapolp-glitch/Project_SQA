@@ -1,17 +1,17 @@
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
-Latest integration: [Champ 8e350c68 and twenty-bug shared development v6](docs/api854/AOM_CHAMP8E_V6_DEVELOPMENT_TH.md).
-The new candidate retains 377 selected / 314 unsupported declarations; Gate A and primary generation remain closed.
+Latest integration: [Champ 7e09a5fe repair intake and twenty-bug shared development v7](docs/api854/AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md).
+The current candidate retains 377 selected / 314 unsupported declarations, with a complete worklist and unchanged maximum prompt of 250,315 bytes. Offline integration: 302 passed / 1 skipped. Gate A and primary generation remain closed.
 
-Latest checker update: [Aom acceptance of Champ b6051367 and selected Gate A inputs](docs/api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md).
+Checker introduction (historical): [Aom acceptance of Champ b6051367 and selected Gate A inputs](docs/api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md).
 Gate A requires an explicit protocol/runner pair and validates its fixture recipes.
-The current five-bug input bindings pass; full-pilot completeness and team/provider approval remain pending.
+Current v7 input bindings pass for 20 bugs; complete declaration support and team/provider approval remain pending.
 
-Latest team receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md).
+Historical provider receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api854/AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md).
 Request settings and historical quota observations are verified; final limits,
 framing, reset/expiry and the final shared pilot condition remain pending.
 
-Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Shared v5 currently prepares five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
+Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md) for the original runner proposal. Its five-bug preparation is historical; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 
 Aom's independent fixed-source/build preparation, local recovery rehearsal,
 progress page, draft slides and report/demo drafts are described in

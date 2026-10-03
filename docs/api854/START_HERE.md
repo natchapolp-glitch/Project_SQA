@@ -1,12 +1,13 @@
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
-**Integration ล่าสุดของออม:** [รับ Champ 8e350c68 / shared development v6 ครบ 20 inputs](AOM_CHAMP8E_V6_DEVELOPMENT_TH.md)
-ยังรองรับ subset 377/691 declarations; max prompt ใหม่ 250,315 bytes; ยังไม่เปิด Gate A/pilot
+**Integration ล่าสุดของออม:** [รับ Champ 7e09a5fe / repair audit และ shared development v7 ครบ 20 inputs](AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md)
+ตรวจ combined 15 bugs / 30 local-valid suites; candidate ยังรองรับ subset 377/691 declarations
+มี worklist อีก 314 รายการ; max prompt 250,315 bytes; offline tests ผ่าน 302 ข้าม 1; ยังไม่เปิด Gate A/pilot
 
-**Checker ล่าสุด:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
+**ประวัติ checker:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
 การใช้ gate_a ต้องระบุ --protocol และ --runner; worksheet/preflight ไม่ใช่การอนุมัติเปิด pilot
 
-**สถานะตรวจรับของออมล่าสุด:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
+**Historical provider receipt:** [Champ 19ef7ae6 / KKU preflight](AOM_CHAMP19_PREFLIGHT_ACCEPTANCE_TH.md)
 runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ aom-pc1; ยังไม่เปิด primary/Gate A
 รายการทรัพยากรและข้อมูลไม่ยืนยันในแผนแรกด้านล่างให้เทียบกับ checkpoint ที่ตรวจรับรุ่นล่าสุดก่อนใช้งาน
 
@@ -23,7 +24,9 @@ runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ 
 
 ## อ่านตามลำดับ
 
-เริ่มจาก [แชมป์ตรวจ Beam 68b81b0e: หลักฐาน 15 bugs / 30 suites และงานให้ครบ 691](CHAMP_BEAM68_ACCEPTANCE_TH.md)
+เริ่มจาก [แชมป์รับ Beam 3ae6f2fb: รอบแก้ครบและการรับข้อมูล 10 บัญชี](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
+และ [ขั้นตอน/template รับบัญชีแบบส่วนตัว](CHAMP_ACCOUNT_INTAKE_TH.md)
+ผลรอบแรก: [แชมป์ตรวจ Beam 68b81b0e](CHAMP_BEAM68_ACCEPTANCE_TH.md)
 และ [checkpoint สถานะบีมเดิม / รายการเทียบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)
 และ [ผลตรวจ shared-v5 และ KKU preflight ที่รับจากไฟล์แล้ว](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
 และ [ตาราง 20 bugs / งานที่ยังรอ / reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)

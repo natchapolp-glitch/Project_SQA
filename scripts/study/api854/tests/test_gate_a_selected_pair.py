@@ -9,9 +9,9 @@ from scripts.study.api854.common import ROOT, read_json, sha256
 from scripts.study.api854.gate_a import inspect
 from scripts.study.api854.preparation import encoded
 
-PROTOCOL = 'output/api854-20261003/aom-continuation-v6-development/protocol.proposal.json'
-RUNNER = 'output/api854-20261003/aom-continuation-v6-development/runner-plan.json'
-PREP = 'output/api854-20261003/prepare-v6-twenty-bug-development'
+PROTOCOL = 'output/api854-20261003/aom-continuation-v7-development/protocol.proposal.json'
+RUNNER = 'output/api854-20261003/aom-continuation-v7-development/runner-plan.json'
+PREP = 'output/api854-20261003/prepare-v7-twenty-bug-development'
 DISCOVERY = 'output/api854-20261003/prepare-v3'
 
 
@@ -103,6 +103,14 @@ class SelectedGateTests(unittest.TestCase):
         path.write_bytes(path.read_bytes()+b'\n// isolated stale-runtime test\n')
         _, checks = self.run_gate()
         self.assertEqual(checks['runtime_source_binding']['status'], 'blocked')
+
+    def test_retained_v6_pair_does_not_certify_the_post_repair_runtime(self):
+        result = inspect(ROOT,
+            protocol_path='output/api854-20261003/aom-continuation-v6-development/protocol.proposal.json',
+            runner_path='output/api854-20261003/aom-continuation-v6-development/runner-plan.json')
+        checks = {row['id']:row for row in result['checklist']}
+        self.assertEqual(checks['runtime_source_binding']['status'], 'blocked')
+        self.assertFalse(result['generation_authorized'])
 
     def test_unbound_index_fails_without_modifying_artifact_bytes(self):
         self.protocol['preparation_import_evidence']['sha256'] = '0'*64
