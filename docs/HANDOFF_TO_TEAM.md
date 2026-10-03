@@ -1,3 +1,5 @@
+Latest Aom waiting work: [host/input readiness, recovered prepare-only queue and exact tasks for Beam/Champ](api854/AOM_V8_WAITING_WORK_TH.md). Shared v8 unchanged; Gate A/pilot remain closed.
+
 Latest Aom handoff: [shared v8 with the two accepted Math getField signatures](api854/AOM_MATH_FIELD_V8_HANDOFF_TH.md). 20 bugs; 379 selected / 312 unsupported of 691; max prompt 257,515 bytes. Champ remeasures reserve; Beam and Champ continue joint review. Gate A/pilot remain closed. Earlier checkpoints below retain their original counts and evidence.
 
 Latest Champ candidate decision: [accept two Math getField candidates for shared composition](api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
