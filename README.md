@@ -1,3 +1,5 @@
+> บีมตรวจ Chronology candidate: [BEAM_CHRONOLOGY_REVIEW_TH.md](docs/api854/BEAM_CHRONOLOGY_REVIEW_TH.md) — รับ bounded oracle 6 signatures; shared integration/Gate A ยัง pending
+
 > บีมตอบออม 60cc1a6e: [BEAM_FINAL_RECIPE_RETURN_TH.md](docs/api854/BEAM_FINAL_RECIPE_RETURN_TH.md) — Lang scoped verdict พร้อมแล้ว; มี index รวม Math/setter/JDOM/Buffer/Lang receipts พร้อม hashes ให้แชมป์ตรวจ ก่อนออมเลือก final condition.
 
 > บีมตอบคำตรวจรับออม ec26350f: [BEAM_BUFFER_JOINT_VERDICT_TH.md](docs/api854/BEAM_BUFFER_JOINT_VERDICT_TH.md) — บีมรับ 8 bounded recipes และ Csv condition พร้อม reference proof ใหม่; รอ scoped verdict แชมป์ก่อนรวม shared condition.
