@@ -1,5 +1,7 @@
 Current shared development: [Aom/Champ integrated v9 intake, peer review and reserve worksheet](api854/AOM_CHAMP_V9_INTEGRATION_TH.md). Twenty bugs, 380 selected / 311 unsupported / 691 total; request floor 263,010 + H. Final reserve, provider limits and enum joint decision remain pending. Gate A and primary generation remain closed.
 
+Latest continuation: [v9 owner worklist and sealed enum null-boundary development evidence](api854/CHAMP_V9_CONTINUATION_TH.md). Unsupported work is allocated Aom 53 / Beam 91 / Champ 167. New fixed/state/method-entry development proof retains all four enum exclusions and does not confer joint approval.
+
 The checkpoint descriptions below retain their original versions; use the v9 integrated protocol/runner pair linked above for the current review.
 
 Previous Champ candidate decision: [accept two Math getField candidates for shared composition](api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.

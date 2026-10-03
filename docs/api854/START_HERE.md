@@ -2,6 +2,10 @@
 ครบ 20 bugs; selected 380 / unsupported 311 / denominator 691. Request floor ใหม่ 263,010 + H;
 final reserve และคำตัดสินสี่ enum targets ยัง pending. Gate A และ primary generation ยังปิด.
 
+**งานต่อล่าสุด:** [worklist v9 และ sealed null-boundary development proof](CHAMP_V9_CONTINUATION_TH.md)
+งานค้างออม 53 / บีม 91 / แชมป์ 167; fixed ซ้ำ/actual method entry/state ผ่านสำหรับห้า boundary cases.
+Focused integrity tests ใหม่ผ่าน 8; สี่ enum targets ยังคง unsupported รอคำตัดสินร่วม.
+
 ข้อความ checkpoint ด้านล่างคงตัวเลขและผลตรวจตามรุ่นเดิม; คู่ protocol/runner ที่ตรวจล่าสุดอยู่ในรายงาน v9 ข้างต้น.
 
 Previous Champ candidate decision: [accept two Math getField candidates for shared composition](CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.

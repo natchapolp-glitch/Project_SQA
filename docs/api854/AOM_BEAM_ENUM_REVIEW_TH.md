@@ -75,3 +75,11 @@ fixed-sweep script, compile command และ v7 target/exclusion files รว�
 - [Beam readiness](evidence/beam-v7-readiness-20261003/readiness.json)
 - [Raw JacksonXml fixed record](evidence/beam-v7-fixed-sweep-20261003/JacksonXml-1/record.json)
 - [Fixed source](../../output/api854-20261003/prepare-v7-twenty-bug-development/JacksonXml-1/fixed-source/src/main/java/com/fasterxml/jackson/dataformat/xml/deser/FromXmlParser.java)
+
+## Development evidence ที่เพิ่มภายหลัง
+
+ผล read-only review ข้างต้นคงตาม checkpoint เดิม. งานต่อบน champ เพิ่ม
+[sealed fixed/state/JVM-entry proof](CHAMP_V9_CONTINUATION_TH.md) สำหรับ null boundary
+ครบห้ากรณี รวม configure false และตรวจ parser อ่านต่อได้.
+หลักฐานนี้แยกจาก shared runtime/preparation; ไม่อนุมัติ boundary oracle หรือ joint decision
+และยังคงสี่ signatures เป็น unsupported ใน denominator 691.
