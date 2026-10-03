@@ -1,3 +1,5 @@
+> บีมตรวจรับงานออม v8: [BEAM_V8_RECEIVED_REVIEW_TH.md](BEAM_V8_RECEIVED_REVIEW_TH.md) — preparation ใหม่ 379/312, Math/เครื่องบีมมีหลักฐานจริง; final semantic/Champ scoped verdict/enum/reserve ยัง pending.
+
 ล่าสุดฝั่งบีม: [Lang helper development](BEAM_LANG_BATCH_V1_TH.md) รวม Aom `e95e979b` แล้ว เพิ่ม Lang 2 helpers พร้อม 2 local-valid sampled suites / 60 methods และ reference 12 cases ที่ตรวจครบทุก stage; prospective combined selection 389/691 เหลือ exclusions 302 รายการ แยกจาก historical shared v8 ที่ 379/691 ยังไม่ใช่ complete semantic/team approval หรือ shared preparation รุ่นใหม่ ยังไม่เปิด Gate A/pilot หรือรับ keys เพิ่ม
 
 ชุด buffer เดิม: [buffer/slice 8 declarations](BEAM_BUFFER_BATCH_V1_TH.md) เก็บ condition 385/691 และหลักฐานเดิมครบ ไม่ relabel เป็นผลของ Lang condition

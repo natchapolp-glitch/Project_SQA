@@ -1,3 +1,5 @@
+> บีมตรวจรับงานออม v8: [BEAM_V8_RECEIVED_REVIEW_TH.md](docs/api854/BEAM_V8_RECEIVED_REVIEW_TH.md) — preparation ใหม่ 379/312, Math/เครื่องบีมมีหลักฐานจริง; final semantic/Champ scoped verdict/enum/reserve ยัง pending.
+
 Current Beam checkpoint: [Lang helper development](docs/api854/BEAM_LANG_BATCH_V1_TH.md). Integrated Aom `e95e979b`, preserving the two accepted Math field signatures, then added two Lang helpers. Two sampled suites / 60 methods locally reviewed; twelve reference cases passed fixed twice, buggy and coverage. Prospective combined fixture selection is 389/691 with 302 exclusions, separate from historical shared v8 and complete semantic/team acceptance. Offline checks: 318 passed / 2 skipped plus nine Java probe tests. Primary/Gate A remain closed; no KKU requests or live queue mutations.
 
 Historical Beam checkpoint: [buffer/slice batch of eight declarations](docs/api854/BEAM_BUFFER_BATCH_V1_TH.md), with its original 385/691 condition, source pins and proof packets preserved.

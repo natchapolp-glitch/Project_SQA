@@ -1,3 +1,5 @@
+> บีมตรวจรับงานออม v8: [BEAM_V8_RECEIVED_REVIEW_TH.md](api854/BEAM_V8_RECEIVED_REVIEW_TH.md) — preparation ใหม่ 379/312, Math/เครื่องบีมมีหลักฐานจริง; final semantic/Champ scoped verdict/enum/reserve ยัง pending.
+
 Current owner of this continuation is Beam. [Lang helper checkpoint](api854/BEAM_LANG_BATCH_V1_TH.md) integrates Aom `e95e979b` and adds two scoped Lang helpers; two sampled suites / 60 methods locally valid, twelve reference cases verified across fixed twice, buggy and coverage. Combined prospective selection is 389/691 with 302 exclusions; historical shared v8 remains its own 379/691 condition. Full declaration/semantic approval and fresh shared composition remain pending. Account intake remains paused; Gate A/primary remain closed, with no KKU request or live queue mutation.
 
 Historical Beam buffer proof: [buffer/slice checkpoint](api854/BEAM_BUFFER_BATCH_V1_TH.md). Preserve original sources, policies, measured results and review supplements; do not relabel them as the new Lang condition.
