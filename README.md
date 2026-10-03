@@ -1,10 +1,14 @@
-Latest Champ candidate decision: [accept two Math getField candidates for shared composition](docs/api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
+Current shared development: [Aom/Champ integrated v9 intake, peer review and reserve worksheet](docs/api854/AOM_CHAMP_V9_INTEGRATION_TH.md). Twenty bugs, 380 selected / 311 unsupported / 691 total; request floor 263,010 + H. Final reserve and enum joint decision remain pending; Gate A and primary generation remain closed.
 
-Latest Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](docs/api854/CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+The checkpoint descriptions below retain the counts, pins and validation evidence of their original versions.
 
-Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](docs/api854/CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+Previous Champ candidate decision: [accept two Math getField candidates for shared composition](docs/api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
 
-Latest Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](docs/api854/CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
+Historical Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](docs/api854/CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+
+Historical Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](docs/api854/CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+
+Historical Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](docs/api854/CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
 
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
@@ -30,7 +34,6 @@ Historical provider receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](
 Request settings and historical quota observations are verified; final limits,
 framing, reset/expiry and the final shared pilot condition remain pending.
 
-Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Historical shared v5 prepared five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md) for the original runner proposal. Its five-bug preparation is historical; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 
 Aom's independent fixed-source/build preparation, local recovery rehearsal,

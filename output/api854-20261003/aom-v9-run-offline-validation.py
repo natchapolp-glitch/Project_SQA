@@ -28,7 +28,7 @@ class Tee:
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--attempt', default='v2', choices=('v2','v3'))
+    parser.add_argument('--attempt', default='v4', choices=('v2','v3','v4'))
     args = parser.parse_args()
     base = Path(__file__).parent
     log = base/f'aom-v9-offline-integration-validation-{args.attempt}.log'
@@ -51,8 +51,11 @@ if __name__=='__main__':
             tee.write('Suite: '+name+'\n')
             with contextlib.redirect_stdout(tee):
                 result = unittest.TextTestRunner(stream=tee,verbosity=1).run(suite)
+            skipped_tests = sum(isinstance(test, unittest.TestCase) for test, reason in result.skipped)
             reports.append({'suite':name,'tests_run':result.testsRun,
-                'passed':result.testsRun-len(result.failures)-len(result.errors)-len(result.skipped),
+                'passed':result.testsRun-len(result.failures)-len(result.errors)-skipped_tests,
+                'skipped_test_count':skipped_tests,
+                'class_or_module_skip_count':len(result.skipped)-skipped_tests,
                 'failures':[str(test) for test,error in result.failures],
                 'errors':[str(test) for test,error in result.errors],
                 'skipped':[{'test':str(test),'reason':reason} for test,reason in result.skipped],

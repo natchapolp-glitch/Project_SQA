@@ -1,0 +1,175 @@
+{
+  "schema": "aom-math-field-intake-audit-v1",
+  "source_commit": "4c9ccf7ed5fcaee1fb0c70a2b7249da61c17e8f6",
+  "reviewed_at_utc": "2026-10-03T12:38:24.660967+00:00",
+  "validation_kind": "received_file_validation_not_new_defects4j_execution",
+  "status": "pass",
+  "issues": [],
+  "safe_to_integrate_into_next_development_preparation": true,
+  "primary": false,
+  "joint_semantic_approval": false,
+  "gate_a_passed": false,
+  "new_defects4j_executions": 0,
+  "live_requests": 0,
+  "queue_mutations": 0,
+  "limitations": [
+    "Exactly two reviewed getField signatures; this does not approve other constructors/methods or the candidate helper policy wholesale.",
+    "Received logs/results are validated; no Defects4J stage is rerun.",
+    "Red JSON records have no separate red-test command/log; they are cross-checked with the original fixed diagnostic sweep.",
+    "Finite constructor examples do not cover the full constructor input domain.",
+    "The field result is invariant across receiver values; differing complete observations come from preserved receiver state.",
+    "Historical attempt 1 failed the runner's class/type string expectation before evaluation; it remains preserved."
+  ],
+  "received_files_checked": 95,
+  "received_files_required": true,
+  "packet_checksums": {
+    "docs/api854/evidence/beam-champ-math-field-20261003": {
+      "files_checked": 22,
+      "checksums_sha256": "d093a60ff92ba24412ffa88d10ae6ffc78355caf2be96a04b3f515a98dc609ad"
+    },
+    "docs/api854/evidence/beam-champ-math-field-20261003-attempt2": {
+      "files_checked": 64,
+      "checksums_sha256": "6e749368bea90dbbe247767effed4e6098613e9209e7978ac6a4c4a1a812ec44"
+    }
+  },
+  "accepted_signatures": [
+    {
+      "class": "org.apache.commons.math3.fraction.BigFraction",
+      "constructor_types": "double",
+      "method": "getField",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.apache.commons.math3.fraction.Fraction",
+      "constructor_types": "double",
+      "method": "getField",
+      "parameter_types": ""
+    }
+  ],
+  "source_review": [
+    {
+      "target": {
+        "class": "org.apache.commons.math3.fraction.BigFraction",
+        "constructor_types": "double",
+        "method": "getField",
+        "parameter_types": ""
+      },
+      "source_sha256": "748079e9c801227ead2df9ea119c332ca319d110e020845733454bc18e477bf4",
+      "factory_source_path": "docs/api854/evidence/beam-champ-math-field-20261003-attempt2/supplemental-fixed-source/BigFractionField.java",
+      "factory_sha256": "e0a1d0481991127d2ec9b2314e67cdf5a517853c420d1239bb3fbce97361518b",
+      "source_returns_singleton_without_receiver_mutation": true
+    },
+    {
+      "target": {
+        "class": "org.apache.commons.math3.fraction.Fraction",
+        "constructor_types": "double",
+        "method": "getField",
+        "parameter_types": ""
+      },
+      "source_sha256": "f15a7dd38a5dd23af0b5a28bd6609e026c73db01d1c9ef9ffaf38220d2b50a57",
+      "factory_source_path": "docs/api854/evidence/beam-champ-math-field-20261003-attempt2/supplemental-fixed-source/FractionField.java",
+      "factory_sha256": "67428ed3428f1c9151d7df25305f82fbb4ba9eb4fcc86302d7fb17c929206329",
+      "source_returns_singleton_without_receiver_mutation": true
+    }
+  ],
+  "receipt_sha256": "379b0eb6aea229b46159c777c4e2e26933e9ca37509835345b85c96fb5b8aa18",
+  "champ_acceptance_sha256": "840c7e38050e5dbb3d696378eb71127271e6b794915ebe6898af3ae6708e3a08",
+  "suite_sha256": "289dcb56f006a6d84a691dae67d8c6103c4c54750ffc706e9175b580447d735c",
+  "result_sha256": "620baf48d697b14d297455beee33ab9a842dcb50e860e766646af374fad7e131",
+  "original_probe_sha256": "da4f29d28a90619b6dc627177dde4cfa7a237a8ad782816d4bc16183dd154625",
+  "candidate_probe_sha256": "c4cc1e8ea8ead0a80525f663853540c7209b7ac90a9a1330fe0505fb29986b0e",
+  "candidate_policy_id": "beam-champ-fraction-field-v6-development",
+  "helper_delta": {
+    "projection": "            if (pilot && (name.equals(\"org.apache.commons.math3.fraction.BigFractionField\")\n                    || name.equals(\"org.apache.commons.math3.fraction.FractionField\")))\n                return \"fraction-field:runtime=\" + projection(call(result, \"getRuntimeClass\", new Class<?>[]{}), depth + 1)\n                    + \":zero=\" + projection(call(result, \"getZero\", new Class<?>[]{}), depth + 1)\n                    + \":one=\" + projection(call(result, \"getOne\", new Class<?>[]{}), depth + 1);\n",
+    "other_change": "Candidate changes PILOT_FIXTURES policy ID; port projection only under the new composed policy.",
+    "wholesale_candidate_replacement_accepted": false
+  },
+  "structural_oracle": {
+    "runtime": "element class",
+    "zero": "fraction:0/1",
+    "one": "fraction:1/1",
+    "receiver_states": [
+      "fraction:7/4",
+      "fraction:-3/4"
+    ],
+    "fixed_observations": 4,
+    "repeats_per_observation": 2,
+    "target_invoked": true,
+    "field_result_invariant": true
+  },
+  "stages": {
+    "fixed-1": {
+      "schema_version": 1,
+      "executed": 4,
+      "skipped": 0,
+      "target_checks": 4
+    },
+    "fixed-2": {
+      "schema_version": 1,
+      "executed": 4,
+      "skipped": 0,
+      "target_checks": 4
+    },
+    "buggy": {
+      "schema_version": 1,
+      "executed": 4,
+      "skipped": 0,
+      "target_checks": 4
+    },
+    "coverage": {
+      "schema_version": 1,
+      "executed": 4,
+      "skipped": 0,
+      "target_checks": 4
+    }
+  },
+  "coverage": [
+    {
+      "class": "org.apache.commons.math3.fraction.BigFraction",
+      "method": "getField",
+      "descriptor": "()Lorg/apache/commons/math3/fraction/BigFractionField;",
+      "line_hits": [
+        2
+      ]
+    },
+    {
+      "class": "org.apache.commons.math3.fraction.Fraction",
+      "method": "getField",
+      "descriptor": "()Lorg/apache/commons/math3/fraction/FractionField;",
+      "line_hits": [
+        2
+      ]
+    }
+  ],
+  "archive": {
+    "suite_sha256": "289dcb56f006a6d84a691dae67d8c6103c4c54750ffc706e9175b580447d735c",
+    "java_files": 1,
+    "source_sha256": {
+      "GeneratedStudyTest.java": "22eba320875bd9b156893982bbb8b9b67c0227f6bdd9824095437219b8d5ba8d"
+    }
+  },
+  "historical_attempt1_preserved": {
+    "status": "development_runner_assertion_failed",
+    "error": "Runner expected runtime=class:, but existing Class projection uses runtime=type: because Class implements Type.",
+    "evaluation_attempted": false,
+    "script_sha256": "a69c43c041df94e8a3d9b8ae50be5333a87cfeb7b95b40b2fae139cc662e066f",
+    "primary": false,
+    "real_kku_requests": 0,
+    "queue_mutations": 0
+  },
+  "fixed_source_version": "Math-1f",
+  "supplemental_source_verification": "Retained runner compares supplemental factory checkout bytes with that fixed checkout HEAD Git bytes.",
+  "historical_capability_counts": {
+    "selected": 377,
+    "unsupported": 314,
+    "denominator": 691
+  },
+  "integration_conditions": [
+    "Port the five-line field projection into the latest helper under a new policy; keep existing setter/JDOM recipes.",
+    "Add both immutable field factory sources/knowledge to identical shared inputs for all four study approaches.",
+    "Rebuild and verify source/context/recipe/targets/prompt/index/protocol/runner/consumer/execution bindings before changing preparation counts.",
+    "Recalculate final limits/reserve from the newly composed preparation.",
+    "Preserve historical v7/v8 and both Math candidate attempt packets; primary results and Gate A remain closed."
+  ],
+  "inspector_sha256": "39f76e05083897f2135520901a1f037700ed94224fbc8732b5b905be61132a70"
+}

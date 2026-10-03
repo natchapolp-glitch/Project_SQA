@@ -1,10 +1,16 @@
-Latest Champ candidate decision: [accept two Math getField candidates for shared composition](CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
+**Preparation ปัจจุบัน:** [ออมรวม Champ intake, setter/JDOM/Math recipes และตรวจ reserve รุ่น v9](AOM_CHAMP_V9_INTEGRATION_TH.md)
+ครบ 20 bugs; selected 380 / unsupported 311 / denominator 691. Request floor ใหม่ 263,010 + H;
+final reserve และคำตัดสินสี่ enum targets ยัง pending. Gate A และ primary generation ยังปิด.
 
-Latest Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+ข้อความ checkpoint ด้านล่างคงตัวเลขและผลตรวจตามรุ่นเดิม; คู่ protocol/runner ที่ตรวจล่าสุดอยู่ในรายงาน v9 ข้างต้น.
 
-Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+Previous Champ candidate decision: [accept two Math getField candidates for shared composition](CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
 
-Latest Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
+Historical Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+
+Historical Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+
+Historical Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
 
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
