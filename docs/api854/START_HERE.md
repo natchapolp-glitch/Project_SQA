@@ -13,7 +13,9 @@
 
 ## อ่านตามลำดับ
 
-เริ่มจาก [แชมป์ตรวจ Beam 68b81b0e: หลักฐาน 15 bugs / 30 suites และงานให้ครบ 691](CHAMP_BEAM68_ACCEPTANCE_TH.md)
+เริ่มจาก [แชมป์รับ Beam 3ae6f2fb: รอบแก้ครบและการรับข้อมูล 10 บัญชี](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
+และ [ขั้นตอน/template รับบัญชีแบบส่วนตัว](CHAMP_ACCOUNT_INTAKE_TH.md)
+ผลรอบแรก: [แชมป์ตรวจ Beam 68b81b0e](CHAMP_BEAM68_ACCEPTANCE_TH.md)
 และ [checkpoint สถานะบีมเดิม / รายการเทียบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)
 และ [ผลตรวจ shared-v5 และ KKU preflight ที่รับจากไฟล์แล้ว](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
 และ [ตาราง 20 bugs / งานที่ยังรอ / reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)
