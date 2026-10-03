@@ -1,3 +1,5 @@
+Latest Champ candidate decision: [accept two Math getField candidates for shared composition](docs/api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
+
 Latest Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](docs/api854/CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
 
 Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](docs/api854/CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
