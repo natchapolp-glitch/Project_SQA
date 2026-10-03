@@ -1,3 +1,5 @@
+Latest Aom composition: [shared Graphics2D v12 development inputs](docs/api854/AOM_GRAPHICS_V12_HANDOFF_TH.md). 20 bugs; 403 selected / 288 exclusions of 691. Current proof v5; v11 preserved. Historical v10 scoped acceptance closed; final semantic/host/provider/team gate decision pending, pilot closed.
+
 Latest Aom composition: [shared Chronology v11 development inputs](docs/api854/AOM_CHRONOLOGY_V11_HANDOFF_TH.md). 20 bugs; 396 selected / 295 exclusions of 691. Use preparation/protocol suffix v3; final semantic/host/provider review pending, Gate A/pilot closed.
 
 Latest Aom composition: [jointly accepted v10 shared development inputs](docs/api854/AOM_JOINT_V10_HANDOFF_TH.md). 20 bugs; 390 selected / 301 exclusions of 691. Same inputs for all four approaches, final semantic/host/reserve review pending; Gate A/pilot closed.
