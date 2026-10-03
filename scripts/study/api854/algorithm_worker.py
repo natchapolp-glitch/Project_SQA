@@ -15,7 +15,8 @@ from generate import generate_suite
 def execute(job, protocol, results, worktrees, d4j, *, prepared_input=None):
     if job["approach"] not in {"cmaes", "fscs-art"}:
         raise ValueError("algorithm_worker accepts only cmaes/fscs-art")
-    shared_v3 = protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3"
+    from .preparation import shared_context
+    shared_v3 = shared_context(protocol.get("generation", {}).get("prepare_contract"))
     if shared_v3 and not prepared_input:
         raise ValueError("Shared-v3 algorithms require the same bound preparation as API workers")
     output = start_attempt(results, job, "generation")
@@ -65,6 +66,9 @@ def execute(job, protocol, results, worktrees, d4j, *, prepared_input=None):
                     result.update(context_source_hash=prepared_input["metadata"]["context_source_hash"],
                                   shared_targets_sha256=prepared_input["metadata"]["targets_sha256"],
                                   prepare_attempt_id=prepared_input["prepare_attempt_id"])
+                    for key in ('fixture_policy_id', 'fixture_recipes_sha256'):
+                        if key in prepared_input['metadata']:
+                            result[key] = prepared_input['metadata'][key]
     except Exception as error:
         outcome = "generation_failed" if phase == "generation" else "preflight_failed"
         result = envelope(job, outcome, error=f"{type(error).__name__}: {error}", failed_phase=phase,

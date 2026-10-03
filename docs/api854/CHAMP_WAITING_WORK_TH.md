@@ -1,5 +1,8 @@
 # งานแชมป์ที่เตรียมไว้ระหว่างรอ Gate A
 
+รายงานนี้เป็น prepare v2; ล่าสุดใช้ [shared v3 สูงสุด 161,982 bytes](CHAMP_V3_ACCEPTANCE_TH.md)
+ไม่ใช้ตัวเลข reserve ของ v2 เพื่อเปิด v3
+
 ตรวจ prepare v2 ครบ 20 bugs โดยเทียบ prompt bytes, metadata, policy และ checksums
 กับ frozen-core pilot list แล้ว สร้าง [รายงาน capacity](../../output/api854-provider-preflight-20261003/champ-pilot-capacity-v1.json)
 และ [รายการ prompt เรียงตามขนาด](../../output/api854-provider-preflight-20261003/champ-pilot-prompts-v1.csv)

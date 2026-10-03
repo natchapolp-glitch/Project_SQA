@@ -1,0 +1,232 @@
+{
+  "algorithm_input_budget": 30,
+  "algorithm_parameters": {
+    "cmaes_population": "4 + floor(3 * log(dimensions))",
+    "cmaes_sigma": 0.3,
+    "fixed_observations_per_proposal": 2,
+    "fscs_candidate_set_size": 10,
+    "normalized_bounds": [
+      -1.0,
+      1.0
+    ],
+    "objective": "minimize frequency of observed fixed behavior, not coverage"
+  },
+  "aom_host_evidence": {
+    "aom-pc1": "output/api854-20261003/aom-pc1-environment-v3/environment.json",
+    "aom-pc2": null
+  },
+  "approaches": [
+    "cmaes",
+    "fscs-art",
+    "kku-claude",
+    "kku-gemini"
+  ],
+  "approval_state": "development_proposal_not_frozen",
+  "beam_fixture_review": {
+    "commit": "3ff1a6a415189d8f3944bf0723b2628b3b1f8d71",
+    "evidence_path": "output/api854-20261003/aom-beam-fixture-review-3ff1a6a4.json",
+    "evidence_sha256": "bba2098e2fab1a8e25ef1cc00edee7d981a80768e871f2dae9a22c936f61ff46",
+    "primary_fixture_policy_adopted": false,
+    "runtime_composed": true,
+    "scope": "two bugs/four development suites only; remaining 18 recipes and shared primary acceptance pending"
+  },
+  "beam_handoff_review": {
+    "commit": "44dd5cb0b44e8f075ed283d0ff4f4ae51c97f4ed",
+    "discovery_evidence_accepted": true,
+    "evidence_path": "output/api854-20261003/team-preparation-v2/beam-handoff-review-44dd5cb0.json",
+    "evidence_sha256": "624a7fac140c2fed3b5a8e56652ba3edcdf4dc8b7409bee79912568cb6a99bd8",
+    "fixture_oracle_review": "pending",
+    "primary_approval": false,
+    "runtime_import_complete": false
+  },
+  "budget": 30,
+  "command_timeout_seconds": 900,
+  "compatibility_policy": "none",
+  "condition": "api854-20261003-primary-v1",
+  "context_policy": "Same fixed-source/API/build context and target list for all four methods; fresh KKU request per job; fixed source only; no execution/compile logs sent to AI.",
+  "context_selection": "modified-java-root-build-and-shared-receivers-v3",
+  "defects4j_version": "3.0.1",
+  "enabled_stages": [],
+  "evidence_freeze_at": "2026-10-05T03:00:00+07:00",
+  "execution_timezone": "America/Los_Angeles",
+  "execution_timezone_rationale": "Retain existing generator/evaluator TZ consistently; scheduling and quota use Asia/Bangkok until server verification.",
+  "fixed_validation_repeats": 2,
+  "fixture_development_proposal": "experiments/configs/api854-20261003/protocol.fixture-development-v4.json",
+  "fixture_development_scope": {
+    "bugs": [
+      {
+        "bug_id": 176,
+        "project": "Closure"
+      },
+      {
+        "bug_id": 1,
+        "project": "JxPath"
+      }
+    ],
+    "primary": false,
+    "remaining_pilot_bugs_without_recipe_review": 18,
+    "team_approved": false
+  },
+  "fixture_policy_id": "beam-explicit-fixtures-v3-proposal",
+  "gate_a": {
+    "evidence": [],
+    "pending": [
+      "Shared fixture/oracle recipes and semantic evidence for all 20 pilot bugs",
+      "Champ real settings/limits/framing/reserve and observed quota/expiry",
+      "Runner host readiness and three-owner acceptance"
+    ],
+    "reviewed_by": {
+      "aom": false,
+      "beam": false,
+      "champ": false
+    }
+  },
+  "generation": {
+    "context_policy_id": "modified-java-root-build-and-shared-receivers-v3",
+    "fixture_policy_id": "beam-explicit-fixtures-v3-proposal",
+    "handoff_contract": "beam-v1",
+    "input_contract": "champ-generation-input-v1",
+    "max_tokens": 4096,
+    "owners": [
+      "champ",
+      "beam",
+      "aom"
+    ],
+    "prepare_contract": "aom-beam-prepare-v4",
+    "prompt_policy_id": "shared-fixed-targets-explicit-fixtures-junit4-v4",
+    "prompt_token_reserve": null,
+    "suite_policy_id": "beam-java-suite-v1",
+    "suite_resolver": "scripts.study.api854.champ_bridge:champ_suite_resolver",
+    "temperature": 0
+  },
+  "generation_cutoff_at": "2026-10-05T01:00:00+07:00",
+  "generator_seed": 101,
+  "historical_policy": "17-bug historical cohorts remain separate; never imported as API854 primary observations.",
+  "integration_status": "Champ bridge + Beam receiver partition + Aom shared-v3 CPU/API preparation bound; no live authorization",
+  "kku": {
+    "claude_family": "Sonnet",
+    "exact_model_ids": {
+      "kku-claude": "claude-sonnet-5",
+      "kku-gemini": "gemini-3.5-flash-lite"
+    },
+    "fallback_allowed": false,
+    "gemini_family": "Flash Lite",
+    "max_output_tokens": 4096,
+    "model_settings_verified": false,
+    "notify_user_before_account_switch": true,
+    "output_seed": null,
+    "send_execution_logs_to_ai": false,
+    "temperature": 0
+  },
+  "model_policy": {
+    "kku-claude": {
+      "kku_model_id": "claude-sonnet-5"
+    },
+    "kku-gemini": {
+      "kku_model_id": "gemini-3.5-flash-lite"
+    }
+  },
+  "models": {
+    "kku-claude": {
+      "family": "sonnet",
+      "id": "claude-sonnet-5",
+      "name": "claude-sonnet-5"
+    },
+    "kku-gemini": {
+      "family": "flash-lite",
+      "id": "gemini-3.5-flash-lite",
+      "name": "gemini-3.5-flash-lite"
+    }
+  },
+  "observation_timeout_seconds": 10,
+  "preparation_artifacts": "output/api854-20261003/prepare-v4-fixture-development",
+  "preparation_import_evidence": {
+    "generation_ready": false,
+    "path": "output/api854-20261003/prepare-v4-fixture-development/index.json",
+    "sha256": "96529e286975a618a7097291d47e35cae18286369f3a50e32d8c30c5491f5c22"
+  },
+  "prepare_policy_sha256": "8e1057d057a45556f559cdc2b56b14ca707a62ca1145776c0c65aefd793088c9",
+  "prepare_status": "20 source-bound v3 inventories / 691 targets and 3 exclusions imported; shared receiver/fixture/context policy composed; semantic/team/provider gates pending",
+  "processing_policy": {
+    "assertion_edits_allowed": false,
+    "compatibility_allowlist": [
+      "extract complete Java fences without source edits",
+      "organize unchanged Java bytes by declared package/public class"
+    ],
+    "compatibility_policy": "none",
+    "empty_or_null_return_suite": "invalid_suite",
+    "fixed_failure_pruning_allowed": false,
+    "fixture_policy": "beam-explicit-fixtures-v3-proposal",
+    "over_cap": "reject entire suite; preserve raw response; no truncation or semantic retry",
+    "raw_response_immutable": true,
+    "required_history": [
+      "raw_hash",
+      "processed_hash",
+      "operations",
+      "excluded_methods",
+      "operator"
+    ],
+    "semantic_repairs": "Require new protocol condition and disclosed raw/processed delta; not raw KKU output.",
+    "shared_target_order": "canonical declaration identity order in v3; fresh algorithm discovery must match sealed inventory",
+    "source_order_cap": null,
+    "test_method_cap": 30
+  },
+  "repeat_index": 1,
+  "runner_plan_sha256": "5034311a3522c8b98bd30c7d3ad5aea8778395f3fe62b5ee6c1bf22702ac1255",
+  "schedule_timezone": "Asia/Bangkok",
+  "schema_version": 1,
+  "seed": 101,
+  "settings_status": "Two-bug development inputs only. Max prompt 174475 UTF-8 bytes; future complete-pilot prompts/reserve/limits/quota still pending.",
+  "source_sha256": {
+    "algorithms/java/SqaProbe.java": "bcb91938a0a369bd8d998966aae4549abc112803c3a190ebe974c1957ee5e90e",
+    "algorithms/python/atcg/__init__.py": "1294b41a8603f959eb955c3d3f9fccc4190bc08082f0f8e7dd5c8317cb20aa86",
+    "algorithms/python/atcg/cmaes.py": "0dd7f69d73021602c214f6c57757f19513a5b1d77d6705e815e1856cc1c335e8",
+    "algorithms/python/atcg/fscs_art.py": "7e1a1fa2f05dd46de7af3225a9e2917e146ed174a8fcade6a6029591666bdc60",
+    "experiments/configs/api854-20261003/model-selection.json": "f6b542f81385a7881c62fbf0442c3d683c4c7d348ea82439b001b2e01821aa49",
+    "scripts/study/api854/__init__.py": "396d8ae661e26041750ee8178aea2e8bae994d387de1d8a2eccaf4f1af12248f",
+    "scripts/study/api854/adapters.py": "065660ed7f9bf33ac0f0beb47b42e60a53a0859254a0f76c53bd87396a7c9598",
+    "scripts/study/api854/ai_handoff.py": "bd96ca2fef25cafd626347230f3d139f81724340e6ce0236dfd77c6e278bfe63",
+    "scripts/study/api854/algorithm_worker.py": "7780d0720ae8cca60682a34104883c1e8504f87efe3c05bd4dd4cc2b3bd8eb0f",
+    "scripts/study/api854/api_worker.py": "bc9e6a40d70ede65bde74954aab4c19d01a22f58657177025c460cc7dfe4af38",
+    "scripts/study/api854/beam_queue.py": "07ca46249b9d90e3ba8590da142914c693132ed5d9564ecc0552a8f304973fb0",
+    "scripts/study/api854/champ_bridge.py": "25447d5fa8359812e22b0045073edef5585c284a16b650141d658d7351fa482c",
+    "scripts/study/api854/champ_queue.py": "8286dd8a2739c5ff97e436f5714847ff3b2e4d94130c0119230f2d965f884a84",
+    "scripts/study/api854/common.py": "781b6570aacce2ca2a41f5f073e8092ef24a197e169b6e79d253829bf17a5dd3",
+    "scripts/study/api854/configuration.py": "b083270d8add58665bdfa0d7765af20c1e251799b1b211d1c5c378504c2ab896",
+    "scripts/study/api854/context_export.py": "1a5dffe992dbb96592b17a80f635b610bb5b35718883fc36aa71c2b898204149",
+    "scripts/study/api854/core_preflight.py": "bdc097e35e8512668fa7b5365ea1572cd27f6bb3e3ca274c76ea17b06e75b51a",
+    "scripts/study/api854/environment.py": "c937bef71341a0131d77218f86144a1857fc2af50977d6985194f0fb8fa04826",
+    "scripts/study/api854/evaluate_worker.py": "d337a71b4cde05625bdce3afa608e378100c3bd86c8f930307e5dc6d0a658feb",
+    "scripts/study/api854/fixture_policy.py": "cc2f60dbf2c0aec8ddad8ef328ed9fa41138f8b8781e43360a2db617d01d8ff4",
+    "scripts/study/api854/generate_worker.py": "7e24c0cd3cdd886d1577b363e86ef232007d6133a390e519e14fb1b6f9d048d9",
+    "scripts/study/api854/kku_client.py": "68febb3938b69e7504027cc31cc1a2a470cd3e37dfa4d50ebdcf900696a09245",
+    "scripts/study/api854/lease.py": "c766c0716fb90b5b9c5bb055a36ee07bc1d05df65772e246d11ccdc79b93917f",
+    "scripts/study/api854/make_job.py": "f6e09f642b227103547572adb44d61336b824e89824f01ff1d10745423adfd77",
+    "scripts/study/api854/models.py": "f2f55f63c10c1aaab0ffd3089ef18a4dfb8a012642a87a726ea5eaa8ea576901",
+    "scripts/study/api854/pack_suite.py": "c4341f218c93a42b135a5a80772ffcbe6625bc8cc8143bcd31136baa4deba62c",
+    "scripts/study/api854/preparation.py": "6bcab485251e1854dfeb3007dae2f6a7d4166aadb40a05c76c483dbad7d430d9",
+    "scripts/study/api854/prepare_worker.py": "df4924e336b8c57b2b5a81a37db15e9ac2706c581b4eaf5b58a8a2695662321d",
+    "scripts/study/api854/prepared_inputs.py": "87e6e9e227155f7f5bdbf66fa0487c447a862d1734be7736204781e954b0cd64",
+    "scripts/study/api854/queue_client.py": "1df960b57559b1553b6b0a4fd392ba689c9a2834a06f503ce84b5c30ac010f89",
+    "scripts/study/api854/queue_connection.py": "93496ef2cce248a31bb5e0e5a548d2760e464b73fe0302018b3e270588f14c08",
+    "scripts/study/api854/queue_worker.py": "ad1e3233816f1dd7bb45e4a7de725c6509e74cab58023c3a2d5e7dd94b5ba3c6",
+    "scripts/study/api854/quota.py": "9512dc60220908caec124b7d0a494017d2651bccd2e60b8ab35f9fd5861aa7ce",
+    "scripts/study/api854/suite_resolver.py": "30b5a6975e08dac8ceb6bf97002e05743cdb2bdc11c9798241c0d3f8e9f7c609",
+    "scripts/study/api854/team_queue.py": "fd37b69ae117c7aba8c175b15b23d10909bec0f74adee6893ac759c3f43103c8",
+    "scripts/study/api854/validity.py": "d4240a6ae4c8f58e8f9bf4ad9b7182db7eb7fea065e52fb26b2a92865bd03b52",
+    "scripts/study/api854/worker.py": "95b0cee5def460922fecae273c1cd0895d43945d186954e9687a4a95caaf3cca",
+    "scripts/study/evaluate.py": "68755e76863a2e826fd7519e2868deda53b7532f0b03ea9bb2e1fbf4fd017c42",
+    "scripts/study/generate.py": "42f5a52fe2c02e2dafae575c7ba28a7808ead2e3850b80575a21ff8908b33771",
+    "scripts/study/run.py": "10a72bbbde358001598b033edb00f1274bc8a57488ad4e7adfc50331977c0de0"
+  },
+  "start_at": "2026-10-03T05:00:00+07:00",
+  "state": "development_proposal_pending_team_review",
+  "status": "development_proposal_pending_team_review",
+  "suite_packaging": "beam-java-suite-v1",
+  "target_policy": "All classes modified by each selected fix. Eligibility is intersection of fixed/buggy declaration signatures and common fixture types. No buggy behavior, patch contents, or triggering test supplied for generation.",
+  "target_selection": "shared-declaration-signatures-v1",
+  "test_method_cap": 30,
+  "timezone": "America/Los_Angeles",
+  "unknown_metrics": null,
+  "usable_policy": "Nonempty meaningful assertions and executed target; compile succeeds; identical suite passes fixed twice; buggy and fixed target-class coverage measured; detected=false is valid."
+}

@@ -30,10 +30,35 @@ POLICY_V3 = {**POLICY, "contract": "aom-beam-prepare-v3",
     "context": "modified fixed Java, shared concrete receiver Java and known root build files; identical across four approaches",
     "fixture_inventory": "sorted common compiled production classes; discovery does not approve meaningful construction",
     "lineage": "fixed_source_sha256 is modified-only; additional_receiver_source_sha256 is separate; context_source_hash covers all selected files"}
+POLICY_V4 = {**POLICY_V3, "contract": "aom-beam-prepare-v4",
+    "prompt_policy_id": "shared-fixed-targets-explicit-fixtures-junit4-v4",
+    "fixture_policy": "beam-explicit-fixtures-v3-proposal",
+    "fixture_selection": "predeclared explicit capability recipes before observations; preserve every exclusion; no buggy outcomes",
+    "fixture_recipe": "hash-bound SqaProbe and capability source bytes supplied identically to CPU and AI; separate from fixed production sources",
+    "scope": "development proposal for Closure-176/JxPath-1 only; remaining 18 pilot bugs have no recipe approval"}
+
+
+POLICY_V5 = {**POLICY_V4, 'contract': 'aom-beam-prepare-v5',
+    'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v5',
+    'fixture_policy': 'beam-explicit-fixtures-v4-proposal',
+    'scope': 'five-bug development proposal only; remaining 15 pilot bugs lack reviewed recipes'}
+
+
+def explicit_context(contract):
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract']}
+
+
+def explicit_scope(policy):
+    original = {('Closure', 176), ('JxPath', 1)}
+    return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
+
+
+def shared_context(contract):
+    return contract == POLICY_V3['contract'] or explicit_context(contract)
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")
@@ -64,7 +89,7 @@ def java_mapping(manifest, metadata):
     if not isinstance(fixed, dict) or not fixed or any(java.get(p) != h for p, h in fixed.items()):
         raise ValueError("Modified fixed-source mapping differs")
     additional = {p: h for p, h in java.items() if p not in fixed}
-    if metadata.get("prepare_contract") == POLICY_V3["contract"]:
+    if shared_context(metadata.get("prepare_contract")):
         if metadata.get("additional_receiver_source_sha256") != additional:
             raise ValueError("Additional receiver source mapping differs")
     elif java != fixed:
@@ -110,13 +135,14 @@ def clean_targets(targets):
 
 
 def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
-            policy=POLICY, modified_sources=None, fixture_classes=None):
+            policy=POLICY, modified_sources=None, fixture_classes=None, fixture_recipe=None):
     """Add immutable artifacts to an existing export_context destination."""
     manifest_path = directory / "context-manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if policy != policy_for(policy["contract"]):
         raise ValueError("Shared policy is not implemented")
-    v3 = policy == POLICY_V3
+    v3 = shared_context(policy['contract'])
+    explicit = explicit_context(policy['contract'])
     if manifest["selection_policy_id"] != policy["context_policy_id"] or manifest["contains_execution_logs"] is not False:
         raise ValueError("Fixed context selection differs from shared policy")
     files = manifest["source_files"]
@@ -129,6 +155,15 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
                 or source.stat().st_size != row["bytes"]):
             raise ValueError("Fixed source differs from manifest")
     declarations = clean_targets(targets or [])
+    if explicit:
+        from .fixture_policy import select, validate_recipe
+        if (manifest['project'], manifest['bug_id']) not in explicit_scope(policy):
+            raise ValueError('Explicit fixture proposal is reviewed for two bugs only' if policy == POLICY_V4 else 'Explicit fixture proposal is restricted to its five reviewed development bugs')
+        if select(declarations, policy['fixture_policy'])[1] or not declarations:
+            raise ValueError('Shared explicit targets require reviewed capabilities')
+        validate_recipe(fixture_recipe, policy=policy['fixture_policy'])
+    elif fixture_recipe is not None:
+        raise ValueError('Explicit recipes require a new preparation contract')
     sources = {row["path"]: row["sha256"] for row in files if row["path"].endswith(".java")}
     fixtures = clean_fixture_classes(fixture_classes or [])
     if v3 and (not isinstance(modified_sources, dict) or not modified_sources
@@ -164,7 +199,15 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
             + json.dumps(fixtures, indent=2) + "\n```\n\n"
             "Reach the target with meaningful domain arguments. Do not substitute constructor exceptions, "
             "null-only inputs or empty collections for behavior assertions. No execution feedback or repair loop.\n\n")
-    prompt = (instruction + context).encode("utf-8")
+    support = ''
+    if explicit:
+        instruction += ('Explicit fixture policy: ' + policy['fixture_policy']
+            + '. Use the reviewed capability recipes below instead of legacy recursive/null construction.\n')
+        support = ('\n\nExplicit fixture recipe definitions (generation support, separate from production source):\n'
+            'Use the same construction/projection knowledge across all four approaches. '
+            'Setup failures are not target observations. Use valid receiver/dependency graphs and node kinds.\n```json\n'
+            + encoded(fixture_recipe).decode('utf-8') + '```\n')
+    prompt = (instruction + context + support).encode("utf-8")
     metadata = {"prepare_contract": policy["contract"], "source_sha256": source_hash,
         "context_source_hash": source_hash,
         "fixed_source_sha256": modified_sources if v3 else sources,
@@ -178,15 +221,21 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
     if v3:
         metadata.update(target_classes=sorted(set(classes)), additional_receiver_source_sha256=additional,
                         fixture_class_count=len(fixtures), fixture_classes_sha256=digest(encoded(fixtures)))
-        validate(manifest, metadata, prompt, targets_bytes, encoded(policy))
+    if explicit:
+        metadata.update(fixture_policy_id=policy['fixture_policy'], fixture_recipes_sha256=digest(encoded(fixture_recipe)))
+    if v3:
+        validate(manifest, metadata, prompt, targets_bytes, encoded(policy), fixture_recipe=fixture_recipe)
     for name, data in {"prompt.md": prompt, "targets.json": targets_bytes,
                        "prepare-policy.json": encoded(policy), "prepare-metadata.json": encoded(metadata)}.items():
         with (directory / name).open("xb") as stream:
             stream.write(data)
+    if explicit:
+        with (directory / 'fixture-recipes.json').open('xb') as stream:
+            stream.write(encoded(fixture_recipe))
     return metadata
 
 
-def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=False):
+def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=False, fixture_recipe=None):
     if manifest.get("contains_execution_logs") is not False:
         raise ValueError("Preparation cannot include execution feedback")
     selected = policy_for(metadata.get("prepare_contract"))
@@ -209,7 +258,7 @@ def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=Fa
             or metadata.get("fixture_policy") != selected["fixture_policy"]):
         raise ValueError("Target/fixture policy differs")
     declarations = clean_targets(document["targets"])
-    if selected == POLICY_V3:
+    if shared_context(selected['contract']):
         fixtures = document.get("fixture_classes")
         if (not isinstance(fixtures, list) or fixtures != sorted(set(fixtures))
                 or any(not isinstance(c, str) or not re.fullmatch(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*", c) for c in fixtures)
@@ -226,4 +275,15 @@ def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=Fa
         raise ValueError("Eligibility state differs from declarations")
     if require_eligible and not declarations:
         raise ValueError("Shared declarations are required before generation")
+    if explicit_context(selected['contract']):
+        from .fixture_policy import select, validate_recipe
+        if (manifest['project'], manifest['bug_id']) not in explicit_scope(selected):
+            raise ValueError('Explicit fixture proposal is reviewed for two bugs only' if selected == POLICY_V4 else 'Explicit fixture proposal is restricted to its five reviewed development bugs')
+        validate_recipe(fixture_recipe, policy=selected['fixture_policy'])
+        if (metadata.get('fixture_policy_id') != selected['fixture_policy']
+                or metadata.get('fixture_recipes_sha256') != digest(encoded(fixture_recipe))
+                or encoded(fixture_recipe) not in prompt or select(declarations, selected['fixture_policy'])[1]):
+            raise ValueError('Explicit fixture recipe/prompt/capability binding differs')
+    elif metadata.get('fixture_policy_id') or fixture_recipe is not None:
+        raise ValueError('Explicit recipes cannot reuse historical preparation')
     return True

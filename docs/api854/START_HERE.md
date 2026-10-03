@@ -6,11 +6,17 @@
 - ส่ง: 5 ตุลาคม 2569 เวลา 05:00 ประเทศไทย (48 ชั่วโมง)
 - เป้าหมาย: 854 active bugs × CMA-ES/FSCS-ART/KKU Claude Sonnet/KKU Gemini Flash Lite = 3,416 งาน รวมความล้มเหลวจากการทดลองจริงพร้อมหลักฐาน
 - โมเดลที่ผู้ใช้เลือกล่าสุด: `claude-sonnet-5` และ `gemini-3.5-flash-lite` ตาม [model-selection.json](../../experiments/configs/api854-20261003/model-selection.json) แทน Haiku ที่ระบุในแผนก่อนหน้า ต้องรวมคู่นี้เข้า frozen protocol ก่อน seed pilot; ห้าม fallback เป็น `claude-sonnet-5.5`
-- ทรัพยากรที่ผู้ใช้ยืนยัน: 10 บัญชี API-ready; บีม 3 เครื่อง แชมป์ 1 เครื่อง ออม 2 เครื่อง
+- Runner proposal ล่าสุด: champ-pc1 เป็น API coordinator, beam-pc1 CPU 1 slot และ aom-pc1 CPU 1 slot ตาม [v5 runner plan](../../output/api854-20261003/aom-continuation-v5/runner-plan.json); ยังรอตรวจรับร่วมทีม
+- บัญชีที่มี actual KKU preflight ในหลักฐานปัจจุบัน: a01; อีกบัญชีจากแผน 10 บัญชียังต้องตรวจ credentials/assignment/observed quota ก่อนใช้ ไม่ถือว่าโควตารวมพร้อมแล้ว
 - ต้องแจ้งผู้ใช้ก่อนสลับบัญชีเมื่อ quota หมด; ห้ามส่ง compile/test logs กลับ AI
 - งานไม่เคยส่ง/รันเพราะ quota/deadline ต้องคง not_attempted ไม่แต่งเป็น failure
 
 ## อ่านตามลำดับ
+
+เริ่มจาก [สถานะบีม v5 ที่แจ้งล่าสุดและรายการเทียบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)
+และ [ผลตรวจ shared-v5 และ KKU preflight ที่รับจากไฟล์แล้ว](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
+และ [ตาราง 20 bugs / งานที่ยังรอ / reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)
+เอกสารแผน v1/v3 ด้านล่างใช้เป็นประวัติ; protocol/runner pair ที่จะใช้ต้องตรงกับ final shared input condition
 
 0. [คิวกลางที่เปิดและวิธีเชื่อมต่อของแชมป์/บีม](QUEUE_CONNECTION_TH.md) — worker token รับผ่านช่องทางส่วนตัว
 1. [แผนล่าสุดและเงื่อนไขที่ยืนยัน](../superpowers/plans/2026-10-03-sqa854-collaborative-48h.md)
@@ -72,3 +78,7 @@ shared prepare v2 + callable resolver + runner guards รวมแล้ว; rec
 ชุดส่งมอบใหม่ล่าสุด: [AOM_PREPARE_V3_HANDOFF_TH.md](AOM_PREPARE_V3_HANDOFF_TH.md) —
 import discovery ครบ 20 bugs/691 targets แล้ว พร้อม receiver partition/shared fixtures,
 CPU/API binding และงานต่อสำหรับแชมป์/บีม. Primary/provider/semantic/host Gate A ยัง pending.
+
+รับ fixture รอบใหม่บีม `3ff1a6a4`: [AOM_BEAM_FIXTURE_REVIEW_TH.md](AOM_BEAM_FIXTURE_REVIEW_TH.md) —
+four development suites ของ Closure-176/JxPath-1 และ eligibility import ตรง v3 ครบ 20 bugs;
+shared recipe development v4 compose แล้วเฉพาะสอง bugs. อีก 18 recipes/team acceptance/API evidence ยัง pending.

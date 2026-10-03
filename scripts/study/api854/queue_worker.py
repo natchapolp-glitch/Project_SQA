@@ -54,6 +54,12 @@ def stage_metadata(result, protocol, worker_id):
                 "stage_results": measurement.get("stages")}
     for field in ("line_covered", "line_total", "branch_covered", "branch_total", "fault_detected"):
         metadata[field] = measurement.get(field)
+    if result.get('context_source_hash'):
+        metadata['context_source_hash'] = result['context_source_hash']
+        metadata['source_sha256'] = result['context_source_hash']
+        for key in ('prepare_attempt_id', 'shared_targets_sha256', 'fixture_policy_id', 'fixture_recipes_sha256'):
+            if key in result:
+                metadata[key] = result[key]
     if result.get("context"):
         metadata["source_sha256"] = result["context"]["source_hash"]
         metadata["context_source_hash"] = result["context"]["source_hash"]
@@ -80,6 +86,8 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
         protocol = bind(protocol_path, stage=stage, condition=condition, run_id=run_id)
     if stage not in {"prepare", "generate", "evaluate"} or not approaches or any(a not in APPROACHES for a in approaches):
         raise ValueError("Invalid stage/approaches before claim")
+    if protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3" and protocol.get("fixture_policy_id"):
+        raise ValueError("Explicit fixtures require a new shared preparation contract before claim and a new reviewed preparation policy")
     if owner not in {"beam", "champ", "aom"} or (owner != "beam" and not getattr(client, "team_routing", False)
             and owner not in protocol.get("worker_routing", {}).get(stage, [])):
         raise ValueError("Cross-owner stage routing must be declared by the shared protocol")
@@ -91,9 +99,6 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
         raise ValueError("Development work requires a separate beam-development-* run ID")
     if stage == "generate" and any(a not in {"cmaes", "fscs-art"} for a in approaches):
         raise ValueError("KKU generation is separate and requires API/account/prompt preflight")
-    if (protocol.get('fixture_policy_id')
-            and protocol.get('generation', {}).get('prepare_contract') == 'aom-beam-prepare-v3'):
-        raise ValueError('Explicit fixture recipes require a new shared preparation contract before claim')
     identifier(worker_id, "worker_id")
     protocol_hash = sha256(protocol_path)
     # Queue contract cannot filter claims by run/protocol. Refuse mixed eligible
@@ -109,7 +114,8 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
                 and j.get("owner") == owner and j.get("approach") in approaches]
     if any(j.get("run_id") != run_id or j.get("protocol_hash") != protocol_hash for j in eligible):
         raise ValueError("Eligible queue mixes run IDs/protocols; controller must isolate the intended run")
-    shared_v3 = stage == "generate" and protocol.get("generation", {}).get("prepare_contract") == "aom-beam-prepare-v3"
+    from .preparation import shared_context
+    shared_v3 = stage == "generate" and shared_context(protocol.get("generation", {}).get("prepare_contract"))
     if shared_v3:
         from .prepared_inputs import load as load_prepared
         for queued_job in eligible:
@@ -157,13 +163,15 @@ def run_one(client, *, protocol_path, run_id, stage, approaches, worker_id, outp
                     # Publish the sanitized declaration inventory, not duplicate targets.json names.
                     files += [source / "context" / name for name in
                               ("prompt.md", "targets.json", "prepare-policy.json", "prepare-metadata.json")]
-                else:
-                    target_artifact = canonical_targets_artifact(result['adapter']['targets_file'], output, result['targets_sha256'])
-                    files += [target_artifact]
-                if result.get("prompt") and not result.get("preparation"):
+                    if result['preparation'].get('fixture_policy_id'):
+                        files += [source / 'context/fixture-recipes.json']
+                elif result.get("prompt"):
+                    files += [canonical_targets_artifact(result['adapter']['targets_file'], output, result['targets_sha256'])]
                     files += [source / "context/prompt.md"]
                     if result['prompt'].get('fixture_policy_id'):
                         files += [source / 'context/fixture-recipes.json']
+                else:
+                    files += [canonical_targets_artifact(result['adapter']['targets_file'], output, result['targets_sha256'])]
             outcome = result["observed_outcome"]
             if stage == "generate" and outcome == "generated":
                 prepared = [h for h in claim["job"].get("payload", {}).get("stage_history", [])

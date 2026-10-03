@@ -1,0 +1,348 @@
+{
+  "schema_version": 1,
+  "received_aom_commit": "76b88e25",
+  "catalog_observations": [
+    {
+      "route": "GET /api/v1/models",
+      "started_at_utc": "2026-10-03T00:08:08.860204+00:00",
+      "ended_at_utc": "2026-10-03T00:08:09.129695+00:00",
+      "http_status": 200,
+      "raw_body_sha256": "66c9775534df7c4bbba328ea80892eb96ee7ba7debdc4b31739b5fed155d3aab",
+      "selected_models": [
+        {
+          "id": "claude-sonnet-5",
+          "object": "model",
+          "display_name": "claude-sonnet-5",
+          "owned_by": "Claude"
+        },
+        {
+          "id": "gemini-3.5-flash-lite",
+          "object": "model",
+          "display_name": "gemini-3.5-flash-lite",
+          "owned_by": "Gemini"
+        }
+      ]
+    },
+    {
+      "route": "POST /api/v1/chat/models-list",
+      "started_at_utc": "2026-10-03T00:08:09.130607+00:00",
+      "ended_at_utc": "2026-10-03T00:08:09.371625+00:00",
+      "http_status": 200,
+      "raw_body_sha256": "b1518b6ba4c87e11a1499a20d4bfa950fb4a68b043f17797d831a9fb6ca6a372",
+      "selected_models": [
+        {
+          "id": "claude-sonnet-5",
+          "name": "Claude"
+        },
+        {
+          "id": "gemini-3.5-flash-lite",
+          "name": "Gemini"
+        }
+      ]
+    }
+  ],
+  "public_documentation": {
+    "url": "https://gen.ai.kku.ac.th/docs/api",
+    "retrieved_body_sha256": "707882432ed27888a910a3b6c9dd36694332f670acb77eb65f6ee5b74b3b7eba",
+    "temperature_parameter_range_documented": [
+      0,
+      2
+    ],
+    "max_tokens_parameter_documented": true,
+    "per_model_context_output_limits_documented": false,
+    "quota_reset_documented": "daily; time/timezone unspecified",
+    "quota_numeric_examples_used_as_actual_evidence": false
+  },
+  "calibration_observations": [
+    {
+      "account_alias": "a01",
+      "model_id": "claude-sonnet-5",
+      "purpose": "non-test settings calibration; not pilot",
+      "request": {
+        "model": "claude-sonnet-5",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Reply with exactly OK. This is an API settings preflight; do not generate code or tests."
+          }
+        ],
+        "max_tokens": 4096,
+        "stream": false,
+        "temperature": 0
+      },
+      "request_json_sha256": "ca772d3fee5c36d43b37554d249dced50ed9f97f8db2f08bc0a6bb245a71ec02",
+      "request_json_utf8_bytes": 218,
+      "prompt_utf8_bytes": 88,
+      "started_at_utc": "2026-10-03T00:13:39.615135+00:00",
+      "observed_at_utc": "2026-10-03T00:13:41.830849+00:00",
+      "http_status": 200,
+      "response_raw_body_sha256": "ca5f3605ab50182f9c7f02c4bbecb417ffd1ef8da6d4f7a0e42f01814ce00a7a",
+      "response": {
+        "id": "genai-01a0ff1c-0655-7a68-9ce7-1d9b9454cedc",
+        "model": "claude-sonnet-5",
+        "provider": "Claude",
+        "created": 1790986421,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "OK",
+              "reasoning": ""
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 35,
+          "completion_tokens": 4,
+          "total_tokens": 39
+        },
+        "model_quota": {
+          "daily_quota_tokens": 200000,
+          "daily_usage_tokens": 39,
+          "daily_remaining_tokens": 199961
+        }
+      },
+      "response_headers": {
+        "x-request-id": "ecjmx6t10nysi5scjw9uji66",
+        "date": "Sat, 03 Oct 2026 00:13:41 GMT",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "temperature0_request_accepted": true,
+      "max_tokens4096_request_accepted": true,
+      "effective_backend_temperature_verified": false,
+      "effective_output_cap_verified": false,
+      "backend_model_revision": null,
+      "model_context_limit_tokens": null,
+      "model_max_output_limit_tokens": null,
+      "provider_framing_bound_tokens": null,
+      "pure_text_prompt_tokens": null,
+      "quota_unit": "tokens",
+      "quota_bucket_id_returned": null,
+      "quota_window_id_returned": null,
+      "quota_reset_at_utc_returned": null,
+      "quota_reset_timezone_verified": false,
+      "observation_expiry_at_utc": null,
+      "usable_for_live_quota_ledger_import": false,
+      "remaining_margin_before_unknown_framing_at_current_byte_floor": 18167
+    },
+    {
+      "account_alias": "a01",
+      "model_id": "gemini-3.5-flash-lite",
+      "purpose": "non-test settings calibration; not pilot",
+      "request": {
+        "model": "gemini-3.5-flash-lite",
+        "messages": [
+          {
+            "role": "user",
+            "content": "Reply with exactly OK. This is an API settings preflight; do not generate code or tests."
+          }
+        ],
+        "max_tokens": 4096,
+        "stream": false,
+        "temperature": 0
+      },
+      "request_json_sha256": "fc782ca9a0573bbe160835e0516b392b30ca855b55b3385a19fc21808567ad00",
+      "request_json_utf8_bytes": 224,
+      "prompt_utf8_bytes": 88,
+      "started_at_utc": "2026-10-03T00:13:41.832061+00:00",
+      "observed_at_utc": "2026-10-03T00:13:43.301803+00:00",
+      "http_status": 200,
+      "response_raw_body_sha256": "c79e31dc861bd0e0edc709d62f357a5e79aaa05f69460722c850f0564db18c09",
+      "response": {
+        "id": "genai-01a0ff1c-0c1d-7852-b240-26e8e8c9c019",
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Gemini",
+        "created": 1790986423,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "OK",
+              "reasoning": ""
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 20,
+          "completion_tokens": 1,
+          "total_tokens": 21
+        },
+        "model_quota": {
+          "daily_quota_tokens": 350000,
+          "daily_usage_tokens": 21,
+          "daily_remaining_tokens": 349979
+        }
+      },
+      "response_headers": {
+        "x-request-id": "mtgrwhf05m1phecwc301xws6",
+        "date": "Sat, 03 Oct 2026 00:13:43 GMT",
+        "content-type": "application/json; charset=utf-8"
+      },
+      "temperature0_request_accepted": true,
+      "max_tokens4096_request_accepted": true,
+      "effective_backend_temperature_verified": false,
+      "effective_output_cap_verified": false,
+      "backend_model_revision": null,
+      "model_context_limit_tokens": null,
+      "model_max_output_limit_tokens": null,
+      "provider_framing_bound_tokens": null,
+      "pure_text_prompt_tokens": null,
+      "quota_unit": "tokens",
+      "quota_bucket_id_returned": null,
+      "quota_window_id_returned": null,
+      "quota_reset_at_utc_returned": null,
+      "quota_reset_timezone_verified": false,
+      "observation_expiry_at_utc": null,
+      "usable_for_live_quota_ledger_import": false,
+      "remaining_margin_before_unknown_framing_at_current_byte_floor": 168185
+    }
+  ],
+  "v5_transport_serialization": [
+    {
+      "project": "Closure",
+      "bug_id": 176,
+      "model_id": "claude-sonnet-5",
+      "prompt_sha256": "ce58cb01ce2c8a33d15491255d2c909f3f22177e0cbce1b7430c277eeb67953a",
+      "prompt_utf8_bytes": 177698,
+      "computed_request_json_utf8_bytes": 185618,
+      "json_serialization_overhead_bytes": 7920,
+      "request_json_sha256": "c2d1907badaa8f8aa59aa4754372147757c575e8fc0003c22146fc50dc9e883b",
+      "sent_to_kku": false
+    },
+    {
+      "project": "Closure",
+      "bug_id": 176,
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_sha256": "ce58cb01ce2c8a33d15491255d2c909f3f22177e0cbce1b7430c277eeb67953a",
+      "prompt_utf8_bytes": 177698,
+      "computed_request_json_utf8_bytes": 185624,
+      "json_serialization_overhead_bytes": 7926,
+      "request_json_sha256": "9836deb329dfe9526d8ee8e8315e10e7fb049163f07bef6da40d7caa91a74cc8",
+      "sent_to_kku": false
+    },
+    {
+      "project": "Codec",
+      "bug_id": 1,
+      "model_id": "claude-sonnet-5",
+      "prompt_sha256": "e3d30adb4ee0b7b6f5751d77be3edc6daf78bb0c21e4405ce29d4902549207d7",
+      "prompt_utf8_bytes": 107831,
+      "computed_request_json_utf8_bytes": 113096,
+      "json_serialization_overhead_bytes": 5265,
+      "request_json_sha256": "caa2097228df7acceb6f709217c36381587a32c57f40796c7f86edc0f4682a20",
+      "sent_to_kku": false
+    },
+    {
+      "project": "Codec",
+      "bug_id": 1,
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_sha256": "e3d30adb4ee0b7b6f5751d77be3edc6daf78bb0c21e4405ce29d4902549207d7",
+      "prompt_utf8_bytes": 107831,
+      "computed_request_json_utf8_bytes": 113102,
+      "json_serialization_overhead_bytes": 5271,
+      "request_json_sha256": "bc960f4904ee55333674326ac0124cd8bd7ad4e840652645a4729d883357ad7c",
+      "sent_to_kku": false
+    },
+    {
+      "project": "Collections",
+      "bug_id": 1,
+      "model_id": "claude-sonnet-5",
+      "prompt_sha256": "d57ac545357083a5403bf2e1e9caa5b2a8a39d85a6b7d24e0c7a391bd1afde35",
+      "prompt_utf8_bytes": 141202,
+      "computed_request_json_utf8_bytes": 147918,
+      "json_serialization_overhead_bytes": 6716,
+      "request_json_sha256": "889252ca4d43921aa9e9250764d9e5014b3b3ac86e1bf8797376d828052e6874",
+      "sent_to_kku": false
+    },
+    {
+      "project": "Collections",
+      "bug_id": 1,
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_sha256": "d57ac545357083a5403bf2e1e9caa5b2a8a39d85a6b7d24e0c7a391bd1afde35",
+      "prompt_utf8_bytes": 141202,
+      "computed_request_json_utf8_bytes": 147924,
+      "json_serialization_overhead_bytes": 6722,
+      "request_json_sha256": "d7cbd0bdbf249beebba591fe1d59315dc6a45f1707d82da35b8d0ada8b5270fb",
+      "sent_to_kku": false
+    },
+    {
+      "project": "Csv",
+      "bug_id": 1,
+      "model_id": "claude-sonnet-5",
+      "prompt_sha256": "a1e21061db0239e561a863aa279a8ab51c37f019c0f1d51a7cf3e75cae00e7f6",
+      "prompt_utf8_bytes": 66547,
+      "computed_request_json_utf8_bytes": 69710,
+      "json_serialization_overhead_bytes": 3163,
+      "request_json_sha256": "1296bcedf2b033a89df69c9f389ed87456ed2ae490ea9c8ed4a33320fda5d1de",
+      "sent_to_kku": false
+    },
+    {
+      "project": "Csv",
+      "bug_id": 1,
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_sha256": "a1e21061db0239e561a863aa279a8ab51c37f019c0f1d51a7cf3e75cae00e7f6",
+      "prompt_utf8_bytes": 66547,
+      "computed_request_json_utf8_bytes": 69716,
+      "json_serialization_overhead_bytes": 3169,
+      "request_json_sha256": "b80b96eedc0e84a349e3415f49d6dd31f7b77c86b621877e80acb95a6a40119e",
+      "sent_to_kku": false
+    },
+    {
+      "project": "JxPath",
+      "bug_id": 1,
+      "model_id": "claude-sonnet-5",
+      "prompt_sha256": "6702a674337cf7ebbffe4e7c5479707e83e140debeac6c7e63ccb561a2171a1f",
+      "prompt_utf8_bytes": 141194,
+      "computed_request_json_utf8_bytes": 148164,
+      "json_serialization_overhead_bytes": 6970,
+      "request_json_sha256": "7a35854aa6ff839ca4413cbfe41ffa51dac9a910fca52bca1d4fe322d3343c37",
+      "sent_to_kku": false
+    },
+    {
+      "project": "JxPath",
+      "bug_id": 1,
+      "model_id": "gemini-3.5-flash-lite",
+      "prompt_sha256": "6702a674337cf7ebbffe4e7c5479707e83e140debeac6c7e63ccb561a2171a1f",
+      "prompt_utf8_bytes": 141194,
+      "computed_request_json_utf8_bytes": 148170,
+      "json_serialization_overhead_bytes": 6976,
+      "request_json_sha256": "74dae042aaaa9b2a24298bfc6b0cc24d4b312ba7b685521ae415f8b3329c77c2",
+      "sent_to_kku": false
+    }
+  ],
+  "transport_overhead_is_not_provider_framing_tokens": true,
+  "current_five_bug_max_prompt_utf8_bytes": 177698,
+  "current_five_bug_prompt_reserve_floor_before_framing": 177698,
+  "current_five_bug_reservation_floor_with_requested_output4096": 181794,
+  "reserve_formula": "177698 + H",
+  "reservation_formula": "181794 + H",
+  "framing_bound_H": null,
+  "full_pilot_20_bug_max_prompt_and_token_count": null,
+  "final_prompt_reserve": null,
+  "recompute_after_all_20_pilot_bugs_prepared": true,
+  "model_catalog_requests": 2,
+  "non_test_calibration_requests": 2,
+  "calibration_total_reported_tokens": 60,
+  "calibration_outputs": [
+    "OK",
+    "OK"
+  ],
+  "test_generation_requests": 0,
+  "pilot_generation_requests": 0,
+  "live_queue_mutations": 0,
+  "automatic_account_switches": 0,
+  "probe_retries": 0,
+  "browser_quota_inspection_available": false,
+  "browser_error": "helper_sandbox_lock_failed / SetNamedSecurityInfoW error 5",
+  "missing_evidence": [
+    "per-model effective settings and context/output ceilings",
+    "provider token framing bound or supported count-tokens metadata",
+    "quota bucket sharing/window/reset and explicit observation expiry",
+    "final shared preparation for remaining 15 pilot bugs and team Gate A review"
+  ],
+  "gate_a_passed": false,
+  "live_pilot_authorized": false
+}

@@ -25,8 +25,11 @@ def protocol_document(settings):
     generation = protocol.get("generation", {})
     if protocol.get('fixture_policy_id'):
         from .prepare_worker import explicit_prompt_policy
+        from .preparation import explicit_context, policy_for
+        contract = generation.get('prepare_contract')
+        expected_prompt = policy_for(contract)['prompt_policy_id'] if explicit_context(contract) else explicit_prompt_policy(protocol['fixture_policy_id'])
         if (generation.get('fixture_policy_id') != protocol['fixture_policy_id']
-                or generation.get('prompt_policy_id') != explicit_prompt_policy(protocol['fixture_policy_id'])):
+                or generation.get('prompt_policy_id') != expected_prompt):
             raise ValueError('Explicit fixture policy/prompt has not been frozen consistently')
     if (protocol.get("status") != "frozen" or protocol.get("approval_state") != "frozen"
             or protocol.get("suite_packaging") != BeamSuiteResolver.policy_id
