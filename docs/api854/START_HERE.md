@@ -1,3 +1,5 @@
+Latest Aom composition: [shared Chronology v11 development inputs](AOM_CHRONOLOGY_V11_HANDOFF_TH.md). 20 bugs; 396 selected / 295 exclusions of 691. Use preparation/protocol suffix v3; final semantic/host/provider review pending, Gate A/pilot closed.
+
 Latest Aom composition: [jointly accepted v10 shared development inputs](AOM_JOINT_V10_HANDOFF_TH.md). 20 bugs; 390 selected / 301 exclusions of 691. Same inputs for all four approaches, final semantic/host/reserve review pending; Gate A/pilot closed.
 
 Latest Aom scoped review: [Beam 2e11c7d9 Buffer/Csv verdict and 42-case reference received](AOM_BEAM_BUFFER_VERDICT_ACCEPTANCE_TH.md). Independent oracles/checksums verified; 11 fresh tests passed. Champ verdict required before new shared composition; historical v8 unchanged.

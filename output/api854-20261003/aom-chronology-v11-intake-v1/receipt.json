@@ -1,0 +1,205 @@
+{
+  "descriptors": {
+    "arrays": [
+      "<init>",
+      "([Lorg/joda/time/DateTimeFieldType;[ILorg/joda/time/Chronology;)V"
+    ],
+    "empty": [
+      "<init>",
+      "(Lorg/joda/time/Chronology;)V"
+    ],
+    "field": [
+      "getField",
+      "(ILorg/joda/time/Chronology;)Lorg/joda/time/DateTimeField;"
+    ],
+    "internal": [
+      "<init>",
+      "(Lorg/joda/time/Chronology;[Lorg/joda/time/DateTimeFieldType;[I)V"
+    ],
+    "retain": [
+      "withChronologyRetainFields",
+      "(Lorg/joda/time/Chronology;)Lorg/joda/time/Partial;"
+    ],
+    "single": [
+      "<init>",
+      "(Lorg/joda/time/DateTimeFieldType;ILorg/joda/time/Chronology;)V"
+    ]
+  },
+  "final_shared_team_approval": false,
+  "gate_a_passed": false,
+  "independent_expected_observations": {
+    "arrays_bad_order": {
+      "exception": "java.lang.IllegalArgumentException",
+      "rejected": true
+    },
+    "arrays_invalid_date": {
+      "exception": "org.joda.time.IllegalFieldValueException",
+      "rejected": true
+    },
+    "arrays_leap_iso": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "types": [
+        "year",
+        "monthOfYear",
+        "dayOfMonth"
+      ],
+      "values": [
+        2024,
+        2,
+        29
+      ],
+      "zone": "UTC"
+    },
+    "empty_iso_offset": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "types": [],
+      "values": [],
+      "zone": "UTC"
+    },
+    "empty_null": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "types": [],
+      "values": [],
+      "zone": "UTC"
+    },
+    "getfield_bad_index": {
+      "exception": "java.lang.ArrayIndexOutOfBoundsException",
+      "rejected": true
+    },
+    "getfield_buddhist": {
+      "epoch_year": 2513,
+      "field": "year",
+      "receiver": {
+        "chronology": "org.joda.time.chrono.ISOChronology",
+        "types": [
+          "year"
+        ],
+        "values": [
+          2024
+        ],
+        "zone": "UTC"
+      }
+    },
+    "internal_iso": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "types": [
+        "year",
+        "monthOfYear",
+        "dayOfMonth"
+      ],
+      "values": [
+        2024,
+        2,
+        29
+      ],
+      "zone": "UTC"
+    },
+    "single_hour_iso": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ],
+      "zone": "UTC"
+    },
+    "single_invalid_hour": {
+      "exception": "org.joda.time.IllegalFieldValueException",
+      "rejected": true
+    },
+    "withchrono_buddhist": {
+      "chronology": "org.joda.time.chrono.BuddhistChronology",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ],
+      "zone": "UTC"
+    },
+    "withchrono_null": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ],
+      "zone": "UTC"
+    },
+    "withchrono_same": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ],
+      "zone": "UTC"
+    }
+  },
+  "joint_scoped_candidate_authorized": true,
+  "live_requests": 0,
+  "queue_mutations": 0,
+  "received": {
+    "beam-verdict.json": {
+      "commit": "477b4f8a36957994a3a60c7ba9d035b12234c19f",
+      "path": "output/api854-20261003/beam-chronology-review-v1/beam-chronology-verdict.json",
+      "sha256": "89df833f40c68ae5b768598b02b1318ed337e30e3075abcc632135702497e715"
+    },
+    "candidate-receipt.json": {
+      "commit": "1a28deea84ffd346a86e79d5a5c1122266fb2237",
+      "path": "output/api854-20261003/chronology-development-v2/receipt.json",
+      "sha256": "fc9026ac327fd54508b5f43061a98d37a9522b3cd64b463cc6d23bbdee6b2b43"
+    },
+    "integration-requirements.json": {
+      "commit": "8bde1b80b16f57e1cbae5d86dc20e52715621746",
+      "path": "output/api854-20261003/beam-champ7de-integration-review-v1/integration-requirements.json",
+      "sha256": "8bd50afc4ca356457a1204d7b93b983d429d6b08cfd2459183fb26a3d8b26af6"
+    },
+    "joint-verdict.json": {
+      "commit": "7de14726198886e43d8eb6b8a917f58500acab93",
+      "path": "output/api854-20261003/champ-final-recipe-joint-return-v1/champ-chronology-joint-verdict.json",
+      "sha256": "14a6ae7a62d61b428be07f766a3b5075ae1712afe6a8bc2b249280f3609e54d7"
+    }
+  },
+  "targets": [
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "",
+      "method": "getField",
+      "parameter_types": "int,org.joda.time.Chronology"
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "",
+      "method": "withChronologyRetainFields",
+      "parameter_types": "org.joda.time.Chronology"
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "[Lorg.joda.time.DateTimeFieldType;,[I,org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.Chronology,[Lorg.joda.time.DateTimeFieldType;,[I",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.DateTimeFieldType,int,org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    }
+  ]
+}

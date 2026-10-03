@@ -156,8 +156,11 @@ def generate_suite(project, bug_id, algorithm, budget, seed, targets, classpath,
     manifest['fixture_policy_id'] = fixture_policy or 'legacy-recursive-null-v1'
     if fixture_policy:
         manifest['limitations'][0] = 'Explicit project recipes; fixture failures are retained in the ledger and never emitted as target tests.'
-    if fixture_policy == 'aom-beam-champ-joint-fixtures-v10-development':
+    if fixture_policy in {'aom-beam-champ-joint-fixtures-v10-development', 'aom-beam-champ-chronology-fixtures-v11-development'}:
         manifest['oracle_scope'] = 'Bounded jointly accepted recipes; validateArray exception class/message/input state, setter state and JDOM Attribute projection; other target exception policies unchanged.'
+    if fixture_policy == 'aom-beam-champ-chronology-fixtures-v11-development':
+        manifest['oracle_scope'] += ' Six bounded Partial identities add exact exception, named/indexed value, public array defensive copy, supplied Buddhist field/year, receiver state and retain identity observations; internal constructor makes no cloning/validation claim.'
+        manifest['limitations'][3] = 'Bounded Chronology constructors observe structural state and defensive copy where contracted; other constructor policies unchanged.'
     if count:
         source = suite_source(rows, fixture_policy).encode('utf-8')
         helper = (ROOT / 'algorithms/java/SqaProbe.java').read_bytes()
