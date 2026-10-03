@@ -8,7 +8,7 @@ def recipe_document(source_hashes, policy=POLICY):
     expected = {name: source_hashes[name] for name in RECIPE_SOURCES}
     if any(sha256(ROOT / name) != value for name, value in expected.items()):
         raise ValueError('Explicit recipe source differs from protocol')
-    if policy not in {POLICY, POLICY_V4}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5}:
         raise ValueError('Unknown explicit fixture policy')
     return {'schema_version': 1, 'fixture_policy_id': policy, 'source_sha256': expected,
         'sources': {name: (ROOT / name).read_bytes().decode('utf-8') for name in RECIPE_SOURCES},
@@ -17,7 +17,7 @@ def recipe_document(source_hashes, policy=POLICY):
 
 def validate_recipe(recipe, source_hashes=None, policy=POLICY):
     from .preparation import digest
-    if (policy not in {POLICY, POLICY_V4} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
+    if (policy not in {POLICY, POLICY_V4, POLICY_V5} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
             or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(RECIPE_SOURCES)
             or not isinstance(recipe.get('source_sha256'), dict) or set(recipe['source_sha256']) != set(RECIPE_SOURCES)
             or any(not isinstance(recipe['sources'][name], str)

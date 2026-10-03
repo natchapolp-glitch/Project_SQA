@@ -120,7 +120,7 @@ def inspect(root=ROOT, *, protocol_path=None, runner_path=None):
                     or original_proof.get('verified') is not True
                     or original_proof['head'] != original_proof['fixed_tag_commit']
                     or proof['head'] != original_proof['head']
-                    or (policy['contract'] in {'aom-beam-prepare-v4', 'aom-beam-prepare-v5'}
+                    or (explicit_context(policy['contract'])
                         and metadata.get('previous_hashes', {}).get('v3_index_sha256') != sha256(discovery_path))):
                 raise ValueError('Discovery index/metadata lineage differs')
             keys = lambda rows: {tuple(t[k] for k in policy['target_identity_fields']) for t in clean_targets(rows)}

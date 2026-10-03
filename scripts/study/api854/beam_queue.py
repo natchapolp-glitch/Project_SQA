@@ -182,7 +182,7 @@ def download_generation(client, claim, output):
     prepared = [h for h in histories if h.get("stage") == "prepare" and h.get("outcome") == "prepared"]
     if not prepared or lineage.get("fixed_source_sha256") != prepared[-1]["metadata"].get("fixed_source_sha256"):
         raise ValueError("Generation lineage fixed sources differ from successful preparation")
-    if (prepared[-1]["metadata"].get("prepare_contract") in {"aom-beam-prepare-v3", "aom-beam-prepare-v4", "aom-beam-prepare-v5"}
+    if (prepared[-1]["metadata"].get("prepare_contract") in {"aom-beam-prepare-v3", "aom-beam-prepare-v4", "aom-beam-prepare-v5", "aom-beam-prepare-v6-development"}
             and lineage.get("context_source_hash") != prepared[-1]["metadata"].get("context_source_hash")):
         raise ValueError("Generation receiver/build context differs from successful preparation")
     return found["suite.tar.bz2"], lineage

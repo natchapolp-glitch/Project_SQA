@@ -6,13 +6,13 @@ import tempfile
 import unittest
 
 from scripts.study.api854.common import ROOT, read_json, sha256, implementation_hashes
-from scripts.study.api854.build_prepare_v5 import build
+from scripts.study.api854.build_prepare_v6_development import build
 from scripts.study.api854.gate_a import inspect
 from scripts.study.api854.preparation import encoded
 
-PROTOCOL = 'experiments/configs/api854-20261003/champ-composed-v5.proposal.json'
-RUNNER = 'output/api854-20261003/aom-continuation-v5/runner-plan.json'
-PREP = 'output/api854-20261003/prepare-v5-five-bug-development'
+PROTOCOL = 'output/api854-20261003/aom-continuation-v6-development/protocol.proposal.json'
+RUNNER = 'output/api854-20261003/aom-continuation-v6-development/runner-plan.json'
+PREP = 'output/api854-20261003/prepare-v6-twenty-bug-development'
 DISCOVERY = 'output/api854-20261003/prepare-v3'
 
 
@@ -52,15 +52,16 @@ class SelectedGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Explicit protocol and runner'):
             inspect(self.root)
 
-    def test_valid_five_bug_bindings_do_not_approve_twenty_bug_pilot(self):
+    def test_twenty_bug_bindings_do_not_approve_incomplete_declaration_coverage(self):
         result, checks = self.run_gate()
         for name in ('protocol_runner_binding', 'runtime_source_binding', 'shared_policy', 'fixture_recipe_binding'):
             self.assertEqual(checks[name]['status'], 'pass')
-        self.assertEqual(checks['fixture_recipe_binding']['validated_recipe_bugs'], 5)
-        self.assertEqual(checks['all_common_declarations']['selected_declarations'], 124)
-        self.assertEqual(checks['prepare_contract']['bugs'], 5)
+        self.assertEqual(checks['fixture_recipe_binding']['validated_recipe_bugs'], 20)
+        self.assertEqual(checks['all_common_declarations']['selected_declarations'], 377)
+        self.assertEqual(checks['prepare_contract']['bugs'], 20)
         self.assertEqual(checks['prepare_contract']['issues'], [])
-        self.assertEqual(checks['prepare_contract']['status'], 'blocked')
+        self.assertEqual(checks['prepare_contract']['status'], 'pass')
+        self.assertEqual(checks['all_common_declarations']['status'], 'blocked')
         self.assertFalse(result['gate_a_passed'])
         self.assertFalse(result['generation_authorized'])
         self.assertEqual(result['live_requests'], 0)

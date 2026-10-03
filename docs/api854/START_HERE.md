@@ -1,6 +1,11 @@
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
-**Integration ล่าสุด:** [แชมป์รับ Aom 4a0e699c และตรวจ recipe ↔ protocol runtime](CHAMP_AOM4A_INTEGRATION_TH.md)
+**Integration ล่าสุด:** [แชมป์รับ Aom b11b379a / build และวัด prompt v6 ใหม่หลังรวม](CHAMP_AOMB11_V6_INTEGRATION_TH.md)
+ร่างครบ 20 bugs แต่ selected 377/691; ยังรออีก 314 declarations และ semantic/shared acceptance
+รับงานบีมรอบแก้จาก champ 7e09a5fe และ integration e5d4a66b แล้ว; งานรับ keys ยังพักไว้
+Checkpoint ที่รับจากออม: [shared development v6](AOM_CHAMP8E_V6_DEVELOPMENT_TH.md)
+
+**Integration ก่อนหน้า:** [แชมป์รับ Aom 4a0e699c และตรวจ recipe ↔ protocol runtime](CHAMP_AOM4A_INTEGRATION_TH.md)
 คู่ shared-v5 เดิมยัง 5/20 bugs และ 124/691 declarations; runtime pins เก่าถูก blocked เมื่อเทียบกับโค้ดที่รวมล่าสุด
 งานรับ keys พักไว้ตามคำขอผู้ใช้; limits/framing/bucket/reset/expiry และ final 20-bug reserve ยัง pending
 
@@ -24,7 +29,8 @@ runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ 
 
 ## อ่านตามลำดับ
 
-เริ่มจาก [แชมป์ตรวจ integration Aom 4a0e699c](CHAMP_AOM4A_INTEGRATION_TH.md)
+เริ่มจาก [แชมป์รับ Aom b11b379a](CHAMP_AOMB11_V6_INTEGRATION_TH.md)
+Checkpoint ก่อนหน้า: [แชมป์ตรวจ integration Aom 4a0e699c](CHAMP_AOM4A_INTEGRATION_TH.md)
 สถานะบีมที่รับก่อนหน้า: [แชมป์รับ Beam 3ae6f2fb: รอบแก้และขั้นตอนรับบัญชีที่พักไว้](CHAMP_BEAM_REPAIR_INTAKE_TH.md)
 และ [ขั้นตอน/template รับบัญชีแบบส่วนตัว](CHAMP_ACCOUNT_INTAKE_TH.md)
 ผลรอบแรก: [แชมป์ตรวจ Beam 68b81b0e](CHAMP_BEAM68_ACCEPTANCE_TH.md)

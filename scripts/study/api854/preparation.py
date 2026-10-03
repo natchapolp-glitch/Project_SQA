@@ -43,12 +43,22 @@ POLICY_V5 = {**POLICY_V4, 'contract': 'aom-beam-prepare-v5',
     'fixture_policy': 'beam-explicit-fixtures-v4-proposal',
     'scope': 'five-bug development proposal only; remaining 15 pilot bugs lack reviewed recipes'}
 
+POLICY_V6 = {**POLICY_V5, 'contract': 'aom-beam-prepare-v6-development',
+    'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v6-development',
+    'fixture_policy': 'beam-explicit-fixtures-v5-proposal',
+    'scope': '20-bug development candidate; capability subset only, not full 691-declaration or team approval',
+    'development_bugs': [['Chart',1],['Cli',1],['Closure',1],['Closure',176],['Codec',1],['Collections',1],
+        ['Compress',1],['Csv',1],['Gson',1],['JacksonCore',1],['JacksonDatabind',1],['JacksonDatabind',112],
+        ['JacksonXml',1],['Jsoup',1],['JxPath',1],['JxPath',22],['Lang',1],['Math',1],['Mockito',1],['Time',1]]}
+
 
 def explicit_context(contract):
-    return contract in {POLICY_V4['contract'], POLICY_V5['contract']}
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract']}
 
 
 def explicit_scope(policy):
+    if policy == POLICY_V6:
+        return {tuple(row) for row in policy['development_bugs']}
     original = {('Closure', 176), ('JxPath', 1)}
     return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
 
@@ -58,7 +68,7 @@ def shared_context(contract):
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")

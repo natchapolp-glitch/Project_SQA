@@ -1,4 +1,6 @@
-Latest Champ integration: [Aom 4a0e699c / selected pair, recipe sources and Windows stage creation](api854/CHAMP_AOM4A_INTEGRATION_TH.md). Shared-v5 is still five bugs / 124 of 691 declarations, with old runtime pins blocked against the merged code. Account intake is paused. No live pilot or KKU requests in this integration.
+Latest Champ integration: [Aom b11b379a / newly measured twenty-bug development inputs](api854/CHAMP_AOMB11_V6_INTEGRATION_TH.md). The merge includes Champ e5d4a66b and Beam repair intake from 7e09a5fe. Preparation is still a 377/691 subset; Gate A and generation remain closed. Account intake is paused.
+
+Previous Champ integration: [Aom 4a0e699c / selected pair, recipe sources and Windows stage creation](api854/CHAMP_AOM4A_INTEGRATION_TH.md). Shared-v5 is still five bugs / 124 of 691 declarations, with old runtime pins blocked against the merged code. Account intake is paused. No live pilot or KKU requests in this integration.
 
 Received Aom team acceptance: [Champ b6051367 / selected Gate A input checker](api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md). Protocol/runner and fixture recipe bindings are checked explicitly. Final shared inputs, limits/framing/reset/expiry and joint Gate A remain pending. Primary completion is still 0.
 

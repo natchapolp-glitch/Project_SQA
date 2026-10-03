@@ -1,6 +1,10 @@
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
-Latest Champ integration: [Aom 4a0e699c, recipe/runtime binding and Windows stage creation](docs/api854/CHAMP_AOM4A_INTEGRATION_TH.md).
+Latest Champ integration: [Aom b11b379a and freshly bound twenty-bug v6 inputs](docs/api854/CHAMP_AOMB11_V6_INTEGRATION_TH.md).
+The development candidate retains 377 selected / 314 excluded declarations; final acceptance remains pending. Account intake is paused.
+Received Aom checkpoint: [twenty-bug v6 development](docs/api854/AOM_CHAMP8E_V6_DEVELOPMENT_TH.md).
+
+Previous Champ integration: [Aom 4a0e699c, recipe/runtime binding and Windows stage creation](docs/api854/CHAMP_AOM4A_INTEGRATION_TH.md).
 The historical shared v5 pair still covers five bugs / 124 of 691 declarations;
 its old runtime pins are blocked against the latest merged code. Account intake is paused.
 
@@ -12,7 +16,7 @@ Latest team receipt: [Aom acceptance of Champ 19ef7ae6 / KKU preflight](docs/api
 Request settings and historical quota observations are verified; final limits,
 framing, reset/expiry and the final shared pilot condition remain pending.
 
-Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Shared v5 currently prepares five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
+Read [AOM_CONTINUATION_V5_TH.md](docs/api854/AOM_CONTINUATION_V5_TH.md). Historical shared v5 prepared five development bugs; full-cohort primary jobs are held and not dispatched. Historical results remain separate.
 
 Aom's independent fixed-source/build preparation, local recovery rehearsal,
 progress page, draft slides and report/demo drafts are described in
