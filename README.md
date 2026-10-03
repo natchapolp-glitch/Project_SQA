@@ -1,3 +1,5 @@
+Codex handoff: [workspace, checkpoint, verification commands and next Champ work](docs/api854/CHAMP_CODEX_HANDOFF_TH.md). Use branch `champ`; development checkpoint `da878b54` is pushed.
+
 Current shared development: [Aom/Champ integrated v9 intake, peer review and reserve worksheet](docs/api854/AOM_CHAMP_V9_INTEGRATION_TH.md). Twenty bugs, 380 selected / 311 unsupported / 691 total; request floor 263,010 + H. Final reserve and enum joint decision remain pending; Gate A and primary generation remain closed.
 
 Latest continuation: [v9 owner worklist and sealed enum null-boundary development evidence](docs/api854/CHAMP_V9_CONTINUATION_TH.md). Five repeated boundary cases, actual JVM method-entry traces, state/continuation checks and eight focused integrity tests passed. Four enum targets remain unsupported pending joint decision.

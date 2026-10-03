@@ -1,3 +1,6 @@
+**รับช่วงด้วย Codex อีกเครื่อง/บัญชี:** [handoff พร้อม checkpoint, คำสั่งตรวจ และ prompt เริ่มงาน](CHAMP_CODEX_HANDOFF_TH.md)
+ใช้ `champ`; checkpoint งานพัฒนา `da878b54` push แล้ว
+
 **Preparation ปัจจุบัน:** [ออมรวม Champ intake, setter/JDOM/Math recipes และตรวจ reserve รุ่น v9](AOM_CHAMP_V9_INTEGRATION_TH.md)
 ครบ 20 bugs; selected 380 / unsupported 311 / denominator 691. Request floor ใหม่ 263,010 + H;
 final reserve และคำตัดสินสี่ enum targets ยัง pending. Gate A และ primary generation ยังปิด.
