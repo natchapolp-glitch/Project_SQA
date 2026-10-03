@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "response_id": "genai-01a10332-8f1c-7dc2-99f8-3717c386765c",
+    "requested_model_id": "gemini-3.5-flash-lite",
+    "requested_model_name": "gemini-3.5-flash-lite",
+    "actual_model": "gemini-3.5-flash-lite",
+    "actual_provider": "Gemini",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 41314,
+      "completion_tokens": 1287,
+      "total_tokens": 42601
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 42607,
+      "daily_remaining_tokens": 307393
+    }
+  },
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T19:16:42.011725+00:00",
+    "ended_at_utc": "2026-10-03T19:16:47.409673+00:00",
+    "raw_body_sha256": "55c17b13d74529478e9158faff6906538822d9b35e407c494034a821ab6b8c1c",
+    "body": {
+      "id": "genai-01a10332-8f1c-7dc2-99f8-3717c386765c",
+      "object": "chat.completion",
+      "created": 1791055007,
+      "model": "gemini-3.5-flash-lite",
+      "provider": "Gemini",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```java\npackage org.apache.commons.csv;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport java.io.IOException;\nimport java.io.StringReader;\n\npublic class ExtendedBufferedReaderTest {\n\n    @Test\n    public void testGetLineNumberInitial() {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"abc\"));\n        assertEquals(0, reader.getLineNumber());\n    }\n\n    @Test\n    public void testReadSingleCharacter() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"a\"));\n        int c = reader.read();\n        assertEquals('a', c);\n        assertEquals('a', reader.readAgain());\n        assertEquals(0, reader.getLineNumber());\n    }\n\n    @Test\n    public void testReadEndOfStream() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"\"));\n        int c = reader.read();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, c);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.readAgain());\n    }\n\n    @Test\n    public void testReadNewlineIncrementsLineNumber() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"\\n\"));\n        int c = reader.read();\n        assertEquals('\\n', c);\n        assertEquals(1, reader.getLineNumber());\n    }\n\n    @Test\n    public void testReadCarriageReturnAndNewline() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"\\r\\n\"));\n        assertEquals('\\r', reader.read());\n        assertEquals(1, reader.getLineNumber());\n        assertEquals('\\n', reader.read());\n        // \\n following \\r should not increment the line counter again\n        assertEquals(1, reader.getLineNumber());\n    }\n\n    @Test\n    public void testLookAheadDoesNotConsumeCharacter() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"abc\"));\n        assertEquals('a', reader.lookAhead());\n        assertEquals('a', reader.read());\n        assertEquals('b', reader.lookAhead());\n        assertEquals('a', reader.readAgain());\n    }\n\n    @Test\n    public void testLookAheadAtEof() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"\"));\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.lookAhead());\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.read());\n    }\n\n    @Test\n    public void testReadLineBasic() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"line1\\nline2\"));\n        String line1 = reader.readLine();\n        assertEquals(\"line1\", line1);\n        assertEquals(1, reader.getLineNumber());\n        assertEquals('1', reader.readAgain());\n\n        String line2 = reader.readLine();\n        assertEquals(\"line2\", line2);\n        assertEquals(2, reader.getLineNumber());\n        assertEquals('2', reader.readAgain());\n    }\n\n    @Test\n    public void testReadLineEof() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"\"));\n        assertNull(reader.readLine());\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.readAgain());\n    }\n\n    @Test\n    public void testReadBufferZeroLength() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"abc\"));\n        char[] buf = new char[5];\n        int len = reader.read(buf, 0, 0);\n        assertEquals(0, len);\n        assertEquals(0, reader.getLineNumber());\n    }\n\n    @Test\n    public void testReadBufferPartial() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"hello\"));\n        char[] buf = new char[5];\n        int len = reader.read(buf, 0, 3);\n        assertEquals(3, len);\n        assertEquals('h', buf[0]);\n        assertEquals('e', buf[1]);\n        assertEquals('l', buf[2]);\n        assertEquals('l', reader.readAgain());\n    }\n\n    @Test\n    public void testReadBufferWithNewlines() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"a\\nb\\r\\nc\"));\n        char[] buf = new char[10];\n        int len = reader.read(buf, 0, 6);\n        assertEquals(6, len);\n        assertEquals(2, reader.getLineNumber());\n        assertEquals('\\r', reader.readAgain());\n    }\n\n    @Test\n    public void testReadBufferEof() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"\"));\n        char[] buf = new char[5];\n        int len = reader.read(buf, 0, 5);\n        assertEquals(-1, len);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, reader.readAgain());\n    }\n\n    @Test\n    public void testMultipleLookAheads() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"xyz\"));\n        assertEquals('x', reader.lookAhead());\n        assertEquals('x', reader.lookAhead());\n        assertEquals('x', reader.read());\n        assertEquals('y', reader.lookAhead());\n    }\n\n    @Test\n    public void testReadLineEmptyLine() throws IOException {\n        ExtendedBufferedReader reader = new ExtendedBufferedReader(new StringReader(\"\\n\"));\n        String line = reader.readLine();\n        assertEquals(\"\", line);\n        assertEquals(1, reader.getLineNumber());\n    }\n}\n```",
+            "reasoning": ""
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 41314,
+        "completion_tokens": 1287,
+        "total_tokens": 42601
+      },
+      "model_quota": {
+        "daily_quota_tokens": 350000,
+        "daily_usage_tokens": 42607,
+        "daily_remaining_tokens": 307393
+      }
+    },
+    "headers": {
+      "x-request-id": "pbmuf1rkqt9uj5y1t7hd3cfo",
+      "date": "Sat, 03 Oct 2026 19:16:47 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  },
+  "outcome": "response_received"
+}
