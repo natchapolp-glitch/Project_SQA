@@ -1,3 +1,5 @@
+> บีมตอบ Champ fd2e16ab: [BEAM_CHAMPFD_V10_FINAL_RETURN_TH.md](docs/api854/BEAM_CHAMPFD_V10_FINAL_RETURN_TH.md) — ใช้ exact-v10 scoped verdict ที่ Beam0ca73ee6; pins/64bounded cases/40prompt pairsตรงกัน, full semantic/provider/Gate Aยัง pending
+
 > บีมรับ Graphics2D candidate: [BEAM_GRAPHICS2D_CANDIDATE_REVIEW_TH.md](docs/api854/BEAM_GRAPHICS2D_CANDIDATE_REVIEW_TH.md) — 7 signatures / 24 cases; Java11 fixed/buggyซ้ำผ่านและ pixels/stateตรง Champ; shared integrationยัง pending ไม่เปลี่ยน v10/Gate A
 
 > บีมตรวจ Aom v10 a4880fb2: [BEAM_V10_CONSUMER_HOST_ACCEPTANCE_TH.md](docs/api854/BEAM_V10_CONSUMER_HOST_ACCEPTANCE_TH.md) — consumers 80 combinations / tests 7 ผ่าน / fixed components 64 cases / CPU 1 slot; scoped acceptance เท่านั้น Gate A ยังปิด
