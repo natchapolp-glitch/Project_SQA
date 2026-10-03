@@ -1,5 +1,22 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
+ล่าสุดอ่าน [Jsoup ready results](CHAMP_JSOUP_READY_RESULTS_TH.md) และ
+`champ-ready-results-audit-v2` / `champ-ready-results-return-index-v3.json` ก่อนบันทึกเก่า.
+ขยาย nativeผลจริงเป็น3unique bugs/16outcomes: Jsoup CMA/FSCS30tests fixed2/buggy/coverageผ่าน
+36/46lines/55.56%branches/faultfalse; Sonnet27/fixedfail1/Gemini9/fixedfail2ทั้งสองรอบ,
+compileผ่านแต่ปฏิเสธทั้งsuite. ไม่ repair/prune/resend. A03 calibration2+generation2calls;
+SonnetMessages thinking0 input64391/output2618/totalnull;Gemini41896/695/42591.
+LatestobservedA03quotaSonnet132971/Gemini307404 ไม่ใช่reset/expiry/currentforever.
+เก็บ native-v1 Cobertura missing DataNode failure; v2เพิ่ม exactproduction classpath และ
+ใช้AIresponsesเดิม, CMA sourcebytesเหมือนเดิม. Audit238entries/checkpoint100pinsผ่าน.
+Wrapperรองรับ `--packet` และ `--approaches cmaes fscs-art` สำหรับJsoupvalidsubset;
+Csvเดิมยังdefaultครบ4validarchives. AST/WindowsLinuxguardผ่าน แต่ยังไม่executeบนLinuxhost.
+FullD4J0/primary0/GateAfalse; CsvMessagesยังเป็นconditionเดียวที่4วิธีมีvalidmeasurements.
+รับรู้peer Aomff319ecd v13/Beam a15ffa4f candidateแล้ว; freezev12สำหรับconditionที่รันไป.
+ผู้ใช้ยังไม่ได้ยืนยันส่งข้อความให้เพื่อน:ใช้ข้อความและคำสั่งในเอกสารJsoupใหม่.
+
+บันทึก milestone ก่อนขยาย Jsoup:
+
 ผลจริงล่าสุด: อ่าน [ready results update](CHAMP_READY_RESULTS_UPDATE_TH.md) และ
 `output/api854-20261004/champ-ready-results-audit-v1` ก่อนข้อมูลย้อนหลัง.
 Csv Messages/disabled-thinking conditionใหม่มี4validnative suites:

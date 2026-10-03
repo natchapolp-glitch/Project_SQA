@@ -1,4 +1,4 @@
-"""Replay the four unchanged Csv Messages-condition archives on a Linux D4J host.
+"""Replay four unchanged, fixed-validated Csv/Jsoup archives on a Linux D4J host.
 
 Uses the received Aom evaluator/runtime and the host's existing single CPU lock.
 Separate development replay; no provider requests, queue, or primary promotion.
@@ -15,16 +15,29 @@ from .review_joint_recipe_intake import require,extract_archive
 from .start_csv_development import AOM
 
 PACKET=ROOT/'output/api854-20261004/champ-csv-messages-native-measurement-v1'
+CLASSES={'Csv':'org.apache.commons.csv.ExtendedBufferedReader','Jsoup':'org.jsoup.nodes.Document'}
+CONDITIONS={'Csv':'api854-20261004-csv-messages-disabled-thinking-native-development-v2',
+            'Jsoup':'api854-20261004-jsoup-ten-target-messages-disabled-thinking-native-development-v1'}
 
 
-def run(output,worktrees,d4j,worker_id):
+def run(output,worktrees,d4j,worker_id,packet=PACKET,approaches=None):
     require(sys.platform=='linux','Full replay requires the accepted Linux/Java11 host')
     output=Path(output).resolve();worktrees=Path(worktrees).resolve()
+    packet=Path(packet).resolve();require(packet.is_relative_to(ROOT/'output'),'Contained native packet required')
     require(output.is_relative_to(ROOT/'output') and not output.exists(),'New contained evidence output required')
     require(worker_id in {'beam-pc1','aom-pc1'},'Declare the actual accepted host alias')
-    for relative,h in read_json(PACKET/'checksums.json').items():require(sha256(PACKET/relative)==h,'Native packet changed')
-    received=read_json(PACKET/'receipt.json');seal=read_json(PACKET/'preexecution-seal.json')
-    require(len(received['records'])==4 and all(r['status']=='native_fixed_twice_buggy_coverage_measured' for r in received['records']), 'Only complete unchanged native suites may enter this replay')
+    for relative,h in read_json(packet/'checksums.json').items():require(sha256(packet/relative)==h,'Native packet changed')
+    received=read_json(packet/'receipt.json');seal=read_json(packet/'preexecution-seal.json')
+    require(len(received['records'])==4,'All four native outcomes must be retained, including invalid suites')
+    if approaches is None:approaches=['cmaes','fscs-art','kku-claude','kku-gemini']
+    require(approaches and len(set(approaches))==len(approaches),'Unique nonempty explicit approaches required')
+    selected=[r for r in received['records'] if r['approach'] in approaches]
+    require(len(selected)==len(approaches) and all(r['status']=='native_fixed_twice_buggy_coverage_measured' for r in selected),
+            'Only unchanged, native fixed-validated selected suites may enter this replay')
+    project=seal['project'];bug=seal['bug_id']
+    require(project in CLASSES and bug==1 and seal['aom_commit']==AOM and received['condition']==CONDITIONS[project],
+            'Exact accepted native condition/project differs')
+    target_class=CLASSES[project]
     # A new isolated checkout for every approach; retain all checkouts for peer inspection.
     checkout_base=(worktrees/output.name).resolve()
     require(checkout_base.is_relative_to(worktrees) and not checkout_base.exists(),'Fresh contained host checkout root required')
@@ -35,17 +48,21 @@ def run(output,worktrees,d4j,worker_id):
     evaluator_path=snapshot/'scripts/study/evaluate.py'
     spec=importlib.util.spec_from_file_location('ready_csv_received_evaluate',evaluator_path)
     evaluator=importlib.util.module_from_spec(spec);sys.modules[spec.name]=evaluator;spec.loader.exec_module(evaluator)
-    classes_file=output/'instrument-classes.txt';classes_file.write_text('org.apache.commons.csv.ExtendedBufferedReader\n',encoding='utf-8',newline='\n')
+    classes_file=output/'instrument-classes.txt';classes_file.write_text(target_class+'\n',encoding='utf-8',newline='\n')
     tasks=[{'approach':r['approach'],'test_count':r['declared_test_count'],
-            'suite':(PACKET/r['approach']/'packaged-suite/suite.tar.bz2').relative_to(ROOT).as_posix(),
-            'suite_sha256':sha256(PACKET/r['approach']/'packaged-suite/suite.tar.bz2')} for r in received['records']]
+            'suite':(packet/r['approach']/'packaged-suite/suite.tar.bz2').relative_to(ROOT).as_posix(),
+            'suite_sha256':sha256(packet/r['approach']/'packaged-suite/suite.tar.bz2')} for r in selected]
     write_json(output/'preexecution-plan.json',{'schema_version':1,'condition':received['condition'],
         'replay_condition':received['condition']+'-d4j-java11-los-angeles-replay-v1','native_environment_results_do_not_transfer':True,
-        'purpose':'User-authorized full Defects4J development replay of first ready four valid suites',
+        'purpose':'User-authorized full Defects4J development replay of explicitly selected fixed-valid ready-bug suites',
+        'project':project,'bug_id':bug,'native_packet':packet.relative_to(ROOT).as_posix(),
+        'selected_approaches':approaches,'native_outcomes_not_replayed':[{'approach':r['approach'],'status':r['status']}
+            for r in received['records'] if r['approach'] not in approaches],
+        'unreplayed_or_invalid_AI_outcomes_are_not_zero_coverage_or_four_measured_methods':True,
         'worker_id':worker_id,'cpu_slots':1,'worktrees_root':str(worktrees),'checkout_root':str(checkout_base),
-        'received_native_manifest_sha256':sha256(PACKET/'checksums.json'),'aom_commit':AOM,
+        'received_native_manifest_sha256':sha256(packet/'checksums.json'),'aom_commit':AOM,
         'received_runtime_source_sha256':seal['runtime_source_sha256'],'snapshot_archive_sha256':archive,
-        'evaluated_classes':['org.apache.commons.csv.ExtendedBufferedReader'],'java_required':11,'timezone':'America/Los_Angeles',
+        'evaluated_classes':[target_class],'java_required':11,'timezone':'America/Los_Angeles',
         'tasks':tasks,'primary_results_allowed':False,'kku_requests_cap':0,'queue_mutations':0})
     records=[]
     with cpu_slot(worktrees):
@@ -56,12 +73,12 @@ def run(output,worktrees,d4j,worker_id):
             out=output/approach;out.mkdir();trees={}
             for version in ('f','b'):
                 tree=base/version
-                command=evaluator.run_command([d4j,'checkout','-p','Csv','-v','1'+version,'-w',str(tree)],ROOT,out/('checkout-'+version),300)
+                command=evaluator.run_command([d4j,'checkout','-p',project,'-v',str(bug)+version,'-w',str(tree)],ROOT,out/('checkout-'+version),300)
                 require(command['exit_code']==0 and not command['timed_out'],'Defects4J checkout failed')
-                evaluator.validate_worktree(tree,'Csv','1'+version);trees[version]=tree
+                evaluator.validate_worktree(tree,project,str(bug)+version);trees[version]=tree
                 expected=seal['production_source_sha256']['fixed' if version=='f' else 'buggy']['sources']
                 for relative,h in expected.items():require(sha256(tree/relative)==h,'Actual D4J production source differs from native production revision')
-            record=evaluator.evaluate_run(evaluator.EvaluationConfig(project='Csv',bug_id=1,generator=approach,seed=101,budget=30,
+            record=evaluator.evaluate_run(evaluator.EvaluationConfig(project=project,bug_id=bug,generator=approach,seed=101,budget=30,
                 suite=ROOT/task['suite'],buggy_worktree=trees['b'],fixed_worktree=trees['f'],output=out/'measurement',d4j=d4j,
                 classes_file=classes_file,test_count=task['test_count'],timeout_seconds=300))
             records.append({'approach':approach,'status':record['status'],'record_path':(out/'measurement/record.json').relative_to(ROOT).as_posix(),
@@ -78,11 +95,14 @@ def run(output,worktrees,d4j,worker_id):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     for name in ('output','worktrees'):parser.add_argument('--'+name,type=Path,required=True)
+    parser.add_argument('--packet',type=Path,default=PACKET)
+    parser.add_argument('--approaches',nargs='+',choices=['cmaes','fscs-art','kku-claude','kku-gemini'])
     parser.add_argument('--d4j',required=True);parser.add_argument('--worker-id',required=True);args=parser.parse_args()
-    try:r=run(args.output,args.worktrees,args.d4j,args.worker_id)
+    new=not args.output.resolve().exists()
+    try:r=run(args.output,args.worktrees,args.d4j,args.worker_id,args.packet,args.approaches)
     except Exception as error:
         out=args.output.resolve()
-        if out.is_relative_to(ROOT/'output') and out.exists() and not (out/'checksums.json').exists():
+        if new and out.is_relative_to(ROOT/'output') and out.exists() and not (out/'checksums.json').exists():
             write_json(out/'failed-attempt.json',{'status':'replay_attempt_failed','error_type':type(error).__name__,'error':str(error),'primary_results_added':0})
             write_json(out/'checksums.json',{p.relative_to(out).as_posix():sha256(p) for p in sorted(out.rglob('*')) if p.is_file()})
         raise
