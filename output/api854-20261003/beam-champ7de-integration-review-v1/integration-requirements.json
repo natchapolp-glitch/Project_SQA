@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "scope": "Beam review contract for prospective shared Chronology integration; no implementation approval",
+  "joint_verdict_source": {
+    "commit": "7de14726198886e43d8eb6b8a917f58500acab93",
+    "path": "output/api854-20261003/champ-final-recipe-joint-return-v1/champ-chronology-joint-verdict.json",
+    "sha256": "14a6ae7a62d61b428be07f766a3b5075ae1712afe6a8bc2b249280f3609e54d7"
+  },
+  "worklist_identities": [
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "",
+      "method": "getField",
+      "parameter_types": "int,org.joda.time.Chronology"
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "",
+      "method": "withChronologyRetainFields",
+      "parameter_types": "org.joda.time.Chronology"
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "[Lorg.joda.time.DateTimeFieldType;,[I,org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.Chronology,[Lorg.joda.time.DateTimeFieldType;,[I",
+      "method": "<init>",
+      "parameter_types": ""
+    },
+    {
+      "class": "org.joda.time.Partial",
+      "constructor_types": "org.joda.time.DateTimeFieldType,int,org.joda.time.Chronology",
+      "method": "<init>",
+      "parameter_types": ""
+    }
+  ],
+  "exact_targets": {
+    "empty": [
+      "<init>",
+      "(Lorg/joda/time/Chronology;)V"
+    ],
+    "single": [
+      "<init>",
+      "(Lorg/joda/time/DateTimeFieldType;ILorg/joda/time/Chronology;)V"
+    ],
+    "arrays": [
+      "<init>",
+      "([Lorg/joda/time/DateTimeFieldType;[ILorg/joda/time/Chronology;)V"
+    ],
+    "internal": [
+      "<init>",
+      "(Lorg/joda/time/Chronology;[Lorg/joda/time/DateTimeFieldType;[I)V"
+    ],
+    "field": [
+      "getField",
+      "(ILorg/joda/time/Chronology;)Lorg/joda/time/DateTimeField;"
+    ],
+    "retain": [
+      "withChronologyRetainFields",
+      "(Lorg/joda/time/Chronology;)Lorg/joda/time/Partial;"
+    ]
+  },
+  "agreed_preconditions": {
+    "chronology": "Real ISO/Buddhist production factories; UTC or fixed +07:00 offset; explicit null means default ISO for constructors/retain. JVM default timezone pinned UTC and production UTCProvider selected explicitly. Named-zone/resource coverage is outside this candidate.",
+    "method_receiver": "Start with default Partial then seed hourOfDay=10, or year=2024 for getField. Assert receiver values and chronology before activating target tracing.",
+    "getField": "Protected target called from package-local probe on a real final Partial. Valid index 0; separate invalid index 1 boundary. Supplied Buddhist chronology must determine the field independently of receiver ISO chronology.",
+    "public_array_constructor": "Sorted year/month/day with independently specified leap-day values; separate invalid February 30 and year/dayOfMonth/era ordering rejection.",
+    "internal_constructor": "Package-private Chronology-first constructor skips validation and stores arrays directly. Use independently validated UTC fields/values; no claim of input cloning, arbitrary value validation or zone normalization for this signature."
+  },
+  "agreed_assertions": [
+    "Exact field types, named and indexed values, UTC normalization and concrete chronology class",
+    "Public array constructor protects stored values/types from input and getter-array mutation",
+    "Invalid hour/date/order rejected via exact constructor; bad index via exact getField",
+    "Buddhist year at epoch is 2513; exact supplied production year field and unchanged ISO receiver",
+    "Chronology-retain preserves hour 10, original receiver, new-object vs same-normalized-chronology identity, and null-to-ISO behavior"
+  ],
+  "required_integration_checks": [
+    "Same exact declaration/receiver identities in all four approaches",
+    "Package-local or equally exact protected/internal invocation on production Partial",
+    "UTC default/UTCProvider and only UTC/fixed +07:00 chronology factories",
+    "Internal constructor uses already-validated UTC arrays; no clone/normalization/validation claim",
+    "Default method receivers seeded before target tracing; setup/projection failures are fixture_error",
+    "Preserve exact exception, Buddhist field/epoch-year, receiver state, array mutation and identity assertions",
+    "Seal and test shared runtime/recipes, fixed repeatability, buggy and exact target-entry evidence before selection"
+  ],
+  "independent_expected_observations": {
+    "empty_iso_offset": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "zone": "UTC",
+      "types": [],
+      "values": []
+    },
+    "empty_null": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "zone": "UTC",
+      "types": [],
+      "values": []
+    },
+    "single_hour_iso": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "zone": "UTC",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ]
+    },
+    "single_invalid_hour": {
+      "rejected": true,
+      "exception": "org.joda.time.IllegalFieldValueException"
+    },
+    "arrays_leap_iso": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "zone": "UTC",
+      "types": [
+        "year",
+        "monthOfYear",
+        "dayOfMonth"
+      ],
+      "values": [
+        2024,
+        2,
+        29
+      ]
+    },
+    "arrays_invalid_date": {
+      "rejected": true,
+      "exception": "org.joda.time.IllegalFieldValueException"
+    },
+    "arrays_bad_order": {
+      "rejected": true,
+      "exception": "java.lang.IllegalArgumentException"
+    },
+    "internal_iso": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "zone": "UTC",
+      "types": [
+        "year",
+        "monthOfYear",
+        "dayOfMonth"
+      ],
+      "values": [
+        2024,
+        2,
+        29
+      ]
+    },
+    "getfield_buddhist": {
+      "field": "year",
+      "epoch_year": 2513,
+      "receiver": {
+        "chronology": "org.joda.time.chrono.ISOChronology",
+        "zone": "UTC",
+        "types": [
+          "year"
+        ],
+        "values": [
+          2024
+        ]
+      }
+    },
+    "getfield_bad_index": {
+      "rejected": true,
+      "exception": "java.lang.ArrayIndexOutOfBoundsException"
+    },
+    "withchrono_buddhist": {
+      "chronology": "org.joda.time.chrono.BuddhistChronology",
+      "zone": "UTC",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ]
+    },
+    "withchrono_same": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "zone": "UTC",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ]
+    },
+    "withchrono_null": {
+      "chronology": "org.joda.time.chrono.ISOChronology",
+      "zone": "UTC",
+      "types": [
+        "hourOfDay"
+      ],
+      "values": [
+        10
+      ]
+    }
+  },
+  "independent_oracle_source_sha256": "69485ead1d9fbc02b7e2eecd6fb9f193daace603f09662ad99b7297b40a7f0cc",
+  "new_policy_condition_required": true,
+  "required_future_evidence": [
+    "exact invocation/receiver identities",
+    "source/runtime/recipe pins",
+    "preexecution seal",
+    "fixed twice / buggy / exact target-entry checks",
+    "semantic projections with assertion sensitivity",
+    "all four consumer bindings on final 20-bug preparation",
+    "beam-pc1 one-CPU host bindings for final runner"
+  ],
+  "current_shared_support": false,
+  "final_approval": false
+}
