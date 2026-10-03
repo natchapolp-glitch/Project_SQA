@@ -8,7 +8,7 @@ from .environment import inspect_environment
 from .adapters import prepare_adapter
 from .worker import new_worktrees, fixed_sources, artifact_index
 from .context_export import BUILD_FILES, export_context
-from .preparation import compose, POLICY_V3, policy_for, shared_context, explicit_context, receiver_paths
+from .preparation import compose, POLICY_V8, FRACTION_FACTORY_SOURCES, policy_for, shared_context, explicit_context, receiver_paths
 
 CONTEXT_POLICY = "modified-java-and-root-build-v1"
 PROMPT_POLICY = "beam-fixed-targets-junit4-v1"
@@ -74,13 +74,22 @@ def export_prompt(job, protocol, targets, context_dir):
             "context_policy_id": CONTEXT_POLICY, "prompt_utf8_bytes": path.stat().st_size, **fixture_metadata}
 
 
+def selected_context_sources(job, contract, sources, extras, fixed_tree):
+    supplemental = FRACTION_FACTORY_SOURCES if contract == POLICY_V8['contract'] and (job['project'],job['bug_id']) == ('Math',1) else {}
+    for name,expected in supplemental.items():
+        if sha256(fixed_tree/name) != expected:
+            raise ValueError('Reviewed production factory source differs from fixed checkout')
+    return sorted(set(sources) | set(extras) | set(supplemental) |
+                  {name for name in BUILD_FILES if (fixed_tree/name).is_file()})
+
+
 def execute(job, protocol, results, worktrees, d4j):
     contract = protocol.get('generation', {}).get('prepare_contract')
     v3 = shared_context(contract)
     explicit = explicit_context(contract)
     if protocol.get('fixture_policy_id') and (v3 or contract == 'aom-beam-prepare-v2') and not explicit:
         raise ValueError('Explicit fixtures require a new shared preparation contract (shared-v4 or shared-v5) with matching recipe and prompt')
-    context_policy = POLICY_V3["context_policy_id"] if v3 else CONTEXT_POLICY
+    context_policy = policy_for(contract)["context_policy_id"] if v3 else CONTEXT_POLICY
     if protocol.get("context_selection") != context_policy:
         raise ValueError("Frozen protocol must declare this explicit fixed-context selection")
     output = start_attempt(results, job, "prepare")
@@ -99,7 +108,7 @@ def execute(job, protocol, results, worktrees, d4j):
             fixed_tree = Path(prepared["fixed_worktree"])
             sources = fixed_sources(fixed_tree, classes, source_dir)
             extras = receiver_paths(targets, classes, source_dir) if v3 else []
-            selected = sorted(set(sources) | set(extras) | {name for name in BUILD_FILES if (fixed_tree / name).is_file()}) if v3 else sorted(sources) + sorted(name for name in BUILD_FILES if (fixed_tree / name).is_file())
+            selected = selected_context_sources(job,contract,sources,extras,fixed_tree)
             context = export_context(fixed_tree, job["project"], job["bug_id"], selected,
                                      output / "context", policy_id=context_policy)
             preparation = None

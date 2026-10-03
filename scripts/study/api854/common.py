@@ -95,7 +95,7 @@ def validate_protocol(protocol):
         raise ValueError("This adapter implements only shared-declaration-signatures-v1")
     if protocol.get("compatibility_policy") != "none":
         raise ValueError("This worker makes no compatibility or semantic repairs")
-    if protocol.get('fixture_policy_id') not in {None, 'beam-explicit-fixtures-v3-proposal', 'beam-explicit-fixtures-v4-proposal', 'beam-explicit-fixtures-v5-proposal'}:
+    if protocol.get('fixture_policy_id') not in {None, 'beam-explicit-fixtures-v3-proposal', 'beam-explicit-fixtures-v4-proposal', 'beam-explicit-fixtures-v5-proposal', 'aom-beam-fraction-field-v6-development'}:
         raise ValueError('Unknown fixture policy')
     from .preparation import explicit_context, policy_for, shared_context
     contract = protocol.get('generation', {}).get('prepare_contract')
