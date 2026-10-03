@@ -1,5 +1,8 @@
 # Current Aom continuation: 854 active bugs, one repeat per approach
 
+Latest integration: [Champ 8e350c68 and twenty-bug shared development v6](docs/api854/AOM_CHAMP8E_V6_DEVELOPMENT_TH.md).
+The new candidate retains 377 selected / 314 unsupported declarations; Gate A and primary generation remain closed.
+
 Latest checker update: [Aom acceptance of Champ b6051367 and selected Gate A inputs](docs/api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md).
 Gate A requires an explicit protocol/runner pair and validates its fixture recipes.
 The current five-bug input bindings pass; full-pilot completeness and team/provider approval remain pending.

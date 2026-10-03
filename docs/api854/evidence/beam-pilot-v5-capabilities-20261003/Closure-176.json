@@ -1,0 +1,431 @@
+{
+  "project": "Closure",
+  "bug_id": 176,
+  "owner": "beam",
+  "fixture_policy_id": "beam-explicit-fixtures-v5-proposal",
+  "baseline_targets_sha256": "25eae6643e8f0f0321d6e3fad507a654500d47f9ddec71ea2e05f829f6b9533a",
+  "selection_basis": "Fixed before buggy evaluation; structural recipe/oracle capability, not outcome filtering",
+  "targets": [
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "createEntryLattice",
+      "parameter_types": "",
+      "dimensions": 15
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "createInitialEstimateLattice",
+      "parameter_types": "",
+      "dimensions": 15
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "flowThrough",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "branchedFlowThrough",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "isAddedAsNumber",
+      "parameter_types": "com.google.javascript.rhino.jstype.JSType",
+      "dimensions": 18
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "isUnflowable",
+      "parameter_types": "com.google.javascript.jscomp.Scope$Var",
+      "dimensions": 18
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "newBooleanOutcomePair",
+      "parameter_types": "com.google.javascript.rhino.jstype.JSType,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseAnd",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseOr",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseShortCircuitingBinOp",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope,boolean",
+      "dimensions": 24
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseWithinShortCircuitingBinOp",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "narrowScope",
+      "parameter_types": "com.google.javascript.jscomp.type.FlowScope,com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.JSType",
+      "dimensions": 24
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverse",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseAdd",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseArrayLiteral",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseAssign",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseChildren",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseGetElem",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseGetProp",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseHook",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseName",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseObjectLiteral",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "traverseReturn",
+      "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+      "dimensions": 21
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "getJSType",
+      "parameter_types": "com.google.javascript.rhino.Node",
+      "dimensions": 18
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "getNativeType",
+      "parameter_types": "com.google.javascript.rhino.jstype.JSTypeNative",
+      "dimensions": 18
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "redeclareSimpleVar",
+      "parameter_types": "com.google.javascript.jscomp.type.FlowScope,com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.JSType",
+      "dimensions": 24
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+      "method": "updateScopeForTypeChange",
+      "parameter_types": "com.google.javascript.jscomp.type.FlowScope,com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.JSType,com.google.javascript.rhino.jstype.JSType",
+      "dimensions": 27
+    },
+    {
+      "class": "com.google.javascript.jscomp.TypeInference",
+      "constructor_types": "",
+      "method": "getBooleanOutcomes",
+      "parameter_types": "com.google.javascript.rhino.jstype.BooleanLiteralSet,com.google.javascript.rhino.jstype.BooleanLiteralSet,boolean",
+      "dimensions": 9
+    }
+  ],
+  "excluded_fixture_capabilities": [
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "getBooleanOutcomePair",
+        "parameter_types": "com.google.javascript.jscomp.TypeInference$BooleanOutcomePair,com.google.javascript.jscomp.TypeInference$BooleanOutcomePair,boolean",
+        "dimensions": 24
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "ensurePropertyDeclaredHelper",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.ObjectType",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "inferTemplatedTypesForCall",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.FunctionType",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "dereferencePointer",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "tightenTypesAfterAssertions",
+        "parameter_types": "com.google.javascript.jscomp.type.FlowScope,com.google.javascript.rhino.Node",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "traverseCall",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "traverseCatch",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "traverseNew",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "getPropertyType",
+        "parameter_types": "com.google.javascript.rhino.jstype.JSType,java.lang.String,com.google.javascript.rhino.Node,com.google.javascript.jscomp.type.FlowScope",
+        "dimensions": 27
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "inferTemplateTypesFromParameters",
+        "parameter_types": "com.google.javascript.rhino.jstype.FunctionType,com.google.javascript.rhino.Node",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "",
+        "method": "inferPropertyTypesToMatchConstraint",
+        "parameter_types": "com.google.javascript.rhino.jstype.JSType,com.google.javascript.rhino.jstype.JSType",
+        "dimensions": 6
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "",
+        "method": "resolvedTemplateType",
+        "parameter_types": "java.util.Map,com.google.javascript.rhino.jstype.TemplateType,com.google.javascript.rhino.jstype.JSType",
+        "dimensions": 9
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "backwardsInferenceFromCallSite",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.FunctionType",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "ensurePropertyDeclared",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "ensurePropertyDefined",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.JSType",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "inferArguments",
+        "parameter_types": "com.google.javascript.jscomp.Scope",
+        "dimensions": 18
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "maybeResolveTemplateTypeFromNodes",
+        "parameter_types": "java.lang.Iterable,java.lang.Iterable,java.util.Map,java.util.Set",
+        "dimensions": 27
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "maybeResolveTemplateTypeFromNodes",
+        "parameter_types": "java.util.Iterator,java.util.Iterator,java.util.Map,java.util.Set",
+        "dimensions": 27
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "maybeResolveTemplatedType",
+        "parameter_types": "com.google.javascript.rhino.jstype.JSType,com.google.javascript.rhino.jstype.JSType,java.util.Map,java.util.Set",
+        "dimensions": 27
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "updateBind",
+        "parameter_types": "com.google.javascript.rhino.Node",
+        "dimensions": 18
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "updateTypeOfParameters",
+        "parameter_types": "com.google.javascript.rhino.Node,com.google.javascript.rhino.jstype.FunctionType",
+        "dimensions": 21
+      },
+      "reason": "specialized_ast_recipe_not_reviewed"
+    },
+    {
+      "target": {
+        "class": "com.google.javascript.jscomp.TypeInference",
+        "constructor_types": "com.google.javascript.jscomp.AbstractCompiler,com.google.javascript.jscomp.ControlFlowGraph,com.google.javascript.jscomp.type.ReverseAbstractInterpreter,com.google.javascript.jscomp.Scope,java.util.Map",
+        "method": "<init>",
+        "parameter_types": "",
+        "dimensions": 15
+      },
+      "reason": "constructor_or_identity_oracle_not_reviewed"
+    }
+  ],
+  "excluded_fixed_only": [],
+  "team_semantic_approval": false,
+  "scope": "Recipe availability only; execution and oracle review are separate"
+}

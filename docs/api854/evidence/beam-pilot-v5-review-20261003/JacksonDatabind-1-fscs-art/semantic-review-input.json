@@ -1,0 +1,68 @@
+{
+  "reviewer": "Codex local development review",
+  "suite_sha256": "f15ccb9743368a1ec36295979eea07a05779c8a86b59e14996ea8ffad61369ac",
+  "fixed_source_sha256": {
+    "src/main/java/com/fasterxml/jackson/databind/ser/BeanPropertyWriter.java": "62719490c035797d58d158d8adbc476b4501970e931f0781579d040ecb5c626a"
+  },
+  "verdict": "valid",
+  "target_execution_evidence": [
+    {
+      "path": "measurement/coverage/coverage.xml",
+      "sha256": "24f42e1e8101ce342f96526221c2ecb52567854d1fddd413e3a9361b14c52aa8"
+    },
+    {
+      "path": "semantic-evidence/fixture-oracle-review.json",
+      "sha256": "6498d486de68f333cc9f64320bb650e34f0747515c19462306ce368823a5cbab"
+    }
+  ],
+  "fixture_oracle_review": {
+    "scope": "local development only",
+    "reviewed_case_count": 30,
+    "recipe_proof": "Production ObjectMapper factories create property writers or collection deserializer dependencies. Writer renaming/settings compare property type/name/state; collection parser/context and string deserializer form one coherent graph.",
+    "team_or_primary_approval": false,
+    "helper_sha256": "34afc661b87eda73f45c2ef36a430bada46990fc29a54a5096b14ac66e594b84"
+  },
+  "weak_oracles": {
+    "invalid_case_ids": [],
+    "expected_boundary_exception_case_ids": [],
+    "partial_projection_limitations_disclosed": true
+  },
+  "stage_counts": {
+    "fixed-1": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-1/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "fixed-2": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-2/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "buggy": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/buggy/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "coverage": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/coverage/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    }
+  }
+}

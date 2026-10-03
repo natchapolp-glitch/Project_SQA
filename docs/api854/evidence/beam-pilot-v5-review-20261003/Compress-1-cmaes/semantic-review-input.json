@@ -1,0 +1,68 @@
+{
+  "reviewer": "Codex local development review",
+  "suite_sha256": "025219d07533f45519073aff2ab4c72aa683661a3a558689bd2f04ff52cbb543",
+  "fixed_source_sha256": {
+    "src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStream.java": "757143e25b6dd9188c1eb45062d8335cbbcc83767e4c316ff3b0a13f11c51d64"
+  },
+  "verdict": "valid",
+  "target_execution_evidence": [
+    {
+      "path": "measurement/coverage/coverage.xml",
+      "sha256": "bca1f90cc30d4229b1290515925b8af73dbb106cc7f71981459a58f73f6ad059"
+    },
+    {
+      "path": "semantic-evidence/fixture-oracle-review.json",
+      "sha256": "765513e5c5d87295f8358a624f68a29035d96fda126f2c4ea336d5f98c65a7a2"
+    }
+  ],
+  "fixture_oracle_review": {
+    "scope": "local development only",
+    "reviewed_case_count": 30,
+    "recipe_proof": "Production CPIO stream over ByteArrayOutputStream with explicit time=0/mode/name/size. Current entry size is 1 for write(int), 0 otherwise; byte output is compared.",
+    "team_or_primary_approval": false,
+    "helper_sha256": "34afc661b87eda73f45c2ef36a430bada46990fc29a54a5096b14ac66e594b84"
+  },
+  "weak_oracles": {
+    "invalid_case_ids": [],
+    "expected_boundary_exception_case_ids": [],
+    "partial_projection_limitations_disclosed": true
+  },
+  "stage_counts": {
+    "fixed-1": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-1/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "fixed-2": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-2/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "buggy": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/buggy/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "coverage": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/coverage/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    }
+  }
+}

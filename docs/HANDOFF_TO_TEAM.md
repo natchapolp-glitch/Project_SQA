@@ -1,4 +1,6 @@
-Latest Aom team acceptance: [Champ b6051367 / selected Gate A input checker](api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md). Protocol/runner and fixture recipe bindings are checked explicitly. Final shared inputs, limits/framing/reset/expiry and joint Gate A remain pending. Primary completion is still 0.
+Latest Aom checkpoint: [Champ 8e350c68 / twenty-bug v6 development candidate](api854/AOM_CHAMP8E_V6_DEVELOPMENT_TH.md). Received first-round evidence audited; fresh preparation has 20 bugs, 377 selected declarations and 314 unsupported declarations. Maximum prompt is 250,315 UTF-8 bytes. Offline integration ran 288 tests (287 passed, 1 symlink skip). Gate A is closed; no new KKU requests or primary experiments. Champ 7e09a5fe repair intake remains a separate next checkpoint requiring new runtime bindings.
+
+Historical Aom acceptance: [Champ b6051367 / selected Gate A input checker](api854/AOM_GATE_A_B605_ACCEPTANCE_TH.md). Its source pins and five-bug reserve worksheet are historical after the runtime change.
 
 Current Aom work (3 October 2026): read [AOM_CONTINUATION_V5_TH.md](api854/AOM_CONTINUATION_V5_TH.md) and [AOM_INDEPENDENT_PREPARATION_TH.md](api854/AOM_INDEPENDENT_PREPARATION_TH.md). The owner now requests branch `aom`, 854 active bugs, four approaches, one repeat per bug, and Claude Sonnet 5 / Gemini 3.5 Flash Lite through KKU only. New primary completion is **0**. Independent source/build preparation and recovery evidence do not approve Gate A.
 

@@ -1,5 +1,8 @@
 # ออมรับ b6051367 และแก้ Gate A input checker
 
+**งานตรวจรับถัดมา:** [Champ 8e350c68 / shared development v6](AOM_CHAMP8E_V6_DEVELOPMENT_TH.md)
+ตัวเลขและ source pins ด้านล่างคงเป็น snapshot ของ b6051367 ก่อนรวม runtime ใหม่
+
 รวม `champ b60513672122d7533999e5fbbd369d4ea2eaf936` ต่อจากงานออม `978f68ab`
 รับตาราง pilot 20 bugs, missing evidence 15 bugs ใน checkpoint นั้น และ conditional reserve worksheet
 พร้อมตรวจไฟล์กับ Git commit จริงและ hashes ที่ worksheet อ้าง

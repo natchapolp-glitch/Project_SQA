@@ -1,5 +1,8 @@
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 
+**Integration ล่าสุดของออม:** [รับ Champ 8e350c68 / shared development v6 ครบ 20 inputs](AOM_CHAMP8E_V6_DEVELOPMENT_TH.md)
+ยังรองรับ subset 377/691 declarations; max prompt ใหม่ 250,315 bytes; ยังไม่เปิด Gate A/pilot
+
 **Checker ล่าสุด:** [ออมรับ b6051367 และแก้ selected Gate A inputs](AOM_GATE_A_B605_ACCEPTANCE_TH.md)
 การใช้ gate_a ต้องระบุ --protocol และ --runner; worksheet/preflight ไม่ใช่การอนุมัติเปิด pilot
 
@@ -20,7 +23,9 @@ runner proposal ปัจจุบันใช้ champ-pc1, beam-pc1 และ 
 
 ## อ่านตามลำดับ
 
-เริ่มจาก [ผลตรวจ shared-v5 และ KKU preflight ล่าสุด](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
+เริ่มจาก [แชมป์ตรวจ Beam 68b81b0e: หลักฐาน 15 bugs / 30 suites และงานให้ครบ 691](CHAMP_BEAM68_ACCEPTANCE_TH.md)
+และ [checkpoint สถานะบีมเดิม / รายการเทียบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)
+และ [ผลตรวจ shared-v5 และ KKU preflight ที่รับจากไฟล์แล้ว](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
 และ [ตาราง 20 bugs / งานที่ยังรอ / reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)
 เอกสารแผน v1/v3 ด้านล่างใช้เป็นประวัติ; protocol/runner pair ที่จะใช้ต้องตรงกับ final shared input condition
 

@@ -8,7 +8,7 @@ def recipe_document(source_hashes, policy=POLICY):
     expected = {name: source_hashes[name] for name in RECIPE_SOURCES}
     if any(sha256(ROOT / name) != value for name, value in expected.items()):
         raise ValueError('Explicit recipe source differs from protocol')
-    if policy not in {POLICY, POLICY_V4}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5}:
         raise ValueError('Unknown explicit fixture policy')
     return {'schema_version': 1, 'fixture_policy_id': policy, 'source_sha256': expected,
         'sources': {name: (ROOT / name).read_bytes().decode('utf-8') for name in RECIPE_SOURCES},
@@ -17,7 +17,7 @@ def recipe_document(source_hashes, policy=POLICY):
 
 def validate_recipe(recipe, source_hashes=None, policy=POLICY):
     from .preparation import digest
-    if (policy not in {POLICY, POLICY_V4} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
+    if (policy not in {POLICY, POLICY_V4, POLICY_V5} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
             or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(RECIPE_SOURCES)
             or not isinstance(recipe.get('source_sha256'), dict) or set(recipe['source_sha256']) != set(RECIPE_SOURCES)
             or any(not isinstance(recipe['sources'][name], str)
@@ -27,6 +27,60 @@ def validate_recipe(recipe, source_hashes=None, policy=POLICY):
         raise ValueError('Explicit recipe source differs from frozen protocol')
     return True
 POLICY_V4 = 'beam-explicit-fixtures-v4-proposal'
+POLICY_V5 = 'beam-explicit-fixtures-v5-proposal'
+
+# Fixed-source recipes, declared before generation/evaluation. This development
+# version deliberately preserves unsupported declarations as explicit exclusions.
+PILOT_METHODS = {
+    'org.apache.commons.lang3.math.NumberUtils': {'isDigits', 'isNumber', 'max', 'min', 'toByte', 'toDouble',
+        'toFloat', 'toInt', 'toLong', 'toShort', 'createDouble', 'createFloat', 'createInteger', 'createLong',
+        'createNumber', 'createBigDecimal', 'createBigInteger'},
+    'com.fasterxml.jackson.core.io.NumberInput': {'parseAsDouble', 'parseDouble', 'parseAsInt', 'parseInt',
+        'parseBigDecimal', 'parseAsLong', 'parseLong', 'inLongRange'},
+    'com.fasterxml.jackson.core.util.TextBuffer': {'hasTextAsCharacters', 'contentsAsArray', 'contentsAsString',
+        'getCurrentSegmentSize', 'getTextOffset', 'size', 'toString', 'append', 'resetWithEmpty', 'resetWithString'},
+    'org.apache.commons.math3.fraction.BigFraction': {'equals', 'doubleValue', 'percentageValue', 'floatValue',
+        'getDenominator', 'getNumerator', 'intValue', 'longValue', 'toString', 'abs', 'add', 'subtract',
+        'multiply', 'divide', 'negate', 'reciprocal', 'reduce', 'compareTo'},
+    'org.apache.commons.math3.fraction.Fraction': {'equals', 'doubleValue', 'percentageValue', 'floatValue',
+        'getDenominator', 'getNumerator', 'intValue', 'longValue', 'toString', 'abs', 'add', 'subtract',
+        'multiply', 'divide', 'negate', 'reciprocal', 'compareTo'},
+    'org.jsoup.nodes.Document': {'nodeName', 'outerHtml', 'title', 'normalise', 'body', 'head', 'text', 'createElement', 'createShell'},
+    'org.apache.commons.cli.CommandLine': {'hasOption', 'getOptionObject', 'getOptionValue', 'getArgs',
+        'getOptionValues', 'iterator', 'getArgList', 'getOptions', 'addArg', 'addOption'},
+    'org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream': {'ensureOpen', 'writeCString',
+        'close', 'closeArchiveEntry', 'finish', 'putArchiveEntry', 'putNextEntry', 'write'},
+    'org.joda.time.field.UnsupportedDurationField': {'equals', 'isPrecise', 'isSupported', 'getType',
+        'getName', 'toString', 'getUnitMillis', 'compareTo', 'getInstance'},
+    'org.joda.time.Partial': {'size', 'getValues', 'toStringList', 'with', 'withField', 'without'},
+    'com.google.gson.TypeInfoFactory': {'getIndex', 'getActualType', 'extractRealTypes', 'getTypeInfoForField', 'getTypeInfoForArray'},
+    'com.google.javascript.jscomp.RemoveUnusedVars': {'process', 'traverseAndRemoveUnusedReferences', 'getFunctionArgList'},
+    'org.jfree.chart.renderer.category.AreaRenderer': {'findRangeBounds', 'getRowCount', 'getColumnCount',
+        'getPassCount', 'getLegendItems', 'getLegendItem', 'getItemMiddle'},
+    'com.fasterxml.jackson.databind.ser.BeanPropertyWriter': {'getName', 'getSerializedName', 'getType',
+        'getPropertyType', 'getGenericPropertyType', 'isRequired', 'willSuppressNulls', 'hasSerializer',
+        'hasNullSerializer', 'rename', 'get', 'getInternalSetting', 'setInternalSetting', 'removeInternalSetting'},
+    'com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer': {'deserialize', 'deserializeUsingCustom', 'handleNonArray'},
+    'com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser': {'hasTextCharacters', 'isClosed', 'isExpectedStartArrayToken',
+        'requiresCustomCodec', 'getTextCharacters', 'nextToken', 'getText', 'getCurrentName', 'getValueAsString',
+        'nextTextValue', 'close', 'overrideCurrentName', 'setXMLTextElementName'},
+    'org.mockito.internal.invocation.InvocationMatcher': {'matches', 'hasSameMethod', 'hasSimilarMethod',
+        'getMethod', 'getInvocation', 'toString'},
+}
+PILOT_TYPES = {'com.fasterxml.jackson.core.util.BufferRecycler', 'org.apache.commons.math3.fraction.BigFraction',
+    'org.apache.commons.math3.fraction.Fraction', 'java.math.BigInteger', 'org.apache.commons.cli.Option',
+    'java.io.OutputStream', 'org.apache.commons.compress.archivers.ArchiveEntry',
+    'org.apache.commons.compress.archivers.cpio.CpioArchiveEntry', 'org.joda.time.DurationFieldType',
+    'org.joda.time.DurationField', 'org.joda.time.DateTimeFieldType', 'java.lang.reflect.Type',
+    'java.lang.reflect.TypeVariable', '[Ljava.lang.reflect.Type;', '[Ljava.lang.reflect.TypeVariable;',
+    'java.lang.reflect.Field', 'java.lang.Class', 'com.google.javascript.jscomp.AbstractCompiler',
+    'com.google.javascript.rhino.Node', 'org.jfree.data.category.CategoryDataset', 'org.jfree.chart.axis.CategoryAxis',
+    'java.lang.Comparable', 'java.awt.geom.Rectangle2D', 'org.jfree.chart.util.RectangleEdge',
+    'com.fasterxml.jackson.databind.ser.BeanPropertyWriter', 'com.fasterxml.jackson.databind.util.NameTransformer',
+    'com.fasterxml.jackson.databind.JavaType', 'com.fasterxml.jackson.databind.JsonDeserializer',
+    'com.fasterxml.jackson.databind.deser.ValueInstantiator', 'com.fasterxml.jackson.core.JsonParser',
+    'com.fasterxml.jackson.databind.DeserializationContext', 'com.fasterxml.jackson.core.io.IOContext',
+    'com.fasterxml.jackson.core.ObjectCodec', 'javax.xml.stream.XMLStreamReader', 'org.mockito.invocation.Invocation'}
 
 # Added capability recipes are fixed before any buggy evaluation. Mutators need
 # structural post-state; unsupported helpers/serialization hooks stay excluded.
@@ -68,7 +122,7 @@ CLOSURE_METHODS = {'createEntryLattice', 'createInitialEstimateLattice', 'flowTh
 def select(targets, policy):
     if policy is None:
         return targets, []
-    if policy not in {POLICY, POLICY_V4}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5}:
         raise ValueError('Unknown explicit fixture policy')
     selected, excluded = [], []
     for target in targets:
@@ -76,9 +130,12 @@ def select(targets, policy):
         family = CLOSURE if name == 'com.google.javascript.jscomp.TypeInference' else JXPATH if name in {
             'org.apache.commons.jxpath.ri.model.dom.DOMNodePointer',
             'org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer'} else set()
-        extra = policy == POLICY_V4 and name in ADDITIONAL_METHODS
+        extra = policy in {POLICY_V4, POLICY_V5} and name in ADDITIONAL_METHODS
+        pilot = policy == POLICY_V5 and name in PILOT_METHODS
         if extra:
             family = {'java.io.Reader'}
+        if pilot:
+            family = PILOT_TYPES | {'[B', '[S', '[I', '[J', '[F', '[D', '[C'}
         reason = None
         if not family:
             reason = 'explicit_project_recipe_not_reviewed'
@@ -90,6 +147,20 @@ def select(targets, policy):
             reason = 'additional_method_preconditions_or_state_not_reviewed'
         elif extra and name.endswith('ExtendedBufferedReader') and target['parameter_types']:
             reason = 'reader_buffer_offset_bounds_recipe_not_reviewed'
+        elif pilot and target['method'] not in PILOT_METHODS[name]:
+            reason = 'pilot_method_preconditions_or_oracle_not_reviewed'
+        elif pilot and name.endswith('NumberInput') and '[' in target['parameter_types']:
+            reason = 'numeric_buffer_slice_recipe_not_reviewed'
+        elif pilot and name.endswith('TextBuffer') and target['method'] == 'append' and target['parameter_types'] != 'char':
+            reason = 'text_buffer_slice_recipe_not_reviewed'
+        elif pilot and name.endswith('Document') and target['parameter_types'] == 'org.jsoup.nodes.Element':
+            reason = 'html_internal_normalise_recipe_not_reviewed'
+        elif pilot and name.endswith('CpioArchiveOutputStream') and target['method'] == 'write' and target['parameter_types'] != 'int':
+            reason = 'archive_buffer_slice_recipe_not_reviewed'
+        elif pilot and name.endswith('BeanPropertyWriter') and target['method'] == 'isRequired' and target['parameter_types']:
+            reason = 'annotation_introspector_recipe_not_reviewed'
+        elif pilot and name.endswith('RemoveUnusedVars') and target['method'] == 'process' and target['parameter_types'] != 'com.google.javascript.rhino.Node,com.google.javascript.rhino.Node':
+            reason = 'call_site_definition_finder_recipe_not_reviewed'
         else:
             required = set(filter(None, (target['constructor_types'] + ',' + target['parameter_types']).split(',')))
             missing = required - SCALARS - family

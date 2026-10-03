@@ -1,5 +1,11 @@
 # แชมป์ตรวจ Aom 76b88e25 / shared v5 และ KKU preflight
 
+Runtime และหลักฐานบีมรอบใหม่: [Champ ตรวจ Beam 68b81b0e](CHAMP_BEAM68_ACCEPTANCE_TH.md)
+Source pins ของ proposal ห้าบั๊กด้านล่างเป็นรุ่นเดิม ต้องสร้าง shared preparation รุ่นใหม่ก่อนใช้งานกับ runtime ล่าสุด
+
+สถานะบีมที่แจ้งภายหลัง: [v5 27/40 suites / 377 จาก 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)
+เป็นรายงานผ่านผู้ใช้ ยังไม่ได้รับ commit/evidence รอบใหม่; ผลตรวจด้านล่างคงอ้างอิงรุ่น Aom 76b88e25
+
 งานที่เตรียมต่อก่อนรับหลักฐานครบ: [ตาราง 20 bugs และ reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)
 
 รวม `aom 76b88e25` ต่อจาก `champ a7964613` แล้ว ตรวจ API worker, shared preparation v5 และ assignment แบบ offline

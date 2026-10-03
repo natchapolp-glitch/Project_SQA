@@ -81,6 +81,9 @@ def inspect(root=ROOT, *, protocol_path=None, runner_path=None):
                     or any(row.get(key) != value for key,value in metadata.items())):
                 raise ValueError('Index identity/metadata or selected protocol contract differs')
             recipe = read_json(folder/'fixture-recipes.json') if explicit_context(policy['contract']) else None
+            if recipe is not None:
+                from .fixture_policy import validate_recipe
+                validate_recipe(recipe, protocol.get('source_sha256', {}), policy=policy['fixture_policy'])
             prompt = (folder/'prompt.md').read_bytes()
             prompt_sizes.append(len(prompt))
             if metadata['prompt_utf8_bytes'] != len(prompt) or manifest['revision'] != str(row['bug_id'])+'f':
@@ -116,7 +119,7 @@ def inspect(root=ROOT, *, protocol_path=None, runner_path=None):
                     or original_proof.get('verified') is not True
                     or original_proof['head'] != original_proof['fixed_tag_commit']
                     or proof['head'] != original_proof['head']
-                    or (policy['contract'] in {'aom-beam-prepare-v4', 'aom-beam-prepare-v5'}
+                    or (explicit_context(policy['contract'])
                         and metadata.get('previous_hashes', {}).get('v3_index_sha256') != sha256(discovery_path))):
                 raise ValueError('Discovery index/metadata lineage differs')
             keys = lambda rows: {tuple(t[k] for k in policy['target_identity_fields']) for t in clean_targets(rows)}
