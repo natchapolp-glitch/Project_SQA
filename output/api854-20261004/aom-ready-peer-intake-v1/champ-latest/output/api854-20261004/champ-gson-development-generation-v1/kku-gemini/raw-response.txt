@@ -1,0 +1,101 @@
+```java
+package com.google.gson;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import org.junit.Test;
+
+public class TypeInfoFactoryTest {
+
+  private static final double[] VECTOR = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+  @Test
+  public void testGetTypeInfoForArrayWithStringArray() {
+    String observed = SqaProbe.observeWithPolicy(
+        "com.google.gson.TypeInfoFactory",
+        "",
+        "getTypeInfoForArray",
+        "java.lang.reflect.Type",
+        VECTOR,
+        "beam-explicit-fixtures-v5-proposal"
+    );
+    assertNotNull(observed);
+  }
+
+  @Test
+  public void testGetTypeInfoForArrayWithIntegerArray() {
+    double[] vector = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    String observed = SqaProbe.observeWithPolicy(
+        "com.google.gson.TypeInfoFactory",
+        "",
+        "getTypeInfoForArray",
+        "java.lang.reflect.Type",
+        vector,
+        "beam-explicit-fixtures-v5-proposal"
+    );
+    assertNotNull(observed);
+  }
+
+  @Test
+  public void testGetTypeInfoForField() {
+    String observed = SqaProbe.observeWithPolicy(
+        "com.google.gson.TypeInfoFactory",
+        "",
+        "getTypeInfoForField",
+        "java.lang.reflect.Field,java.lang.reflect.Type",
+        VECTOR,
+        "beam-explicit-fixtures-v5-proposal"
+    );
+    assertNotNull(observed);
+  }
+
+  @Test
+  public void testGetActualType() {
+    String observed = SqaProbe.observeWithPolicy(
+        "com.google.gson.TypeInfoFactory",
+        "",
+        "getActualType",
+        "java.lang.reflect.Type,java.lang.reflect.Type,java.lang.Class",
+        VECTOR,
+        "beam-explicit-fixtures-v5-proposal"
+    );
+    assertNotNull(observed);
+  }
+
+  @Test
+  public void testExtractRealTypes() {
+    String observed = SqaProbe.observeWithPolicy(
+        "com.google.gson.TypeInfoFactory",
+        "",
+        "extractRealTypes",
+        "[Ljava.lang.reflect.Type;,java.lang.reflect.Type,java.lang.Class",
+        VECTOR,
+        "beam-explicit-fixtures-v5-proposal"
+    );
+    assertNotNull(observed);
+  }
+
+  @Test
+  public void testGetIndex() {
+    try {
+      TypeVariable<?>[] typeVars = SqaProbe.GenericFixture.class.getTypeParameters();
+      TypeVariable<?> targetVar = typeVars[0];
+      String observed = SqaProbe.observeWithPolicy(
+          "com.google.gson.TypeInfoFactory",
+          "",
+          "getIndex",
+          "[Ljava.lang.reflect.TypeVariable;,java.lang.reflect.TypeVariable",
+          VECTOR,
+          "beam-explicit-fixtures-v5-proposal"
+      );
+      assertNotNull(observed);
+    } catch (Exception e) {
+      assertNotNull(e);
+    }
+  }
+}
+```

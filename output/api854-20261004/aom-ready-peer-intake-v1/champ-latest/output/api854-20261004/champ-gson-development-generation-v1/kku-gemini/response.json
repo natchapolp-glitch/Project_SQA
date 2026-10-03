@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "response_id": "genai-01a103ab-573c-79fc-bab9-9f445fb25638",
+    "requested_model_id": "gemini-3.5-flash-lite",
+    "requested_model_name": "gemini-3.5-flash-lite",
+    "actual_model": "gemini-3.5-flash-lite",
+    "actual_provider": "Gemini",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 41799,
+      "completion_tokens": 854,
+      "total_tokens": 42653
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 42658,
+      "daily_remaining_tokens": 307342
+    }
+  },
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T21:28:38.629960+00:00",
+    "ended_at_utc": "2026-10-03T21:28:43.007333+00:00",
+    "raw_body_sha256": "c0bbaed2ef769fcf20531f12c7ac66fb5b4b2e8247725118f97765f6bf2c6d40",
+    "body": {
+      "id": "genai-01a103ab-573c-79fc-bab9-9f445fb25638",
+      "object": "chat.completion",
+      "created": 1791062923,
+      "model": "gemini-3.5-flash-lite",
+      "provider": "Gemini",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```java\npackage com.google.gson;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport java.lang.reflect.TypeVariable;\nimport org.junit.Test;\n\npublic class TypeInfoFactoryTest {\n\n  private static final double[] VECTOR = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};\n\n  @Test\n  public void testGetTypeInfoForArrayWithStringArray() {\n    String observed = SqaProbe.observeWithPolicy(\n        \"com.google.gson.TypeInfoFactory\",\n        \"\",\n        \"getTypeInfoForArray\",\n        \"java.lang.reflect.Type\",\n        VECTOR,\n        \"beam-explicit-fixtures-v5-proposal\"\n    );\n    assertNotNull(observed);\n  }\n\n  @Test\n  public void testGetTypeInfoForArrayWithIntegerArray() {\n    double[] vector = {1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};\n    String observed = SqaProbe.observeWithPolicy(\n        \"com.google.gson.TypeInfoFactory\",\n        \"\",\n        \"getTypeInfoForArray\",\n        \"java.lang.reflect.Type\",\n        vector,\n        \"beam-explicit-fixtures-v5-proposal\"\n    );\n    assertNotNull(observed);\n  }\n\n  @Test\n  public void testGetTypeInfoForField() {\n    String observed = SqaProbe.observeWithPolicy(\n        \"com.google.gson.TypeInfoFactory\",\n        \"\",\n        \"getTypeInfoForField\",\n        \"java.lang.reflect.Field,java.lang.reflect.Type\",\n        VECTOR,\n        \"beam-explicit-fixtures-v5-proposal\"\n    );\n    assertNotNull(observed);\n  }\n\n  @Test\n  public void testGetActualType() {\n    String observed = SqaProbe.observeWithPolicy(\n        \"com.google.gson.TypeInfoFactory\",\n        \"\",\n        \"getActualType\",\n        \"java.lang.reflect.Type,java.lang.reflect.Type,java.lang.Class\",\n        VECTOR,\n        \"beam-explicit-fixtures-v5-proposal\"\n    );\n    assertNotNull(observed);\n  }\n\n  @Test\n  public void testExtractRealTypes() {\n    String observed = SqaProbe.observeWithPolicy(\n        \"com.google.gson.TypeInfoFactory\",\n        \"\",\n        \"extractRealTypes\",\n        \"[Ljava.lang.reflect.Type;,java.lang.reflect.Type,java.lang.Class\",\n        VECTOR,\n        \"beam-explicit-fixtures-v5-proposal\"\n    );\n    assertNotNull(observed);\n  }\n\n  @Test\n  public void testGetIndex() {\n    try {\n      TypeVariable<?>[] typeVars = SqaProbe.GenericFixture.class.getTypeParameters();\n      TypeVariable<?> targetVar = typeVars[0];\n      String observed = SqaProbe.observeWithPolicy(\n          \"com.google.gson.TypeInfoFactory\",\n          \"\",\n          \"getIndex\",\n          \"[Ljava.lang.reflect.TypeVariable;,java.lang.reflect.TypeVariable\",\n          VECTOR,\n          \"beam-explicit-fixtures-v5-proposal\"\n      );\n      assertNotNull(observed);\n    } catch (Exception e) {\n      assertNotNull(e);\n    }\n  }\n}\n```",
+            "reasoning": ""
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 41799,
+        "completion_tokens": 854,
+        "total_tokens": 42653
+      },
+      "model_quota": {
+        "daily_quota_tokens": 350000,
+        "daily_usage_tokens": 42658,
+        "daily_remaining_tokens": 307342
+      }
+    },
+    "headers": {
+      "x-request-id": "codrf8j0dkatbsnvzobzx2wh",
+      "date": "Sat, 03 Oct 2026 21:28:43 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  },
+  "outcome": "response_received"
+}

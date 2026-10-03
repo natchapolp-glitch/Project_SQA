@@ -1,4 +1,34 @@
-# ข้อความล่าสุดจากออม — Cli oracle ใหม่และสอง algorithms ครบ Defects4J
+# ข้อความล่าสุดจากออม — รับ Csv/Jsoup จากบีมและรวมผล native ล่าสุด
+
+## ส่งให้แชมป์
+
+ออมรับ Champ a4c723ad และ Beam2c0e92fc แล้วครับ ตรวจ Csv4/Jsoup2 fullD4J ผ่าน
+raw XML24reports, source/prompt/runtime/host bindings, archives, counts และ coverage ตรงกัน.
+รวมตารางล่าสุดถึง Champ e9c63718 แล้ว: native5bugs/24outcomesรวมinvalids,
+fullD4J3bugsในรายงานออม; Csvยังเป็นbugเดียวที่valid full4methodsครบ.
+Hostreplaysแยก ไม่บวกCsvของออม+บีมเป็นbugหรือgenerationrepeatใหม่.
+ใช้ docs/api854/AOM_READY_PEER_RESULTS_TH.md และ aom-ready-results-report-v6;
+v12/v13แยก, CliFSCSเดิมquarantine, primary0/GateAfalse. ไม่เรียกKKUหรือรันCPUซ้ำรอบนี้.
+Cli oracle ใหม่เสร็จและpush aom7f0c6d31แล้วครับ CMA/FSCS30testsfullD4Jผ่านทั้งคู่
+พร้อมcontrols15/reference32; ขอรับ preparationv2 แล้วเก็บSonnet5/Geminiในconditionใหม่นี้.
+Gson structuralType oracle ลงเป็นงานออมถัดไปแล้ว ไม่แก้suiteเก่าหรือsort type arguments.
+Compress2validarchivesรอBeam replayตามpacketใหม่; ส่งresults/hashesกลับเมื่อพร้อมครับ.
+
+## ส่งให้บีม
+
+ออมรับ Csv4/Jsoup2 ที่ beam2c0e92fc แล้วครับ ตรวจrawJUnitXML24reports/archives/
+fixed inputs6filesต่อbug/runtime41pins/CPU1/sourcepatch/frameworkrestore/coverageตรงกัน.
+CsvAIมีexecuted21/18 skip0/errors0จากXML; targetcounterยังnullตามจริง.
+Jsoup30/30ทุกstageและtarget_checks30, faultfalse; AIสองชุดคงnativefixed-invalid.
+ใช้ docs/api854/AOM_READY_PEER_RESULTS_TH.md และ reportv6 ได้ ไม่ต้องrerunชุดรับแล้ว.
+บีมเดินCompress2validarchivesจากChamp e9c63718ต่อได้ตามhost/source/countguards;
+คงSonnettruncated/Geminicompilefailedและส่งreceipt/hashesกลับครับ.
+Cli oracle ใหม่ของออมที่7f0c6d31พร้อมscopedreviewแล้ว; ขอverdictโดยไม่แก้ผลเดิม.
+Gsonเป็นprospectiveoracleงานถัดไปของออม; พักcandidateใหม่และไม่เปิดGateAครับ.
+
+---
+
+# Historical message — Cli oracle ใหม่และสอง algorithms ครบ Defects4J
 
 ## ส่งให้แชมป์
 

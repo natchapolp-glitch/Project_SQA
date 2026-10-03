@@ -1,0 +1,61 @@
+{
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T20:10:59.758144+00:00",
+    "ended_at_utc": "2026-10-03T20:11:19.691386+00:00",
+    "raw_body_sha256": "fecc5ce6938e5b5ee22cd46421e6c39ef5002a5eb8edf51352705689ddf8baac",
+    "body": {
+      "id": "gen-1791058260-b7obPeqtQ664sWc9D0fz",
+      "type": "message",
+      "role": "assistant",
+      "container": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "```java\npackage org.jsoup.nodes;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\n/**\n * Deterministic JUnit 4 suite for org.jsoup.nodes.Document,\n * exercising the fixed API behavior of createShell, body, head,\n * createElement, nodeName, normalise, outerHtml, text, and title.\n */\npublic class DocumentTest {\n\n    @Test\n    public void createShellProducesHtmlHeadBody() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n        assertEquals(\"html\", doc.child(0).tagName());\n    }\n\n    @Test\n    public void createShellBaseUriIsSetOnDocument() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        assertEquals(\"http://example.com/\", doc.baseUri());\n    }\n\n    @Test\n    public void bodyReturnsNullWhenNoBodyPresent() {\n        Document doc = new Document(\"http://example.com/\");\n        assertNull(doc.body());\n    }\n\n    @Test\n    public void bodyReturnsElementAfterShellCreation() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        Element body = doc.body();\n        assertNotNull(body);\n        assertEquals(\"body\", body.tagName());\n    }\n\n    @Test\n    public void headReturnsNullWhenNoHeadPresent() {\n        Document doc = new Document(\"http://example.com/\");\n        assertNull(doc.head());\n    }\n\n    @Test\n    public void headReturnsElementAfterShellCreation() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        Element head = doc.head();\n        assertNotNull(head);\n        assertEquals(\"head\", head.tagName());\n    }\n\n    @Test\n    public void createElementUsesDocumentBaseUri() {\n        Document doc = new Document(\"http://example.com/\");\n        Element element = doc.createElement(\"div\");\n        assertEquals(\"div\", element.tagName());\n        assertEquals(\"http://example.com/\", element.baseUri());\n    }\n\n    @Test\n    public void createElementDoesNotAttachToDocument() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        Element element = doc.createElement(\"span\");\n        assertEquals(0, doc.getElementsByTag(\"span\").size());\n    }\n\n    @Test\n    public void nodeNameReturnsHashDocument() {\n        Document doc = new Document(\"http://example.com/\");\n        assertEquals(\"#document\", doc.nodeName());\n    }\n\n    @Test\n    public void normaliseCreatesHtmlHeadBodyWhenMissing() {\n        Document doc = new Document(\"http://example.com/\");\n        doc.normalise();\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n        assertEquals(1, doc.children().size());\n        assertEquals(\"html\", doc.child(0).tagName());\n    }\n\n    @Test\n    public void normaliseMovesTopLevelTextIntoBody() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.appendChild(new TextNode(\"Hello\", doc.baseUri()));\n        doc.normalise();\n        assertTrue(doc.body().text().contains(\"Hello\"));\n    }\n\n    @Test\n    public void normaliseReturnsSameDocumentInstance() {\n        Document doc = new Document(\"http://example.com/\");\n        Document normalised = doc.normalise();\n        assertSame(doc, normalised);\n    }\n\n    @Test\n    public void normaliseIsIdempotentOnShell() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.normalise();\n        assertEquals(1, doc.children().size());\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n    }\n\n    @Test\n    public void outerHtmlContainsHtmlHeadBodyTags() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        String html = doc.outerHtml();\n        assertTrue(html.contains(\"<html>\"));\n        assertTrue(html.contains(\"<head></head>\"));\n        assertTrue(html.contains(\"<body></body>\"));\n    }\n\n    @Test\n    public void outerHtmlOnEmptyDocumentIsEmptyString() {\n        Document doc = new Document(\"http://example.com/\");\n        assertEquals(\"\", doc.outerHtml());\n    }\n\n    @Test\n    public void textSetsBodyTextContent() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        Element returned = doc.text(\"Hello World\");\n        assertEquals(\"Hello World\", doc.body().text());\n        assertSame(doc, returned);\n    }\n\n    @Test\n    public void textClearsExistingBodyContentBeforeSetting() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.body().appendElement(\"p\").text(\"Old content\");\n        doc.text(\"New content\");\n        assertEquals(\"New content\", doc.body().text());\n        assertEquals(0, doc.body().children().size());\n    }\n\n    @Test\n    public void textPreservesDocumentStructure() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.text(\"Some text\");\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n    }\n\n    @Test\n    public void titleReturnsEmptyStringWhenNoTitleElement() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        assertEquals(\"\", doc.title());\n    }\n\n    @Test\n    public void titleSetterAddsTitleElementToHead() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.title(\"My Title\");\n        assertEquals(\"My Title\", doc.title());\n        assertEquals(1, doc.head().getElementsByTag(\"title\").size());\n    }\n\n    @Test\n    public void titleGetterTrimsWhitespace() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.head().appendElement(\"title\").text(\"  Padded Title  \");\n        assertEquals(\"Padded Title\", doc.title());\n    }\n\n    @Test\n    public void titleSetterUpdatesExistingTitleElement() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.title(\"First Title\");\n        doc.title(\"Second Title\");\n        assertEquals(\"Second Title\", doc.title());\n        assertEquals(1, doc.head().getElementsByTag(\"title\").size());\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void titleSetterThrowsOnNullTitle() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.title(null);\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void createShellThrowsOnNullBaseUri() {\n        Document.createShell(null);\n    }\n\n    @Test\n    public void headAndBodyAreDistinctElements() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        assertNotSame(doc.head(), doc.body());\n    }\n\n    @Test\n    public void createElementWithDifferentTagNamesProducesDistinctTags() {\n        Document doc = new Document(\"http://example.com/\");\n        Element div = doc.createElement(\"div\");\n        Element span = doc.createElement(\"span\");\n        assertEquals(\"div\", div.tagName());\n        assertEquals(\"span\", span.tagName());\n    }\n\n    @Test\n    public void nodeNameConsistentAcrossInstances() {\n        Document doc1 = new Document(\"http://example.com/\");\n        Document doc2 = Document.createShell(\"http://other.com/\");\n        assertEquals(doc1.nodeName(), doc2.nodeName());\n    }\n}\n```",
+          "citations": []
+        }
+      ],
+      "model": "anthropic/claude-sonnet-5",
+      "stop_reason": "end_turn",
+      "stop_details": null,
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 64391,
+        "output_tokens": 2618,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "server_tool_use": null,
+        "service_tier": "standard",
+        "speed": "standard",
+        "cost": 0.154962,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0.154962,
+          "upstream_inference_prompt_cost": 0.128782,
+          "upstream_inference_completions_cost": 0.02618
+        }
+      },
+      "context_management": null,
+      "provider": "Claude Platform on AWS",
+      "model_quota": {
+        "daily_quota_tokens": 200000,
+        "daily_usage_tokens": 67029,
+        "daily_remaining_tokens": 132971
+      }
+    },
+    "headers": {
+      "x-request-id": "swl0ah5e1ryjzhc9zsvg71k3",
+      "date": "Sat, 03 Oct 2026 20:11:19 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  }
+}

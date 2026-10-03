@@ -1,0 +1,111 @@
+package org.apache.commons.compress.archivers.cpio;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+public class CpioArchiveOutputStreamTest {
+
+    @Test
+    public void testConstructorAndFinish() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);
+        cpioOut.finish();
+        cpioOut.close();
+        assertTrue(out.size() > 0);
+    }
+
+    @Test
+    public void testConstructorWithFormat() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out, CpioConstants.FORMAT_NEW);
+        cpioOut.finish();
+        cpioOut.close();
+        assertNotNull(out);
+    }
+
+    @Test
+    public void testPutNextEntryAndWrite() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);
+        CpioArchiveEntry entry = new CpioArchiveEntry("testfile.txt");
+        String content = "hello";
+        entry.setFileSize(content.length());
+        cpioOut.putNextEntry(entry);
+        cpioOut.write(content.getBytes());
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        cpioOut.close();
+        assertTrue(out.size() > 0);
+    }
+
+    @Test
+    public void testWriteSingleInt() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);
+        CpioArchiveEntry entry = new CpioArchiveEntry("single.txt");
+        entry.setFileSize(1);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write((int) 'A');
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        cpioOut.close();
+        assertTrue(out.size() > 0);
+    }
+
+    @Test
+    public void testWriteCString() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);
+        CpioArchiveEntry entry = new CpioArchiveEntry("cstring.txt");
+        entry.setFileSize(0);
+        cpioOut.putNextEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        cpioOut.close();
+        assertNotNull(cpioOut);
+    }
+
+    @Test
+    public void testPutArchiveEntry() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);
+        CpioArchiveEntry entry = new CpioArchiveEntry("archive-entry.txt");
+        entry.setFileSize(0);
+        cpioOut.putArchiveEntry(entry);
+        cpioOut.closeArchiveEntry();
+        cpioOut.finish();
+        cpioOut.close();
+        assertTrue(out.size() > 0);
+    }
+
+    @Test
+    public void testEnsureOpen() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);
+        cpioOut.close();
+        boolean thrown = false;
+        try {
+            CpioArchiveEntry entry = new CpioArchiveEntry("closed.txt");
+            cpioOut.putNextEntry(entry);
+        } catch (IOException e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
+    @Test(expected = IOException.class)
+    public void testInvalidEntrySizeThrowsException() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out);
+        CpioArchiveEntry entry = new CpioArchiveEntry("mismatch.txt");
+        entry.setFileSize(10);
+        cpioOut.putNextEntry(entry);
+        cpioOut.write("short".getBytes());
+        cpioOut.closeArchiveEntry();
+    }
+}

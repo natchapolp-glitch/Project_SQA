@@ -1,4 +1,34 @@
-# Current checkpoint: scoped Cli oracle and full Defects4J algorithms completed
+# Current checkpoint: peer results received and condition-separated report v6 published
+
+อ่าน [AOM_READY_PEER_RESULTS_TH.md](AOM_READY_PEER_RESULTS_TH.md) และ
+[ข้อความส่งทีม](AOM_TO_TEAM_MESSAGE_TH.md) ก่อน. Branch aom; ready-results-first, candidatesพัก.
+รับ exact Champa4c723ad/Beam2c0e92fc/Champe9c63718 ใน aom-ready-peer-intake-v1.
+Csv4/Jsoup2จากBeamตรวจrawXML24reports/archives/inputs/source/runtime/hostผ่านแล้ว;
+ไม่มีการรันCPUหรือKKUซ้ำ. Nativeล่าสุด5bugs/24outcomesเก็บinvalidครบ.
+Report authoritativeคือ aom-ready-results-report-v6; v4/v5เป็นreader/schema failuresของออม
+เก็บpartial/producer/receipt ไม่ใช่peer failuresหรือ scientifictrial. Focusedtests14ผ่าน,
+original peerGitblobs1364ตรง exactcommit. v3/Cli/Csvเก่ายังอยู่ครบ.
+18execution/outcome rows มี14completedhostevaluations แต่10uniquegeneration-condition/method
+pairsของ3bugsหลังไม่นับhostreplaysซ้ำ; ไม่ใช่จำนวน independent repeats.
+Csvเท่านั้นที่valid fullD4Jครบ4methods; Jsoup2algfull+2nativeAIinvalid, Cliใหม่2algfull+2AIpending.
+Compress2algvalidnative/fault1,5รอBeamfullD4J; AItruncated/compilefailed.
+GsonCMA/FSCSnativefixedfail11/8จากParameterizedTypeImplidentity; AItruncated/compilefailed.
+v12/v13แยกในcondition-catalog; v13manual/candidateไม่ใช้แทนmethodoutcomes.
+
+งานต่อของออม: รับผลCliAIconditionใหม่/CompressfullD4Jเมื่อทีมส่งแล้วตรวจhashก่อนรวม;
+เตรียมรายงาน/สไลด์/demoจาก measuredsubset และข้อจำกัดควบคู่.
+ProspectiveGsonstructuralTypeoracleเป็นงานถัดไปจากChamp e9: rawtype/actualargs/owner/typevariables/
+boundedcyclecontrols ต้องregress/newhelper/preparation/conditionก่อนgeneration; typeargsยังordered.
+ไม่ใช้toString@identityเป็นoracle, ไม่ซ่อมtestsเก่า,ไม่ส่งfailurefeedbackให้AI.
+แชมป์ใช้Cli preparationv2จากaom7f0c6d31เก็บSonnet5/Gemini3.5FlashLiteผ่านKKUเท่านั้น.
+BeamCsv/Jsoupdoneแล้ว ไม่rerunซ้ำ; รับCompress2archivesจากe9ตามsourceguards/CPU1.
+GateAfalse/primary0/reservenull; inheritedliveworkerไม่รองรับ scopedClicontract อย่าflipflags.
+ทุกproducerใช้exclusivepaths; ห้ามแก้sealedoutputsหรือrerunใส่pathเดิม.
+ประวัติด้านล่างเก็บไว้เพื่อprovenance.
+
+---
+
+# Historical checkpoint: scoped Cli oracle and full Defects4J algorithms completed
 
 อ่าน [AOM_CLI_UNORDERED_RESULTS_TH.md](AOM_CLI_UNORDERED_RESULTS_TH.md) และ
 [ข้อความส่งทีม](AOM_TO_TEAM_MESSAGE_TH.md) ก่อน. Branch aom, checkoutจริงดูenvironment.

@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "response_id": "genai-01a10364-8e8c-7412-85c6-f81f777cda35",
+    "requested_model_id": "gemini-3.5-flash-lite",
+    "requested_model_name": "gemini-3.5-flash-lite",
+    "actual_model": "gemini-3.5-flash-lite",
+    "actual_provider": "Gemini",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 41896,
+      "completion_tokens": 695,
+      "total_tokens": 42591
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 42596,
+      "daily_remaining_tokens": 307404
+    }
+  },
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T20:11:19.837615+00:00",
+    "ended_at_utc": "2026-10-03T20:11:24.019839+00:00",
+    "raw_body_sha256": "6911f181e9a423f0136ba1d73e4feab9a8fc7daea8472950ead5153e91ca6624",
+    "body": {
+      "id": "genai-01a10364-8e8c-7412-85c6-f81f777cda35",
+      "object": "chat.completion",
+      "created": 1791058284,
+      "model": "gemini-3.5-flash-lite",
+      "provider": "Gemini",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```java\npackage org.jsoup.nodes;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class DocumentTest {\n\n    @Test\n    public void testDocumentConstructorAndBaseUri() {\n        Document doc = new Document(\"http://example.com/\");\n        assertEquals(\"http://example.com/\", doc.baseUri());\n        assertEquals(\"#document\", doc.nodeName());\n    }\n\n    @Test\n    public void testCreateShell() {\n        Document doc = Document.createShell(\"http://example.com/shell\");\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n        assertEquals(\"html\", doc.select(\"html\").first().tagName());\n        assertEquals(\"http://example.com/shell\", doc.baseUri());\n    }\n\n    @Test\n    public void testTitleGetAndSet() {\n        Document doc = new Document(\"http://example.com/\");\n        assertEquals(\"\", doc.title());\n        \n        doc.title(\"My Test Title\");\n        assertEquals(\"My Test Title\", doc.title());\n        assertNotNull(doc.head().getElementsByTag(\"title\").first());\n        \n        doc.title(\"Updated Title\");\n        assertEquals(\"Updated Title\", doc.title());\n    }\n\n    @Test\n    public void testCreateElement() {\n        Document doc = new Document(\"http://example.com/\");\n        Element span = doc.createElement(\"span\");\n        assertEquals(\"span\", span.tagName());\n        assertEquals(\"http://example.com/\", span.baseUri());\n        assertFalse(doc.getAllElements().contains(span));\n    }\n\n    @Test\n    public void testBodyAndHeadAccessors() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n        assertEquals(\"head\", doc.head().tagName());\n        assertEquals(\"body\", doc.body().tagName());\n    }\n\n    @Test\n    public void testNormalise() {\n        Document doc = new Document(\"http://example.com/\");\n        doc.appendChild(new TextNode(\"orphan text\", \"http://example.com/\"));\n        doc.normalise();\n        \n        assertNotNull(doc.body());\n        assertTrue(doc.body().text().contains(\"orphan text\"));\n    }\n\n    @Test\n    public void testOuterHtml() {\n        Document doc = new Document(\"http://example.com/\");\n        doc.body().text(\"Hello world\");\n        String html = doc.outerHtml();\n        assertTrue(html.contains(\"Hello world\"));\n    }\n\n    @Test\n    public void testDocumentText() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        doc.text(\"New body content\");\n        assertEquals(\"New body content\", doc.body().text());\n        assertEquals(\"New body content\", doc.text());\n    }\n\n    @Test\n    public void testNodeName() {\n        Document doc = new Document(\"http://example.com/\");\n        assertEquals(\"#document\", doc.nodeName());\n    }\n}\n```",
+            "reasoning": ""
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 41896,
+        "completion_tokens": 695,
+        "total_tokens": 42591
+      },
+      "model_quota": {
+        "daily_quota_tokens": 350000,
+        "daily_usage_tokens": 42596,
+        "daily_remaining_tokens": 307404
+      }
+    },
+    "headers": {
+      "x-request-id": "x1pr2vxfw6gewv812dl9krpr",
+      "date": "Sat, 03 Oct 2026 20:11:24 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  },
+  "outcome": "response_received"
+}
