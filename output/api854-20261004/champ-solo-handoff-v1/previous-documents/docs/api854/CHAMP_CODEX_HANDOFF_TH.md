@@ -1,11 +1,5 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
-**คำสั่งล่าสุด: ทำ solo — บีมและออมไม่ทำต่อแล้ว.** อ่าน
-[CHAMP_SOLO_HANDOFF_TH.md](CHAMP_SOLO_HANDOFF_TH.md) และ snapshot
-`output/api854-20261004/champ-solo-handoff-v1/` ก่อนข้อความย้อนหลังทั้งหมด.
-ผู้ใช้แจ้งเหลือ20ชั่วโมงก่อนทำhandoff; อย่าเริ่มนับใหม่/รอpeerส่งงาน.
-ให้ทำรายงานจากผลจริงทันทีแล้วขยายเฉพาะชุดพร้อมตามเวลา; งานแบ่งทีมด้านล่างเป็นประวัติ.
-
 ล่าสุดรับ Aom `4334c2ab`: อ่าน [Csv acceptance และ JacksonDatabind-112 next batch](CHAMP_AOM_CSV_AND_JACKSON_NEXT_RETURN_TH.md)
 และ `champ-aom-next-batch-audit-v1` / `champ-ready-results-return-index-v6.json` ก่อนประวัติ.
 ระหว่างpublicationพบBeamf3484746Compress2fullD4Jแล้ว/Aom7f0c6d31Clioracleใหม่+2fullD4Jแล้ว;
