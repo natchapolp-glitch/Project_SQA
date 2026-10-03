@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "response_id": "genai-01a10332-79f3-7d0c-94ab-da655294fd56",
+    "requested_model_id": "claude-sonnet-5",
+    "requested_model_name": "claude-sonnet-5",
+    "actual_model": "claude-sonnet-5",
+    "actual_provider": "Claude",
+    "finish_reason": "length",
+    "usage": {
+      "prompt_tokens": 63672,
+      "completion_tokens": 4096,
+      "total_tokens": 67768
+    },
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 67787,
+      "daily_remaining_tokens": 132213
+    }
+  },
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T19:15:58.306899+00:00",
+    "ended_at_utc": "2026-10-03T19:16:42.001059+00:00",
+    "raw_body_sha256": "3d34bd317ff9f24bd74df8212eea3b6d4cb2ed6d834bb407b1e8d47d74d02788",
+    "body": {
+      "id": "genai-01a10332-79f3-7d0c-94ab-da655294fd56",
+      "object": "chat.completion",
+      "created": 1791055002,
+      "model": "claude-sonnet-5",
+      "provider": "Claude",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": null,
+            "reasoning": "I'm planning deterministic JUnit 4 tests for ExtendedBufferedReader, placed in the same package since the class is package-private. I'll cover basic behaviors like reading characters one at a time and verifying line counting increments correctly for '\\r' and '\\n', while avoiding double-counting '\\n' after '\\r', plus checking getLineNum works as expected.\n\nI also want to verify readAgain() starts as UNDEFINED and reflects the last read character, lookAhead() peeks without consuming, EOF returns -1 consistently, and bulk reads via read(char[], int, int) and readLine() behave correctly against known input strings.\n\nFor zero-length reads, lineCounter and lastChar stay untouched since no bytes were actually consumed. At EOF, reads return -1 and lastChar gets set to the END_OF_STREAM marker.\n\nNow I'm tracing readLine() behavior: each call increments lineCounter once and sets lastChar to the final character of that line, continuing until null is returned at EOF with lastChar set to END_OF_STREAM. I'm also checking how an empty line affects this counting.\n\nFor empty lines specifically, lastChar stays unchanged since no characters were actually read, though lineCounter still increments. I'm also checking that getLineNumber() stays consistent with manual read() calls, and that lookAhead() correctly returns -1 once the stream is exhausted.\n\nI should also verify read(buf, offset, length) places data only in the target range, leaving other array positions untouched by pre-filling with a sentinel value. Now I'm sketching out the test method list, starting with checks for initial line number, initial lookahead state, and basic single-character reads.\n\nContinuing the list: tests for newline detection (including CRLF counting as one line), EOF handling, lookahead behavior without consumption, bulk reads with newline counting and edge cases (zero length, EOF), and readLine behavior covering terminator stripping, line number increments, last-char tracking, empty lines, and EOF-null returns.\n\nI've landed on 20 tests total, comfortably under the 30 limit. Now I'm writing the actual test class, setting up the package and imports, and reasoning through edge cases like how read() behaves at end-of-stream—confirming that when the underlying reader returns -1, the line counter stays unchanged and lastChar gets set to END_OF_STREAM correctly.\n\nSince the test class lives in the same package, it can access the package-private END_OF_STREAM and UNDEFINED constants directly. I'm now working out a bulk read test using a StringReader with sample content, tracing through how the buffer offsets and lengths interact with the underlying read call.\n\nTrusting the typical JDK implementation, since fill() reads from the underlying StringReader into an 8192-char buffer in one shot, grabbing all remaining content at once, so the read should deterministically return all 6 characters in a single call.\n\nSo with offset=2 and len=6, the buffer should hold 'a','\\n','b','\\r','\\n','c' at positions 2-7, with the sentinel bytes untouched elsewhere, and the line count should match my earlier manual trace of 2, with lastChar landing on 'c'.\n\nFor the zero-length case, the sentinel stays in place, the call returns 0 immediately without touching the buffer, and lastChar stays undefined since the reader is fresh. For the EOF bulk-read case with an empty string, I expect the underlying read to return -1 right away, which should set lastChar to END_OF_STREAM and make the overall read return -1 as well.\n\nMoving to readLine testing: with \"hello\\nworld\" the calls should return \"hello\" then \"world\" then null, incrementing the line counter each time and updating lastChar to the final character read before hitting EOF. For \"\\na\", the first readLine should return an empty string since there's nothing before the newline, bumping the line counter to 1 while lastChar remains unchanged since no actual line content was consumed.\n\nChecking the multi-line accumulation test with \"x\\ny\\nz\": each readLine call returns a line and increments the counter regardless of whether the final line has a trailing newline, so after three calls getLineNumber() should read 3, and a fourth call hitting EOF should leave the counter unchanged.\n\nFor lookAhead, I'm planning a StringReader(\"ab\") test: lookAhead returns 'a' without consuming, read() consumes 'a', lookAhead then returns 'b', read() consumes 'b', and a final lookAhead returns -1 at EOF. This requires mark support from the underlying reader.\n\n"
+          },
+          "finish_reason": "length"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 63672,
+        "completion_tokens": 4096,
+        "total_tokens": 67768
+      },
+      "model_quota": {
+        "daily_quota_tokens": 200000,
+        "daily_usage_tokens": 67787,
+        "daily_remaining_tokens": 132213
+      }
+    },
+    "headers": {
+      "x-request-id": "lrptqvium0jubmbyr4awtzq8",
+      "date": "Sat, 03 Oct 2026 19:16:42 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  },
+  "outcome": "truncated"
+}

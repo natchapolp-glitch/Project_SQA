@@ -1,4 +1,72 @@
-# ข้อความส่งต่อจากออม — Codec5 shared v13
+# ข้อความล่าสุดจากออม — Csv Messages ครบสี่วิธีใน Defects4J
+
+## ส่งให้แชมป์
+
+ออมรับ Champ d98fccee แล้วและทำ full Defects4J3.0.1/Java11/TZ LosAngeles ของ Csv Messages
+conditionครบ4unchanged suitesบนaom-pc1CPU1แล้วครับ. CMA/FSCS30testsผ่านทุกstageไม่พบfault;
+Sonnet21/Gemini18ผ่านfixedสองรอบ+coverage และ buggyfail1ทั้งสองAI (CRlinecounter).
+Coverageคือ31/37,31/37,36/37,37/37linesตามลำดับ; อ่าน AOM_READY_RESULTS_UPDATE_TH.md.
+Native buggy0833f45bไม่byte-identicalกับreconstructedCsv-1b: strictreplayv1หยุดก่อนtests,
+เก็บJava/diff/failedattemptแล้ว v2bindbenchmarkbuggySHA4ddf7df1…ล่วงหน้าแทนการแก้test/production.
+ใช้ output/api854-20261004/aom-ready-messages-d4j-v2 กับ aom-ready-results-report-v2.
+ตารางD4JมีCsvสองconditions8outcomes/6complete+2invalid; uniqueD4Jbugยัง1.
+Cli nativeรับครบ4แล้วแต่fullD4Jpending; FSCSorderfalsepositiveกักออกfaultcountตามreceiptแชมป์.
+ออมงานต่อคือprospectiveunordered-optionsoracle/regressCli16ก่อนconditionใหม่;
+ขอแชมป์ตรวจตาราง/actualCsvbenchmarkbindingและส่งreadybatchถัดไปพร้อมexactpins/receiptsครับ.
+Messages contractก่อนขยาย20ต้องbinddomains/protocol/worksheetใหม่ร่วมกัน;
+ไม่ใช้baselineinvalidเป็นpassedหรือโอนreserveเดิม. รอบออมไม่มีKKU/queue mutation, GateAfalse/primary0.
+
+## ส่งให้บีม
+
+ออมรัน Csv Messages condition ของ Champ d98fccee ครบ4fullD4Jแล้วครับ
+(30/30/21/18tests; AIทั้งสองพบCRfault, algorithmsไม่พบ; fixedสองรอบ/coverageผ่าน).
+ขอรับตรวจ docs/api854/AOM_READY_RESULTS_UPDATE_TH.md และ output/api854-20261004/
+aom-ready-messages-d4j-v2 + aom-ready-results-report-v2 ตามexactrecord/suite/runtime/hosthashes.
+Wrapper strictของแชมป์จะติดnativeupstreambuggySHAไม่ตรงreconstructedDefects4JCsv-1b;
+ออมเก็บv1failureและdiffแล้ว ใช้v2conditionที่ประกาศactualbenchmarkSHA4ddf7df1…ล่วงหน้า,
+ไม่มีการแก้Java/archives/helper/productionให้ผ่าน. อย่าใช้wrapperเดิมแล้วลบguardเงียบๆ.
+Algorithmsactualcounters30/0/30ครบ; AIมีJUnitstart21/18 แต่skip/targetcountersยังnull.
+Csvทำแล้วให้reviewreceiptก่อนrerunซ้ำ; บีมเดินreadybugsownerบีมCPU1ร่วมAPIcoordinatorแชมป์.
+Cli falsepositiveกักไว้และออมทำprospectiveoracleต่อ; candidateใหม่พักและคงหลักฐานเดิมครับ.
+
+---
+
+# Historical message — baseline Csv ก่อนรับ condition ใหม่
+
+## ส่งให้แชมป์
+
+ออมปรับตาม Champ a4a38a5e แล้วครับ ใช้ immutable Aom63ad1956 v12 เป็นฐานเก็บผล
+และพักการรวม candidate ใหม่; Codec v13 ff319ecd เก็บครบเป็นประวัติ.
+รับ Csv-1 archives เดิมและรัน Defects4J3.0.1/Java11/TZ America/Los_Angeles บน aom-pc1 CPU1แล้ว:
+CMA-ES/FSCS-ARTอย่างละ30testsผ่าน fixedสองรอบ/buggy/coverage;
+ทุกstage executed30/skipped0/target_checks30, coverage31/37linesและ13/26branches, fault=false.
+Claudeคง truncated/no executable suite; Gemini compileผ่านและ fixedfail1ข้อเดิมทั้งสองรอบ
+(expected13/actual99), rejectทั้งsuite ไม่แก้Javaหรือรันbuggy/coverage.
+เวลารวม preparation/evaluation77.10s เฉพาะCsv ไม่ใช่ประมาณการ854.
+อ่าน docs/api854/AOM_READY_RESULTS_FIRST_TH.md; receipt/table/host/pinsอยู่ใน
+output/api854-20261004/aom-ready-csv-{intake,d4j,report}-v1.
+Evaluation conditionใหม่ api854-20261004-csv-v12-d4j-development-v1 แยกจากnative Java17/UTC;
+fixedsource/prompt/targets/recipesตรงv12, archive hashesคงเดิม.
+ขอส่ง bugถัดไปที่พร้อมของcohort20 พร้อม commit/checksums/generationcondition/โมเดล-settings/
+account allocationและsuite/source pins ให้ออมรับ ownerออม+แชมป์ไปรันCPU1ต่อครับ.
+ผลปัจจุบัน4outcomes=2valid+2invalid ไม่ใช่4passed; GateA/primaryยังไม่ผ่านและreserveยังnull.
+รอบออมไม่มี KKU request หรือ queue mutationเพิ่มครับ.
+
+## ส่งให้บีม
+
+ออมรับ Csv-1 จากChamp a4a38a5e และทำ full Defects4J developmentบน aom-pc1 CPU1แล้วครับ.
+อ่าน docs/api854/AOM_READY_RESULTS_FIRST_TH.md และ packets aom-ready-csv-{intake,d4j,report}-v1.
+CMA/FSCS30testsผ่านทุกstageพร้อมactual counters30/0/30และcoverage31/37lines;
+Claudetruncated/Geminifixedfailทั้งสองรอบคงผลinvalid ไม่มีการแก้testหรือส่งfeedbackAI.
+ขอรับตรวจ exactsuite/host/source/runtime receiptรุ่นนี้ก่อน ไม่ต้องรันCsvซ้ำเพื่อเพิ่มยอด.
+เก็บ candidate/Collections packetเดิมไว้และพักcompositionตามแผนผลจริงก่อน.
+บีมทำ bugsที่พร้อมของownerบีมในcohort20บนbeam-pc1 CPU1 แล้วส่ง outcomesครบสี่วิธีพร้อม
+fixedสองรอบ/buggy/coverage/counters/commands/hashesกลับมา โดยประสานAIกับแชมป์.
+ถ้า input/runtime/conditionเปลี่ยนให้แจ้งก่อนและส่งpacketใหม่; คงfailedและpendingตามจริงครับ.
+
+---
+
+# Historical message — Codec5 shared v13 (พักคำขอตรวจรุ่นนี้ตามแผนใหม่)
 
 ## ส่งให้บีม
 

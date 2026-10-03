@@ -1,6 +1,8 @@
-Latest Aom: [Codec5 shared development v13](AOM_CODEC_V13_HANDOFF_TH.md). 20 bugs / 408 selected / 283 exclusions /691. Use preparation/protocol/readiness v2 and integration/preserved v3. Local offline checks complete; final peer/host/provider/reserve/team approval pending, Gate A/live closed.
+Current Aom task: [ready results first — four valid Csv Defects4J suites in the new Messages condition](AOM_READY_RESULTS_UPDATE_TH.md), receiving Champ d98fccee. Algorithms30/30, Claude21, Gemini18; both AI suites reproduce the CR fault on actual Csv-1b. Baseline two invalid AI outcomes retained. Native and benchmark buggy bytes differ; strict failed attempt/source diff retained, v2 explicitly binds benchmark source. Cli native received; option-order false positive quarantined and prospective oracle work next. New candidates paused; v13 retained as history. No primary/Gate A approval. [Next-agent handoff](AOM_NEXT_AGENT_HANDOFF_TH.md) and [team messages](AOM_TO_TEAM_MESSAGE_TH.md) describe the next work.
 
-Next Aom agent: [continuation handoff — v12 baseline and jointly accepted Codec packet](AOM_NEXT_AGENT_HANDOFF_TH.md). Codec shared integration has not started; live/Gate A remain closed.
+Historical Aom: [Codec5 shared development v13](AOM_CODEC_V13_HANDOFF_TH.md). 20 bugs / 408 selected / 283 exclusions /691. Use preparation/protocol/readiness v2 and integration/preserved v3 for that historical condition. Local offline checks complete; final peer/host/provider/reserve/team approval pending, Gate A/live closed.
+
+Historical pre-Codec handoff is retained inside [continuation handoff](AOM_NEXT_AGENT_HANDOFF_TH.md). Codec v13 integration was completed; it is now parked while collecting v12 ready-subset outcomes. Follow the current handoff at the top.
 
 Latest Aom composition: [shared Graphics2D v12 development inputs](AOM_GRAPHICS_V12_HANDOFF_TH.md). 20 bugs; 403 selected / 288 exclusions of 691. Current proof v5; v11 preserved. Historical v10 scoped acceptance closed; final semantic/host/provider/team gate decision pending, pilot closed.
 

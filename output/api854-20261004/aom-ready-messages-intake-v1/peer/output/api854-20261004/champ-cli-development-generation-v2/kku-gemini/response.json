@@ -1,0 +1,60 @@
+{
+  "metadata": {
+    "response_id": "genai-01a1034a-63e5-750e-beef-ec6941a15807",
+    "requested_model_id": "gemini-3.5-flash-lite",
+    "requested_model_name": "gemini-3.5-flash-lite",
+    "actual_model": "gemini-3.5-flash-lite",
+    "actual_provider": "Gemini",
+    "finish_reason": "stop",
+    "usage": {
+      "prompt_tokens": 44800,
+      "completion_tokens": 1520,
+      "total_tokens": 46320
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 46325,
+      "daily_remaining_tokens": 303675
+    }
+  },
+  "evidence": {
+    "http_status": 200,
+    "started_at_utc": "2026-10-03T19:42:43.110025+00:00",
+    "ended_at_utc": "2026-10-03T19:42:49.207335+00:00",
+    "raw_body_sha256": "a79967393c2d034b347bc718d3552487e5ef79572ddf7255512505a54877b7df",
+    "body": {
+      "id": "genai-01a1034a-63e5-750e-beef-ec6941a15807",
+      "object": "chat.completion",
+      "created": 1791056569,
+      "model": "gemini-3.5-flash-lite",
+      "provider": "Gemini",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "```java\npackage org.apache.commons.cli;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport java.util.Iterator;\nimport java.util.List;\n\npublic class CommandLineTest {\n\n    @Test\n    public void testAddAndGetArg() {\n        CommandLine cmd = new CommandLine();\n        cmd.addArg(\"arg1\");\n        cmd.addArg(\"arg2\");\n\n        String[] args = cmd.getArgs();\n        assertNotNull(args);\n        assertEquals(2, args.length);\n        assertEquals(\"arg1\", args[0]);\n        assertEquals(\"arg2\", args[1]);\n\n        List<String> argList = cmd.getArgList();\n        assertNotNull(argList);\n        assertEquals(2, argList.size());\n        assertEquals(\"arg1\", argList.get(0));\n        assertEquals(\"arg2\", argList.get(1));\n    }\n\n    @Test\n    public void testAddAndHasOptionString() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"a\", \"alpha\", true, \"alpha option\");\n        cmd.addOption(option);\n\n        assertTrue(cmd.hasOption(\"a\"));\n        assertTrue(cmd.hasOption(\"alpha\"));\n        assertTrue(cmd.hasOption(\"-a\"));\n        assertTrue(cmd.hasOption(\"--alpha\"));\n        assertFalse(cmd.hasOption(\"b\"));\n        assertFalse(cmd.hasOption(\"beta\"));\n    }\n\n    @Test\n    public void testAddAndHasOptionChar() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"b\", \"beta\", true, \"beta option\");\n        cmd.addOption(option);\n\n        assertTrue(cmd.hasOption('b'));\n        assertFalse(cmd.hasOption('a'));\n    }\n\n    @Test\n    public void testGetOptionValueString() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"f\", \"file\", true, \"file option\");\n        option.addValue(\"output.txt\");\n        cmd.addOption(option);\n\n        assertEquals(\"output.txt\", cmd.getOptionValue(\"f\"));\n        assertEquals(\"output.txt\", cmd.getOptionValue(\"file\"));\n        assertNull(cmd.getOptionValue(\"missing\"));\n    }\n\n    @Test\n    public void testGetOptionValueChar() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"v\", \"value\", true, \"value option\");\n        option.addValue(\"123\");\n        cmd.addOption(option);\n\n        assertEquals(\"123\", cmd.getOptionValue('v'));\n        assertNull(cmd.getOptionValue('x'));\n    }\n\n    @Test\n    public void testGetOptionValueWithDefaultString() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"p\", \"port\", true, \"port option\");\n        option.addValue(\"8080\");\n        cmd.addOption(option);\n\n        assertEquals(\"8080\", cmd.getOptionValue(\"p\", \"3000\"));\n        assertEquals(\"3000\", cmd.getOptionValue(\"missing\", \"3000\"));\n    }\n\n    @Test\n    public void testGetOptionValueWithDefaultChar() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"t\", \"timeout\", true, \"timeout option\");\n        option.addValue(\"500\");\n        cmd.addOption(option);\n\n        assertEquals(\"500\", cmd.getOptionValue('t', \"100\"));\n        assertEquals(\"100\", cmd.getOptionValue('x', \"100\"));\n    }\n\n    @Test\n    public void testGetOptionValuesString() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"m\", \"multi\", true, \"multi option\");\n        option.addValue(\"val1\");\n        option.addValue(\"val2\");\n        cmd.addOption(option);\n\n        String[] values = cmd.getOptionValues(\"m\");\n        assertNotNull(values);\n        assertEquals(2, values.length);\n        assertEquals(\"val1\", values[0]);\n        assertEquals(\"val2\", values[1]);\n\n        assertNull(cmd.getOptionValues(\"missing\"));\n    }\n\n    @Test\n    public void testGetOptionValuesChar() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"c\", \"color\", true, \"color option\");\n        option.addValue(\"red\");\n        option.addValue(\"blue\");\n        cmd.addOption(option);\n\n        String[] values = cmd.getOptionValues('c');\n        assertNotNull(values);\n        assertEquals(2, values.length);\n        assertEquals(\"red\", values[0]);\n        assertEquals(\"blue\", values[1]);\n\n        assertNull(cmd.getOptionValues('z'));\n    }\n\n    @Test\n    public void testGetOptionObjectString() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"d\", \"digit\", true, \"digit option\");\n        option.setType(Integer.class);\n        option.addValue(\"42\");\n        cmd.addOption(option);\n\n        assertEquals(Integer.valueOf(42), cmd.getOptionObject(\"d\"));\n        assertEquals(Integer.valueOf(42), cmd.getOptionObject(\"digit\"));\n        assertNull(cmd.getOptionObject(\"missing\"));\n    }\n\n    @Test\n    public void testGetOptionObjectChar() {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"n\", \"number\", true, \"number option\");\n        option.setType(Integer.class);\n        option.addValue(\"100\");\n        cmd.addOption(option);\n\n        assertEquals(Integer.valueOf(100), cmd.getOptionObject('n'));\n        assertNull(cmd.getOptionObject('x'));\n    }\n\n    @Test\n    public void testGetOptionsAndIterator() {\n        CommandLine cmd = new CommandLine();\n        Option opt1 = new Option(\"a\", \"alpha\", false, \"alpha\");\n        Option opt2 = new Option(\"b\", \"beta\", false, \"beta\");\n        cmd.addOption(opt1);\n        cmd.addOption(opt2);\n\n        Option[] options = cmd.getOptions();\n        assertNotNull(options);\n        assertEquals(2, options.length);\n\n        Iterator<?> it = cmd.iterator();\n        assertNotNull(it);\n        int count = 0;\n        while (it.hasNext()) {\n            assertNotNull(it.next());\n            count++;\n        }\n        assertEquals(2, count);\n    }\n}\n```",
+            "reasoning": ""
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 44800,
+        "completion_tokens": 1520,
+        "total_tokens": 46320
+      },
+      "model_quota": {
+        "daily_quota_tokens": 350000,
+        "daily_usage_tokens": 46325,
+        "daily_remaining_tokens": 303675
+      }
+    },
+    "headers": {
+      "x-request-id": "yvr3rc19hrrndlbqlqaytwi8",
+      "date": "Sat, 03 Oct 2026 19:42:49 GMT",
+      "content-type": "application/json; charset=utf-8"
+    }
+  },
+  "outcome": "response_received"
+}

@@ -1,4 +1,27 @@
-# Current checkpoint: Codec5 shared v13 completed locally
+# Current task: ready results first, frozen v12 evaluation baseline
+
+อ่าน [AOM_READY_RESULTS_UPDATE_TH.md](AOM_READY_RESULTS_UPDATE_TH.md) เป็นสถานะล่าสุด แล้ว
+[AOM_READY_RESULTS_FIRST_TH.md](AOM_READY_RESULTS_FIRST_TH.md) สำหรับ baseline และ
+[ข้อความล่าสุดส่งทีม](AOM_TO_TEAM_MESSAGE_TH.md) ก่อน.
+ผู้ใช้เปลี่ยนแผนตาม Champ a4a38a5e: เก็บ outcomes จริงครบ4วิธีจาก ready bugs ก่อน,
+พัก candidate composition. ใช้ immutable Aom63ad1956 v12; root/v13 historyคงเดิม.
+Csv-1 conditionใหม่จากChamp d98fccee replayครบ4valid Defects4Jแล้ว: algorithms30/30,
+Claude21/Gemini18และAIทั้งสองพบCRfaultในactualCsv-1b. BaselineClaude truncated/Gemini fixedfailคงเดิม.
+ใช้ aom-ready-messages-intake-v1/d4j-v2 และ aom-ready-results-report-v2 ใต้ output/api854-20261004.
+Strict d4j-v1 failedก่อนtestsเพราะupstreambuggyไม่ตรงbenchmark; เก็บsourcebytes/diffครบ.
+Primary=false, GateAfalse, reserve null. Cli nativeรับ4outcomesแล้วแต่D4Jยังpending;
+FSCS option-orderfalsepositiveกักไว้. งานออมต่อคือprospective unordered-options oracle/regressCli16
+แล้วconditionใหม่; อย่าแก้v12/v13/helper/rawtestsที่sealแล้ว.
+งานต่อคือรับ bug ถัดไปที่พร้อม ตรวจ generation/source/condition/hashes แล้ว evaluate บน CPU1,
+และเตรียม report/slides/demo/ZIPใน4ชั่วโมงสุดท้าย. Worklist80แถวมี72 pending_not_received_by_aom,
+Cli4 native received/D4J pending-oracle และ Csv4 complete ในconditionใหม่;
+ไม่ตีความว่าเพื่อนยังไม่ทำ. ไม่สร้าง v14 หรือกลับไป compose Codec/Collections ระหว่างแผนนี้.
+ห้ามrerunproducerใส่outputเดิม; คงinvalid/rawsuiteทั้งหมดและแยกnativeกับD4J tables.
+ข้อความและคำสั่งเก่าด้านล่างเป็น historical checkpoints เท่านั้น.
+
+---
+
+# Historical checkpoint: Codec5 shared v13 completed locally
 
 อ่าน [AOM_CODEC_V13_HANDOFF_TH.md](AOM_CODEC_V13_HANDOFF_TH.md) และ
 [ข้อความส่งทีม](AOM_TO_TEAM_MESSAGE_TH.md) ก่อน. Branch aom.

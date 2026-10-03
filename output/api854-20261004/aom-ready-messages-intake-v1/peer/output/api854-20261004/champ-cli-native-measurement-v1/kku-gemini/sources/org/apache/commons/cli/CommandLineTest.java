@@ -1,0 +1,179 @@
+package org.apache.commons.cli;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import java.util.Iterator;
+import java.util.List;
+
+public class CommandLineTest {
+
+    @Test
+    public void testAddAndGetArg() {
+        CommandLine cmd = new CommandLine();
+        cmd.addArg("arg1");
+        cmd.addArg("arg2");
+
+        String[] args = cmd.getArgs();
+        assertNotNull(args);
+        assertEquals(2, args.length);
+        assertEquals("arg1", args[0]);
+        assertEquals("arg2", args[1]);
+
+        List<String> argList = cmd.getArgList();
+        assertNotNull(argList);
+        assertEquals(2, argList.size());
+        assertEquals("arg1", argList.get(0));
+        assertEquals("arg2", argList.get(1));
+    }
+
+    @Test
+    public void testAddAndHasOptionString() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("a", "alpha", true, "alpha option");
+        cmd.addOption(option);
+
+        assertTrue(cmd.hasOption("a"));
+        assertTrue(cmd.hasOption("alpha"));
+        assertTrue(cmd.hasOption("-a"));
+        assertTrue(cmd.hasOption("--alpha"));
+        assertFalse(cmd.hasOption("b"));
+        assertFalse(cmd.hasOption("beta"));
+    }
+
+    @Test
+    public void testAddAndHasOptionChar() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("b", "beta", true, "beta option");
+        cmd.addOption(option);
+
+        assertTrue(cmd.hasOption('b'));
+        assertFalse(cmd.hasOption('a'));
+    }
+
+    @Test
+    public void testGetOptionValueString() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("f", "file", true, "file option");
+        option.addValue("output.txt");
+        cmd.addOption(option);
+
+        assertEquals("output.txt", cmd.getOptionValue("f"));
+        assertEquals("output.txt", cmd.getOptionValue("file"));
+        assertNull(cmd.getOptionValue("missing"));
+    }
+
+    @Test
+    public void testGetOptionValueChar() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("v", "value", true, "value option");
+        option.addValue("123");
+        cmd.addOption(option);
+
+        assertEquals("123", cmd.getOptionValue('v'));
+        assertNull(cmd.getOptionValue('x'));
+    }
+
+    @Test
+    public void testGetOptionValueWithDefaultString() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("p", "port", true, "port option");
+        option.addValue("8080");
+        cmd.addOption(option);
+
+        assertEquals("8080", cmd.getOptionValue("p", "3000"));
+        assertEquals("3000", cmd.getOptionValue("missing", "3000"));
+    }
+
+    @Test
+    public void testGetOptionValueWithDefaultChar() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("t", "timeout", true, "timeout option");
+        option.addValue("500");
+        cmd.addOption(option);
+
+        assertEquals("500", cmd.getOptionValue('t', "100"));
+        assertEquals("100", cmd.getOptionValue('x', "100"));
+    }
+
+    @Test
+    public void testGetOptionValuesString() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("m", "multi", true, "multi option");
+        option.addValue("val1");
+        option.addValue("val2");
+        cmd.addOption(option);
+
+        String[] values = cmd.getOptionValues("m");
+        assertNotNull(values);
+        assertEquals(2, values.length);
+        assertEquals("val1", values[0]);
+        assertEquals("val2", values[1]);
+
+        assertNull(cmd.getOptionValues("missing"));
+    }
+
+    @Test
+    public void testGetOptionValuesChar() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("c", "color", true, "color option");
+        option.addValue("red");
+        option.addValue("blue");
+        cmd.addOption(option);
+
+        String[] values = cmd.getOptionValues('c');
+        assertNotNull(values);
+        assertEquals(2, values.length);
+        assertEquals("red", values[0]);
+        assertEquals("blue", values[1]);
+
+        assertNull(cmd.getOptionValues('z'));
+    }
+
+    @Test
+    public void testGetOptionObjectString() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("d", "digit", true, "digit option");
+        option.setType(Integer.class);
+        option.addValue("42");
+        cmd.addOption(option);
+
+        assertEquals(Integer.valueOf(42), cmd.getOptionObject("d"));
+        assertEquals(Integer.valueOf(42), cmd.getOptionObject("digit"));
+        assertNull(cmd.getOptionObject("missing"));
+    }
+
+    @Test
+    public void testGetOptionObjectChar() {
+        CommandLine cmd = new CommandLine();
+        Option option = new Option("n", "number", true, "number option");
+        option.setType(Integer.class);
+        option.addValue("100");
+        cmd.addOption(option);
+
+        assertEquals(Integer.valueOf(100), cmd.getOptionObject('n'));
+        assertNull(cmd.getOptionObject('x'));
+    }
+
+    @Test
+    public void testGetOptionsAndIterator() {
+        CommandLine cmd = new CommandLine();
+        Option opt1 = new Option("a", "alpha", false, "alpha");
+        Option opt2 = new Option("b", "beta", false, "beta");
+        cmd.addOption(opt1);
+        cmd.addOption(opt2);
+
+        Option[] options = cmd.getOptions();
+        assertNotNull(options);
+        assertEquals(2, options.length);
+
+        Iterator<?> it = cmd.iterator();
+        assertNotNull(it);
+        int count = 0;
+        while (it.hasNext()) {
+            assertNotNull(it.next());
+            count++;
+        }
+        assertEquals(2, count);
+    }
+}
