@@ -1,3 +1,5 @@
+> บีมตรวจ Aom v10 a4880fb2: [BEAM_V10_CONSUMER_HOST_ACCEPTANCE_TH.md](docs/api854/BEAM_V10_CONSUMER_HOST_ACCEPTANCE_TH.md) — consumers 80 combinations / tests 7 ผ่าน / fixed components 64 cases / CPU 1 slot; scoped acceptance เท่านั้น Gate A ยังปิด
+
 > บีมรับ Champ 7de14726: [BEAM_CHAMP7DE_SHARED_INVOCATION_REVIEW_TH.md](docs/api854/BEAM_CHAMP7DE_SHARED_INVOCATION_REVIEW_TH.md) — shared-v9 Chronology ยังมี 12 fixture failures/0 invocations; ส่ง integration contract ให้ออมแล้ว รอ final condition เพื่อตรวจ consumers/host
 
 > บีมยืนยัน Buffer/Csv + Lang กับแชมป์แล้ว: [BEAM_AOM_BUFFER_CHAMP_JOINT_RETURN_TH.md](docs/api854/BEAM_AOM_BUFFER_CHAMP_JOINT_RETURN_TH.md) — scoped component agreement พร้อมให้ออม compose รุ่นใหม่; Gate A ยังปิด
