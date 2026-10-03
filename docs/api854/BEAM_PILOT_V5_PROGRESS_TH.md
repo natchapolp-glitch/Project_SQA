@@ -1,4 +1,6 @@
-Checkpoint ใหม่: [buffer/slice batch](BEAM_BUFFER_BATCH_V1_TH.md) เพิ่ม prospective recipes 8 รายการ พร้อม bounded fixed review ครบทั้ง 8 และ 4 development suites; structural selection เป็น 385/691 เหลือ exclusions 306 รายการ ข้อมูล v5 ด้านล่างคงไว้เป็นประวัติของ condition เดิม ยังไม่รับรองครบ 691 หรือ Gate A
+Checkpoint ใหม่: [Lang helper batch](BEAM_LANG_BATCH_V1_TH.md) รวม Math ที่ทีมรับ 2 signatures กับ buffer เดิม และเพิ่ม Lang อีก 2 helpers; prospective combined selection 389/691 เหลือ exclusions 302 รายการ มี 2 sampled suites และ reference 12 cases ผ่าน local development checks ยังไม่รับรอง semantic coverage ครบ 691 หรือ Gate A
+
+Historical buffer checkpoint: [buffer/slice batch](BEAM_BUFFER_BATCH_V1_TH.md) คง condition 385/691 และหลักฐานเดิมครบ ข้อมูล v5 ด้านล่างคงไว้เป็นประวัติของ condition เดิม
 
 # บีม: หลักฐานพัฒนา 15 bugs และ requirement ครบ 691 declarations
 

@@ -1,0 +1,73 @@
+{
+  "reviewer": "Codex local development review",
+  "suite_sha256": "0c5cd4829a0b67274379c34c9b7e5e629d1667f830b6c6aff8f0fd6a19f070b3",
+  "fixed_source_sha256": {
+    "src/main/java/org/apache/commons/lang3/math/NumberUtils.java": "0374c7b486626927217ad42677e1a57fc60fc551218660316a0e7f4f8ea79477"
+  },
+  "verdict": "valid",
+  "target_execution_evidence": [
+    {
+      "path": "measurement/coverage/coverage.xml",
+      "sha256": "327b556ff6eb0ba2bee5317a9f08f685efc8a357a1a7c15e15119457d7c61989"
+    },
+    {
+      "path": "semantic-evidence/fixture-oracle-review.json",
+      "sha256": "a3590e4a92ce785acf22757d07bee38ed1fffe70fb8538dc0687620c2c5a0a81"
+    }
+  ],
+  "fixture_oracle_review": {
+    "scope": "local development only",
+    "reviewed_case_count": 30,
+    "recipe_proof": "Existing numeric methods keep their bounded v5 inputs. isAllZeros explicitly covers null, empty, zero-only and nonzero text; validateArray receives null, empty int[], and nonempty int[] only. Successful validation compares actual array contents; documented null/empty rejection compares exception class, message and input state. No non-array object is selected as a legal fixture.",
+    "team_or_primary_approval": false,
+    "helper_sha256": "c206379895c53991d784f3225bd550f2d2432e0250a8352b57eeaa53488eac47"
+  },
+  "weak_oracles": {
+    "invalid_case_ids": [],
+    "expected_boundary_exception_case_ids": [
+      11,
+      22,
+      28,
+      29
+    ],
+    "partial_projection_limitations_disclosed": true
+  },
+  "stage_counts": {
+    "fixed-1": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-1/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "fixed-2": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/fixed-2/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "buggy": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/buggy/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    },
+    "coverage": {
+      "executed": 30,
+      "skipped": 0,
+      "target_checks": 30,
+      "evidence": {
+        "path": "measurement/coverage/sqa-stage-counts.json",
+        "sha256": "bef809577b519b40131d820695eda0b629e71caf467215765a10475cacd3acc2"
+      }
+    }
+  }
+}

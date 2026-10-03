@@ -1,4 +1,6 @@
-ล่าสุดฝั่งบีม: [buffer/slice 8 declarations](BEAM_BUFFER_BATCH_V1_TH.md) รวม Champ `2ac55e31` กับ Aom `c25faa5e` แล้ว มี 4 local-valid development suites และ fixed reference 32 ตัวอย่างผ่านครบ; prospective selection 385/691 เหลือ exclusions 306 รายการ ยังไม่ใช่ complete semantic/team approval ยังไม่เปิด Gate A/pilot หรือรับ keys เพิ่ม
+ล่าสุดฝั่งบีม: [Lang helper development](BEAM_LANG_BATCH_V1_TH.md) รวม Aom `e95e979b` แล้ว เพิ่ม Lang 2 helpers พร้อม 2 local-valid sampled suites / 60 methods และ reference 12 cases ที่ตรวจครบทุก stage; prospective combined selection 389/691 เหลือ exclusions 302 รายการ แยกจาก historical shared v8 ที่ 379/691 ยังไม่ใช่ complete semantic/team approval หรือ shared preparation รุ่นใหม่ ยังไม่เปิด Gate A/pilot หรือรับ keys เพิ่ม
+
+ชุด buffer เดิม: [buffer/slice 8 declarations](BEAM_BUFFER_BATCH_V1_TH.md) เก็บ condition 385/691 และหลักฐานเดิมครบ ไม่ relabel เป็นผลของ Lang condition
 
 # SQA API854 — เริ่มจากแผนที่ยืนยันแล้ว
 

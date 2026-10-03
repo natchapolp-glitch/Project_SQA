@@ -1,4 +1,6 @@
-Current Beam checkpoint: [buffer/slice batch of eight declarations](docs/api854/BEAM_BUFFER_BATCH_V1_TH.md). Integrated Champ `2ac55e31` and Aom `c25faa5e`; four development suites locally reviewed, 32 fixed reference examples passed. Prospective structural capability is 385/691 with 306 exclusions; this is not complete semantic/team acceptance. Offline checks: 308 passed / 1 skipped plus nine Java probe tests. Primary and Gate A remain closed; no KKU/queue requests.
+Current Beam checkpoint: [Lang helper development](docs/api854/BEAM_LANG_BATCH_V1_TH.md). Integrated Aom `e95e979b`, preserving the two accepted Math field signatures, then added two Lang helpers. Two sampled suites / 60 methods locally reviewed; twelve reference cases passed fixed twice, buggy and coverage. Prospective combined fixture selection is 389/691 with 302 exclusions, separate from historical shared v8 and complete semantic/team acceptance. Offline checks: 318 passed / 2 skipped plus nine Java probe tests. Primary/Gate A remain closed; no KKU requests or live queue mutations.
+
+Historical Beam checkpoint: [buffer/slice batch of eight declarations](docs/api854/BEAM_BUFFER_BATCH_V1_TH.md), with its original 385/691 condition, source pins and proof packets preserved.
 
 Champ integration reference: [twenty-bug v6 runtime/recipe guards](docs/api854/CHAMP_AOMB11_V6_INTEGRATION_TH.md).
 
