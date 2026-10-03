@@ -1,3 +1,5 @@
+> บีมรับ Graphics2D candidate: [BEAM_GRAPHICS2D_CANDIDATE_REVIEW_TH.md](docs/api854/BEAM_GRAPHICS2D_CANDIDATE_REVIEW_TH.md) — 7 signatures / 24 cases; Java11 fixed/buggyซ้ำผ่านและ pixels/stateตรง Champ; shared integrationยัง pending ไม่เปลี่ยน v10/Gate A
+
 > บีมตรวจ Aom v10 a4880fb2: [BEAM_V10_CONSUMER_HOST_ACCEPTANCE_TH.md](docs/api854/BEAM_V10_CONSUMER_HOST_ACCEPTANCE_TH.md) — consumers 80 combinations / tests 7 ผ่าน / fixed components 64 cases / CPU 1 slot; scoped acceptance เท่านั้น Gate A ยังปิด
 
 > บีมรับ Champ 7de14726: [BEAM_CHAMP7DE_SHARED_INVOCATION_REVIEW_TH.md](docs/api854/BEAM_CHAMP7DE_SHARED_INVOCATION_REVIEW_TH.md) — shared-v9 Chronology ยังมี 12 fixture failures/0 invocations; ส่ง integration contract ให้ออมแล้ว รอ final condition เพื่อตรวจ consumers/host
