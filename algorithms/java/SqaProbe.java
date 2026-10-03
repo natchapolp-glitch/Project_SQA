@@ -40,6 +40,8 @@ public final class SqaProbe {
     public static final String EXPLICIT_FIXTURES = "beam-explicit-fixtures-v3-proposal";
     public static final String SCALAR_FIXTURES = "beam-explicit-fixtures-v4-proposal";
     public static final String PILOT_FIXTURES = "beam-explicit-fixtures-v5-proposal";
+    public static final String REVIEWED_FIXTURES = "beam-explicit-fixtures-v6-development";
+    public static final String COMPOSED_FIXTURES = "beam-explicit-fixtures-v7-development";
     private static final ThreadLocal<FixtureSession> FIXTURES = new ThreadLocal<FixtureSession>();
     private static final ThreadLocal<Boolean> INVOKED = new ThreadLocal<Boolean>();
 
@@ -74,6 +76,8 @@ public final class SqaProbe {
         final String targetClass;
         final String method;
         final boolean pilot;
+        final boolean reviewed;
+        final boolean composed;
         boolean constructing;
         Object compiler, registry, scope, cfg, reverse, flow, closureNode, receiver;
         org.w3c.dom.Element domRoot;
@@ -175,7 +179,9 @@ public final class SqaProbe {
         FixtureSession(String targetClass, String method, String policy) {
             this.targetClass = targetClass;
             this.method = method;
-            this.pilot = PILOT_FIXTURES.equals(policy);
+            this.composed = COMPOSED_FIXTURES.equals(policy);
+            this.reviewed = REVIEWED_FIXTURES.equals(policy) || composed;
+            this.pilot = PILOT_FIXTURES.equals(policy) || reviewed;
         }
 
         Object option(String name, String text) throws ReflectiveOperationException {
@@ -354,6 +360,9 @@ public final class SqaProbe {
             try {
                 if (depth > 2) throw new FixtureFailure("Fixture recursion limit: " + type.getName(), null);
                 String name = type.getName();
+                if (reviewed && !constructing && targetClass.equals("org.apache.commons.codec.language.Metaphone")
+                        && method.equals("setMaxCodeLen") && type == int.class)
+                    return a < -8 ? 0 : a < 0 ? 1 : a < 8 ? 4 : 8;
                 if (pilot) {
                     if (targetClass.equals("com.google.gson.TypeInfoFactory")) {
                         java.lang.reflect.Field value = GenericFixture.class.getField(a < 0 ? "value" : "items");
@@ -572,6 +581,11 @@ public final class SqaProbe {
             if (depth > 8) throw new FixtureFailure("Oracle projection depth exceeded", null);
             if (result == null) return "null";
             String name = result.getClass().getName();
+            if (composed && (name.equals("org.apache.commons.math3.fraction.BigFractionField")
+                    || name.equals("org.apache.commons.math3.fraction.FractionField")))
+                return "fraction-field:runtime=" + projection(call(result, "getRuntimeClass", new Class<?>[]{}), depth + 1)
+                    + ":zero=" + projection(call(result, "getZero", new Class<?>[]{}), depth + 1)
+                    + ":one=" + projection(call(result, "getOne", new Class<?>[]{}), depth + 1);
             if (pilot && result instanceof java.lang.reflect.Type) return "type:" + nestedTestName(((java.lang.reflect.Type)result).getTypeName());
             if (pilot && result instanceof Method) return "method:" + nestedTestName(((Method)result).toGenericString());
             if (pilot && name.startsWith("com.google.gson.TypeInfo"))
@@ -629,6 +643,10 @@ public final class SqaProbe {
                     return "duration:" + call(result, "getName", new Class<?>[]{}) + ':' + call(result, "isSupported", new Class<?>[]{});
             }
             if (result instanceof org.w3c.dom.Node) return nodeSnapshot((org.w3c.dom.Node)result, 0);
+            if (reviewed && name.equals("org.jdom.Attribute"))
+                return "jdom-attribute:name=" + projection(call(result, "getName", new Class<?>[]{}), depth + 1)
+                    + ":namespace=" + projection(call(result, "getNamespaceURI", new Class<?>[]{}), depth + 1)
+                    + ":value=" + projection(call(result, "getValue", new Class<?>[]{}), depth + 1);
             if (name.equals("org.jdom.Element") || name.equals("org.jdom.ProcessingInstruction")
                     || name.equals("org.jdom.Text") || name.equals("org.jdom.CDATA")) {
                 Object writer = construct("org.jdom.output.XMLOutputter", new Class<?>[]{});
@@ -679,6 +697,13 @@ public final class SqaProbe {
         }
 
         String state() throws ReflectiveOperationException {
+            if (reviewed && targetClass.equals("org.apache.commons.codec.language.Metaphone")
+                    && method.equals("setMaxCodeLen")) {
+                int limit = ((Number)call(receiver, "getMaxCodeLen", new Class<?>[]{})).intValue();
+                String encoded = (String)call(receiver, "metaphone", new Class<?>[]{String.class}, "architecture");
+                return "metaphone:maxCodeLen=" + limit + ":encoded=" + encoded
+                    + ":maxCodeLenAfterEncoding=" + call(receiver, "getMaxCodeLen", new Class<?>[]{});
+            }
             if (pilot && targetClass.equals("com.google.javascript.jscomp.RemoveUnusedVars"))
                 return "cleanup:" + call(cleanupScript, "toStringTree", new Class<?>[]{});
             if (pilot && targetClass.equals("org.jfree.chart.renderer.category.AreaRenderer"))
@@ -994,7 +1019,9 @@ public final class SqaProbe {
 
     public static String observeWithPolicy(String className, String constructorTypes, String methodName,
             String methodTypes, double[] vector, String policy) {
-        if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy) && !PILOT_FIXTURES.equals(policy))
+        if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy)
+                && !PILOT_FIXTURES.equals(policy) && !REVIEWED_FIXTURES.equals(policy)
+                && !COMPOSED_FIXTURES.equals(policy))
             throw new IllegalArgumentException("Unknown explicit fixture policy");
         FIXTURES.set(new FixtureSession(className, methodName, policy));
         try { return observe(className, constructorTypes, methodName, methodTypes, vector); }

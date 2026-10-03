@@ -8,7 +8,7 @@ def recipe_document(source_hashes, policy=POLICY):
     expected = {name: source_hashes[name] for name in RECIPE_SOURCES}
     if any(sha256(ROOT / name) != value for name, value in expected.items()):
         raise ValueError('Explicit recipe source differs from protocol')
-    if policy not in {POLICY, POLICY_V4, POLICY_V5}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7}:
         raise ValueError('Unknown explicit fixture policy')
     return {'schema_version': 1, 'fixture_policy_id': policy, 'source_sha256': expected,
         'sources': {name: (ROOT / name).read_bytes().decode('utf-8') for name in RECIPE_SOURCES},
@@ -17,7 +17,7 @@ def recipe_document(source_hashes, policy=POLICY):
 
 def validate_recipe(recipe, source_hashes=None, policy=POLICY):
     from .preparation import digest
-    if (policy not in {POLICY, POLICY_V4, POLICY_V5} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
+    if (policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
             or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(RECIPE_SOURCES)
             or not isinstance(recipe.get('source_sha256'), dict) or set(recipe['source_sha256']) != set(RECIPE_SOURCES)
             or any(not isinstance(recipe['sources'][name], str)
@@ -28,6 +28,8 @@ def validate_recipe(recipe, source_hashes=None, policy=POLICY):
     return True
 POLICY_V4 = 'beam-explicit-fixtures-v4-proposal'
 POLICY_V5 = 'beam-explicit-fixtures-v5-proposal'
+POLICY_V6 = 'beam-explicit-fixtures-v6-development'
+POLICY_V7 = 'beam-explicit-fixtures-v7-development'
 
 # Fixed-source recipes, declared before generation/evaluation. This development
 # version deliberately preserves unsupported declarations as explicit exclusions.
@@ -122,7 +124,7 @@ CLOSURE_METHODS = {'createEntryLattice', 'createInitialEstimateLattice', 'flowTh
 def select(targets, policy):
     if policy is None:
         return targets, []
-    if policy not in {POLICY, POLICY_V4, POLICY_V5}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7}:
         raise ValueError('Unknown explicit fixture policy')
     selected, excluded = [], []
     for target in targets:
@@ -130,8 +132,14 @@ def select(targets, policy):
         family = CLOSURE if name == 'com.google.javascript.jscomp.TypeInference' else JXPATH if name in {
             'org.apache.commons.jxpath.ri.model.dom.DOMNodePointer',
             'org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer'} else set()
-        extra = policy in {POLICY_V4, POLICY_V5} and name in ADDITIONAL_METHODS
-        pilot = policy == POLICY_V5 and name in PILOT_METHODS
+        extra = policy in {POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7} and name in ADDITIONAL_METHODS
+        pilot = policy in {POLICY_V5, POLICY_V6, POLICY_V7} and name in PILOT_METHODS
+        setter = (policy in {POLICY_V6, POLICY_V7} and name == 'org.apache.commons.codec.language.Metaphone'
+                  and target['method'] == 'setMaxCodeLen' and target['constructor_types'] == ''
+                  and target['parameter_types'] == 'int')
+        field = (policy == POLICY_V7 and name in {'org.apache.commons.math3.fraction.BigFraction',
+                  'org.apache.commons.math3.fraction.Fraction'} and target['method'] == 'getField'
+                  and target['constructor_types'] == 'double' and target['parameter_types'] == '')
         if extra:
             family = {'java.io.Reader'}
         if pilot:
@@ -143,11 +151,11 @@ def select(targets, policy):
             reason = 'constructor_or_identity_oracle_not_reviewed'
         elif family is CLOSURE and target['method'] not in CLOSURE_METHODS:
             reason = 'specialized_ast_recipe_not_reviewed'
-        elif extra and target['method'] not in ADDITIONAL_METHODS[name]:
+        elif extra and target['method'] not in ADDITIONAL_METHODS[name] and not setter:
             reason = 'additional_method_preconditions_or_state_not_reviewed'
         elif extra and name.endswith('ExtendedBufferedReader') and target['parameter_types']:
             reason = 'reader_buffer_offset_bounds_recipe_not_reviewed'
-        elif pilot and target['method'] not in PILOT_METHODS[name]:
+        elif pilot and target['method'] not in PILOT_METHODS[name] and not field:
             reason = 'pilot_method_preconditions_or_oracle_not_reviewed'
         elif pilot and name.endswith('NumberInput') and '[' in target['parameter_types']:
             reason = 'numeric_buffer_slice_recipe_not_reviewed'

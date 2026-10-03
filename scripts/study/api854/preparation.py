@@ -55,13 +55,28 @@ POLICY_V7 = {**POLICY_V6, 'contract': 'aom-beam-prepare-v7-development',
     'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v7-development',
     'scope': '20-bug development candidate after repair intake; capability subset only, not full 691-declaration or team approval'}
 
+POLICY_V8 = {**POLICY_V7, 'contract': 'aom-beam-prepare-v8-development',
+    'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v8-development',
+    'fixture_policy': 'beam-explicit-fixtures-v6-development',
+    'scope': '20-bug recipe intake candidate: setter state and JDOM attribute projection; not final semantic or 691-declaration approval'}
+
+POLICY_V9 = {**POLICY_V8, 'contract': 'aom-beam-prepare-v9-development',
+    'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v9-development',
+    'context_policy_id': 'modified-java-root-build-receivers-and-field-factories-v9',
+    'fixture_policy': 'beam-explicit-fixtures-v7-development',
+    'reviewed_factory_sources': {
+        'src/main/java/org/apache/commons/math3/fraction/BigFractionField.java': 'e0a1d0481991127d2ec9b2314e67cdf5a517853c420d1239bb3fbce97361518b',
+        'src/main/java/org/apache/commons/math3/fraction/FractionField.java': '67428ed3428f1c9151d7df25305f82fbb4ba9eb4fcc86302d7fb17c929206329'},
+    'context': 'modified fixed Java, concrete receiver Java, reviewed field factory Java and root build files; identical across four approaches',
+    'scope': '20-bug recipe intake with setter/JDOM and two reviewed Math getField signatures; no final semantic or Gate A approval'}
+
 
 def explicit_context(contract):
-    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract']}
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract'], POLICY_V8['contract'], POLICY_V9['contract']}
 
 
 def explicit_scope(policy):
-    if policy in (POLICY_V6, POLICY_V7):
+    if policy in (POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V9):
         return {tuple(row) for row in policy['development_bugs']}
     original = {('Closure', 176), ('JxPath', 1)}
     return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
@@ -72,7 +87,7 @@ def shared_context(contract):
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7, POLICY_V8, POLICY_V9):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")
@@ -104,7 +119,16 @@ def java_mapping(manifest, metadata):
         raise ValueError("Modified fixed-source mapping differs")
     additional = {p: h for p, h in java.items() if p not in fixed}
     if shared_context(metadata.get("prepare_contract")):
-        if metadata.get("additional_receiver_source_sha256") != additional:
+        factories = (POLICY_V9['reviewed_factory_sources']
+            if metadata.get('prepare_contract') == POLICY_V9['contract']
+            and (manifest['project'],manifest['bug_id']) == ('Math',1) else {})
+        if any(additional.get(p) != h for p,h in factories.items()):
+            raise ValueError('Reviewed factory source mapping differs')
+        if factories and metadata.get('additional_factory_source_sha256') != factories:
+            raise ValueError('Reviewed factory metadata differs')
+        if not factories and metadata.get('additional_factory_source_sha256'):
+            raise ValueError('Factory supplements are not reviewed for this version or bug')
+        if metadata.get("additional_receiver_source_sha256") != {p:h for p,h in additional.items() if p not in factories}:
             raise ValueError("Additional receiver source mapping differs")
     elif java != fixed:
         raise ValueError("Legacy preparation cannot include receiver supplements")
@@ -235,6 +259,10 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
     if v3:
         metadata.update(target_classes=sorted(set(classes)), additional_receiver_source_sha256=additional,
                         fixture_class_count=len(fixtures), fixture_classes_sha256=digest(encoded(fixtures)))
+        if policy == POLICY_V9 and (manifest['project'],manifest['bug_id']) == ('Math',1):
+            factories = policy['reviewed_factory_sources']
+            metadata['additional_factory_source_sha256'] = {p:additional[p] for p in factories}
+            metadata['additional_receiver_source_sha256'] = {p:h for p,h in additional.items() if p not in factories}
     if explicit:
         metadata.update(fixture_policy_id=policy['fixture_policy'], fixture_recipes_sha256=digest(encoded(fixture_recipe)))
     if v3:
@@ -283,7 +311,9 @@ def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=Fa
         if not isinstance(classes, list) or not classes:
             raise ValueError("Modified target classes are required")
         receivers = {t["class"].split("$", 1)[0].replace(".", "/") + ".java" for t in declarations if t["class"] not in classes}
-        if any(not any(p.endswith("/" + r) for r in receivers) for p in additional):
+        factories = (selected['reviewed_factory_sources'] if selected == POLICY_V9
+            and (manifest['project'],manifest['bug_id']) == ('Math',1) else {})
+        if any(not (factories.get(p) == h or any(p.endswith("/" + r) for r in receivers)) for p,h in additional.items()):
             raise ValueError("Additional source is not a shared concrete receiver")
     if metadata.get("target_count") != len(declarations) or metadata.get("adapter_eligibility_verified") is not bool(declarations):
         raise ValueError("Eligibility state differs from declarations")
