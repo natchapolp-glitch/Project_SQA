@@ -13,7 +13,8 @@
 
 ## อ่านตามลำดับ
 
-เริ่มจาก [ผลตรวจ shared-v5 และ KKU preflight ล่าสุด](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
+เริ่มจาก [สถานะบีม v5 ที่แจ้งล่าสุดและรายการเทียบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)
+และ [ผลตรวจ shared-v5 และ KKU preflight ที่รับจากไฟล์แล้ว](CHAMP_V5_KKU_ACCEPTANCE_TH.md)
 และ [ตาราง 20 bugs / งานที่ยังรอ / reserve worksheet](CHAMP_V5_WAITING_WORK_TH.md)
 เอกสารแผน v1/v3 ด้านล่างใช้เป็นประวัติ; protocol/runner pair ที่จะใช้ต้องตรงกับ final shared input condition
 

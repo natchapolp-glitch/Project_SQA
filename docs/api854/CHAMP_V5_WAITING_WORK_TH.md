@@ -1,5 +1,8 @@
 # งานที่แชมป์เตรียมไว้ก่อนรับหลักฐานครบ
 
+สถานะบีมที่ผู้ใช้แจ้งหลัง checkpoint นี้: [27/40 suites และงานให้ครบ 691 declarations](CHAMP_BEAM_V5_PROGRESS_TH.md)
+ตารางด้านล่างแสดงเฉพาะไฟล์ที่แชมป์รับและตรวจแล้ว ไม่ใช่สถานะสดของงานที่บีมกำลังรัน
+
 อ้างอิง `champ 19ef7ae6` และ shared-v5 ของ `aom 76b88e25`
 ตรวจ identities/owners, source pins, review hashes และ runner assignment จากไฟล์ที่ทีมส่งมาแล้ว
 รอบนี้ไม่มี KKU request, live queue mutation หรือการแก้ quota ledger
