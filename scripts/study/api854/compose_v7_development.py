@@ -39,6 +39,7 @@ def compose(preparation, output):
                      'docs/api854/evidence/beam-pilot-v5-repair-handoff-20261003/index.json')]
     protocol['generation'].update(prepare_contract=POLICY_V7['contract'], fixture_policy_id=POLICY_V7['fixture_policy'],
         prompt_policy_id=POLICY_V7['prompt_policy_id'], prompt_token_reserve=None)
+    protocol['processing_policy']['fixture_policy'] = POLICY_V7['fixture_policy']
     protocol['gate_a'].update(reviewed_by={'aom':False,'beam':False,'champ':False}, evidence=[],
         pending=['314 unsupported common declarations including four enum targets requiring joint decision',
                  'Condition-bound semantic/host/team acceptance; received local reviews retain their original versions',

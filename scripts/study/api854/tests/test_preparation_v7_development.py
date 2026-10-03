@@ -4,8 +4,10 @@ from pathlib import Path
 from types import SimpleNamespace
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from scripts.study.api854.common import ROOT, read_json, sha256
+from scripts.study.api854.common import ROOT, read_json, sha256, implementation_hashes
+from scripts.study.api854 import compose_v7_development
 from scripts.study.api854.preparation import POLICY_V7, encoded, explicit_scope
 from scripts.study.api854.prepared_inputs import load
 from scripts.study.api854.api_worker import FrozenSettings, WorkerBlocked, resolve_prepared_job
@@ -15,6 +17,33 @@ PROTOCOL = ROOT/'output/api854-20261003/aom-continuation-v7-development/protocol
 
 
 class DevelopmentV7Tests(unittest.TestCase):
+    def test_composed_pair_updates_legacy_processing_policy_and_keeps_generation_closed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            base = root/'output/api854-20261003/aom-continuation-v6-development'
+            base.mkdir(parents=True)
+            protocol = read_json(ROOT/base.relative_to(root)/'protocol.proposal.json')
+            protocol['processing_policy']['fixture_policy'] = 'beam-explicit-fixtures-v3-proposal'
+            (base/'protocol.proposal.json').write_bytes(encoded(protocol))
+            (base/'runner-plan.json').write_bytes((ROOT/base.relative_to(root)/'runner-plan.json').read_bytes())
+            for name in ('beam-pilot-v5-repair-review-20261003', 'beam-pilot-v5-repair-handoff-20261003'):
+                path = Path('docs/api854/evidence')/name/'index.json'
+                (root/path).parent.mkdir(parents=True)
+                (root/path).write_bytes((ROOT/path).read_bytes())
+            preparation = root/'prepare'
+            preparation.mkdir()
+            index = read_json(PREP/'index.json')
+            index['runtime_source_sha256'] = implementation_hashes()
+            (preparation/'index.json').write_bytes(encoded(index))
+            with patch.object(compose_v7_development, 'ROOT', root):
+                compose_v7_development.compose(preparation, root/'pair')
+            generated = read_json(root/'pair/protocol.proposal.json')
+            self.assertEqual(generated['processing_policy']['fixture_policy'], POLICY_V7['fixture_policy'])
+            self.assertEqual(generated['fixture_policy_id'], POLICY_V7['fixture_policy'])
+            self.assertEqual(generated['enabled_stages'], [])
+            self.assertIsNone(generated['generation']['prompt_token_reserve'])
+            self.assertEqual(generated['gate_a']['reviewed_by'], {'aom':False, 'beam':False, 'champ':False})
+
     def test_scope_is_exact_pilot_and_retains_unsupported_declarations(self):
         index = read_json(PREP/'index.json')
         self.assertEqual(explicit_scope(POLICY_V7), {(r['project'],r['bug_id']) for r in index['records']})
