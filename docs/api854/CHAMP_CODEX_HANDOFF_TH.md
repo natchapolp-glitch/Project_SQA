@@ -21,7 +21,14 @@ Lang 2 / Buffer 8-Csv / setter-JDOM มี scoped joint verdict ครบ;
 Chronology 6 รับร่วมเป็น bounded candidate และอนุญาต prospective shared implementation/test.
 ยังไม่รับ shared integration หรือเปลี่ยน unsupported ทั้งหกจน implementation/oracle ผ่าน.
 Actual shared v9 380/311/691; proposed Buffer+Lang 390/301 หรือรวม Chronology หลัง integration ผ่าน 396/295.
-Focused checks ล่าสุด 31 tests ผ่าน; credentials มีใน local ignored file เท่านั้น ไม่แสดง/stage/log key.
+Focused checks ของ checkpoint นั้น 31 tests ผ่าน; credentials มีใน local ignored file เท่านั้น ไม่แสดง/stage/log key.
+
+งานระหว่างรอ final inputs: [Graphics2D candidate](CHAMP_GRAPHICS2D_DEVELOPMENT_TH.md) และ
+[receipt/pins](../../output/api854-20261003/champ-graphics-continuation-v1.json).
+Sealed graphics-development-v3 ครบ7 inherited declarations/24 cases;
+fixed/buggyซ้ำและ JDIผ่าน, fault=false, shifted-line sensitivityจับได้; focused checksล่าสุด39ผ่าน.
+เก็บ v1/v2 failuresครบ. Graphicsทั้ง7ยังunsupportedและรอ Beam joint/shared integration;
+ต้องตรวจ new Chart fixture conditionกับ existing Chart8 recipesก่อนเลือกเพิ่ม.
 
 ## เริ่มจากที่ไหน
 
@@ -125,7 +132,7 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
    Scoped Lang/Buffer-Csv/setter-JDOM joint verdicts พร้อม; รอ Aom combined preparation/pins ใหม่.
    Buffer 8 + Lang 2 บน v9 เป็น proposed 390/301/691; เพิ่ม Chronology 6 หลัง shared integration ผ่านเป็น 396/295.
    ไม่ใช้ Beam-only 389/302 แทน final union
-2. เริ่ม candidate fixture/oracle ฝั่งแชมป์จาก `Chronology` (6 affected targets) หรือ `Graphics2D` (7)
+2. ปิด bounded candidate fixture/oracle ฝั่งแชมป์จาก `Chronology` (6 affected targets) และ `Graphics2D` (7)
    เปิด identities และ raw cases ใน worklist ก่อน จำนวนนี้ยังไม่รับรองว่าทุก signature ใช้ recipe เดียวได้
    พัฒนาแยกจาก shared runtime พร้อม preconditions, meaningful state/value assertions,
    fixed ซ้ำ, buggy และ target coverage ตาม requirement ที่ใช้จริง เก็บ failed attempts ด้วย
@@ -134,7 +141,11 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
    ทั้งสอง revisions และ ignored-chronology mutation ถูก oracle จับได้. ทั้ง 6 ยัง unsupported
    จนกว่า shared runtime จะ implement/bind/test invocation และ oracle ตามคำรับร่วม.
    Beam+Champ รับ bounded candidate แล้วใน final joint return; รอ Aom prospective integration.
-   ทำ Graphics2D candidate แยกต่อได้; อย่า rerun ทับ v1/v2
+   Graphics2Dมี [sealed v3](../../output/api854-20261003/graphics-development-v3/receipt.json) แล้ว:
+   24 cases fixed/buggyซ้ำผ่านและ JDIเข้า inherited owner/descriptorครบ7; fault=false.
+   รอ [scoped joint template](../../output/api854-20261003/champ-graphics-joint-review.template.json) จากบีม;
+   ต้องรับ new Chart fixture knowledge/ตรวจ receiving host และรักษา Chart8เดิมก่อนintegrate.
+   อย่า rerun ทับ packetsใด; finalงานออมเดินต่อจาก verdictsที่มีอยู่ได้
 3. ประสานออม/บีมเมื่อมี packet ที่ตรวจรับได้: บีมมี `JXPathContext` 13 targets; ออมมี `StringBuffer` 4
    ผู้รับช่วงต้องรายงานข้อเสนอ enum ให้คนในทีมตัดสินร่วม ไม่ถือความเห็นของ Codex เป็น three-owner approval
 4. หลังรับ recipes เพิ่ม ต้องสร้าง preparation รุ่นใหม่พร้อม policy/runtime/runner/condition pins คู่เดียวกัน
@@ -151,10 +162,11 @@ python -m unittest -v scripts.study.api854.tests.test_v9_continuation_evidence
 python -m unittest -v scripts.study.api854.tests.test_chronology_development
 python -m unittest -v scripts.study.api854.tests.test_joint_recipe_intake
 python -B -m unittest -v scripts.study.api854.tests.test_final_recipe_returns
+python -B -m unittest -v scripts.study.api854.tests.test_graphics_development
 python -c "from scripts.study.api854.audit_v9_shared_limits import inspect; r=inspect(); print({k:r[k] for k in ('shared_prepared_bugs','target_count','capability_exclusion_count','max_prompt_utf8_bytes','final_prompt_reserve','gate_a_passed')})"
 ```
 
-สี่ test modules ควรผ่าน 8 + 8 + 7 + 8 tests (รวม 31); shared audit ควรได้ 20 / 380 / 311 / 258914 / None / False
+ห้า test modules ควรผ่าน 8 + 8 + 7 + 8 + 8 tests (รวม 39); shared audit ควรได้ 20 / 380 / 311 / 258914 / None / False
 runtime 41 files และ source/evidence SHA-256 อยู่ใน continuation receipt v2 ให้ตรวจ bytes จริงกับ receipt
 ห้ามเขียนทับ output ที่ seal แล้ว ถ้าต้อง rerun verifier ให้ใช้ output directory รุ่นใหม่
 `verify_enum_boundary_development.py --defects4j <installation> --output <new-directory>`
@@ -169,5 +181,5 @@ verifier ที่ execute v3 ถูก snapshot ใน packet; verifier ปั�
 ## Prompt สำหรับ Codex คนถัดไป
 
 ```text
-รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md และ CHAMP_FINAL_RECIPE_JOINT_RETURN_TH.md ตรวจ HEAD/status/current v9 100 pins และ packet hashes ก่อน รับ beam 477b4f8a/aom f753770d แล้ว มี scoped joint verdicts Lang 2/Buffer 8-Csv/setter-JDOM และ bounded Chronology candidate 6 พร้อม prospective shared implementation authorization Shared v9 ยัง actual 380/311/691; proposed Buffer+Lang 390/301 หรือรวม Chronology เมื่อ shared invocation/oracle integration ผ่าน 396/295 รอ Aom final preparation/protocol/runner/runtime pins และ prompts แล้วตรวจ 20 bugs x 2 models, actual IDs/limits/settings/framing/current quota/reset/expiry/reserve จาก condition เดียวกัน historical floors ใช้แทน final ไม่ได้ อย่าสร้าง branch/worktree ซ้ำหรือแตะ PDF อย่าแสดง/log/stage private credentials และอย่าเขียนทับ sealed packets Chronology ยัง unsupported จน shared integration ผ่าน; empty-enum 4 คงเดิม Graphics2D 7 ทำ candidate แยกต่อได้ Gate A false/final reserve null/primary0 ห้าม generation/live queue จน gates/owner approvals ครบ สรุปผลและข้อความส่งบีม/ออมแล้ว commit/push champ เมื่อพร้อม
+รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md, CHAMP_FINAL_RECIPE_JOINT_RETURN_TH.md และ CHAMP_GRAPHICS2D_DEVELOPMENT_TH.md ตรวจ HEAD/status/current v9 100 pins และ candidate packets ก่อน มี scoped joint verdicts Lang2/Buffer8-Csv/setter-JDOM กับ bounded Chronology6พร้อม prospective implementation authorization Shared v9 actual380/311/691; proposed Buffer+Lang390/301หรือรวมChronologyเมื่อintegrationผ่าน396/295 รอ Aom final pins/promptsแล้วตรวจ40pairs/IDs/limits/settings/framing/current quota/reset/expiry/reserveรุ่นเดียวกัน Graphics2D standalone v3มี7 inherited signatures/24cases fixed/buggyซ้ำ+JDIผ่าน fault=false และ mutation sensitivity verified แต่รอ Beam joint scoped verdict/new Chart fixture knowledge/host review; รักษา Chart8เดิมและ finalงานออมที่กำลังทำ Focused39testsผ่าน เก็บ failed attempts v1/v2 และ sealed bytesครบ อย่าสร้าง branch/worktreeซ้ำ แตะPDF หรือแสดง/log/stage private credentials Chronology/Graphicsยังunsupportedจนshared integrationผ่าน empty-enum4คงเดิม GateAfalse/reservenull/primary0 ห้าม generation/livequeueจนgates/owner approvalsครบ สรุปผล/ข้อความบีมออมแล้วcommit/pushchampเมื่อพร้อม
 ```

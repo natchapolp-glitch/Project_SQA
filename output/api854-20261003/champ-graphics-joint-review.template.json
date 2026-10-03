@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "review_status": "champ_bounded_candidate_verdict_complete_peer_joint_review_pending",
+  "candidate_policy_id": "champ-graphics2d-candidate-v2-development",
+  "base_champ_commit": "7de14726198886e43d8eb6b8a917f58500acab93",
+  "evidence": [
+    {
+      "path": "output/api854-20261003/graphics-development-v3/receipt.json",
+      "sha256": "c8533f8185479b556bb233be1b0d602647279687e2e30e08dbba0a94c8a19232"
+    },
+    {
+      "path": "output/api854-20261003/graphics-development-v3/policy.json",
+      "sha256": "cd9220e00eebc8cdef1b3865f4eb9cc7173152d5d07712e12866d34843179f3a"
+    },
+    {
+      "path": "output/api854-20261003/graphics-development-v3/preexecution-seal.json",
+      "sha256": "44348e5ee2a29bdba2e71b7c6ef73bf5f2087eae5b7c80bc06b8d41e4589829f"
+    },
+    {
+      "path": "output/api854-20261003/graphics-development-v3/checksums.json",
+      "sha256": "6a58dca16961433b6de67cf6aad7a1e3a86fc15ed7493793a424065e1a8f15c3"
+    }
+  ],
+  "candidates": [
+    {
+      "target": {
+        "class": "org.jfree.chart.renderer.category.AreaRenderer",
+        "constructor_types": "",
+        "method": "drawAnnotations",
+        "parameter_types": "java.awt.Graphics2D,java.awt.geom.Rectangle2D,org.jfree.chart.axis.CategoryAxis,org.jfree.chart.axis.ValueAxis,org.jfree.chart.util.Layer,org.jfree.chart.plot.PlotRenderingInfo",
+        "project": "Chart",
+        "bug_id": 1
+      },
+      "exact_declaring_class": "org.jfree.chart.renderer.category.AbstractCategoryItemRenderer",
+      "exact_jvm_descriptor": "(Ljava/awt/Graphics2D;Ljava/awt/geom/Rectangle2D;Lorg/jfree/chart/axis/CategoryAxis;Lorg/jfree/chart/axis/ValueAxis;Lorg/jfree/chart/util/Layer;Lorg/jfree/chart/plot/PlotRenderingInfo;)V",
+      "receiver_identity": "Default production AreaRenderer(); inherited declaration remains AbstractCategoryItemRenderer",
+      "candidate_cases": 4,
+      "proposed_preconditions": "Fresh bound AreaRenderer with production foreground/background CategoryLineAnnotation; category A/B with zero margins, range [0,10], both orientations, selected real Layer, null rendering info.",
+      "proposed_oracle": "Full ARGB equality against analytic endpoints: A/B middle20/40; v->50-4v vertical or10+4v horizontal, matching chosen layer/red or green; actual graphics state and unchanged dataset/receiver.",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "beam_verdict": null,
+      "aom_shared_integration_verdict": null,
+      "agreed_preconditions": null,
+      "agreed_oracle": null,
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.jfree.chart.renderer.category.AreaRenderer",
+        "constructor_types": "",
+        "method": "drawBackground",
+        "parameter_types": "java.awt.Graphics2D,org.jfree.chart.plot.CategoryPlot,java.awt.geom.Rectangle2D",
+        "project": "Chart",
+        "bug_id": 1
+      },
+      "exact_declaring_class": "org.jfree.chart.renderer.category.AbstractCategoryItemRenderer",
+      "exact_jvm_descriptor": "(Ljava/awt/Graphics2D;Lorg/jfree/chart/plot/CategoryPlot;Ljava/awt/geom/Rectangle2D;)V",
+      "receiver_identity": "Default production AreaRenderer(); inherited declaration remains AbstractCategoryItemRenderer",
+      "candidate_cases": 2,
+      "proposed_preconditions": "Solid yellow plot background alpha1, no background image; Rectangle2D (10,10,40,40), fresh white canvas, both orientations.",
+      "proposed_oracle": "Independent integer raster: yellow exactly [10,50)x[10,50); all other pixels white; paint yellow, SRC_OVER alpha0.5 restored; transform/clip/dataset/receiver unchanged.",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "beam_verdict": null,
+      "aom_shared_integration_verdict": null,
+      "agreed_preconditions": null,
+      "agreed_oracle": null,
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.jfree.chart.renderer.category.AreaRenderer",
+        "constructor_types": "",
+        "method": "drawDomainLine",
+        "parameter_types": "java.awt.Graphics2D,org.jfree.chart.plot.CategoryPlot,java.awt.geom.Rectangle2D,double,java.awt.Paint,java.awt.Stroke",
+        "project": "Chart",
+        "bug_id": 1
+      },
+      "exact_declaring_class": "org.jfree.chart.renderer.category.AbstractCategoryItemRenderer",
+      "exact_jvm_descriptor": "(Ljava/awt/Graphics2D;Lorg/jfree/chart/plot/CategoryPlot;Ljava/awt/geom/Rectangle2D;DLjava/awt/Paint;Ljava/awt/Stroke;)V",
+      "receiver_identity": "Default production AreaRenderer(); inherited declaration remains AbstractCategoryItemRenderer",
+      "candidate_cases": 4,
+      "proposed_preconditions": "Coordinate24, solid red/BasicStroke2, both orientations; null Paint and null Stroke checked separately with exact IllegalArgumentException messages and unchanged image/state.",
+      "proposed_oracle": "Full raster equality against analytic vertical/horizontal coordinate24/red/stroke2; exact paint/stroke state. Null cases: IllegalArgumentException, Null paint/stroke argument exact message, unchanged image/state.",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "beam_verdict": null,
+      "aom_shared_integration_verdict": null,
+      "agreed_preconditions": null,
+      "agreed_oracle": null,
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.jfree.chart.renderer.category.AreaRenderer",
+        "constructor_types": "",
+        "method": "drawDomainMarker",
+        "parameter_types": "java.awt.Graphics2D,org.jfree.chart.plot.CategoryPlot,org.jfree.chart.axis.CategoryAxis,org.jfree.chart.plot.CategoryMarker,java.awt.geom.Rectangle2D",
+        "project": "Chart",
+        "bug_id": 1
+      },
+      "exact_declaring_class": "org.jfree.chart.renderer.category.AbstractCategoryItemRenderer",
+      "exact_jvm_descriptor": "(Ljava/awt/Graphics2D;Lorg/jfree/chart/plot/CategoryPlot;Lorg/jfree/chart/axis/CategoryAxis;Lorg/jfree/chart/plot/CategoryMarker;Ljava/awt/geom/Rectangle2D;)V",
+      "receiver_identity": "Default production AreaRenderer(); inherited declaration remains AbstractCategoryItemRenderer",
+      "candidate_cases": 5,
+      "proposed_preconditions": "Real CategoryMarker A, alpha1, no label, line or band, both orientations; separate missing-key no-op; restore initial composite.",
+      "proposed_oracle": "A middle20 or band [10,30), orientation-specific line/filled region; full image, red paint/appropriate stroke, alpha0.5 restored; missing key leaves image/state unchanged.",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "beam_verdict": null,
+      "aom_shared_integration_verdict": null,
+      "agreed_preconditions": null,
+      "agreed_oracle": null,
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.jfree.chart.renderer.category.AreaRenderer",
+        "constructor_types": "",
+        "method": "drawOutline",
+        "parameter_types": "java.awt.Graphics2D,org.jfree.chart.plot.CategoryPlot,java.awt.geom.Rectangle2D",
+        "project": "Chart",
+        "bug_id": 1
+      },
+      "exact_declaring_class": "org.jfree.chart.renderer.category.AbstractCategoryItemRenderer",
+      "exact_jvm_descriptor": "(Ljava/awt/Graphics2D;Lorg/jfree/chart/plot/CategoryPlot;Ljava/awt/geom/Rectangle2D;)V",
+      "receiver_identity": "Default production AreaRenderer(); inherited declaration remains AbstractCategoryItemRenderer",
+      "candidate_cases": 2,
+      "proposed_preconditions": "Real plot blue BasicStroke2 outline over declared rectangle; explicit visible and disabled cases.",
+      "proposed_oracle": "Full blue outline raster on (10,10,40,40), actual paint/BasicStroke2/composite; disabled outline leaves image/state unchanged.",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "beam_verdict": null,
+      "aom_shared_integration_verdict": null,
+      "agreed_preconditions": null,
+      "agreed_oracle": null,
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.jfree.chart.renderer.category.AreaRenderer",
+        "constructor_types": "",
+        "method": "drawRangeMarker",
+        "parameter_types": "java.awt.Graphics2D,org.jfree.chart.plot.CategoryPlot,org.jfree.chart.axis.ValueAxis,org.jfree.chart.plot.Marker,java.awt.geom.Rectangle2D",
+        "project": "Chart",
+        "bug_id": 1
+      },
+      "exact_declaring_class": "org.jfree.chart.renderer.category.AbstractCategoryItemRenderer",
+      "exact_jvm_descriptor": "(Ljava/awt/Graphics2D;Lorg/jfree/chart/plot/CategoryPlot;Lorg/jfree/chart/axis/ValueAxis;Lorg/jfree/chart/plot/Marker;Ljava/awt/geom/Rectangle2D;)V",
+      "receiver_identity": "Default production AreaRenderer(); inherited declaration remains AbstractCategoryItemRenderer",
+      "candidate_cases": 5,
+      "proposed_preconditions": "Real red ValueMarker2 or IntervalMarker2..8, alpha1, no labels, no interval outlines, both orientations; separate out-of-range20 no-op.",
+      "proposed_oracle": "Value2 maps y42 orx18; interval2..8 maps band [18,42), orientation-specific; full image/state and composite restoration; outside20 leaves image/state unchanged.",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "beam_verdict": null,
+      "aom_shared_integration_verdict": null,
+      "agreed_preconditions": null,
+      "agreed_oracle": null,
+      "accepted_into_shared_inputs": false
+    },
+    {
+      "target": {
+        "class": "org.jfree.chart.renderer.category.AreaRenderer",
+        "constructor_types": "",
+        "method": "initialise",
+        "parameter_types": "java.awt.Graphics2D,java.awt.geom.Rectangle2D,org.jfree.chart.plot.CategoryPlot,org.jfree.data.category.CategoryDataset,org.jfree.chart.plot.PlotRenderingInfo",
+        "project": "Chart",
+        "bug_id": 1
+      },
+      "exact_declaring_class": "org.jfree.chart.renderer.category.AbstractCategoryItemRenderer",
+      "exact_jvm_descriptor": "(Ljava/awt/Graphics2D;Ljava/awt/geom/Rectangle2D;Lorg/jfree/chart/plot/CategoryPlot;Lorg/jfree/data/category/CategoryDataset;Lorg/jfree/chart/plot/PlotRenderingInfo;)Lorg/jfree/chart/renderer/category/CategoryItemRendererState;",
+      "receiver_identity": "Default production AreaRenderer(); inherited declaration remains AbstractCategoryItemRenderer",
+      "candidate_cases": 2,
+      "proposed_preconditions": "Default AreaRenderer bound to a distinct real non-null CategoryPlot before target; supplied plot holds production dataset; method dataset is real2x2 or legal null, info null. No initialise setup call.",
+      "proposed_oracle": "Row/column counts2/2 or0/0, receiver bound to supplied plot, concrete CategoryItemRendererState/info null/bar_width0, selection identity equals real dataset or is null; graphics/dataset unchanged.",
+      "champ_verdict": "accepted_for_bounded_candidate_oracle_development",
+      "beam_verdict": null,
+      "aom_shared_integration_verdict": null,
+      "agreed_preconditions": null,
+      "agreed_oracle": null,
+      "accepted_into_shared_inputs": false
+    }
+  ],
+  "joint_acceptance_complete": false,
+  "shared_integration_approved": false,
+  "new_shared_preparation_authorized_by_receipt": false,
+  "current_shared_chart_fixture": {
+    "helper": {
+      "path": "algorithms/java/SqaProbe.java",
+      "sha256": "53431b60d326e6995e48d5ed46780d481ac32b6b614236a260111ec1ff33162f"
+    },
+    "existing_chart_targets": 8,
+    "old_fixture": "16x16 setup graphics; one category with row values -2 or2 and5; chart() calls initialise during generic setup"
+  },
+  "prospective_integration_requirements": [
+    "Review and bind per-target graphics fixture lifecycle and meaningful pixel/state projection.",
+    "Do not invoke initialise during setup of the initialise target; distinguish setup/projection failures as fixture_error.",
+    "Review any change to existing Chart dataset/axes/initialisation knowledge as an explicit new condition.",
+    "Preserve existing selected Chart recipes, or obtain explicit scoped change approval; share identical fixtures/source/context/knowledge across all four approaches.",
+    "Rerun native Java/AWT on the receiving host before claiming raster/host equivalence.",
+    "Seal new shared runtime/recipes/protocol/runner/preparation/prompts and recalculate reserve for that same condition."
+  ],
+  "candidate_fault_detected": false,
+  "full_defects4j_evaluation": false,
+  "full_legal_domain_approval": false,
+  "actual_selected": 380,
+  "actual_unsupported": 311,
+  "denominator": 691,
+  "graphics_only_proposed_union": {
+    "selected": 387,
+    "unsupported": 304,
+    "implemented": false
+  },
+  "preserve_final_preparation_work_in_progress": true,
+  "gate_a_passed": false,
+  "final_prompt_reserve": null,
+  "primary_added": 0,
+  "live_requests": 0,
+  "queue_mutations": 0
+}
