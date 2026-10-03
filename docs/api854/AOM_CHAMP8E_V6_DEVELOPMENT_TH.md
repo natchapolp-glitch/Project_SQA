@@ -1,5 +1,8 @@
 # ออมรับ Champ 8e350c68 และสร้าง shared preparation ร่าง v6
 
+Checkpoint นี้เป็นประวัติ: [งานล่าสุดรับรอบแก้ 7e09a5fe และ preparation ร่าง v7](AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md)
+ข้อที่ระบุว่า packet รอบแก้ยังไม่รับด้านล่างเป็นสถานะ ณ checkpoint v6; source pins v6 ไม่ใช่ current runtime
+
 รวม `champ 8e350c6853eed252c4c0642319b043da50d64269` ต่อจากออม `4a0e699c`
 รับ packet บีมรอบแรกพร้อม failures แล้วสร้าง **20-bug development candidate** จาก fixed inputs v3
 และ runtime หลังรวม ไม่ใช่ final shared acceptance หรือ primary results
