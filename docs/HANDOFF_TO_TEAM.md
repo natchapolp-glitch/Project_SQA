@@ -1,3 +1,5 @@
+Latest Aom receipt: [Beam 24a38184 Math-only v8 preparation/host evidence accepted for development review](api854/AOM_BEAM_V8_RECEIVED_ACCEPTANCE_TH.md). 809 checksums verified; Aom reran 4 tests across 80 consumer combinations. Final composition/joint verdict/Gate A remain pending.
+
 Latest Aom intake: [Beam 22982e8c scoped Lang source/oracle review and joint-verdict tasks](api854/AOM_BEAM_LANG_INTAKE_TH.md). 281 checksums verified; historical shared v8 retained. Lang and buffer decisions remain separate; Gate A/pilot closed.
 
 Latest Aom intake: [Beam c125695a buffer/runtime review and exact tasks for Champ/Beam](api854/AOM_BEAM_BUFFER_INTAKE_TH.md). 193 checksums verified; shared buffer composition awaits joint acceptance. Historical v7 retained; Gate A/pilot closed.

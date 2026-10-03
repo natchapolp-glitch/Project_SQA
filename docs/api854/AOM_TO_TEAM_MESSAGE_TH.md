@@ -1,3 +1,5 @@
+Latest: Aom received Math-only v8/Beam host evidence from 24a38184; 809 checksums verified, four-consumer rerun passed. See [AOM_BEAM_V8_RECEIVED_ACCEPTANCE_TH.md](AOM_BEAM_V8_RECEIVED_ACCEPTANCE_TH.md). Final recipe verdicts below remain pending.
+
 # ข้อความพร้อมส่งต่อจากออม — scoped Lang 22982e8c
 
 ออมตรวจ Beam 22982e8c แล้ว: 281 checksums/runtime 41 pins ตรง,
