@@ -1,5 +1,17 @@
 Current owner of this continuation is Beam. [Buffer/slice checkpoint](api854/BEAM_BUFFER_BATCH_V1_TH.md) integrates Champ `2ac55e31` and Aom `c25faa5e`: eight new bounded recipes, four locally valid development suites and 32 passing fixed reference examples. Prospective selection is 385/691, with 306 exclusions; full declaration/semantic approval remains pending. Preserve historical preparations and measure new prompts from the final agreed runtime. Account intake remains paused; Gate A/primary remain closed, with no KKU or live queue mutation.
 
+
+Latest Aom handoff: [shared v8 with the two accepted Math getField signatures](api854/AOM_MATH_FIELD_V8_HANDOFF_TH.md). 20 bugs; 379 selected / 312 unsupported of 691; max prompt 257,515 bytes. Champ remeasures reserve; Beam and Champ continue joint review. Gate A/pilot remain closed. Earlier checkpoints below retain their original counts and evidence.
+
+Latest Champ candidate decision: [accept two Math getField candidates for shared composition](api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.
+
+Latest Champ joint-review intake: [Beam 0b560f05 / Math field proof and shared-input consistency](api854/CHAMP_BEAM0B560_JOINT_INTAKE_TH.md). Final shared recipes and reserve remain pending.
+
+Latest Champ evidence intake: [Beam 532baa31 diagnostics and oracle development](api854/CHAMP_BEAM532_ACCEPTANCE_TH.md). Final recipes/preparation and Gate A remain pending.
+
+Latest Champ v7 intake: [fresh runtime bindings, offline audit and reserve worksheet](api854/CHAMP_V7_INTAKE_TH.md). Gate A remains closed; account intake remains paused. Previous checkpoints below retain their original evidence.
+
+Historical Champ integration: [Aom b11b379a / newly measured twenty-bug development inputs](api854/CHAMP_AOMB11_V6_INTEGRATION_TH.md). The merge includes Champ e5d4a66b and Beam repair intake from 7e09a5fe. Preparation is still a 377/691 subset; Gate A and generation remain closed. Account intake is paused.
 Latest Aom checkpoint: [Champ 7e09a5fe repair intake / twenty-bug v7 development candidate](api854/AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md). Repair/combined evidence audited; fresh preparation has 20 bugs, 377 selected declarations and 314 unsupported declarations with a full handoff worklist. Maximum prompt is 250,315 UTF-8 bytes. Offline integration ran 303 tests (302 passed, 1 symlink skip). Gate A is closed; no new KKU requests or primary experiments.
 
 Previous Champ integration: [Aom 4a0e699c / selected pair, recipe sources and Windows stage creation](api854/CHAMP_AOM4A_INTEGRATION_TH.md). Shared-v5 is still five bugs / 124 of 691 declarations, with old runtime pins blocked against the merged code. Account intake is paused. No live pilot or KKU requests in this integration.

@@ -41,6 +41,7 @@ public final class SqaProbe {
     public static final String SCALAR_FIXTURES = "beam-explicit-fixtures-v4-proposal";
     public static final String PILOT_FIXTURES = "beam-explicit-fixtures-v5-proposal";
     public static final String BUFFER_FIXTURES = "beam-explicit-fixtures-v6-buffer-proposal";
+    public static final String FRACTION_FIELD_FIXTURES = "aom-beam-fraction-field-v6-development";
     private static final ThreadLocal<FixtureSession> FIXTURES = new ThreadLocal<FixtureSession>();
     private static final ThreadLocal<Boolean> INVOKED = new ThreadLocal<Boolean>();
 
@@ -77,6 +78,7 @@ public final class SqaProbe {
         final boolean pilot;
         final boolean bufferSlices;
         char[] outputBuffer;
+        final boolean fractionField;
         boolean constructing;
         Object compiler, registry, scope, cfg, reverse, flow, closureNode, receiver;
         org.w3c.dom.Element domRoot;
@@ -179,7 +181,8 @@ public final class SqaProbe {
             this.targetClass = targetClass;
             this.method = method;
             this.bufferSlices = BUFFER_FIXTURES.equals(policy);
-            this.pilot = PILOT_FIXTURES.equals(policy) || bufferSlices;
+            this.fractionField = FRACTION_FIELD_FIXTURES.equals(policy);
+            this.pilot = PILOT_FIXTURES.equals(policy) || bufferSlices || fractionField;
         }
 
         Object[] boundedBufferArguments(Class<?>[] types, double[] vector) {
@@ -613,6 +616,11 @@ public final class SqaProbe {
             if (depth > 8) throw new FixtureFailure("Oracle projection depth exceeded", null);
             if (result == null) return "null";
             String name = result.getClass().getName();
+            if (fractionField && (name.equals("org.apache.commons.math3.fraction.BigFractionField")
+                    || name.equals("org.apache.commons.math3.fraction.FractionField")))
+                return "fraction-field:runtime=" + projection(call(result, "getRuntimeClass", new Class<?>[]{}), depth + 1)
+                    + ":zero=" + projection(call(result, "getZero", new Class<?>[]{}), depth + 1)
+                    + ":one=" + projection(call(result, "getOne", new Class<?>[]{}), depth + 1);
             if (pilot && result instanceof java.lang.reflect.Type) return "type:" + nestedTestName(((java.lang.reflect.Type)result).getTypeName());
             if (pilot && result instanceof Method) return "method:" + nestedTestName(((Method)result).toGenericString());
             if (pilot && name.startsWith("com.google.gson.TypeInfo"))
@@ -1042,7 +1050,7 @@ public final class SqaProbe {
     public static String observeWithPolicy(String className, String constructorTypes, String methodName,
             String methodTypes, double[] vector, String policy) {
         if (!EXPLICIT_FIXTURES.equals(policy) && !SCALAR_FIXTURES.equals(policy)
-                && !PILOT_FIXTURES.equals(policy) && !BUFFER_FIXTURES.equals(policy))
+                && !PILOT_FIXTURES.equals(policy) && !BUFFER_FIXTURES.equals(policy) && !FRACTION_FIELD_FIXTURES.equals(policy))
             throw new IllegalArgumentException("Unknown explicit fixture policy");
         FIXTURES.set(new FixtureSession(className, methodName, policy));
         try { return observe(className, constructorTypes, methodName, methodTypes, vector); }

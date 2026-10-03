@@ -8,7 +8,7 @@ def recipe_document(source_hashes, policy=POLICY):
     expected = {name: source_hashes[name] for name in RECIPE_SOURCES}
     if any(sha256(ROOT / name) != value for name, value in expected.items()):
         raise ValueError('Explicit recipe source differs from protocol')
-    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6_BUFFER}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6_BUFFER, POLICY_V6}:
         raise ValueError('Unknown explicit fixture policy')
     return {'schema_version': 1, 'fixture_policy_id': policy, 'source_sha256': expected,
         'sources': {name: (ROOT / name).read_bytes().decode('utf-8') for name in RECIPE_SOURCES},
@@ -17,7 +17,7 @@ def recipe_document(source_hashes, policy=POLICY):
 
 def validate_recipe(recipe, source_hashes=None, policy=POLICY):
     from .preparation import digest
-    if (policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6_BUFFER} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
+    if (policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6_BUFFER, POLICY_V6} or not isinstance(recipe, dict) or recipe.get('fixture_policy_id') != policy
             or not isinstance(recipe.get('sources'), dict) or set(recipe['sources']) != set(RECIPE_SOURCES)
             or not isinstance(recipe.get('source_sha256'), dict) or set(recipe['source_sha256']) != set(RECIPE_SOURCES)
             or any(not isinstance(recipe['sources'][name], str)
@@ -42,6 +42,7 @@ BUFFER_SIGNATURES = {
     ('com.fasterxml.jackson.core.util.TextBuffer', 'append', 'java.lang.String,int,int'),
     ('org.apache.commons.csv.ExtendedBufferedReader', 'read', '[C,int,int'),
 }
+POLICY_V6 = 'aom-beam-fraction-field-v6-development'
 
 # Fixed-source recipes, declared before generation/evaluation. This development
 # version deliberately preserves unsupported declarations as explicit exclusions.
@@ -136,8 +137,17 @@ CLOSURE_METHODS = {'createEntryLattice', 'createInitialEstimateLattice', 'flowTh
 def select(targets, policy):
     if policy is None:
         return targets, []
-    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6_BUFFER}:
+    if policy not in {POLICY, POLICY_V4, POLICY_V5, POLICY_V6_BUFFER, POLICY_V6}:
         raise ValueError('Unknown explicit fixture policy')
+    if policy == POLICY_V6:
+        # Keep every v5 decision, adding only the exact Champ-accepted signatures.
+        selected, excluded = select(targets, POLICY_V5)
+        accepted = lambda t: (t['class'] in {
+            'org.apache.commons.math3.fraction.BigFraction', 'org.apache.commons.math3.fraction.Fraction'}
+            and t['constructor_types'] == 'double' and t['method'] == 'getField' and t['parameter_types'] == '')
+        chosen = {tuple(t[k] for k in ('class', 'constructor_types', 'method', 'parameter_types')) for t in selected}
+        return ([t for t in targets if accepted(t) or tuple(t[k] for k in ('class', 'constructor_types', 'method', 'parameter_types')) in chosen],
+                [row for row in excluded if not accepted(row['target'])])
     selected, excluded = [], []
     for target in targets:
         name = target['class']

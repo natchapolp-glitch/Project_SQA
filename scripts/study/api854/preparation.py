@@ -55,13 +55,24 @@ POLICY_V7 = {**POLICY_V6, 'contract': 'aom-beam-prepare-v7-development',
     'prompt_policy_id': 'shared-fixed-targets-explicit-fixtures-junit4-v7-development',
     'scope': '20-bug development candidate after repair intake; capability subset only, not full 691-declaration or team approval'}
 
+FRACTION_FACTORY_SOURCES = {
+    'src/main/java/org/apache/commons/math3/fraction/BigFractionField.java': 'e0a1d0481991127d2ec9b2314e67cdf5a517853c420d1239bb3fbce97361518b',
+    'src/main/java/org/apache/commons/math3/fraction/FractionField.java': '67428ed3428f1c9151d7df25305f82fbb4ba9eb4fcc86302d7fb17c929206329'}
+POLICY_V8 = {**POLICY_V7, 'contract':'aom-beam-prepare-v8-development',
+    'context_policy_id':'modified-java-root-build-shared-receivers-and-fraction-factories-v8-development',
+    'prompt_policy_id':'shared-fixed-targets-fraction-field-junit4-v8-development',
+    'fixture_policy':'aom-beam-fraction-field-v6-development',
+    'supplemental_math1_factory_sources':FRACTION_FACTORY_SOURCES,
+    'lineage':'Modified sources remain evaluator targets; receivers and reviewed factory sources are separate context knowledge.',
+    'scope':'v7 development subset plus exactly BigFraction/Fraction getField(double receiver, no method arguments); remaining exclusions retained'}
+
 
 def explicit_context(contract):
-    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract']}
+    return contract in {POLICY_V4['contract'], POLICY_V5['contract'], POLICY_V6['contract'], POLICY_V7['contract'], POLICY_V8['contract']}
 
 
 def explicit_scope(policy):
-    if policy in (POLICY_V6, POLICY_V7):
+    if policy in (POLICY_V6, POLICY_V7, POLICY_V8):
         return {tuple(row) for row in policy['development_bugs']}
     original = {('Closure', 176), ('JxPath', 1)}
     return original | {('Codec', 1), ('Collections', 1), ('Csv', 1)} if policy == POLICY_V5 else original
@@ -72,7 +83,7 @@ def shared_context(contract):
 
 
 def policy_for(contract):
-    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7):
+    for policy in (POLICY, POLICY_V3, POLICY_V4, POLICY_V5, POLICY_V6, POLICY_V7, POLICY_V8):
         if policy["contract"] == contract:
             return policy
     raise ValueError("Unknown shared preparation contract")
@@ -103,6 +114,12 @@ def java_mapping(manifest, metadata):
     if not isinstance(fixed, dict) or not fixed or any(java.get(p) != h for p, h in fixed.items()):
         raise ValueError("Modified fixed-source mapping differs")
     additional = {p: h for p, h in java.items() if p not in fixed}
+    if metadata.get('prepare_contract') == POLICY_V8['contract']:
+        supplemental = FRACTION_FACTORY_SOURCES if (manifest.get('project'),manifest.get('bug_id')) == ('Math',1) else {}
+        if (metadata.get('additional_fixture_source_sha256') != supplemental or set(supplemental) & set(fixed)
+                or any(additional.get(p) != h for p,h in supplemental.items())):
+            raise ValueError('Reviewed factory source mapping differs')
+        additional = {p:h for p,h in additional.items() if p not in supplemental}
     if shared_context(metadata.get("prepare_contract")):
         if metadata.get("additional_receiver_source_sha256") != additional:
             raise ValueError("Additional receiver source mapping differs")
@@ -184,6 +201,11 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
                or fixture_classes is None or any(not re.fullmatch(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*", c) for c in fixtures)):
         raise ValueError("V3 requires modified-source mapping and declaration-only fixture inventory")
     additional = {p: h for p, h in sources.items() if p not in (modified_sources or sources)}
+    supplemental = FRACTION_FACTORY_SOURCES if policy == POLICY_V8 and (manifest['project'],manifest['bug_id']) == ('Math',1) else {}
+    if policy == POLICY_V8:
+        if any(additional.get(p) != h for p,h in supplemental.items()):
+            raise ValueError('Reviewed factory context is required')
+        additional = {p:h for p,h in additional.items() if p not in supplemental}
     if v3:
         context = render_context(directory, files)
         (directory / "context.md").write_bytes(context.encode("utf-8"))
@@ -237,6 +259,8 @@ def compose(directory: Path, *, classes, targets=None, previous_hashes=None,
                         fixture_class_count=len(fixtures), fixture_classes_sha256=digest(encoded(fixtures)))
     if explicit:
         metadata.update(fixture_policy_id=policy['fixture_policy'], fixture_recipes_sha256=digest(encoded(fixture_recipe)))
+    if policy == POLICY_V8:
+        metadata['additional_fixture_source_sha256'] = supplemental
     if v3:
         validate(manifest, metadata, prompt, targets_bytes, encoded(policy), fixture_recipe=fixture_recipe)
     for name, data in {"prompt.md": prompt, "targets.json": targets_bytes,
@@ -265,6 +289,22 @@ def validate(manifest, metadata, prompt, targets, policy, *, require_eligible=Fa
             or metadata.get("context_policy_id") != selected["context_policy_id"] or metadata.get("context_selection") != selected["context_policy_id"]
             or metadata.get("prompt_policy_id") != selected["prompt_policy_id"] or json.loads(policy) != selected):
         raise ValueError("Preparation policy differs")
+    if selected == POLICY_V8:
+        text = prompt.decode('utf-8')
+        for source in files:
+            header = '## ' + source['path'] + '\n\n'
+            if text.count(header) != 1:
+                raise ValueError('Fixed context source missing or duplicated in prompt')
+            start = text.index(header) + len(header)
+            fence = re.match(r'`{3,}\n',text[start:])
+            if fence is None:
+                raise ValueError('Fixed context fence missing in prompt')
+            boundary = '\n' + fence.group(0)
+            start += len(fence.group(0))
+            end = text.find(boundary,start)
+            content = text[start:end].encode('utf-8') if end >= 0 else b''
+            if digest(content) != source['sha256'] or len(content) != source['bytes']:
+                raise ValueError('Fixed context source bytes differ from prompt')
     document = json.loads(targets)
     if (document.get("target_selection") != selected["target_selection"]
             or document.get("fixture_policy") != selected["fixture_policy"]
