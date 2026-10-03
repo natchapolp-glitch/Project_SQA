@@ -1,7 +1,19 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
 บันทึก 3 ตุลาคม 2026 (Asia/Bangkok) เพื่อรับช่วงจากบัญชี/เครื่องของเพื่อนโดยอ่านสถานะจาก Git และไฟล์หลักฐาน
-อัปเดต 4 ตุลาคม 2026: รับ `beam f708595d` ยืนยัน v10 scoped closure แล้ว:
+อัปเดต 4 ตุลาคม 2026: รับ `beam a44f796f` Codec5 bounded joint verdictครบแล้ว:
+อ่าน [Champ Codec review](CHAMP_CODEC_JOINT_REVIEW_TH.md) และ
+[successful v2 receipt](../../output/api854-20261004/champ-codec-joint-review-v2/receipt.json).
+Manifest88/native68/provenance7/runtimeBeam41ผ่าน; independent oracle43cases,
+Champ nativefixed86/buggy86/traced86observationsตรงBeam, JDI5exact declarations/43firstentriesต่อrevision.
+Received guardtests7รันใหม่ผ่าน/skip0; mutationsจับ3/9cases; candidatefault=false.
+Scopeคือ privateStringBufferhelpers4+package-staticdifferenceกับ realMetaphoneencoder/defaultmaxCodeLen4.
+Sharedintegrationยังpending: Aomv10actual390/301, Codec13selected/5excluded; Codec-onlyproposal395/296หลังผ่าน.
+ออมintegrate boundedlifecycle/oracleและregressionCodec13ก่อนสร้างcondition/preparation/prompts/worksheet/reserveใหม่.
+ไม่รวมChronologyv11/Graphicsproposalอัตโนมัติ. เก็บv1WindowsEOLarchiveguardfailureก่อนtests/Javaครบ;
+v2ใช้ git -c core.autocrlf=false เฉพาะexportและhashตรงBeam. SharedChamp100pinsคงเดิม/noKKU/livequeue/primary.
+
+ก่อนหน้านี้รับ `beam f708595d` ยืนยัน v10 scoped closure แล้ว:
 อ่าน [v10 reaffirmation](CHAMP_BEAM_V10_REAFFIRMATION_TH.md) และ
 [receipt](../../output/api854-20261003/champ-beam-v10-reaffirmation-v1/receipt.json).
 Manifest13/bindings441/uniqueGit437/receivedcopies9 ตรง original Beam0ca73ee6/Champfd2e16ab;
@@ -227,6 +239,7 @@ verifier ที่ execute v3 ถูก snapshot ใน packet; verifier ปั�
 ## Prompt สำหรับ Codex คนถัดไป
 
 ```text
+รับ beam a44f796f Codec5boundedjointแล้ว อ่าน CHAMP_CODEC_JOINT_REVIEW_TH.md/packetv2/returnindex: privateMetaphoneStringBufferhelpers4+SoundexUtilsdifferenceกับ realdefaultMetaphoneencoder/maxCodeLen4 รับ43boundedcases nativefixed86/buggy86/JDI86observationsตรงBeam fault=false guardtests7ผ่าน mutations3/9caught ยังไม่integrateshared Aomv10actual390/301 Codec13selected/5excluded Codec-onlyproposed395/296หลังintegrationผ่าน ออมทำlifecycle/value-exception-buffer-encoderstate/regressionCodec13และnewcondition/preparation/prompts/worksheetต่อ ไม่โอนv10reserveหรือบวกChronology/Graphicsproposalอัตโนมัติ เก็บv1archiveEOLguardfailureครบ v2exportcore.autocrlf=falsehashตรงBeam
 รับ beam f708595d scoped v10 reaffirmationแล้ว อ่าน CHAMP_BEAM_V10_REAFFIRMATION_TH.md/receipt: manifest13/bindings441/unique437/copies9ตรง prior Champ1b0bcbceclosureและworksheet40เดิม ไม่ต้องรอคำรับBeamv10inputs/componentoracles/beam-pc1CPU1เพิ่ม ไม่ใช่semantic390/GateA/currentproviderapproval ไม่มีexecutionใหม่ พบAom6c0f6328Chronologyv11suffixv3เป็นpacketใหม่ยังต้องตรวจแยก อย่าโอนv10acceptance/reserveไปconditionใหม่
 ล่าสุดอ่าน CHAMP_BEAM_GRAPHICS_ACCEPTANCE_TH.md และ champ-beam-graphics-return-index-v1.json ด้วย: รับ beam db74f117 Graphics7 bounded joint/native proofแล้ว ภาพ/stateตรงทั้ง6stages fault=false; actual Aom v10ยัง390/301และGraphics7excluded ออมทำsharedlifecycle/oracle/regressionChart8ต่อได้ initialise setupห้ามเรียกtargetล่วงหน้า หลังผ่านจึงเสนอ397/294/newpreparation/prompts/worksheet/reserve ไม่ต้องรอGraphicsboundedjointเพิ่ม เก็บChampauditv1/v2failuresและsuccessfulv3logsครบ
 รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md, CHAMP_BEAM_V10_ACCEPTANCE_TH.md และ CHAMP_V10_READINESS_REVIEW_TH.md ก่อน ตรวจ HEAD/status/current v9 100 pinsและsealed candidates ReceivedAoma4880fb2v10 20bugs390/301/691: Champตรวจinputs80/nativefixed64ซ้ำแล้ว รับBeam0ca73ee6scopedconsumer/boundedoracle/beam-pc1CPU1slothostevidenceด้วย manifest1026/provenance133/rawcommands141และ64cases/128observations+separatemutationverified Worksheet40pairs/max265937bytes/guard270033+unknownH/finalreservenullคงเดิม CurrentproviderIDs/effectivesettings/limits/token-framing/currentquota-reset-expiryยังpending Credentials10aliasesofflineignoredห้ามแสดงkey ไม่มีauthenticatedAPIcall/queue/ledger mutation Champsharedruntimeยังv9 380/311อย่าใช้runtimeคนละรุ่น ไม่ต้องรอBeamconsumer/hostชุดนี้อีก แต่ยังไม่รับsemantic390หรือGateA/teamfreeze รอprovider/remainingownerhost/ทีมกำหนดGateAหรือscopedpilotcriteriaชัดก่อนactualexperiments เก็บfailedattempts/oldreceipts Chronology6/Graphics7ยังไม่adoptemptyenum4unsupported ห้ามgeneration/livequeueจนgates/ownerapprovalsครบ อย่าสร้างbranch/worktreeซ้ำหรือแตะPDF สรุปผลพร้อมข้อความบีมออมแล้วcommit/pushchampเมื่อพร้อม
