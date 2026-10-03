@@ -7,6 +7,12 @@ Shared development checkpoint อยู่ที่ `da878b54fc6e5ed5b0ec15d6853
 [receipt/pins](../../output/api854-20261003/champ-chronology-continuation-v1.json) เพิ่มด้วย;
 ตรวจ HEAD จริงก่อนเริ่มทุกครั้ง
 
+รับข้อความ peer ครบหกแล้ว (5=บีม, 6=ออม) และส่ง scoped Champ verdicts ต่อ:
+อ่าน [six-message joint review ล่าสุด](CHAMP_SIX_MESSAGES_JOINT_REVIEW_TH.md) และ
+[packet v3](../../output/api854-20261003/champ-six-message-joint-review-v3/receipt.json).
+Buffer 8/Csv และ setter/JDOM มี Beam+Champ component verdicts แล้ว;
+Lang 2 มี Champ verdict แต่ยังรอ explicit Beam joint receipt. ไม่ได้ compose shared runtime ใหม่
+
 ## เริ่มจากที่ไหน
 
 - เครื่องเดิม: repository คือ `D:\Projects\SQA_p\Project_SQA` ภายใต้ workspace `D:\Projects\SQA_p`
@@ -105,6 +111,9 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
 
 1. ตรวจ HEAD, source/evidence hashes และคู่ preparation/protocol/runner จาก receipt v2 ก่อน
    ถ้า remote ของออมหรือบีมมีงานใหม่ ให้ตรวจ intake กับ pins เดิมก่อนรวม; อย่าแทนคู่ปัจจุบันด้วยไฟล์คนละรุ่น
+   ปัจจุบันรับ `beam 2e11c7d9` / `aom 60cc1a6e` แบบ isolated intake แล้ว.
+   รอ Beam explicit Lang verdict และ Aom combined preparation/pins ใหม่;
+   หากรับ Buffer 8 + Lang 2 บน v9 จะเป็น proposed 390/301/691 ไม่ใช่ Beam-only 389/302
 2. เริ่ม candidate fixture/oracle ฝั่งแชมป์จาก `Chronology` (6 affected targets) หรือ `Graphics2D` (7)
    เปิด identities และ raw cases ใน worklist ก่อน จำนวนนี้ยังไม่รับรองว่าทุก signature ใช้ recipe เดียวได้
    พัฒนาแยกจาก shared runtime พร้อม preconditions, meaningful state/value assertions,
@@ -128,10 +137,11 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
 ```powershell
 python -m unittest -v scripts.study.api854.tests.test_v9_continuation_evidence
 python -m unittest -v scripts.study.api854.tests.test_chronology_development
+python -m unittest -v scripts.study.api854.tests.test_joint_recipe_intake
 python -c "from scripts.study.api854.audit_v9_shared_limits import inspect; r=inspect(); print({k:r[k] for k in ('shared_prepared_bugs','target_count','capability_exclusion_count','max_prompt_utf8_bytes','final_prompt_reserve','gate_a_passed')})"
 ```
 
-สอง test modules ควรผ่าน module ละ 8 tests (รวม 16); shared audit ควรได้ 20 / 380 / 311 / 258914 / None / False
+สาม test modules ควรผ่าน 8 + 8 + 7 tests (รวม 23); shared audit ควรได้ 20 / 380 / 311 / 258914 / None / False
 runtime 41 files และ source/evidence SHA-256 อยู่ใน continuation receipt v2 ให้ตรวจ bytes จริงกับ receipt
 ห้ามเขียนทับ output ที่ seal แล้ว ถ้าต้อง rerun verifier ให้ใช้ output directory รุ่นใหม่
 `verify_enum_boundary_development.py --defects4j <installation> --output <new-directory>`
@@ -146,5 +156,5 @@ verifier ที่ execute v3 ถูก snapshot ใน packet; verifier ปั�
 ## Prompt สำหรับ Codex คนถัดไป
 
 ```text
-รับช่วงงาน Champ ใน repo Project_SQA บน branch champ อ่าน docs/api854/CHAMP_CODEX_HANDOFF_TH.md และ docs/api854/CHAMP_CHRONOLOGY_DEVELOPMENT_TH.md ให้ครบ ตรวจ HEAD/status/pins จาก received bytes และ champ-chronology-continuation-v1.json ก่อน อย่าสร้าง worktree/branch ซ้ำและอย่าแตะ PDF untracked ของผู้ใช้ Shared v9 ยัง selected 380/unsupported 311/denominator 691; standalone Chronology v2 ตรวจ fixed/buggy ซ้ำและ exact JDI entries ครบ 6 declarations แล้ว แต่ยังไม่อนุมัติ oracle/integration จึงยัง unsupported ตรวจรับ packet ตาม bounded domain/protected-internal invocation หรือพัฒนา Graphics2D 7 targets ต่อ เก็บ failed attempts และอย่าเขียนทับ sealed outputs เมื่อรับ recipes ใหม่ให้สร้าง preparation/policy/runtime/runner/condition pins คู่เดียวกันและคำนวณ shared limits/reserve ใหม่ คงสี่ enum targets unsupported จนมี joint decision; Gate A false, final reserve null, primary completion 0 ห้ามเรียก KKU API/เปิด queue/นำ development proof ไปอ้างเป็น primary results สรุปผลแล้ว commit/push champ เมื่อพร้อม
+รับช่วง Champ บน branch champ อ่าน CHAMP_CODEX_HANDOFF_TH.md, CHAMP_SIX_MESSAGES_JOINT_REVIEW_TH.md และ CHAMP_CHRONOLOGY_DEVELOPMENT_TH.md ตรวจ HEAD/status/current v9 pins และ packet hashes ก่อน Shared v9 ยัง 380/311/691; Champ scoped Buffer 8/Csv และ setter/JDOM verdicts พร้อมแล้ว ส่วน Lang 2 มี Champ verdict ยังรอ explicit Beam joint receipt ก่อน Aom compose combined condition ใหม่ proposed 390/301/691 รอ final preparation/protocol/runner/runtime pins และ prompts จากออมแล้วตรวจ final 20 bugs x 2 models, actual limits/settings/framing/current quota/expiry ใหม่ historical floors 261611/268995/263010+H ใช้แทน final ไม่ได้ อย่าสร้าง branch/worktree ซ้ำหรือแตะ PDF/private credentials, อย่าเขียนทับ sealed packets Chronology 6 และ empty-enum 4 ยัง unsupported; Graphics2D 7 ทำ candidate แยกต่อได้ Gate A false, final reserve null, primary0 ห้าม KKU generation/live queue จน gates/owner approvals ครบ สรุปผลและข้อความส่งบีม/ออมแล้ว commit/push champ เมื่อพร้อม
 ```
