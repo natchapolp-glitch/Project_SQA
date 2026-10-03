@@ -1,8 +1,11 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
 บันทึก 3 ตุลาคม 2026 (Asia/Bangkok) เพื่อรับช่วงจากบัญชี/เครื่องของเพื่อนโดยอ่านสถานะจาก Git และไฟล์หลักฐาน
-งานพัฒนาล่าสุดอยู่ที่ `da878b54fc6e5ed5b0ec15d6853373346642c86c` และ push บน `origin/champ` แล้ว
-commit ที่เพิ่มเอกสาร handoff นี้จะอยู่ถัดจาก checkpoint ดังกล่าว; ตรวจ HEAD จริงก่อนเริ่มทุกครั้ง
+Shared development checkpoint อยู่ที่ `da878b54fc6e5ed5b0ec15d6853373346642c86c`;
+รับช่วง handoff `e742095d` แล้วสร้าง standalone Chronology candidate ต่อโดยไม่เปลี่ยน shared v9.
+อ่าน [Chronology continuation ล่าสุด](CHAMP_CHRONOLOGY_DEVELOPMENT_TH.md) และ
+[receipt/pins](../../output/api854-20261003/champ-chronology-continuation-v1.json) เพิ่มด้วย;
+ตรวจ HEAD จริงก่อนเริ่มทุกครั้ง
 
 ## เริ่มจากที่ไหน
 
@@ -106,6 +109,11 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
    เปิด identities และ raw cases ใน worklist ก่อน จำนวนนี้ยังไม่รับรองว่าทุก signature ใช้ recipe เดียวได้
    พัฒนาแยกจาก shared runtime พร้อม preconditions, meaningful state/value assertions,
    fixed ซ้ำ, buggy และ target coverage ตาม requirement ที่ใช้จริง เก็บ failed attempts ด้วย
+   ตอนนี้ Chronology มี [sealed packet v2](../../output/api854-20261003/chronology-development-v2/receipt.json):
+   fixed ซ้ำผ่าน 13 cases; buggy ซ้ำ fail `arrays_bad_order`; JDI เข้า exact targets ครบ 6 declarations
+   ทั้งสอง revisions และ ignored-chronology mutation ถูก oracle จับได้. ทั้ง 6 ยัง unsupported
+   จนกว่าทีมตรวจ bounded domain/semantic oracle/protected-internal invocation และรับ integration.
+   เลือกตรวจรับ packet นี้หรือทำ Graphics2D ต่อ; อย่า rerun ทับ v1/v2
 3. ประสานออม/บีมเมื่อมี packet ที่ตรวจรับได้: บีมมี `JXPathContext` 13 targets; ออมมี `StringBuffer` 4
    ผู้รับช่วงต้องรายงานข้อเสนอ enum ให้คนในทีมตัดสินร่วม ไม่ถือความเห็นของ Codex เป็น three-owner approval
 4. หลังรับ recipes เพิ่ม ต้องสร้าง preparation รุ่นใหม่พร้อม policy/runtime/runner/condition pins คู่เดียวกัน
@@ -119,10 +127,11 @@ fixed สองรอบและ JDI trace ผ่านรอบละ 5 execut
 
 ```powershell
 python -m unittest -v scripts.study.api854.tests.test_v9_continuation_evidence
+python -m unittest -v scripts.study.api854.tests.test_chronology_development
 python -c "from scripts.study.api854.audit_v9_shared_limits import inspect; r=inspect(); print({k:r[k] for k in ('shared_prepared_bugs','target_count','capability_exclusion_count','max_prompt_utf8_bytes','final_prompt_reserve','gate_a_passed')})"
 ```
 
-คำสั่งแรกควรผ่าน 8 tests; คำสั่งที่สองควรได้ 20 / 380 / 311 / 258914 / None / False
+สอง test modules ควรผ่าน module ละ 8 tests (รวม 16); shared audit ควรได้ 20 / 380 / 311 / 258914 / None / False
 runtime 41 files และ source/evidence SHA-256 อยู่ใน continuation receipt v2 ให้ตรวจ bytes จริงกับ receipt
 ห้ามเขียนทับ output ที่ seal แล้ว ถ้าต้อง rerun verifier ให้ใช้ output directory รุ่นใหม่
 `verify_enum_boundary_development.py --defects4j <installation> --output <new-directory>`
@@ -137,5 +146,5 @@ verifier ที่ execute v3 ถูก snapshot ใน packet; verifier ปั�
 ## Prompt สำหรับ Codex คนถัดไป
 
 ```text
-รับช่วงงาน Champ ใน repo Project_SQA บน branch champ อ่าน docs/api854/CHAMP_CODEX_HANDOFF_TH.md ให้ครบก่อนทำต่อ งานพัฒนาล่าสุดคือ da878b54 และเอกสาร handoff อยู่ใน commit ถัดมา ตรวจ HEAD/status/pins จาก received bytes ก่อน อย่าสร้าง worktree/branch ซ้ำและอย่าแตะ PDF untracked ของผู้ใช้ ทำ offline candidate fixture/oracle ฝั่ง Champ ต่อจาก worklist v9 โดยเริ่ม Chronology หรือ Graphics2D ตามหลักฐาน เก็บ fixed ซ้ำ/buggy/target coverage และ failed attempts แยกจาก shared runtime เมื่อรับ recipes ใหม่ให้สร้าง preparation/pins รุ่นใหม่และคำนวณ shared limits/reserve ใหม่ คง denominator 691 และสี่ enum targets เป็น unsupported จนมี joint decision; Gate A ยัง false, final reserve null และ primary completion 0 ห้ามเรียก KKU API/เปิด queue/นำ development proof ไปอ้างเป็น primary results สรุปสิ่งที่เปลี่ยนและผลตรวจแล้ว commit/push champ เมื่อพร้อม
+รับช่วงงาน Champ ใน repo Project_SQA บน branch champ อ่าน docs/api854/CHAMP_CODEX_HANDOFF_TH.md และ docs/api854/CHAMP_CHRONOLOGY_DEVELOPMENT_TH.md ให้ครบ ตรวจ HEAD/status/pins จาก received bytes และ champ-chronology-continuation-v1.json ก่อน อย่าสร้าง worktree/branch ซ้ำและอย่าแตะ PDF untracked ของผู้ใช้ Shared v9 ยัง selected 380/unsupported 311/denominator 691; standalone Chronology v2 ตรวจ fixed/buggy ซ้ำและ exact JDI entries ครบ 6 declarations แล้ว แต่ยังไม่อนุมัติ oracle/integration จึงยัง unsupported ตรวจรับ packet ตาม bounded domain/protected-internal invocation หรือพัฒนา Graphics2D 7 targets ต่อ เก็บ failed attempts และอย่าเขียนทับ sealed outputs เมื่อรับ recipes ใหม่ให้สร้าง preparation/policy/runtime/runner/condition pins คู่เดียวกันและคำนวณ shared limits/reserve ใหม่ คงสี่ enum targets unsupported จนมี joint decision; Gate A false, final reserve null, primary completion 0 ห้ามเรียก KKU API/เปิด queue/นำ development proof ไปอ้างเป็น primary results สรุปผลแล้ว commit/push champ เมื่อพร้อม
 ```
