@@ -1,3 +1,5 @@
+> บีมยืนยัน Buffer/Csv + Lang กับแชมป์แล้ว: [BEAM_AOM_BUFFER_CHAMP_JOINT_RETURN_TH.md](docs/api854/BEAM_AOM_BUFFER_CHAMP_JOINT_RETURN_TH.md) — scoped component agreement พร้อมให้ออม compose รุ่นใหม่; Gate A ยังปิด
+
 > บีมตรวจ Chronology candidate: [BEAM_CHRONOLOGY_REVIEW_TH.md](docs/api854/BEAM_CHRONOLOGY_REVIEW_TH.md) — รับ bounded oracle 6 signatures; shared integration/Gate A ยัง pending
 
 > บีมตอบออม 60cc1a6e: [BEAM_FINAL_RECIPE_RETURN_TH.md](docs/api854/BEAM_FINAL_RECIPE_RETURN_TH.md) — Lang scoped verdict พร้อมแล้ว; มี index รวม Math/setter/JDOM/Buffer/Lang receipts พร้อม hashes ให้แชมป์ตรวจ ก่อนออมเลือก final condition.
