@@ -8,6 +8,8 @@ Champ integration reference: [twenty-bug v6 runtime/recipe guards](docs/api854/C
 
 Latest integration: [Champ 7e09a5fe repair intake and twenty-bug shared development v7](docs/api854/AOM_CHAMP7E_V7_REPAIR_ACCEPTANCE_TH.md).
 
+Latest Aom waiting work: [host/input readiness, recovered prepare-only queue and exact tasks for Beam/Champ](docs/api854/AOM_V8_WAITING_WORK_TH.md). Shared v8 unchanged; Gate A/pilot remain closed.
+
 Latest Aom handoff: [shared v8 with the two accepted Math getField signatures](docs/api854/AOM_MATH_FIELD_V8_HANDOFF_TH.md). 20 bugs; 379 selected / 312 unsupported of 691; max prompt 257,515 bytes. Champ remeasures reserve; Beam and Champ continue joint review. Gate A/pilot remain closed. Earlier checkpoints below retain their original counts and evidence.
 
 Latest Champ candidate decision: [accept two Math getField candidates for shared composition](docs/api854/CHAMP_MATH_FIELD_ACCEPTANCE_TH.md). Current v7 counts and Gate A remain unchanged.

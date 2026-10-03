@@ -1,44 +1,27 @@
-# ข้อความส่งต่อจากออม
-
-อัปเดตหลังรับ Beam `3ff1a6a4`: อ่าน [AOM_BEAM_FIXTURE_REVIEW_TH.md](AOM_BEAM_FIXTURE_REVIEW_TH.md)
-ก่อนข้อความ v3 ด้านล่าง. Shared explicit recipes compose เป็น v4 development เฉพาะ Closure-176/JxPath-1;
-prompt สูงสุดสอง bugs 174,475 bytes. อีก 18 recipes และ team/provider/host acceptance ยัง pending.
-บีมตรวจ shared recipe/capability version และส่งส่วนที่เหลือ; แชมป์คำนวณ reserve จาก prompt รุ่นสุดท้าย
-พร้อม framing/limits/quota. ยังไม่เปิด live pilot และไม่แทน frozen core ด้วย draft นี้.
-
-ออม push ชุด shared prepare v3 บน branch aom แล้ว ให้ดึง commit ล่าสุดพร้อม
-[บันทึกส่งมอบ](AOM_PREPARE_V3_HANDOFF_TH.md). มี artifacts 20 bugs, targets 691 รายการ,
-exclusions 3 รายการ และ Chart receiver partition พร้อม CPU/API/bridge/evaluator binding.
-Prompt ใหญ่สุดใหม่ 161,982 UTF-8 bytes. ZIP พร้อม SHA-256 อยู่ output/api854-20261003/.
-ยังไม่ frozen primary และไม่เปิด live pilot; core queue 80 งานยัง prepare/queued/0 attempts.
-
-## ส่งให้แชมป์
-
-ดึง aom ไปตรวจ shared-v3 policy/runner/runtime hashes และ composition tests.
-ใช้ prepare-v3/index.json, prepare-v3-prompts.csv และ prepare-v3-capacity.json
-คำนวณ prompt reserve ใหม่รวม provider framing; ไม่ใช้ 99,439 หรือ 115,826 ของรุ่นก่อน.
-ส่ง actual model/settings/context/output limits พร้อม remaining/unit/bucket/window/expiry,
-observed time และ evidence/hash ตาม provider-evidence.template.json. ยืนยัน champ-pc1 readiness
-และ team review. ไม่ส่ง API keys และยังไม่เริ่ม --once.
+# ข้อความพร้อมส่งต่อจากออม — v8
 
 ## ส่งให้บีม
 
-Discovery ชุด 44dd5cb0 import ครบแล้ว ไม่ต้องส่ง inventory เดิมซ้ำ.
-ขอตรวจ shared-v3 targets/fixtures/exclusions และ Chart receiver mapping แล้วปิด meaningful
-fixture/oracle/target execution review โดยเฉพาะ Closure-176/JxPath-1.
-แจ้ง executed/skipped counts ที่มีหลักฐาน; หากยังไม่ทราบคง null. ผลเดิม usable=false
-และทั้งคู่ fault_detected=false ตามจริง. ถ้าเปลี่ยน fixture/generator policy ให้ส่ง version/diff/hash
-และหลักฐาน fixed twice/buggy/coverage ใหม่ ไม่ซ่อม assertion เดิม.
-ยืนยัน readiness ของ beam-pc1/2/3 และตรวจ runner/policy ร่วมกัน.
+ออม push shared inputs v8 แล้ว (input commit e95e979b): 20 bugs, 379 selected / 312 unsupported / 691 declarations
+และตรวจ Math getField สองรายการพร้อม factory knowledge, fixed สองรอบ/buggy/coverage แล้ว
+ขอให้ดึง origin/aom และทำตาม [TASK_TO_BEAM_V8_TH.md](TASK_TO_BEAM_V8_TH.md): ตรวจ exact composition/semantic/beam-pc1
+แล้วร่วมกับแชมป์ส่ง scoped acceptance ของ setter/JDOM และ candidate ถัดไป โดยแยก target addition จาก recipe repair
+ส่ง branch + pushed commit + receipt paths/hashes ตาม templates กลับให้ออม
+enum สี่ targets คง denominator และรอคำตัดสินร่วม ยังไม่เปิด Gate A/pilot
 
-## ดึงงานโดยเก็บงานเดิมไว้
+## ส่งให้แชมป์
 
-```bash
-git fetch origin refs/heads/aom:refs/remotes/origin/aom
-git merge origin/aom
-python3 -m unittest discover -s scripts/study/api854/tests -t .
-```
+ออมส่ง preparation/protocol/runner v8 แล้ว และทำ input/WSL/CPU-lock/queue preflight ฝั่งออมเพิ่มครบ
+ขอให้ดึง origin/aom และทำตาม [TASK_TO_CHAMP_V8_TH.md](TASK_TO_CHAMP_V8_TH.md): ตรวจ 40 คู่ prompt × model
+ด้วย model IDs ที่เลือก temperature 0/output 4096 พร้อม actual context/output limits, framing และ observed quota/bucket/reset/expiry
+Prompt สูงสุด 257,515 bytes; conservative request floor ใหม่ 261,611 + framing ไม่ใช้ floor v7 เดิม
+ร่วมกับบีมตัดสิน setter/JDOM และส่ง final reserve ready/blocked พร้อม branch + pushed commit + receipt paths/hashes
+ยังไม่ส่ง generation requests หรือเริ่ม --once; templates เป็น pending แบบฟอร์ม ไม่ใช่ใบอนุมัติ
 
-ตรวจ SHA-256 ของ ZIP/index/policy ตาม commit ที่ออมแจ้ง ไม่เติม proposal fields เพื่อข้าม gate.
-เมื่อ semantic/provider/host evidence และ review สามคนครบ ออมจึงตรึง primary protocol/runner
-bytes/hash และ seed run ใหม่. preparation-only core เดิมยังคงไว้เป็น evidence แยก.
+## คิวใหม่และหลักฐาน
+
+URL: https://fax-stake-salvador-experts.trycloudflare.com
+health/schema/status ผ่านแบบ authenticated; คิวคง 80 prepare/queued, 0 attempts ของ frozen core เดิม
+ใช้ role access file ส่วนตัวเดิม เปลี่ยน base_url เป็น URL นี้; tokens เดิมยังใช้ได้และไม่ส่ง tokens ผ่าน Git
+ยังไม่มี v8 generation queue และไม่เปิด Gate A/pilot
+รายละเอียดสิ่งที่ออมทำเพิ่มและ return templates: [AOM_V8_WAITING_WORK_TH.md](AOM_V8_WAITING_WORK_TH.md)
