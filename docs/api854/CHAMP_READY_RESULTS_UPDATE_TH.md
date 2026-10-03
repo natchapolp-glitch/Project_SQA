@@ -1,5 +1,13 @@
 # แผนใหม่และชุดผลจริงพร้อมส่งออม/บีม
 
+ล่าสุด [รับ Csv ของ Aom และส่ง JacksonDatabind-112](CHAMP_AOM_CSV_AND_JACKSON_NEXT_RETURN_TH.md):
+รับAom4334c2abแล้ว; native6bugs/28outcomesรวมinvalid,latest reviewed Beam/Aom10suite-host rows/2bugs.
+JacksonDatabind112มี2validalgorithm archives+prospectiveGNUsourcebytebindingส่งAom;
+Sonnettruncated/Geminifixedfailเก็บinvalidครบ. CompressยังBeam,เพียงCsvMessagesที่4validfullD4Jmethods.
+อ่าน return-index-v6 / champ-aom-next-batch-audit-v1 ก่อนประวัติด้านล่าง.
+รับรู้pushใหม่Beamf3484746Compress2fullD4J/Aom7f0c6d31Clioracle+2fullD4Jแล้ว;
+คำรับChamprawreceiptsสองชุดยังpending แยกจากตาราง10reviewedhostrows ไม่ให้รันซ้ำ.
+
 ล่าสุด [รับผล Beam และส่ง Compress](CHAMP_BEAM_RESULTS_AND_COMPRESS_RETURN_TH.md):
 ตรวจรับCsv4/Jsoup2fullD4Jแล้ว; nativeรวม5bugs/24outcomesรวมinvalid.
 Compress2validarchivesพร้อมส่งBeam; Gsonต้องprospectiveTypeoracleก่อนทดลองใหม่.

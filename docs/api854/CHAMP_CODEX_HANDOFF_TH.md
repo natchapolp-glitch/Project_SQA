@@ -1,5 +1,26 @@
 # Handoff ให้ Codex รับช่วงงาน Champ
 
+ล่าสุดรับ Aom `4334c2ab`: อ่าน [Csv acceptance และ JacksonDatabind-112 next batch](CHAMP_AOM_CSV_AND_JACKSON_NEXT_RETURN_TH.md)
+และ `champ-aom-next-batch-audit-v1` / `champ-ready-results-return-index-v6.json` ก่อนประวัติ.
+ระหว่างpublicationพบBeamf3484746Compress2fullD4Jแล้ว/Aom7f0c6d31Clioracleใหม่+2fullD4Jแล้ว;
+อ่านdocsสองชุดแล้วแต่ยังไม่auditrawreceipts/ไม่รวมใน10hostrowsของChamp. ห้ามให้เพื่อนรันซ้ำ.
+งานChampถัดไป:รับCompressbenchmarkbinding/receiptsและตรวจAomCli preparation-v2/worksheetก่อนnewAIcalls.
+งานBeamถัดไป:รับตรวจnewCli oracle/preparation/source/hostตามคำสั่งAom,ไม่ต้องrerunCompress.
+ReviewAomผ่าน881manifest entries/16test-start lists/4coverage XML/22post-run dependencies;
+Csv4validfullD4J,CRfaultตรงBeam/native. AI skip/target countersรอบAomยังnull;ตรวจ23recordedregressionไม่รันซ้ำ.
+Nativeรวม6unique bugs/28outcomesรวมinvalid,latest reviewedhost Beam6+Aom4=10rows/2bugs ไม่ใช่newrepetitions.
+JacksonDatabind112CMA/FSCS30fixed2/buggy/coverageผ่าน49/91lines/36.67%branches/faultfalse;
+Sonnettruncated4096/Gemini9fixedfail4ทั้ง2รอบ เก็บinvalidครบ. ส่ง2validarchivesให้AomCPU1;
+CompressยังBeam. GNUbindingreview-v2ประกาศone-fileCRLF/LF deltaก่อนhosttests โดยไม่ลดsourceguard.
+Wrapper `--benchmark-binding` ต้องvalidate exactpacket/officialpatch/EOL-onlysourceก่อนใช้declaredSHA,
+และexport actualcheckoutsource/config+librarybindings; defaultnativeguardคงเดิม. Guard5/AST5ผ่าน,ยังไม่executeLinuxที่Champ.
+Mockito6fixture failuresก่อนtargetinvokeกักไว้/noAPI,เก็บpreflight harnessfailed attemptsครบ.
+Callsรวม27(gen14/cal13),A06latestobservedquotaSonnet115252/Gemini297281,finalreserve/reset/expiryยังunknown.
+Checkpoint100pinsไม่เปลี่ยน,primary0/GateAfalse. Full854/semantic403/inputdomain equivalenceยังไม่รับรอง.
+AI/Cli/Gsoninvalid/quarantineเดิมคงครบ. ข้อความพร้อมส่งAom/Beamและคำสั่งอยู่ในเอกสารใหม่.
+
+บันทึก milestone ก่อนรับ Aom/ขยาย JacksonDatabind:
+
 ล่าสุดรับ Beam `2c0e92fc`: อ่าน [Beam results และ Compress return](CHAMP_BEAM_RESULTS_AND_COMPRESS_RETURN_TH.md)
 และ `champ-ready-progress-audit-v1` / `champ-ready-results-return-index-v4.json` ก่อนประวัติ.
 ReviewBeam-v5ผ่าน1387manifestentries/24JUnitXML/officialpatchderivation/frameworkrestore:

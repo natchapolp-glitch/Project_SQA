@@ -1,0 +1,260 @@
+Looking at this task, I need to generate deterministic JUnit 4 tests for `StringCollectionDeserializer` using real Jackson API objects (ObjectMapper, JsonParser, DeserializationContext) rather than mocks, per the fixture policy demonstrated in the probe recipe (which constructs real `ArrayList<String>` collection types, real parsers over JSON string literals, and resolves deserializers through `ObjectMapper`).
+
+```java
+package com.fasterxml.jackson.databind.deser.std;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.ValueInstantiator;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+/**
+ * Deterministic tests for StringCollectionDeserializer using real Jackson
+ * infrastructure (ObjectMapper, JsonParser, DeserializationContext) instead
+ * of mocks, consistent with the fixture policy's recipe for this class.
+ */
+public class StringCollectionDeserializerTest {
+
+    private ObjectMapper newMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        return mapper;
+    }
+
+    private JavaType listOfStringType(ObjectMapper mapper) {
+        return mapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class);
+    }
+
+    private StringCollectionDeserializer findDeserializer(ObjectMapper mapper, JavaType type)
+            throws Exception {
+        JsonParser parser = mapper.getFactory().createParser("[]");
+        parser.nextToken();
+        DeserializationContext context = mapper.getDeserializationContext().createInstance(
+                mapper.getDeserializationConfig(), parser, null);
+        JsonDeserializer<Object> deser = context.findRootValueDeserializer(type);
+        parser.close();
+        assertTrue("Expected StringCollectionDeserializer for List<String>",
+                deser instanceof StringCollectionDeserializer);
+        return (StringCollectionDeserializer) deser;
+    }
+
+    private DeserializationContext contextFor(ObjectMapper mapper, JsonParser parser) {
+        return mapper.getDeserializationContext().createInstance(
+                mapper.getDeserializationConfig(), parser, null);
+    }
+
+    @Test
+    public void deserializeArrayOfStringsProducesExpectedElements() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"alpha\",\"beta\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        Collection<String> result = deser.deserialize(parser, ctxt);
+        parser.close();
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains("alpha"));
+        assertTrue(result.contains("beta"));
+    }
+
+    @Test
+    public void deserializeEmptyArrayProducesEmptyCollection() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        JsonParser parser = mapper.getFactory().createParser("[]");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        Collection<String> result = deser.deserialize(parser, ctxt);
+        parser.close();
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void deserializeArrayWithNullValueIncludesNull() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"left\",null,\"right\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        Collection<String> result = deser.deserialize(parser, ctxt);
+        parser.close();
+
+        List<String> list = new ArrayList<String>(result);
+        assertEquals(3, list.size());
+        assertEquals("left", list.get(0));
+        assertNull(list.get(1));
+        assertEquals("right", list.get(2));
+    }
+
+    @Test
+    public void deserializeWithExistingCollectionAppendsValues() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"gamma\",\"delta\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        Collection<String> existing = new ArrayList<String>();
+        existing.add("preexisting");
+
+        Collection<String> result = deser.deserialize(parser, ctxt, existing);
+        parser.close();
+
+        assertSame(existing, result);
+        List<String> list = new ArrayList<String>(result);
+        assertEquals(3, list.size());
+        assertEquals("preexisting", list.get(0));
+        assertEquals("gamma", list.get(1));
+        assertEquals("delta", list.get(2));
+    }
+
+    @Test
+    public void handleNonArraySingleValueWrapsIntoCollection() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        JsonParser parser = mapper.getFactory().createParser("\"single-value\"");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        Collection<String> result = deser.deserialize(parser, ctxt);
+        parser.close();
+
+        assertEquals(1, result.size());
+        assertTrue(result.contains("single-value"));
+    }
+
+    @Test
+    public void handleNonArrayWithoutAcceptSingleThrowsMismatchedInput() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, false);
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        JsonParser parser = mapper.getFactory().createParser("\"solo\"");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        try {
+            deser.deserialize(parser, ctxt);
+            fail("Expected an exception for non-array input without wrapping enabled");
+        } catch (Exception expected) {
+            // Jackson wraps the unexpected-token handling as a JsonMappingException subtype.
+            assertTrue(expected instanceof com.fasterxml.jackson.databind.JsonMappingException);
+        } finally {
+            parser.close();
+        }
+    }
+
+    @Test
+    public void deserializeUsingCustomDeserializerProducesUpperCasedValues() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        ValueInstantiator valueInstantiator = findDeserializer(mapper, type).getValueInstantiator();
+
+        JsonDeserializer<?> baseStringDeser =
+                com.fasterxml.jackson.databind.deser.std.StringDeserializer.instance;
+
+        JsonDeserializer<String> upperCasing = new JsonDeserializer<String>() {
+            @Override
+            public String deserialize(JsonParser p, DeserializationContext ctxt) throws java.io.IOException {
+                String value = p.getValueAsString();
+                return value == null ? null : value.toUpperCase();
+            }
+        };
+
+        StringCollectionDeserializer customDeser =
+                new StringCollectionDeserializer(type, upperCasing, valueInstantiator);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"abc\",\"def\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        Collection<String> seed = new ArrayList<String>();
+        Collection<String> result = customDeser.deserializeUsingCustom(parser, ctxt, seed, upperCasing);
+        parser.close();
+
+        List<String> list = new ArrayList<String>(result);
+        assertEquals(2, list.size());
+        assertEquals("ABC", list.get(0));
+        assertEquals("DEF", list.get(1));
+    }
+
+    @Test
+    public void deserializeUsingCustomStopsAtEndArrayToken() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        ValueInstantiator valueInstantiator = findDeserializer(mapper, type).getValueInstantiator();
+
+        JsonDeserializer<String> identityDeser = new JsonDeserializer<String>() {
+            @Override
+            public String deserialize(JsonParser p, DeserializationContext ctxt) throws java.io.IOException {
+                return p.getValueAsString();
+            }
+        };
+
+        StringCollectionDeserializer customDeser =
+                new StringCollectionDeserializer(type, identityDeser, valueInstantiator);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"only\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = contextFor(mapper, parser);
+
+        Collection<String> seed = new ArrayList<String>();
+        Collection<String> result = customDeser.deserializeUsingCustom(parser, ctxt, seed, identityDeser);
+        parser.close();
+
+        assertEquals(1, result.size());
+        assertEquals("only", result.iterator().next());
+    }
+
+    @Test
+    public void isCachableReturnsTrueForDefaultConfiguration() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        assertTrue(deser.isCachable());
+    }
+
+    @Test
+    public void getContentDeserializerIsNullForDefaultStringHandling() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeserializer deser = findDeserializer(mapper, type);
+
+        // Standard contextualization nulls out the content deserializer when
+        // the default String deserializer is in effect.
+        assertNull(deser.getContentDeserializer());
+    }
+
+    @Test
+    public void getValueInstantiatorIsNotNull() throws Exception {
+        ObjectMapper mapper = newMapper();
+        JavaType type = listOfStringType(mapper);
+        StringCollectionDeser

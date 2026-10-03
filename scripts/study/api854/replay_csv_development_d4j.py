@@ -1,4 +1,4 @@
-"""Replay four unchanged, fixed-validated Csv/Jsoup archives on a Linux D4J host.
+"""Replay selected unchanged, fixed-validated ready-bug archives on a Linux D4J host.
 
 Uses the received Aom evaluator/runtime and the host's existing single CPU lock.
 Separate development replay; no provider requests, queue, or primary promotion.
@@ -6,6 +6,7 @@ Separate development replay; no provider requests, queue, or primary promotion.
 import argparse
 from contextlib import nullcontext
 from datetime import datetime, timezone
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -18,13 +19,59 @@ from .start_csv_development import AOM
 PACKET=ROOT/'output/api854-20261004/champ-csv-messages-native-measurement-v1'
 CLASSES={'Csv':'org.apache.commons.csv.ExtendedBufferedReader','Jsoup':'org.jsoup.nodes.Document'}
 CLASSES.update({'Gson':'com.google.gson.TypeInfoFactory','Compress':'org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream'})
+CLASSES['JacksonDatabind']='com.fasterxml.jackson.databind.deser.std.StringCollectionDeserializer'
+BUG_IDS={p:112 if p=='JacksonDatabind' else 1 for p in CLASSES}
 CONDITIONS={'Csv':'api854-20261004-csv-messages-disabled-thinking-native-development-v2',
             'Jsoup':'api854-20261004-jsoup-ten-target-messages-disabled-thinking-native-development-v1'}
 CONDITIONS.update({'Gson':'api854-20261004-gson-five-target-messages-disabled-thinking-isolated-bug-native-development-v1',
                    'Compress':'api854-20261004-compress-eight-target-messages-disabled-thinking-isolated-bug-native-development-v1'})
+CONDITIONS['JacksonDatabind']='api854-20261004-jacksondatabind112-four-target-messages-disabled-thinking-isolated-bug-native-development-v1'
 
 
-def run(output,worktrees,d4j,worker_id,packet=PACKET,approaches=None,counted=False):
+def verify_benchmark_binding(folder,packet,seal,defects4j_root):
+    """Accept an explicit exact-byte binding for the observed GNU EOL change.
+
+    Default native guards remain intact. This supports only the independently
+    derived JacksonDatabind-112 packet, and rejects any Java content difference.
+    """
+    folder=Path(folder).resolve()
+    require(folder.is_relative_to(ROOT/'output'),'Contained benchmark binding required')
+    manifest=read_json(folder/'checksums.json')
+    for relative,h in manifest.items():
+        file=(folder/relative).resolve()
+        require(file.is_relative_to(folder) and sha256(file)==h,'Benchmark binding manifest differs')
+    binding=read_json(folder/'receipt.json')
+    require(seal['project']=='JacksonDatabind' and seal['bug_id']==112 and binding['project']=='JacksonDatabind'
+            and binding['bug_id']==112 and binding['status']=='prospective_GNU_benchmark_source_binding_ready',
+            'Benchmark byte-binding scope differs')
+    require(binding['generation_condition']==CONDITIONS['JacksonDatabind'] and
+            binding['native_packet_manifest_sha256']==sha256(packet/'checksums.json') and
+            binding['native_seal_sha256']==sha256(packet/'preexecution-seal.json'),'Binding belongs to another native packet')
+    require(binding['declared_before_host_test_execution'] and not binding['production_source_replacement_allowed'] and
+            not binding['wrapper_guard_removal_allowed'],'Source guard or production replacement requested')
+    native={v:seal['production_source_sha256'][v]['sources'] for v in ('fixed','buggy')}
+    expected=binding['expected_source_sha256']
+    require(expected['fixed']==native['fixed'] and binding['native_buggy_source_sha256']==native['buggy'] and
+            set(expected['buggy'])==set(native['buggy']),'Declared source inventories differ')
+    changed={p for p in native['buggy'] if native['buggy'][p]!=expected['buggy'][p]}
+    target='src/main/java/'+CLASSES['JacksonDatabind'].replace('.','/')+'.java'
+    require(changed=={target} and {r['path'] for r in binding['source_differences']}==changed,
+            'Benchmark binding changes an unexpected source')
+    for row in binding['source_differences']:
+        p=row['path'];original=(folder/'native-source'/p).read_bytes();benchmark=(folder/'benchmark-source'/p).read_bytes()
+        require(sha256(folder/'native-source'/p)==native['buggy'][p]==row['native_sha256'] and
+                sha256(folder/'benchmark-source'/p)==expected['buggy'][p]==row['benchmark_sha256'],'Source evidence hash differs')
+        normalized=original.replace(b'\r\n',b'\n')
+        require(normalized==benchmark.replace(b'\r\n',b'\n'),'Benchmark binding changes Java content beyond CRLF/LF')
+        require(hashlib.sha256(normalized).hexdigest()==row['LF_normalized_sha256'],'Normalized source hash differs')
+    original_derivation=read_json(packet/'isolated-bug-reference/derivation.json')
+    patch=defects4j_root/'framework/projects/JacksonDatabind/patches/112.src.patch'
+    require(sha256(patch)==binding['official_patch_sha256']==original_derivation['official_patch_sha256'],
+            'Host official isolated bug patch differs')
+    return binding
+
+
+def run(output,worktrees,d4j,worker_id,packet=PACKET,approaches=None,counted=False,benchmark_binding=None):
     require(sys.platform=='linux','Full replay requires the accepted Linux/Java11 host')
     output=Path(output).resolve();worktrees=Path(worktrees).resolve()
     packet=Path(packet).resolve();require(packet.is_relative_to(ROOT/'output'),'Contained native packet required')
@@ -46,9 +93,11 @@ def run(output,worktrees,d4j,worker_id,packet=PACKET,approaches=None,counted=Fal
     require(len(selected)==len(approaches) and all(r['status']=='native_fixed_twice_buggy_coverage_measured' for r in selected),
             'Only unchanged, native fixed-validated selected suites may enter this replay')
     project=seal['project'];bug=seal['bug_id']
-    require(project in CLASSES and bug==1 and seal['aom_commit']==AOM and received['condition']==CONDITIONS[project],
+    require(project in CLASSES and bug==BUG_IDS[project] and seal['aom_commit']==AOM and received['condition']==CONDITIONS[project],
             'Exact accepted native condition/project differs')
     target_class=CLASSES[project]
+    d4j_root=Path(d4j).resolve().parents[2]
+    binding=verify_benchmark_binding(benchmark_binding,packet,seal,d4j_root) if benchmark_binding else None
     # A new isolated checkout for every approach; retain all checkouts for peer inspection.
     checkout_base=(worktrees/output.name).resolve()
     require(checkout_base.is_relative_to(worktrees) and not checkout_base.exists(),'Fresh contained host checkout root required')
@@ -64,13 +113,17 @@ def run(output,worktrees,d4j,worker_id,packet=PACKET,approaches=None,counted=Fal
             'suite':(packet/r['approach']/'packaged-suite/suite.tar.bz2').relative_to(ROOT).as_posix(),
             'suite_sha256':sha256(packet/r['approach']/'packaged-suite/suite.tar.bz2')} for r in selected]
     write_json(output/'preexecution-plan.json',{'schema_version':1,'condition':received['condition'],
-        'replay_condition':received['condition']+('-d4j-java11-los-angeles-counted-replay-v1' if counted else '-d4j-java11-los-angeles-replay-v1'),
+        'replay_condition':(binding['execution_condition']+('-counted' if counted else '') if binding else
+                            received['condition']+('-d4j-java11-los-angeles-counted-replay-v1' if counted else '-d4j-java11-los-angeles-replay-v1')),
         'native_environment_results_do_not_transfer':True,'actual_junit_xml_observer_enabled':counted,
         'received_observer_sha256':sha256(observer_path) if counted else None,
         'purpose':'User-authorized full Defects4J development replay of explicitly selected fixed-valid ready-bug suites',
         'project':project,'bug_id':bug,'native_packet':packet.relative_to(ROOT).as_posix(),
         'buggy_source_mode':seal['production_source_sha256']['buggy'].get('source_mode','exact_git_parent_revision'),
         'source_guard_requires_exact_bytes':True,
+        'benchmark_binding_packet':Path(benchmark_binding).resolve().relative_to(ROOT).as_posix() if binding else None,
+        'benchmark_binding_manifest_sha256':sha256(Path(benchmark_binding)/'checksums.json') if binding else None,
+        'benchmark_binding_scope':'Only independently derived CRLF/LF source-byte difference; exact actual checkout guard remains' if binding else None,
         'selected_approaches':approaches,'native_outcomes_not_replayed':[{'approach':r['approach'],'status':r['status']}
             for r in received['records'] if r['approach'] not in approaches],
         'unreplayed_or_invalid_AI_outcomes_are_not_zero_coverage_or_four_measured_methods':True,
@@ -78,7 +131,16 @@ def run(output,worktrees,d4j,worker_id,packet=PACKET,approaches=None,counted=Fal
         'received_native_manifest_sha256':sha256(packet/'checksums.json'),'aom_commit':AOM,
         'received_runtime_source_sha256':seal['runtime_source_sha256'],'snapshot_archive_sha256':archive,
         'evaluated_classes':[target_class],'java_required':11,'timezone':'America/Los_Angeles',
+        'native_dependency_sha256':seal['dependencies_sha256'],
+        'export_actual_production_source_inventories_before_tests':True,
         'tasks':tasks,'primary_results_allowed':False,'kku_requests_cap':0,'queue_mutations':0})
+    actual_dependencies={}
+    for relative,h in seal['dependencies_sha256'].items():
+        normalized=relative.replace('\\','/')
+        actual_dependencies[normalized]=sha256(d4j_root/normalized)
+        require(actual_dependencies[normalized]==h,'Host library bytes differ from native declared dependency')
+    write_json(output/'host-library-bindings.json',{'observed_before_test_execution':True,
+        'files':actual_dependencies,'scope':'Declared evaluator and production jars; not every OS dependency'})
     records=[]
     with cpu_slot(worktrees):
         checkout_base.mkdir(parents=True)
@@ -95,8 +157,14 @@ def run(output,worktrees,d4j,worker_id,packet=PACKET,approaches=None,counted=Fal
                         command=evaluator.run_command([d4j,'checkout','-p',project,'-v',str(bug)+version,'-w',str(tree)],ROOT,out/('checkout-'+version),300)
                         require(command['exit_code']==0 and not command['timed_out'],'Defects4J checkout failed')
                         evaluator.validate_worktree(tree,project,str(bug)+version);trees[version]=tree
-                        expected=seal['production_source_sha256']['fixed' if version=='f' else 'buggy']['sources']
-                        for relative,h in expected.items():require(sha256(tree/relative)==h,'Actual D4J production source differs from native production revision')
+                        label='fixed' if version=='f' else 'buggy'
+                        expected=binding['expected_source_sha256'][label] if binding else seal['production_source_sha256'][label]['sources']
+                        observed={relative:sha256(tree/relative) for relative in expected}
+                        require(observed==expected,'Actual D4J production source differs from native production revision')
+                        write_json(out/('production-sources-'+version+'.json'),{'project':project,'version':str(bug)+version,
+                            'observed_before_test_execution':True,'actual_source_sha256':observed,
+                            'worktree_config_sha256':sha256(tree/'.defects4j.config'),
+                            'scope':'Every source declared by the native seal, including supplied build-generated sources'})
                     record=evaluator.evaluate_run(evaluator.EvaluationConfig(project=project,bug_id=bug,generator=approach,seed=101,budget=30,
                         suite=ROOT/task['suite'],buggy_worktree=trees['b'],fixed_worktree=trees['f'],output=out/'measurement',d4j=d4j,
                         classes_file=classes_file,test_count=task['test_count'],timeout_seconds=300))
@@ -127,9 +195,10 @@ if __name__=='__main__':
     parser.add_argument('--packet',type=Path,default=PACKET)
     parser.add_argument('--approaches',nargs='+',choices=['cmaes','fscs-art','kku-claude','kku-gemini'])
     parser.add_argument('--counted',action='store_true',help='Use received Beam formatter-only observer under the same CPU lock, restoring exact framework bytes')
+    parser.add_argument('--benchmark-binding',type=Path,help='Explicit sealed JacksonDatabind112 GNU CRLF/LF byte-binding packet; guards remain exact')
     parser.add_argument('--d4j',required=True);parser.add_argument('--worker-id',required=True);args=parser.parse_args()
     new=not args.output.resolve().exists()
-    try:r=run(args.output,args.worktrees,args.d4j,args.worker_id,args.packet,args.approaches,args.counted)
+    try:r=run(args.output,args.worktrees,args.d4j,args.worker_id,args.packet,args.approaches,args.counted,args.benchmark_binding)
     except Exception as error:
         out=args.output.resolve()
         if new and out.is_relative_to(ROOT/'output') and out.exists() and not (out/'checksums.json').exists():

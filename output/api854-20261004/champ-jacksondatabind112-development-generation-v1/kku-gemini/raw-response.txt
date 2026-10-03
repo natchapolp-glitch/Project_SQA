@@ -1,0 +1,173 @@
+```java
+package com.fasterxml.jackson.databind.deser.std;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.ValueInstantiator;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+
+public class StringCollectionDeserializerTest {
+
+    @Test
+    public void testConstructorAndGetters() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        JsonDeserializer<?> stringDeser = StringDeserializer.instance;
+        ValueInstantiator instantiator = null;
+
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, stringDeser, instantiator);
+
+        assertSame(collectionType, deserializer.getValueType());
+        assertNotNull(deserializer.getValueInstantiator());
+    }
+
+    @Test
+    public void testGetContentDeserializer() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(LinkedHashSet.class, String.class);
+        
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, StringDeserializer.instance, null);
+
+        assertNotNull(deserializer.getContentDeserializer());
+    }
+
+    @Test
+    public void testDeserializeArrayInput() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, null, null);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"hello\", \"world\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = mapper.getDeserializationContext();
+
+        Collection<String> result = deserializer.deserialize(parser, ctxt);
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(true, result.contains("hello"));
+        assertEquals(true, result.contains("world"));
+    }
+
+    @Test
+    public void testDeserializeIntoExistingCollection() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, null, null);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"item3\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = mapper.getDeserializationContext();
+
+        Collection<String> target = new ArrayList<>();
+        target.add("item1");
+        
+        Collection<String> result = deserializer.deserialize(parser, ctxt, target);
+        assertSame(target, result);
+        assertEquals(2, result.size());
+        assertEquals(true, result.contains("item1"));
+        assertEquals(true, result.contains("item3"));
+    }
+
+    @Test
+    public void testDeserializeUsingCustomDeserializer() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        
+        JsonDeserializer<String> customDeser = StringDeserializer.instance;
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, customDeser, null);
+
+        JsonParser parser = mapper.getFactory().createParser("[\"custom\"]");
+        parser.nextToken();
+        DeserializationContext ctxt = mapper.getDeserializationContext();
+
+        Collection<String> result = new ArrayList<>();
+        Collection<String> populated = deserializer.deserialize(parser, ctxt, result);
+        
+        assertNotNull(populated);
+        assertEquals(1, populated.size());
+        assertEquals(true, populated.contains("custom"));
+    }
+
+    @Test
+    public void testHandleNonArrayAcceptSingleValue() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, null, null);
+
+        JsonParser parser = mapper.getFactory().createParser("\"single-value\"");
+        parser.nextToken();
+        DeserializationContext ctxt = mapper.getDeserializationContext();
+
+        Collection<String> result = new ArrayList<>();
+        Collection<String> populated = deserializer.deserialize(parser, ctxt, result);
+        
+        assertNotNull(populated);
+        assertEquals(1, populated.size());
+        assertEquals(true, populated.contains("single-value"));
+    }
+
+    @Test
+    public void testIsCachableReturnsTrueForNullDeserializers() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, null, null);
+
+        assertEquals(true, deserializer.isCachable());
+    }
+
+    @Test
+    public void testIsCachableReturnsFalseForCustomDeserializer() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, StringDeserializer.instance, null);
+
+        assertEquals(false, deserializer.isCachable());
+    }
+
+    @Test
+    public void testGetValueInstantiator() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TypeFactory tf = mapper.getTypeFactory();
+        JavaType collectionType = tf.constructCollectionType(ArrayList.class, String.class);
+        
+        StringCollectionDeserializer deserializer = new StringCollectionDeserializer(
+                collectionType, null, null);
+
+        assertNotNull(deserializer.getValueInstantiator());
+    }
+}
+```
