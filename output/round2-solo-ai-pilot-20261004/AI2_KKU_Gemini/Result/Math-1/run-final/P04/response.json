@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:54:26.645468+00:00",
+  "ended_at_utc": "2026-10-04T02:54:29.017519+00:00",
+  "raw_body_sha256": "40e2a34f8e55c88375a571302b3bf3879433a8addcdc0cd7dc4f4d494cd04e3e",
+  "body": {
+    "id": "genai-01a104d5-9dc2-76d4-885d-896ecaa27fac",
+    "object": "chat.completion",
+    "created": 1791082470,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.math3.fraction;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.junit.Test;\n\npublic class Math1AdditionalFractionTest {\n\n    @Test\n    public void testBigFractionDoubleConstructorAndReduce() {\n        BigFraction bf = new BigFraction(0.5);\n        assertEquals(BigInteger.ONE, bf.getNumerator());\n        assertEquals(BigInteger.valueOf(2), bf.getDenominator());\n        BigFraction reduced = bf.reduce();\n        assertNotNull(reduced);\n        assertEquals(bf, reduced);\n    }\n\n    @Test\n    public void testFractionDoubleConstructorExact() {\n        Fraction f = new Fraction(0.25);\n        assertEquals(1, f.getNumerator());\n        assertEquals(4, f.getDenominator());\n    }\n\n    @Test\n    public void testBigFractionFloatIntConstructors() {\n        BigFraction bf = new BigFraction(3, 4);\n        assertEquals(3, bf.getNumeratorAsInt());\n        assertEquals(4, bf.getDenominatorAsInt());\n        assertEquals(3L, bf.getNumeratorAsLong());\n        assertEquals(4L, bf.getDenominatorAsLong());\n    }\n\n    @Test\n    public void testBigFractionPowAndAbs() {\n        BigFraction bf = new BigFraction(-1, 2);\n        assertEquals(new BigFraction(1, 2), bf.abs());\n        assertEquals(new BigFraction(1, 4), bf.pow(2));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6530,
+      "completion_tokens": 360,
+      "total_tokens": 6890
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 143876,
+      "daily_remaining_tokens": 206124
+    }
+  },
+  "headers": {
+    "x-request-id": "s2fg8i56pto3sizsuj7ysbj1",
+    "date": "Sun, 04 Oct 2026 02:54:30 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

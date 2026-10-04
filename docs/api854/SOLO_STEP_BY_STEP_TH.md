@@ -56,6 +56,14 @@ python3 -B scripts/study/solo_batch.py report \
 
 ## ขั้น 2: AI pilot ผ่าน KKU
 
+**อัปเดต 2026-10-04:** เริ่มและเก็บ checkpoint แล้วที่
+[AI pilot](../../output/round2-solo-ai-pilot-20261004/README.md).
+KKU 16 requests จริง; ตรวจ runner/report รวม 22 tests ผ่าน; actual resume ไม่ส่งคำขอเพิ่ม
+และไม่มีหลักฐานเปลี่ยน รวม DONE 10 / OUTPUT_INCOMPLETE 1 / QUOTA_PAUSED 1 / ยังไม่เริ่ม 3,404
+Csv-1 ครบสี่วิธี; Lang Sonnet โค้ดไม่ครบ; Math Sonnet พักก่อน P02 (ยังเหลือ 30,455 tokens
+แต่ต่ำกว่า conservative guard 32,723); Gemini ทั้งสาม bugs เสร็จ
+ดู combined_summary.json ของ AI pilot แทน parent offline summary สำหรับสถานะรวม
+
 ทำ workflow P01/P02/P03/P04 และตรึง templates/settings ก่อนส่งจริง
 ใช้ buggy-only context ที่ขั้น 1 เตรียมไว้: source รวมไม่เกิน 12,000 characters
 กับ buggy signatures ไม่เกิน 6,000 characters ไม่ส่ง fixed source/patch/trigger tests
@@ -69,7 +77,7 @@ P04 เก็บทั้งผลเพิ่มและ rejection; ใช้ 
 
 ทำ AI ของ Csv-1/Lang-1/Math-1 แล้วตรวจทั้งสี่วิธีร่วมในตาราง
 ผล invalid เป็นผลจริง ไม่เพิ่ม retries เพื่อเอาผลดี และไม่เปลี่ยนโมเดลเอง
-ขั้นนี้ยังไม่เสร็จใน offline pilot
+ขั้นนี้มีผล pilot และข้อจำกัดแล้ว ยังไม่ใช่ผลครบสี่วิธีทุกบั๊ก
 
 ## ขั้น 3: ขยายและวัดเวลา/โควตา
 

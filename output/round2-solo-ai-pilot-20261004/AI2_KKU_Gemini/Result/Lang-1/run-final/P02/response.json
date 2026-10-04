@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:51:39.598580+00:00",
+  "ended_at_utc": "2026-10-04T02:51:44.145062+00:00",
+  "raw_body_sha256": "afe77c634c380f41fa37cd183b44dd470205cb275b29a3789e06113224675946",
+  "body": {
+    "id": "genai-01a104d3-150d-7128-a0ff-f6f513d05fee",
+    "object": "chat.completion",
+    "created": 1791082304,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.lang3.math;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.junit.Test;\n\npublic class NumberUtilsTest {\n\n    @Test\n    public void testToInt() {\n        assertEquals(0, NumberUtils.toInt(null));\n        assertEquals(0, NumberUtils.toInt(\"\"));\n        assertEquals(123, NumberUtils.toInt(\"123\"));\n        assertEquals(5, NumberUtils.toInt(\"invalid\", 5));\n    }\n\n    @Test\n    public void testToLong() {\n        assertEquals(0L, NumberUtils.toLong(null));\n        assertEquals(0L, NumberUtils.toLong(\"\"));\n        assertEquals(123456789L, NumberUtils.toLong(\"123456789\"));\n        assertEquals(99L, NumberUtils.toLong(\"invalid\", 99L));\n    }\n\n    @Test\n    public void testToFloat() {\n        assertEquals(0.0f, NumberUtils.toFloat(null), 0.0001f);\n        assertEquals(0.0f, NumberUtils.toFloat(\"\"), 0.0001f);\n        assertEquals(1.5f, NumberUtils.toFloat(\"1.5\"), 0.0001f);\n        assertEquals(2.2f, NumberUtils.toFloat(\"invalid\", 2.2f), 0.0001f);\n    }\n\n    @Test\n    public void testToDouble() {\n        assertEquals(0.0d, NumberUtils.toDouble(null), 0.0001d);\n        assertEquals(0.0d, NumberUtils.toDouble(\"\"), 0.0001d);\n        assertEquals(2.5d, NumberUtils.toDouble(\"2.5\"), 0.0001d);\n        assertEquals(3.3d, NumberUtils.toDouble(\"invalid\", 3.3d), 0.0001d);\n    }\n\n    @Test\n    public void testToByteAndToShort() {\n        assertEquals((byte) 0, NumberUtils.toByte(null));\n        assertEquals((byte) 7, NumberUtils.toByte(\"invalid\", (byte) 7));\n        assertEquals((byte) 5, NumberUtils.toByte(\"5\"));\n\n        assertEquals((short) 0, NumberUtils.toShort(null));\n        assertEquals((short) 9, NumberUtils.toShort(\"invalid\", (short) 9));\n        assertEquals((short) 10, NumberUtils.toShort(\"10\"));\n    }\n\n    @Test\n    public void testCreateNumber() {\n        assertEquals(Integer.valueOf(123), NumberUtils.createNumber(\"123\"));\n        assertEquals(Long.valueOf(123L), NumberUtils.createNumber(\"123L\"));\n        assertEquals(Float.valueOf(1.5f), NumberUtils.createNumber(\"1.5f\"));\n        assertEquals(Double.valueOf(2.5d), NumberUtils.createNumber(\"2.5d\"));\n        assertEquals(Integer.valueOf(0x10), NumberUtils.createNumber(\"0x10\"));\n        assertEquals(Integer.valueOf(010), NumberUtils.createNumber(\"010\"));\n        assertNotNull(NumberUtils.createNumber(\"1.5e2\"));\n    }\n\n    @Test(expected = NumberFormatException.class)\n    public void testCreateNumberInvalid() {\n        NumberUtils.createNumber(\"not-a-number\");\n    }\n\n    @Test\n    public void testIsNumber() {\n        assertTrue(NumberUtils.isNumber(\"123\"));\n        assertTrue(NumberUtils.isNumber(\"123.45\"));\n        assertTrue(NumberUtils.isNumber(\"0x10\"));\n        assertTrue(NumberUtils.isNumber(\"-123\"));\n        assertTrue(NumberUtils.isNumber(\"1e10\"));\n        assertFalse(NumberUtils.isNumber(null));\n        assertFalse(NumberUtils.isNumber(\"\"));\n        assertFalse(NumberUtils.isNumber(\"123a\"));\n    }\n\n    @Test\n    public void testMinMaxArray() {\n        int[] intArray = {3, 1, 4, 1, 5, 9};\n        assertEquals(1, NumberUtils.min(intArray));\n        assertEquals(9, NumberUtils.max(intArray));\n\n        long[] longArray = {10L, 20L, 5L};\n        assertEquals(5L, NumberUtils.min(longArray));\n        assertEquals(20L, NumberUtils.max(longArray));\n\n        double[] doubleArray = {1.1, 2.2, 0.5};\n        assertEquals(0.5, NumberUtils.min(doubleArray), 0.0001);\n        assertEquals(2.2, NumberUtils.max(doubleArray), 0.0001);\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testMinArrayEmpty() {\n        int[] empty = {};\n        NumberUtils.min(empty);\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testMaxArrayNull() {\n        int[] nullArray = null;\n        NumberUtils.max(nullArray);\n    }\n\n    @Test\n    public void testMinMaxTriplets() {\n        assertEquals(1, NumberUtils.min(3, 1, 2));\n        assertEquals(3, NumberUtils.max(1, 3, 2));\n\n        assertEquals(10L, NumberUtils.min(20L, 10L, 30L));\n        assertEquals(30L, NumberUtils.max(20L, 10L, 30L));\n\n        assertEquals(1.1f, NumberUtils.min(2.2f, 1.1f, 3.3f), 0.0001f);\n        assertEquals(3.3f, NumberUtils.max(2.2f, 1.1f, 3.3f), 0.0001f);\n\n        assertEquals(1.1d, NumberUtils.min(2.2d, 1.1d, 3.3d), 0.0001d);\n        assertEquals(3.3d, NumberUtils.max(2.2d, 1.1d, 3.3d), 0.0001d);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5029,
+      "completion_tokens": 1519,
+      "total_tokens": 6548
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 110036,
+      "daily_remaining_tokens": 239964
+    }
+  },
+  "headers": {
+    "x-request-id": "o8ac5gne0u91qx0yc24ez9tc",
+    "date": "Sun, 04 Oct 2026 02:51:44 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

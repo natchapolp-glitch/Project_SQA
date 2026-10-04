@@ -1,4 +1,14 @@
-# Latest implementation: single-operator offline pilot
+# Latest implementation: single-operator offline + KKU pilot
+
+AI update 2026-10-04: ส่ง KKU จริง 16 requests ด้วย a01; ไม่เผยแพร่ keys
+อ่าน `output/round2-solo-ai-pilot-20261004/README.md` และ combined_summary.json ก่อน
+รวม 12 attempted jobs: DONE 10 / OUTPUT_INCOMPLETE 1 / QUOTA_PAUSED 1 / PENDING 3,404
+Sonnet Lang output ชนเพดาน 4096; Sonnet Math หยุดก่อน P02 ด้วย operator guard
+Gemini ทั้งสาม bugs รันครบ fixed twice/buggy/coverage แล้ว; ไม่พบ fault
+รักษาทั้งสอง protocols/หลักฐานเดิม; ห้ามแก้ frozen code เพื่อ resume paused outcome อัตโนมัติ
+ขั้นถัดไปเป็น prospective batch 10–20 bugs ด้วย accounts/settings ที่ประกาศก่อนส่ง
+อ่านข้อจำกัดเรื่อง alias ≠ distinct quota, missing metrics, cap/continuation ใน README ใหม่
+บรรทัด offline ด้านล่างอธิบาย parent cohort เท่านั้น ไม่ใช่จำนวนรวมล่าสุด
 
 Latest branch update: ทำต่อบน **`Team`** ตามคำสั่งผู้ใช้ ย้ายฐานจาก `aom 026e83ed`
 งานและ receipts ไม่เปลี่ยน; `aom` คงเดิม ประวัติที่ระบุ branch aom ด้านล่างยังเป็น provenance

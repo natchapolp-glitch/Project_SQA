@@ -1,0 +1,12 @@
+Here's my analysis:
+
+- Known Lang-1 bug: `createNumber(String)` mishandles hex-prefixed strings like "0xABCD" combined with a trailing type qualifier (e.g. "0xABCDL") — verify correct Long/Integer parsing and overflow-to-BigInteger fallback.
+- Test `isNumber`/`createNumber` boundary with "." alone, trailing "D"/"F"/"L" without digits, leading "+", malformed decimals (e.g. "1.1.1", "--1.1"), and whitespace.
+- Test `createNumber(null)` returns null per contract; empty string throws NumberFormatException.
+- Test `createFloat`, `createDouble`, `createInteger`, `createLong`, `createBigInteger`, `createBigDecimal` with null input returning null, and invalid strings throwing NumberFormatException.
+- Test hex/octal strings ("0x1A", "010", "#1A") for createNumber/createInteger correctness including negative sign handling ("-0x1A").
+- Test `isDigits` with null/empty/non-digit/unicode-digit edge cases per documented contract.
+- Test `min`/`max` array variants: null array throws IllegalArgumentException, empty array throws IllegalArgumentException, single-element arrays.
+- Test `min`/`max` three-arg overloads for all primitive types with equal values and negative/positive mixes.
+- Test `toInt`/`toLong`/`toFloat`/`toDouble`/`toByte`/`toShort` null, empty, non-numeric, and valid numeric strings against default values.
+- Test overflow scenarios: `createNumber` with digit-only string exceeding Integer/Long range should escalate to BigInteger per Javadoc.

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:51:00.359855+00:00",
+  "ended_at_utc": "2026-10-04T02:51:07.655549+00:00",
+  "raw_body_sha256": "83939ca6dbaffa46374b1b06ae00f4a288acd3e20e9d599bdcc83fd569ff6805",
+  "body": {
+    "id": "gen-1791082260-bnavXD3Me4Almz8ggksR",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Here's my analysis:\n\n- Known Lang-1 bug: `createNumber(String)` mishandles hex-prefixed strings like \"0xABCD\" combined with a trailing type qualifier (e.g. \"0xABCDL\") — verify correct Long/Integer parsing and overflow-to-BigInteger fallback.\n- Test `isNumber`/`createNumber` boundary with \".\" alone, trailing \"D\"/\"F\"/\"L\" without digits, leading \"+\", malformed decimals (e.g. \"1.1.1\", \"--1.1\"), and whitespace.\n- Test `createNumber(null)` returns null per contract; empty string throws NumberFormatException.\n- Test `createFloat`, `createDouble`, `createInteger`, `createLong`, `createBigInteger`, `createBigDecimal` with null input returning null, and invalid strings throwing NumberFormatException.\n- Test hex/octal strings (\"0x1A\", \"010\", \"#1A\") for createNumber/createInteger correctness including negative sign handling (\"-0x1A\").\n- Test `isDigits` with null/empty/non-digit/unicode-digit edge cases per documented contract.\n- Test `min`/`max` array variants: null array throws IllegalArgumentException, empty array throws IllegalArgumentException, single-element arrays.\n- Test `min`/`max` three-arg overloads for all primitive types with equal values and negative/positive mixes.\n- Test `toInt`/`toLong`/`toFloat`/`toDouble`/`toByte`/`toShort` null, empty, non-numeric, and valid numeric strings against default values.\n- Test overflow scenarios: `createNumber` with digit-only string exceeding Integer/Long range should escalate to BigInteger per Javadoc.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6290,
+      "output_tokens": 590,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.01848,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.01848,
+        "upstream_inference_prompt_cost": 0.01258,
+        "upstream_inference_completions_cost": 0.0059
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 150668,
+      "daily_remaining_tokens": 49332
+    }
+  },
+  "headers": {
+    "x-request-id": "uzm849gavfydr6boa1cau9s6",
+    "date": "Sun, 04 Oct 2026 02:51:08 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

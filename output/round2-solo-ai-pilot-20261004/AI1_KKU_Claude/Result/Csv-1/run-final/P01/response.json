@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:48:04.109814+00:00",
+  "ended_at_utc": "2026-10-04T02:48:11.395010+00:00",
+  "raw_body_sha256": "56c91950637b5d3b5967f8202ca06e760df7c54c147d696a97996b8358b5d006",
+  "body": {
+    "id": "gen-1791082084-qOVfBfLWKwqvNXgAcboX",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```\n- read(): single char reads update lastChar; verify '\\n' increments lineCounter, other chars don't, EOF sets lastChar=END_OF_STREAM without incrementing counter\n- readAgain(): returns UNDEFINED before any read; returns lastChar after read()/read(buf)/readLine(), unaffected by lookAhead()\n- read(char[],int,int): length==0 returns 0 without touching lastChar/lineCounter; normal read sets lastChar to last char read; EOF (-1) sets lastChar=END_OF_STREAM\n- read(buf): line counting across buffer boundaries - '\\n' following '\\r' from previous buffer segment (boundary via lastChar) should not double-count; '\\r\\n' within buffer counts once; lone '\\r' and lone '\\n' each count\n- readLine(): strips terminator, sets lastChar to last char of line (or END_OF_STREAM if empty-at-EOF/null), increments lineCounter once per call; EOF (null) sets lastChar=END_OF_STREAM without incrementing\n- lookAhead(): returns next char without consuming (subsequent read() still returns it); returns END_OF_STREAM at EOF; does not modify lastChar or lineCounter\n- getLineNumber(): starts at 0, reflects increments from read()/read(buf)/readLine() combos; mixed CRLF/LF/CR sequences across methods\n- Interleaving read() then read(char[]) then readLine() to check lastChar/lineCounter consistency across method boundaries\n- Receiver setup: wrap StringReader with ExtendedBufferedReader; use varied strings: empty, single char, multiline with \\n, \\r\\n, \\r only, no trailing terminator\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2112,
+      "output_tokens": 578,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.010004,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.010004,
+        "upstream_inference_prompt_cost": 0.004224,
+        "upstream_inference_completions_cost": 0.00578
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 137872,
+      "daily_remaining_tokens": 62128
+    }
+  },
+  "headers": {
+    "x-request-id": "g8w5lqz3ci7hgrj1k5pcvjqr",
+    "date": "Sun, 04 Oct 2026 02:48:11 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

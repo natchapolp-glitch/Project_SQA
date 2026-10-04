@@ -1,4 +1,4 @@
-# งานล่าสุด — solo offline pilot สำหรับแผนเต็ม
+# งานล่าสุด — solo algorithms + KKU pilot สำหรับแผนเต็ม
 
 **Branch ทำงานปัจจุบัน: `Team`** — ย้าย checkpoint จาก `aom 026e83ed` ตามคำสั่งผู้ใช้
 เก็บ `aom` และประวัติเดิมไว้ครบ เมื่อโปรเจคเสร็จค่อยจัดชุดไฟล์สำหรับ repo ใหม่
@@ -6,8 +6,9 @@
 
 เริ่ม implementation แล้ว อ่าน [ลำดับงานทีละขั้น](docs/api854/SOLO_STEP_BY_STEP_TH.md)
 และ [ชุด pilot ปัจจุบัน](output/round2-solo-pilot-20261004/README.md)
-มี runner เลือกบั๊ก/resume/checkpoint และตารางผลกับงานค้าง; ยังไม่เรียก KKU ในชุดใหม่
-ดู [ตัวนับล่าสุด](output/round2-solo-pilot-20261004/Report/data/summary.json)
+AI pilot ผ่าน KKU เริ่มแล้ว อ่าน [ผลและข้อจำกัด](output/round2-solo-ai-pilot-20261004/README.md)
+รวม 12 attempted jobs: DONE 10 / OUTPUT_INCOMPLETE 1 / QUOTA_PAUSED 1; ยังไม่เริ่ม 3,404
+ดู [ตัวนับรวมล่าสุด](output/round2-solo-ai-pilot-20261004/Report/data/combined_summary.json)
 สำหรับจำนวนที่รันจริง ไม่อ้างว่า planned jobs ทั้งหมดเสร็จแล้ว
 
 ## แผนขยาย — โครงชุดส่งตาม repo เพื่อน

@@ -1,0 +1,96 @@
+{
+  "schema": "solo-ai-acceptance.v1",
+  "jobs": [
+    {
+      "case": "Csv-1",
+      "method": "kku-claude",
+      "state": "DONE"
+    },
+    {
+      "case": "Csv-1",
+      "method": "kku-gemini",
+      "state": "DONE"
+    },
+    {
+      "case": "Lang-1",
+      "method": "kku-claude",
+      "state": "OUTPUT_INCOMPLETE"
+    },
+    {
+      "case": "Lang-1",
+      "method": "kku-gemini",
+      "state": "DONE"
+    },
+    {
+      "case": "Math-1",
+      "method": "kku-claude",
+      "state": "QUOTA_PAUSED"
+    },
+    {
+      "case": "Math-1",
+      "method": "kku-gemini",
+      "state": "DONE"
+    }
+  ],
+  "provider_requests": 16,
+  "selected_suite_test_start_events": 192,
+  "resume_changed_files": 0,
+  "resume_stdout": "Csv-1 kku-claude: retained DONE\nCsv-1 kku-gemini: retained DONE\nLang-1 kku-claude: retained OUTPUT_INCOMPLETE\nLang-1 kku-gemini: retained DONE\nMath-1 kku-claude: retained QUOTA_PAUSED\nMath-1 kku-gemini: retained DONE\n",
+  "source_pins": {
+    "scripts/study/solo_ai.py": "b6ad883ed69194c96a64ddd012a328c71c0fb25e45ce125dbaffd25c323d7ada",
+    "scripts/study/solo_batch.py": "2a812cb31546059cbb64e69d95aff4cc81a3e8255dbc6619b029b0a2f3824230",
+    "scripts/study/evaluate.py": "68755e76863a2e826fd7519e2868deda53b7532f0b03ea9bb2e1fbf4fd017c42",
+    "scripts/study/api854/kku_client.py": "68febb3938b69e7504027cc31cc1a2a470cd3e37dfa4d50ebdcf900696a09245",
+    "scripts/study/api854/pack_suite.py": "c4341f218c93a42b135a5a80772ffcbe6625bc8cc8143bcd31136baa4deba62c",
+    "scripts/study/api854/suite_resolver.py": "30b5a6975e08dac8ceb6bf97002e05743cdb2bdc11c9798241c0d3f8e9f7c609",
+    "scripts/study/api854/common.py": "306e9d3a535742aad8e198212b705bf4b05b6b45323a7f5ddba7cfa74c0eeb44"
+  },
+  "verifier_sha256": "151f2f02cd3af60b9f9a0e5d6a4fa8916b715b4c92f6baa7eebc472f51d8bbaa",
+  "combined_summary": {
+    "planned_bugs": 854,
+    "planned_jobs": 3416,
+    "attempted_jobs": 12,
+    "evaluated_jobs": 10,
+    "states": {
+      "PENDING": 3404,
+      "DONE": 10,
+      "OUTPUT_INCOMPLETE": 1,
+      "QUOTA_PAUSED": 1
+    },
+    "provider_request_attempts": 16,
+    "confirmed_provider_responses": 16,
+    "bugs_four_methods_done": 1,
+    "protocols": {
+      "offline": "d206dcefca2caa09a93451fb8fb4ac3ca5f7b04aa2c0be7c9ec83394b28448a7",
+      "ai": "f4e01a246a10a9dff206df55a3e02c4a4d5596ccd4f54d8a734de00f71841b00"
+    },
+    "old_results_pooled": false,
+    "per_method": {
+      "cmaes": {
+        "PENDING": 851,
+        "DONE": 3
+      },
+      "fscs-art": {
+        "PENDING": 851,
+        "DONE": 3
+      },
+      "kku-claude": {
+        "PENDING": 851,
+        "DONE": 1,
+        "OUTPUT_INCOMPLETE": 1,
+        "QUOTA_PAUSED": 1
+      },
+      "kku-gemini": {
+        "PENDING": 851,
+        "DONE": 3
+      }
+    },
+    "limitations": [
+      "DONE means completed evaluation, not necessarily fault detected.",
+      "Offline fixed-observation oracle and AI contract oracle differ.",
+      "P01/P02/P03/P04 and base/extension are stages, not independent bug/model jobs.",
+      "Missing metrics remain null; full inventory is pending outside the pilot."
+    ]
+  },
+  "scope": "Automated binding/execution checks and operator source review; no peer verdict/Gate A claim"
+}
