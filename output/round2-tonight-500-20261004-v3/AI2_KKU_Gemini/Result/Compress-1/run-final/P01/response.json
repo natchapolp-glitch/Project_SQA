@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:49:55.042301+00:00",
+  "ended_at_utc": "2026-10-04T03:49:57.376439+00:00",
+  "raw_body_sha256": "7924c2456260fa601c588779f023591e823eff50da8477378b089f53d843f90b",
+  "body": {
+    "id": "genai-01a10508-67c7-733b-b68e-7294443ce3db",
+    "object": "chat.completion",
+    "created": 1791085799,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Valid receiver setup: Initialize `CpioArchiveOutputStream` wrapping a valid `OutputStream` (e.g., `ByteArrayOutputStream`) and a supported CPIO format constant.\n2. Boundary behavior: `putNextEntry` / `putArchiveEntry` must throw an `IOException` if called after `close()` or `finish()`.\n3. Valid behavior: Successfully write multiple archive entries with associated payloads using `putNextEntry`, `write`, and `closeArchiveEntry`.\n4. Boundary behavior: Writing data via `write()` when no entry is currently open must throw an `IOException`.\n5. Valid behavior: `finish()` writes trailer entries (like the traditional `TRAILER!!!` entry) and flushes the underlying stream without closing it.\n6. Boundary behavior: Calling `finish()` multiple times or calling `close()` after `finish()` should handle state transitions gracefully without duplicate trailers.\n7. Valid behavior: `closeArchiveEntry()` validates entry size constraints (matching declared vs. actual written bytes) and pads output streams per CPIO format rules.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 708,
+      "completion_tokens": 220,
+      "total_tokens": 928
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 928,
+      "daily_remaining_tokens": 349072
+    }
+  },
+  "headers": {
+    "x-request-id": "kzbt7be3hd2qpn6vq2ihznsw",
+    "date": "Sun, 04 Oct 2026 03:49:59 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

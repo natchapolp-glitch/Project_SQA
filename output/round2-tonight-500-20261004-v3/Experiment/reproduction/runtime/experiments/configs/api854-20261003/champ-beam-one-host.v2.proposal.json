@@ -1,0 +1,249 @@
+{
+  "algorithm_input_budget": 30,
+  "algorithm_parameters": {
+    "cmaes_population": "4 + floor(3 * log(dimensions))",
+    "cmaes_sigma": 0.3,
+    "fixed_observations_per_proposal": 2,
+    "fscs_candidate_set_size": 10,
+    "normalized_bounds": [
+      -1.0,
+      1.0
+    ],
+    "objective": "minimize frequency of observed fixed behavior, not coverage"
+  },
+  "aom_host_evidence": {
+    "aom-pc1": "output/api854-20261003/aom-pc1-environment-v3/environment.json",
+    "aom-pc2": null
+  },
+  "approaches": [
+    "cmaes",
+    "fscs-art",
+    "kku-claude",
+    "kku-gemini"
+  ],
+  "approval_state": "integration_proposal_not_frozen",
+  "beam_handoff_review": {
+    "commit": "44dd5cb0b44e8f075ed283d0ff4f4ae51c97f4ed",
+    "discovery_evidence_accepted": true,
+    "evidence_path": "output/api854-20261003/team-preparation-v2/beam-handoff-review-44dd5cb0.json",
+    "evidence_sha256": "624a7fac140c2fed3b5a8e56652ba3edcdf4dc8b7409bee79912568cb6a99bd8",
+    "fixture_oracle_review": "pending",
+    "primary_approval": false,
+    "runtime_import_complete": false
+  },
+  "budget": 30,
+  "command_timeout_seconds": 900,
+  "compatibility_policy": "none",
+  "condition": "api854-20261003-beam-one-host-proposal-v2",
+  "context_policy": "Same fixed-source/API/build context and target list for all four methods; fresh KKU request per job; fixed source only; no execution/compile logs sent to AI.",
+  "context_selection": "modified-java-root-build-and-shared-receivers-v3",
+  "defects4j_version": "3.0.1",
+  "enabled_stages": [],
+  "evidence_freeze_at": "2026-10-05T03:00:00+07:00",
+  "execution_timezone": "America/Los_Angeles",
+  "execution_timezone_rationale": "Retain existing generator/evaluator TZ consistently; scheduling and quota use Asia/Bangkok until server verification.",
+  "fixed_validation_repeats": 2,
+  "gate_a": {
+    "evidence": [],
+    "reviewed_by": {
+      "aom": false,
+      "beam": false,
+      "champ": false
+    }
+  },
+  "generation": {
+    "context_policy_id": "modified-java-root-build-and-shared-receivers-v3",
+    "handoff_contract": "beam-v1",
+    "input_contract": "champ-generation-input-v1",
+    "max_tokens": 4096,
+    "owners": [
+      "champ",
+      "beam",
+      "aom"
+    ],
+    "prepare_contract": "aom-beam-prepare-v3",
+    "prompt_policy_id": "shared-fixed-targets-junit4-v3",
+    "prompt_token_reserve": null,
+    "suite_policy_id": "beam-java-suite-v1",
+    "suite_resolver": "scripts.study.api854.champ_bridge:champ_suite_resolver",
+    "temperature": 0
+  },
+  "generation_cutoff_at": "2026-10-05T01:00:00+07:00",
+  "generator_seed": 101,
+  "historical_policy": "17-bug historical cohorts remain separate; never imported as API854 primary observations.",
+  "integration_status": "Champ bridge + Beam receiver partition + Aom shared-v3 CPU/API preparation bound; no live authorization",
+  "kku": {
+    "claude_family": "Sonnet",
+    "exact_model_ids": {
+      "kku-claude": "claude-sonnet-5",
+      "kku-gemini": "gemini-3.5-flash-lite"
+    },
+    "fallback_allowed": false,
+    "gemini_family": "Flash Lite",
+    "max_output_tokens": 4096,
+    "model_settings_verified": false,
+    "notify_user_before_account_switch": true,
+    "output_seed": null,
+    "send_execution_logs_to_ai": false,
+    "temperature": 0
+  },
+  "model_policy": {
+    "kku-claude": {
+      "kku_model_id": "claude-sonnet-5"
+    },
+    "kku-gemini": {
+      "kku_model_id": "gemini-3.5-flash-lite"
+    }
+  },
+  "models": {
+    "kku-claude": {
+      "family": "sonnet",
+      "id": "claude-sonnet-5",
+      "name": "claude-sonnet-5"
+    },
+    "kku-gemini": {
+      "family": "flash-lite",
+      "id": "gemini-3.5-flash-lite",
+      "name": "gemini-3.5-flash-lite"
+    }
+  },
+  "observation_timeout_seconds": 10,
+  "preparation_artifacts": "output/api854-20261003/prepare-v3",
+  "preparation_import_evidence": {
+    "beam_commit": "44dd5cb0b44e8f075ed283d0ff4f4ae51c97f4ed",
+    "path": "output/api854-20261003/prepare-v3/index.json",
+    "runtime_import_complete": true,
+    "semantic_review": "pending",
+    "sha256": "c51127147928ef1f0ce6a172893a226f92c66d446cd80284864b2803308aab86"
+  },
+  "prepare_policy_sha256": "821eb9b9d5d448734a5357f84170c1da3de3a3127934d74f9b90d9ec417c7b56",
+  "prepare_status": "20 source-bound v3 inventories / 691 targets and 3 exclusions imported; shared receiver/fixture/context policy composed; semantic/team/provider gates pending",
+  "processing_policy": {
+    "assertion_edits_allowed": false,
+    "compatibility_allowlist": [
+      "extract complete Java fences without source edits",
+      "organize unchanged Java bytes by declared package/public class"
+    ],
+    "compatibility_policy": "none",
+    "empty_or_null_return_suite": "invalid_suite",
+    "fixed_failure_pruning_allowed": false,
+    "fixture_policy": "common-fixed-buggy-production-types-v1",
+    "over_cap": "reject entire suite; preserve raw response; no truncation or semantic retry",
+    "raw_response_immutable": true,
+    "required_history": [
+      "raw_hash",
+      "processed_hash",
+      "operations",
+      "excluded_methods",
+      "operator"
+    ],
+    "semantic_repairs": "Require new protocol condition and disclosed raw/processed delta; not raw KKU output.",
+    "shared_target_order": "canonical declaration identity order in v3; fresh algorithm discovery must match sealed inventory",
+    "source_order_cap": null,
+    "test_method_cap": 30
+  },
+  "repeat_index": 1,
+  "runner_plan_sha256": "7bc100a2baa9c3db69e0c2cd5146360b099fd5c17a78921b52c0fd6bd9c96c56",
+  "schedule_timezone": "Asia/Bangkok",
+  "schema_version": 1,
+  "seed": 101,
+  "settings_status": "temperature 0 / output 4096 remain proposals. Final v3 prompt max 161982 UTF-8 bytes; verified provider framing/reserve/context/output limits and quota missing.",
+  "source_sha256": {
+    "scripts/study/run.py": "10a72bbbde358001598b033edb00f1274bc8a57488ad4e7adfc50331977c0de0",
+    "scripts/study/generate.py": "42f5a52fe2c02e2dafae575c7ba28a7808ead2e3850b80575a21ff8908b33771",
+    "scripts/study/evaluate.py": "68755e76863a2e826fd7519e2868deda53b7532f0b03ea9bb2e1fbf4fd017c42",
+    "algorithms/java/SqaProbe.java": "536ccd06d1af7c59622f6708aa447d1a7f3641eba009e1811e2c0106534101f4",
+    "algorithms/python/atcg/__init__.py": "1294b41a8603f959eb955c3d3f9fccc4190bc08082f0f8e7dd5c8317cb20aa86",
+    "algorithms/python/atcg/cmaes.py": "0dd7f69d73021602c214f6c57757f19513a5b1d77d6705e815e1856cc1c335e8",
+    "algorithms/python/atcg/fscs_art.py": "7e1a1fa2f05dd46de7af3225a9e2917e146ed174a8fcade6a6029591666bdc60",
+    "scripts/study/api854/__init__.py": "396d8ae661e26041750ee8178aea2e8bae994d387de1d8a2eccaf4f1af12248f",
+    "scripts/study/api854/adapters.py": "065660ed7f9bf33ac0f0beb47b42e60a53a0859254a0f76c53bd87396a7c9598",
+    "scripts/study/api854/algorithm_worker.py": "db6256cca8f611aa748e8159294e359a129092bbff5a67cf6f737871f17745e6",
+    "scripts/study/api854/common.py": "691fcfe207416b5b67f0f89ea4f76bb81cbc4235550ea4f71998178962aa76ae",
+    "scripts/study/api854/configuration.py": "b083270d8add58665bdfa0d7765af20c1e251799b1b211d1c5c378504c2ab896",
+    "scripts/study/api854/environment.py": "c937bef71341a0131d77218f86144a1857fc2af50977d6985194f0fb8fa04826",
+    "scripts/study/api854/evaluate_worker.py": "d337a71b4cde05625bdce3afa608e378100c3bd86c8f930307e5dc6d0a658feb",
+    "scripts/study/api854/fixture_policy.py": "25fcca6ad6a6ffa261bdec92c0d8f202ea5bfc340d20a8b1f105a5640d18d0ec",
+    "scripts/study/api854/make_job.py": "f6e09f642b227103547572adb44d61336b824e89824f01ff1d10745423adfd77",
+    "scripts/study/api854/pack_suite.py": "c4341f218c93a42b135a5a80772ffcbe6625bc8cc8143bcd31136baa4deba62c",
+    "scripts/study/api854/queue_client.py": "1df960b57559b1553b6b0a4fd392ba689c9a2834a06f503ce84b5c30ac010f89",
+    "scripts/study/api854/queue_connection.py": "93496ef2cce248a31bb5e0e5a548d2760e464b73fe0302018b3e270588f14c08",
+    "scripts/study/api854/validity.py": "d4240a6ae4c8f58e8f9bf4ad9b7182db7eb7fea065e52fb26b2a92865bd03b52",
+    "scripts/study/api854/worker.py": "95b0cee5def460922fecae273c1cd0895d43945d186954e9687a4a95caaf3cca",
+    "scripts/study/api854/ai_handoff.py": "bd96ca2fef25cafd626347230f3d139f81724340e6ce0236dfd77c6e278bfe63",
+    "scripts/study/api854/champ_bridge.py": "bf2cbfa4f9c716e53c24384b1b0e636cbe8f95723adeb91b88b01bcda178c9d9",
+    "scripts/study/api854/beam_queue.py": "59aaf788d60bcfcc365a31e5330f4cb88625cf99f5646772d1e3e263a7c08276",
+    "scripts/study/api854/core_preflight.py": "bdc097e35e8512668fa7b5365ea1572cd27f6bb3e3ca274c76ea17b06e75b51a",
+    "scripts/study/api854/prepare_worker.py": "dc4228369685fac00b987ea017efcbed42e711017c0b32f1327bd857dc7505be",
+    "scripts/study/api854/queue_worker.py": "792bc658a934192b9f9a13f4c50dbecc4c7e056f2829de6e58ab0939538ce636",
+    "scripts/study/api854/suite_resolver.py": "30b5a6975e08dac8ceb6bf97002e05743cdb2bdc11c9798241c0d3f8e9f7c609",
+    "scripts/study/api854/champ_queue.py": "8286dd8a2739c5ff97e436f5714847ff3b2e4d94130c0119230f2d965f884a84",
+    "scripts/study/api854/context_export.py": "1a5dffe992dbb96592b17a80f635b610bb5b35718883fc36aa71c2b898204149",
+    "scripts/study/api854/generate_worker.py": "7e24c0cd3cdd886d1577b363e86ef232007d6133a390e519e14fb1b6f9d048d9",
+    "scripts/study/api854/kku_client.py": "68febb3938b69e7504027cc31cc1a2a470cd3e37dfa4d50ebdcf900696a09245",
+    "scripts/study/api854/lease.py": "c766c0716fb90b5b9c5bb055a36ee07bc1d05df65772e246d11ccdc79b93917f",
+    "scripts/study/api854/models.py": "f2f55f63c10c1aaab0ffd3089ef18a4dfb8a012642a87a726ea5eaa8ea576901",
+    "scripts/study/api854/quota.py": "9512dc60220908caec124b7d0a494017d2651bccd2e60b8ab35f9fd5861aa7ce",
+    "scripts/study/api854/preparation.py": "03de9cb8478f8a0a3ed2e1a55e0b27f4e82e315b9896c18e251089ed7bdbd650",
+    "scripts/study/api854/prepared_inputs.py": "2269f419c7942c5abcf81a31ed081a5486cb0d05c46ba767688252cf6ba121a7",
+    "scripts/study/api854/team_queue.py": "fd37b69ae117c7aba8c175b15b23d10909bec0f74adee6893ac759c3f43103c8",
+    "scripts/study/api854/api_worker.py": "69016507afacaf4bc4b6180e472a03433da9ad743a428ebfe9810b48be002d4e",
+    "experiments/configs/api854-20261003/model-selection.json": "f6b542f81385a7881c62fbf0442c3d683c4c7d348ea82439b001b2e01821aa49"
+  },
+  "start_at": "2026-10-03T05:00:00+07:00",
+  "state": "proposal",
+  "status": "integration_proposal_not_frozen",
+  "suite_packaging": "beam-java-suite-v1",
+  "target_policy": "All classes modified by each selected fix. Eligibility is intersection of fixed/buggy declaration signatures and common fixture types. No buggy behavior, patch contents, or triggering test supplied for generation.",
+  "target_selection": "shared-declaration-signatures-v1",
+  "test_method_cap": 30,
+  "timezone": "America/Los_Angeles",
+  "unknown_metrics": null,
+  "usable_policy": "Nonempty meaningful assertions and executed target; compile succeeds; identical suite passes fixed twice; buggy and fixed target-class coverage measured; detected=false is valid.",
+  "runner_plan_path": "experiments/configs/api854-20261003/runner-plan.beam-one-host.v2.json",
+  "beam_host_evidence": {
+    "beam-pc1": {
+      "path": "docs/api854/evidence/beam-one-host-readiness-20261003/host-receipt.json",
+      "sha256": "0e977e7438caa1241ef2756be4c38c6b10b4cf8aeb6a6bc1bc705fbf8c013b88"
+    }
+  },
+  "beam_semantic_evidence": {
+    "scope": "Separate local development conditions, not approval of the unchanged shared-v3 fixture policy",
+    "bugs_with_local_reviews": 5,
+    "bugs_remaining": 15,
+    "shared_v3_semantic_approved": false,
+    "evidence": [
+      {
+        "path": "docs/api854/evidence/beam-fixture-review-20261003/index.json",
+        "sha256": "0e9e9b5b97a571e3c26131ef226ca9add1369f37cfeeac4c75700c9ff0dda26e"
+      },
+      {
+        "path": "docs/api854/evidence/beam-scalar-fixture-review-20261003/index.json",
+        "sha256": "dfb9f7a11afadbabd360c4d6bc634000bc8534c902a4d7d4beef88e895bdf176"
+      },
+      {
+        "path": "docs/api854/evidence/beam-shared-v3-one-host-review-2-20261003.json",
+        "sha256": "60d55a85b041ba5ed54dcb76a4edb6462fb357910859cc80a569c606f0308a2e"
+      }
+    ],
+    "explicit_recipe_integration": "Requires new shared prepare/prompt policy; do not relabel existing v3"
+  },
+  "planning_constraints_path": "experiments/configs/api854-20261003/confirmed-plan-constraints.beam-one-host.v2.json",
+  "planning_constraints_sha256": "8ece5988a218d003c2d7d217c02320fe76277e048e0f3ea736881ab6cb10ac34",
+  "beam_reported_resources": {
+    "physical_hosts": 1,
+    "cpu_slots": 1,
+    "worker_ids": [
+      "beam-pc1"
+    ]
+  },
+  "champ_composition": {
+    "base_champ_commit": "64418ca0",
+    "received_beam_commit": "3c7c62b8",
+    "received_beam_proposal_sha256": "7c87af346f4e6ee90e77eca49ca726a8490cef020d46a2a04d9ab6f5405ba4fe",
+    "shared_v3_artifacts_unchanged": true,
+    "explicit_fixture_policy_enabled_for_shared_v3": false,
+    "merged_guard": "Reject v3 plus explicit fixture policy before queue claim",
+    "generation_authorized": false
+  }
+}

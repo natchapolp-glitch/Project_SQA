@@ -1,0 +1,347 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Jsoup-1
+Java 11, JUnit 4
+Modified classes: org.jsoup.nodes.Document
+
+BUGGY API signatures (may include private members):
+Compiled from "Document.java"
+public class org.jsoup.nodes.Document extends org.jsoup.nodes.Element {
+  public org.jsoup.nodes.Document(java.lang.String);
+  public static org.jsoup.nodes.Document createShell(java.lang.String);
+  public org.jsoup.nodes.Element head();
+  public org.jsoup.nodes.Element body();
+  public java.lang.String title();
+  public void title(java.lang.String);
+  public org.jsoup.nodes.Element createElement(java.lang.String);
+  public org.jsoup.nodes.Document normalise();
+  private void normalise(org.jsoup.nodes.Element);
+  public java.lang.String outerHtml();
+  public org.jsoup.nodes.Element text(java.lang.String);
+  public java.lang.String nodeName();
+}
+
+
+BUGGY source excerpt: org.jsoup.nodes.Document (truncated=False)
+```java
+package org.jsoup.nodes;
+
+import org.apache.commons.lang.Validate;
+import org.jsoup.parser.Tag;
+
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ A HTML Document.
+
+ @author Jonathan Hedley, jonathan@hedley.net */
+public class Document extends Element {
+
+    /**
+     Create a new, empty Document.
+     @param baseUri base URI of document
+     @see org.jsoup.Jsoup#parse
+     @see #createShell
+     */
+    public Document(String baseUri) {
+        super(Tag.valueOf("#root"), baseUri);
+    }
+
+    /**
+     Create a valid, empty shell of a document, suitable for adding more elements to.
+     @param baseUri baseUri of document
+     @return document with html, head, and body elements.
+     */
+    static public Document createShell(String baseUri) {
+        Validate.notNull(baseUri);
+
+        Document doc = new Document(baseUri);
+        Element html = doc.appendElement("html");
+        html.appendElement("head");
+        html.appendElement("body");
+
+        return doc;
+    }
+
+    /**
+     Accessor to the document's {@code head} element.
+     @return {@code head}
+     */
+    public Element head() {
+        return getElementsByTag("head").first();
+    }
+
+    /**
+     Accessor to the document's {@code body} element.
+     @return {@code body}
+     */
+    public Element body() {
+        return getElementsByTag("body").first();
+    }
+
+    /**
+     Get the string contents of the document's {@code title} element.
+     @return Trimed title, or empty string if none set.
+     */
+    public String title() {
+        Element titleEl = getElementsByTag("title").first();
+        return titleEl != null ? titleEl.text().trim() : "";
+    }
+
+    /**
+     Set the document's {@code title} element. Updates the existing element, or adds {@code title} to {@code head} if
+     not present
+     @param title string to set as title
+     */
+    public void title(String title) {
+        Validate.notNull(title);
+        Element titleEl = getElementsByTag("title").first();
+        if (titleEl == null) { // add to head
+            head().appendElement("title").text(title);
+        } else {
+            titleEl.text(title);
+        }
+    }
+
+    /**
+     Create a new Element, with this document's base uri. Does not make the new element a child of this document.
+     @param tagName element tag name (e.g. {@code a})
+     @return new element
+     */
+    public Element createElement(String tagName) {
+        return new Element(Tag.valueOf(tagName), this.baseUri());
+    }
+
+    /**
+     Normalise the document. This happens after the parse phase so generally does not need to be called.
+     Moves any text content that is not in the body element into the body.
+     @return this document after normalisation
+     */
+    public Document normalise() {
+        if (select("html").isEmpty())
+            appendElement("html");
+        if (head() == null)
+            select("html").first().prependElement("head");
+        if (body() == null)
+            select("html").first().appendElement("body");
+
+        // pull text nodes out of root, html, and head els, and push into body. non-text nodes are already taken care
+        // of. do in inverse order to maintain text order.
+        normalise(head());
+        normalise(select("html").first());
+        normalise(this);        
+
+        return this;
+    }
+
+    // does not recurse.
+    private void normalise(Element element) {
+        List<Node> toMove = new ArrayList<Node>();
+        for (Node node: element.childNodes) {
+            if (node instanceof TextNode) {
+                TextNode tn = (TextNode) node;
+                if (!tn.isBlank())
+                    toMove.add(tn);
+            }
+        }
+
+        for (Node node: toMove) {
+            element.removeChild(node);
+            body().appendChild(new TextNode(" ", ""));
+            body().appendChild(node);
+        }
+    }
+
+    @Override
+    public String outerHtml() {
+        return super.html(); // no outer wrapper tag
+    }
+
+    /**
+     Set the text of the {@code body} of this document. Any existing nodes within the body will be cleared.
+     @param text unencoded text
+     @return this document
+     */
+    @Override
+    public Element text(String text) {
+        body().text(text); // overridden to not nuke doc structure
+        return this;
+    }
+
+    @Override
+    public String nodeName() {
+        return "#document";
+    }
+}
+
+
+```
+
+
+Original generated source:
+```java
+package org.jsoup.nodes;
+
+import org.jsoup.Jsoup;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class DocumentTest {
+
+    @Test
+    public void testCreateShell() {
+        Document doc = Document.createShell("http://example.com/");
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        Element html = doc.child(0);
+        assertEquals("html", html.tagName());
+        assertEquals(2, html.children().size());
+        assertEquals("head", html.child(0).tagName());
+        assertEquals("body", html.child(1).tagName());
+        assertEquals("http://example.com/", doc.head().baseUri());
+        assertEquals("http://example.com/", doc.body().baseUri());
+    }
+
+    @Test
+    public void testTitleGetterEmptyAndTrimmed() {
+        Document doc = Document.createShell("");
+        assertEquals("", doc.title());
+
+        doc.head().appendElement("title").text("  Hello World  \n");
+        assertEquals("Hello World", doc.title());
+    }
+
+    @Test
+    public void testTitleSetterCreatesAndUpdates() {
+        Document doc = Document.createShell("");
+        doc.title("First Title");
+        assertEquals("First Title", doc.title());
+        assertEquals(1, doc.getElementsByTag("title").size());
+
+        doc.title("Second Title");
+        assertEquals("Second Title", doc.title());
+        assertEquals(1, doc.getElementsByTag("title").size());
+    }
+
+    @Test
+    public void testTitleSetterEscapesText() {
+        Document doc = Document.createShell("");
+        doc.title("<b>Bold</b>");
+        Element titleEl = doc.getElementsByTag("title").first();
+        assertEquals("<b>Bold</b>", titleEl.text());
+        assertFalse(titleEl.html().contains("<b>"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testTitleSetterNullThrows() {
+        Document doc = Document.createShell("");
+        doc.title(null);
+    }
+
+    @Test
+    public void testNormaliseMovesStrayText() {
+        Document doc = new Document("");
+        doc.appendText("stray text");
+        doc.normalise();
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        assertTrue(doc.body().text().contains("stray text"));
+    }
+
+    @Test
+    public void testNormaliseIdempotent() {
+        Document doc = Jsoup.parse("<html><head><title>T</title></head><body>Hi</body></html>");
+        doc.normalise();
+        String firstPass = doc.outerHtml();
+        doc.normalise();
+        String secondPass = doc.outerHtml();
+        assertEquals(firstPass, secondPass);
+        assertEquals(1, doc.getElementsByTag("head").size());
+        assertEquals(1, doc.getElementsByTag("body").size());
+    }
+
+    @Test
+    public void testHeadAndBodyStableReferences() {
+        Document doc = Document.createShell("");
+        Element head1 = doc.head();
+        Element body1 = doc.body();
+        doc.normalise();
+        Element head2 = doc.head();
+        Element body2 = doc.body();
+        assertSame(head1, head2);
+        assertSame(body1, body2);
+    }
+
+    @Test
+    public void testTextSetsBodyAndReturnsDocument() {
+        Document doc = Document.createShell("");
+        doc.head().appendElement("title").text("Keep Title");
+        Element result = doc.text("new body text");
+        assertSame(doc, result);
+        assertEquals("new body text", doc.body().text());
+        assertEquals("Keep Title", doc.title());
+    }
+
+    @Test
+    public void testNodeNameAlwaysDocument() {
+        Document doc1 = new Document("");
+        assertEquals("#document", doc1.nodeName());
+
+        Document doc2 = Document.createShell("http://example.com/");
+        doc2.title("Something");
+        assertEquals("#document", doc2.nodeName());
+    }
+
+    @Test
+    public void testCreateElementUsesDocumentBaseUri() {
+        Document doc = Document.createShell("http://example.com/");
+        Element el = doc.createElement("div");
+        assertEquals("div", el.tagName());
+        assertEquals("http://example.com/", el.baseUri());
+        assertNull(el.parent());
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+Extract test suite......................................................... OK
+Running ant (compile.gen.tests)............................................ OK
+Running ant (run.gen.tests)................................................ OK
+Failing tests: 1
+  - org.jsoup.nodes.DocumentTest::testTitleSetterNullThrows
+
+fixed-1/failing_tests:
+--- org.jsoup.nodes.DocumentTest::testTitleSetterNullThrows
+java.lang.Exception: Unexpected exception, expected<java.lang.NullPointerException> but was<java.lang.IllegalArgumentException>
+	at org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:28)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:520)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1060)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:911)
+Caused by: java.lang.IllegalArgumentException: The validated object is null
+	at org.apache.commons.lang.Validate.notNull(Validate.java:222)
+	at org.jsoup.nodes.Document.title(Document.java:72)
+	at org.jsoup.nodes.DocumentTest.testTitleSetterNullThrows(DocumentTest.java:57)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.ExpectException.evaluate(ExpectException.java:19)
+	... 13 more
+

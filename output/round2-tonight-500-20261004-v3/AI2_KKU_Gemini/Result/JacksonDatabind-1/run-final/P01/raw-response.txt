@@ -1,0 +1,8 @@
+1. Valid receiver setup requires constructing a `BeanPropertyWriter` using a valid `BeanPropertyDefinition`, `AnnotatedMember`, `JavaType`, and optional serializers.
+2. Verify `serializeAsField` behavior when handling null values with and without a designated null serializer assigned via `assignNullSerializer`.
+3. Check serialization suppression behavior when `_suppressNulls` is true versus false using `willSuppressNulls`.
+4. Test `assignSerializer` and `assignNullSerializer` boundary states where serializers are reassigned or set to null.
+5. Verify `rename` and `unwrappingWriter` methods correctly return a new `BeanPropertyWriter` with updated name transformations.
+6. Test internal settings storage (`getInternalSetting`, `setInternalSetting`, `removeInternalSetting`) with arbitrary key-value pairs.
+7. Check type resolution methods (`getType`, `getSerializationType`, `getRawSerializationType`, `getPropertyType`) against declared member types.
+8. Validate view filtering via `getViews()` and whether `serializeAsField` respects inclusion rules for configured `_includeInViews`.

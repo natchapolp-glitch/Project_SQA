@@ -1,0 +1,108 @@
+```java
+package org.apache.commons.jxpath.ri.model.dom;
+
+import java.util.Locale;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import static org.junit.Assert.*;
+
+public class DOMNodePointerExtraTest {
+
+    @Test
+    public void testTestNodeWithNameTestAndWildcard() throws Exception {
+        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        Element elem = doc.createElement("element");
+
+        NodeNameTest wildcardTest = new NodeNameTest(new QName(null, "*"));
+        assertTrue(DOMNodePointer.testNode(elem, wildcardTest));
+
+        NodeNameTest specificTest = new NodeNameTest(new QName(null, "element"));
+        assertTrue(DOMNodePointer.testNode(elem, specificTest));
+
+        NodeNameTest mismatchTest = new NodeNameTest(new QName(null, "other"));
+        assertFalse(DOMNodePointer.testNode(elem, mismatchTest));
+    }
+
+    @Test
+    public void testCompareChildNodePointersAttributesAndErrors() throws Exception {
+        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        Element elem = doc.createElement("parent");
+        elem.setAttribute("att1", "val1");
+        elem.setAttribute("att2", "val2");
+        doc.appendChild(elem);
+
+        DOMNodePointer parentPtr = new DOMNodePointer(elem, Locale.getDefault());
+        NodePointer attrPtr1 = parentPtr.createAttribute(null, new QName("att1"));
+        NodePointer attrPtr2 = parentPtr.createAttribute(null, new QName("att2"));
+
+        assertTrue(parentPtr.compareChildNodePointers(attrPtr1, attrPtr2) < 0);
+        assertTrue(parentPtr.compareChildNodePointers(attrPtr2, attrPtr1) > 0);
+        assertEquals(0, parentPtr.compareChildNodePointers(attrPtr1, attrPtr1));
+
+        // Mixed child and attribute or invalid base
+        Element child = doc.createElement("child");
+        elem.appendChild(child);
+        NodePointer childPtr = new DOMNodePointer(parentPtr, child);
+
+        assertTrue(parentPtr.compareChildNodePointers(attrPtr1, childPtr) < 0);
+        assertTrue(parentPtr.compareChildNodePointers(childPtr, attrPtr1) > 0);
+    }
+}
+```
+
+```java
+package org.apache.commons.jxpath.ri.model.jdom;
+
+import java.util.Locale;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.jdom.Attribute;
+import org.jdom.Element;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class JDOMNodePointerExtraTest {
+
+    @Test
+    public void testCompareChildNodePointersJDOMAttributes() {
+        Element parent = new Element("parent");
+        Attribute attr1 = new Attribute("att1", "val1");
+        Attribute attr2 = new Attribute("att2", "val2");
+        parent.setAttribute(attr1);
+        parent.setAttribute(attr2);
+
+        JDOMNodePointer parentPtr = new JDOMNodePointer(parent, Locale.getDefault());
+        NodePointer p1 = new JDOMNodePointer(parentPtr, attr1);
+        NodePointer p2 = new JDOMNodePointer(parentPtr, attr2);
+
+        assertTrue(parentPtr.compareChildNodePointers(p1, p2) < 0);
+        assertTrue(parentPtr.compareChildNodePointers(p2, p1) > 0);
+        assertEquals(0, parentPtr.compareChildNodePointers(p1, p1));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testCompareChildNodePointersNonElementThrowsException() {
+        Element parent = new Element("parent");
+        Element child1 = new Element("child1");
+        Element child2 = new Element("child2");
+        parent.addContent(child1);
+        parent.addContent(child2);
+
+        // Point to a child element instead of parent for the pointer itself
+        JDOMNodePointer childPtrParent = new JDOMNodePointer(child1, Locale.getDefault());
+        NodePointer p1 = new JDOMNodePointer(childPtrParent, child1);
+        NodePointer p2 = new JDOMNodePointer(childPtrParent, child2);
+
+        childPtrParent.compareChildNodePointers(p1, p2);
+    }
+}
+```

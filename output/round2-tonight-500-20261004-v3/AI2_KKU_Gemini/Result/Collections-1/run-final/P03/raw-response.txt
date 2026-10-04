@@ -1,0 +1,161 @@
+```java
+package org.apache.commons.collections.map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class Flat3MapTest {
+
+    @Test
+    public void testFlatOperationsAndTransition() {
+        Flat3Map map = new Flat3Map();
+        assertTrue(map.isEmpty());
+        assertEquals(0, map.size());
+
+        assertNull(map.put("one", "1"));
+        assertNull(map.put("two", "2"));
+        assertNull(map.put("three", "3"));
+        assertEquals(3, map.size());
+        assertFalse(map.isEmpty());
+
+        assertEquals("1", map.get("one"));
+        assertEquals("2", map.get("two"));
+        assertEquals("3", map.get("three"));
+        assertTrue(map.containsKey("two"));
+        assertTrue(map.containsValue("3"));
+
+        // Adding 4th element triggers transition to delegateMap
+        assertNull(map.put("four", "4"));
+        assertEquals(4, map.size());
+        assertEquals("4", map.get("four"));
+        assertTrue(map.containsKey("four"));
+        assertTrue(map.containsValue("4"));
+    }
+
+    @Test
+    public void testNullKeysAndValues() {
+        Flat3Map map = new Flat3Map();
+        assertNull(map.put(null, "null-val"));
+        assertNull(map.put("key-null", null));
+        
+        assertEquals(2, map.size());
+        assertEquals("null-val", map.get(null));
+        assertNull(map.get("key-null"));
+        assertTrue(map.containsKey(null));
+        assertTrue(map.containsKey("key-null"));
+        assertTrue(map.containsValue(null));
+        assertTrue(map.containsValue("null-val"));
+
+        // Push into delegate mode with nulls
+        map.put("a", "A");
+        map.put("b", "B");
+        assertEquals(4, map.size());
+        assertEquals("null-val", map.get(null));
+        assertNull(map.get("key-null"));
+        assertTrue(map.containsKey(null));
+        assertTrue(map.containsValue(null));
+    }
+
+    @Test
+    public void testRemoveAndClear() {
+        Flat3Map map = new Flat3Map();
+        map.put("k1", "v1");
+        map.put("k2", "v2");
+        assertEquals(2, map.size());
+
+        Object removed = map.remove("k1");
+        assertTrue("v1".equals(removed) || "v2".equals(removed));
+        assertEquals(1, map.size());
+        assertFalse(map.containsKey("k1"));
+
+        // Test clear in flat mode
+        map.clear();
+        assertEquals(0, map.size());
+        assertTrue(map.isEmpty());
+        assertNull(map.get("k2"));
+
+        // Test clear in delegate mode
+        map.put("1", "one");
+        map.put("2", "two");
+        map.put("3", "three");
+        map.put("4", "four");
+        assertEquals(4, map.size());
+        map.clear();
+        assertEquals(0, map.size());
+        assertTrue(map.isEmpty());
+    }
+
+    @Test
+    public void testPutAllAndConstructors() {
+        Map<String, String> source = new HashMap<String, String>();
+        source.put("a", "alpha");
+        source.put("b", "beta");
+        source.put("c", "gamma");
+        source.put("d", "delta");
+
+        Flat3Map map = new Flat3Map(source);
+        assertEquals(4, map.size());
+        assertEquals("alpha", map.get("a"));
+        assertEquals("delta", map.get("d"));
+
+        Flat3Map emptyMap = new Flat3Map();
+        emptyMap.putAll(source);
+        assertEquals(4, emptyMap.size());
+        assertEquals("beta", emptyMap.get("b"));
+    }
+
+    @Test
+    public void testViewsAndIteration() {
+        Flat3Map map = new Flat3Map();
+        map.put("x", 10);
+        map.put("y", 20);
+
+        assertEquals(2, map.keySet().size());
+        assertEquals(2, map.values().size());
+        assertEquals(2, map.entrySet().size());
+        assertTrue(map.keySet().contains("x"));
+        assertTrue(map.values().contains(20));
+
+        assertNotNull(map.mapIterator());
+        assertTrue(map.mapIterator().hasNext());
+    }
+
+    @Test
+    public void testCloneAndSerialization() throws Exception {
+        Flat3Map map = new Flat3Map();
+        map.put("key1", "val1");
+        map.put("key2", "val2");
+
+        Flat3Map clone = (Flat3Map) map.clone();
+        assertEquals(map.size(), clone.size());
+        assertEquals(map.get("key1"), clone.get("key1"));
+
+        // Serialization roundtrip
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(map);
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        Flat3Map deserialized = (Flat3Map) ois.readObject();
+        ois.close();
+
+        assertEquals(map.size(), deserialized.size());
+        assertEquals("val1", deserialized.get("key1"));
+        assertEquals("val2", deserialized.get("key2"));
+    }
+}
+```

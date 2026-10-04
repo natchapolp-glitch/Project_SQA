@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:52:50.763825+00:00",
+  "ended_at_utc": "2026-10-04T03:53:00.683809+00:00",
+  "raw_body_sha256": "95413fa7189c2c1d6ba57f616befcdd2a1bbee97b253f08e04664e95aefcbe96",
+  "body": {
+    "id": "gen-1791085973-RosX6mMnvMgqoPAc9eK3",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "## Key behaviors, boundaries, and setup for testing `TypeInfoFactory`\n\n**`getTypeInfoForArray(Type)`**\n- Given a plain array class (e.g., `int[].class`, `String[].class`), returns a `TypeInfoArray` whose component type matches `getComponentType()`.\n- Given a `GenericArrayType` (e.g., field typed `List<String>[]`), resolves component type correctly, including generic component types.\n- Non-array `Type` input (e.g., `String.class`) should throw an informative exception (likely `IllegalArgumentException` per contract).\n\n**`getTypeInfoForField(Field, Type)`**\n- For a field with a concrete (non-generic) type declared in a non-generic class, returns a `TypeInfo` reflecting the declared field type and raw class directly.\n- For a field whose type is a `TypeVariable` (e.g., `T field` in generic class `Holder<T>`), when given `Type` is a `ParameterizedType` instantiating `T` (e.g., `Holder<String>`), should resolve to `String`.\n- For a field typed as a `ParameterizedType` itself (e.g., `List<T> field`), should substitute the actual type argument properly producing `List<String>` resolution.\n- Must handle fields declared in superclasses with generic parameters passed down from subclass's parameterized type (inheritance chain resolution).\n- Boundary: field's generic type variable not found in the declaring class's type parameters — should not throw ArrayIndexOutOfBounds silently; expect either correct fallback to raw type or clear exception.\n\n**Receiver/setup**\n- Use real `Field` objects obtained via reflection (`getClass().getDeclaredField(...)`) from small generic test classes/subclasses, paired with their generic `Type` (via `ParameterizedType` from method return types or `TypeToken`-like helper) — no mocking needed since it's a static utility.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 519,
+      "output_tokens": 644,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007478,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007478,
+        "upstream_inference_prompt_cost": 0.001038,
+        "upstream_inference_completions_cost": 0.00644
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 1163,
+      "daily_remaining_tokens": 198837
+    }
+  },
+  "headers": {
+    "x-request-id": "fepgtjfx6ezkwk6k43x1fr99",
+    "date": "Sun, 04 Oct 2026 03:53:01 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

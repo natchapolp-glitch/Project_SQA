@@ -1,0 +1,10 @@
+- Target method: `findRangeBounds(CategoryDataset)` / `findRangeBounds(CategoryDataset, boolean)` — focus on null-dataset handling and range computation contract.
+- Null dataset input: per CategoryItemRenderer contract, `findRangeBounds(null)` should return `null`, not throw NPE.
+- Empty dataset (zero rows/columns): should return `null` range, not an exception or a degenerate (0,0) range.
+- Dataset with single value: returned Range should have equal lower/upper bound equal to that value.
+- Dataset with multiple values across series/categories: Range must cover exact min and max of all values, ignoring null entries.
+- Dataset containing some null values mixed with numeric values: nulls must be skipped, not treated as 0.
+- Boundary with all-null dataset (no numeric values at all): should yield `null` Range, not (0,0).
+- Verify `includeInterval` boolean parameter: for interval-aware datasets (e.g., statistical/interval), ensure start/end interval values are included in range when true, and excluded (use only y-value) when false.
+- Receiver setup: use a concrete subclass (e.g., `LineAndShapeRenderer` or anonymous minimal subclass) since class is abstract; need valid `CategoryPlot`/dataset association not required merely to call `findRangeBounds`, as it is dataset-driven only.
+- Negative and mixed-sign values: ensure correct min/max detection (e.g., dataset with negative-only values returns correct negative bounds).

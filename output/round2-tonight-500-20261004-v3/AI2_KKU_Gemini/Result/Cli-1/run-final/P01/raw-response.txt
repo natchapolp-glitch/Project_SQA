@@ -1,0 +1,7 @@
+- Valid receiver setup: Instantiate via package-private constructor and populate using `addOption(Option)` and `addArg(String)`.
+- Option lookup behavior: `hasOption`, `getOptionValue`, and `getOptionObject` must correctly resolve options by both `String` (long/short name) and `char` (short name).
+- Case sensitivity/normalization boundaries: Option lookups should respect defined option key casing and character-to-string mappings.
+- Default value handling: `getOptionValue(String/char, String)` must return the specified default value if the option is absent.
+- Multiple values/arguments: `getOptionValues` should return an array of all values associated with a multi-occurring option.
+- Unrecognized or null inputs: Query methods should safely handle null or non-existent option keys without throwing NullPointerException (returning false, null, or empty arrays as appropriate).
+- Remaining arguments: `getArgs()` and `getArgList()` must return all non-option arguments added via `addArg` in the correct insertion order.

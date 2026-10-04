@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:38:09.659636+00:00",
+  "ended_at_utc": "2026-10-04T04:38:16.666326+00:00",
+  "raw_body_sha256": "96fdee8659e788fa382fdf9b1304fa493f3877dfabc07f0a342ac4f92e50a558",
+  "body": {
+    "id": "gen-1791088692-ea4NxiWfHr1eaj0TciOW",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `withFieldAddWrapped(DurationFieldType, int)` on a `Partial` lacking that duration field type among its supported fields should throw `IllegalArgumentException` (field not supported), not `UnsupportedOperationException` from `UnsupportedDurationField`.\n- `withFieldAddWrapped` with amount 0 should return `this` (or an equal Partial), unchanged, when the field is supported.\n- `withFieldAddWrapped` with a supported field and nonzero amount should wrap correctly within min/max range of that field (e.g., month wrap 12->1), not touching higher fields.\n- `UnsupportedDurationField.getInstance(DurationFieldType)` must return the cached singleton instance for repeated calls with the same type (reference equality), and distinct instances per distinct type.\n- `UnsupportedDurationField.equals()` should return true only for another `UnsupportedDurationField` with the same `DurationFieldType`; false for null, different type, or different class.\n- `isSupported()` must always return false; `isPrecise()` behavior per its fixed contract (false) regardless of type.\n- All mutating methods on `UnsupportedDurationField` (`getValue`, `add`, `getMillis`, `getDifference`, etc.) must throw `UnsupportedOperationException` consistently.\n- `Partial` constructed with a single `DateTimeFieldType` and value should have `size()==1`, correct `getFieldType(0)` and `getValue(0)`.\n- `withField`, `with`, `without` should preserve chronology and immutability (original Partial unmodified) and validate field order/duplicate constraints.\n- `getFormatter()` / `toString(String)` boundary: ensure no exception when Partial has zero fields (empty array) versus one or more fields with formatting round-trip consistency.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1910,
+      "output_tokens": 606,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.00988,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.00988,
+        "upstream_inference_prompt_cost": 0.00382,
+        "upstream_inference_completions_cost": 0.00606
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 97395,
+      "daily_remaining_tokens": 102605
+    }
+  },
+  "headers": {
+    "x-request-id": "bcvpydvva581kq0rtu8igcnn",
+    "date": "Sun, 04 Oct 2026 04:38:19 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

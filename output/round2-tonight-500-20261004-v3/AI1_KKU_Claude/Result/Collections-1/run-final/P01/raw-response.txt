@@ -1,0 +1,10 @@
+- Setup: new Flat3Map(), put 3 entries (fills internal slots), then call entrySet().iterator() or mapIterator() and use setValue()/remove() to test in-place (non-delegate) mode mutation correctness.
+- setValue on iterator for key1/key2/key3 slots must update corresponding get(key) result without converting to delegate map.
+- Iterator.remove() on each of the 3 slots must correctly shift remaining entries (test removing slot1, slot2, slot3 individually, verifying remaining keys/values and size).
+- containsKey/containsValue/get with null key and null value as valid entries (Flat3Map allows nulls).
+- Duplicate put with existing key should update value, not increase size, and not disturb other slots.
+- Transition boundary: put 4th entry triggers convertToMap(); verify behavior (get/put/remove/iterator) still correct after delegate conversion.
+- equals()/hashCode() consistency with java.util.Map contract, including comparing two Flat3Maps with same entries in different insertion order.
+- clone() must produce independent copy (mutating clone shouldn't affect original) in both small (<=3) and delegate (>3) modes.
+- Serialization round-trip (writeObject/readObject) preserving entries and size in both modes.
+- remove() on nonexistent key returns null and leaves map unchanged; clear() resets size to 0 and nulls out slots.

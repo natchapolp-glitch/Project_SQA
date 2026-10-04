@@ -1,0 +1,21 @@
+## Key behaviors, contracts, and boundaries to test
+
+1. **Constructor without matchers**: `new InvocationMatcher(invocation)` should default matchers to equals-based matchers derived from invocation's actual arguments (so `matches(sameInvocation)` returns true).
+
+2. **`matches(Invocation)` — method name/type mismatch**: must return false if invocation's method differs (different name, different declaring class/mock, or different arg count) regardless of matchers.
+
+3. **`matches(Invocation)` — varargs handling**: when the underlying method is varargs, matching should correctly compare individual vararg elements vs. an array matcher (core bug area — e.g., `anyVararg()` matching any number of varargs, and exact array vs. expanded elements).
+
+4. **`hasSameMethod(Invocation)`**: true only when same method (name + parameter types + declaring class) on potentially different invocations; false for overloaded/different-signature methods.
+
+5. **`hasSimilarMethod(Invocation)`**: true for same method name/mock even if invoked via different overload resolution paths (e.g., bridge methods) — boundary case with overridden/generic methods.
+
+6. **`captureArgumentsFrom(Invocation)`**: for `CapturesArgumentsFrom` matchers (e.g., `ArgumentCaptor`), ensure correct argument (including vararg element) is captured — check correct index mapping for vararg vs. fixed args.
+
+7. **`isVarargMatcher` / `isVariableArgument` boundary**: last-parameter vararg position with zero, one, multiple actual varargs supplied; non-vararg method must never be treated as vararg.
+
+8. **`getMatchers()` size consistency**: must equal raw arguments count expected by equals-matcher fallback when no explicit matchers given, even for vararg invocations (flattened vs. array).
+
+9. **`createFrom(List<Invocation>)`**: returns list of `InvocationMatcher`s in same order/size, each wrapping its respective invocation with default equals matchers.
+
+10. **`toString()` / `getLocation()` / `getInvocation()` / `getMethod()`**: simple delegation — verify non-null, correct method object, and invocation identity preserved.

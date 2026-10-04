@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:45:38.766997+00:00",
+  "ended_at_utc": "2026-10-04T03:45:43.171981+00:00",
+  "raw_body_sha256": "cd5f5cb03ae2cd22a9b83e3ec51e7c6ecf2230c19c8a1163261fb055e74b36ba",
+  "body": {
+    "id": "genai-01a10504-84ab-7635-b402-1397e831f4d1",
+    "object": "chat.completion",
+    "created": 1791085544,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.collections.map;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class Flat3MapTest {\n\n    @Test\n    public void testFlatOperationsAndTransition() {\n        Flat3Map map = new Flat3Map();\n        assertTrue(map.isEmpty());\n        assertEquals(0, map.size());\n\n        assertNull(map.put(\"one\", \"1\"));\n        assertNull(map.put(\"two\", \"2\"));\n        assertNull(map.put(\"three\", \"3\"));\n        assertEquals(3, map.size());\n        assertFalse(map.isEmpty());\n\n        assertEquals(\"1\", map.get(\"one\"));\n        assertEquals(\"2\", map.get(\"two\"));\n        assertEquals(\"3\", map.get(\"three\"));\n        assertTrue(map.containsKey(\"two\"));\n        assertTrue(map.containsValue(\"3\"));\n\n        // Adding 4th element triggers transition to delegateMap\n        assertNull(map.put(\"four\", \"4\"));\n        assertEquals(4, map.size());\n        assertEquals(\"4\", map.get(\"four\"));\n        assertTrue(map.containsKey(\"four\"));\n        assertTrue(map.containsValue(\"4\"));\n    }\n\n    @Test\n    public void testNullKeysAndValues() {\n        Flat3Map map = new Flat3Map();\n        assertNull(map.put(null, \"null-val\"));\n        assertNull(map.put(\"key-null\", null));\n        \n        assertEquals(2, map.size());\n        assertEquals(\"null-val\", map.get(null));\n        assertNull(map.get(\"key-null\"));\n        assertTrue(map.containsKey(null));\n        assertTrue(map.containsKey(\"key-null\"));\n        assertTrue(map.containsValue(null));\n        assertTrue(map.containsValue(\"null-val\"));\n\n        // Push into delegate mode with nulls\n        map.put(\"a\", \"A\");\n        map.put(\"b\", \"B\");\n        assertEquals(4, map.size());\n        assertEquals(\"null-val\", map.get(null));\n        assertNull(map.get(\"key-null\"));\n        assertTrue(map.containsKey(null));\n        assertTrue(map.containsValue(null));\n    }\n\n    @Test\n    public void testRemoveAndClear() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"k1\", \"v1\");\n        map.put(\"k2\", \"v2\");\n        assertEquals(2, map.size());\n\n        assertEquals(\"v1\", map.remove(\"k1\"));\n        assertEquals(1, map.size());\n        assertNull(map.get(\"k1\"));\n        assertFalse(map.containsKey(\"k1\"));\n\n        // Test clear in flat mode\n        map.clear();\n        assertEquals(0, map.size());\n        assertTrue(map.isEmpty());\n        assertNull(map.get(\"k2\"));\n\n        // Test clear in delegate mode\n        map.put(\"1\", \"one\");\n        map.put(\"2\", \"two\");\n        map.put(\"3\", \"three\");\n        map.put(\"4\", \"four\");\n        assertEquals(4, map.size());\n        map.clear();\n        assertEquals(0, map.size());\n        assertTrue(map.isEmpty());\n    }\n\n    @Test\n    public void testPutAllAndConstructors() {\n        Map<String, String> source = new HashMap<String, String>();\n        source.put(\"a\", \"alpha\");\n        source.put(\"b\", \"beta\");\n        source.put(\"c\", \"gamma\");\n        source.put(\"d\", \"delta\");\n\n        Flat3Map map = new Flat3Map(source);\n        assertEquals(4, map.size());\n        assertEquals(\"alpha\", map.get(\"a\"));\n        assertEquals(\"delta\", map.get(\"d\"));\n\n        Flat3Map emptyMap = new Flat3Map();\n        emptyMap.putAll(source);\n        assertEquals(4, emptyMap.size());\n        assertEquals(\"beta\", emptyMap.get(\"b\"));\n    }\n\n    @Test\n    public void testViewsAndIteration() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"x\", 10);\n        map.put(\"y\", 20);\n\n        assertEquals(2, map.keySet().size());\n        assertEquals(2, map.values().size());\n        assertEquals(2, map.entrySet().size());\n        assertTrue(map.keySet().contains(\"x\"));\n        assertTrue(map.values().contains(20));\n\n        assertNotNull(map.mapIterator());\n        assertTrue(map.mapIterator().hasNext());\n    }\n\n    @Test\n    public void testCloneAndSerialization() throws Exception {\n        Flat3Map map = new Flat3Map();\n        map.put(\"key1\", \"val1\");\n        map.put(\"key2\", \"val2\");\n\n        Flat3Map clone = (Flat3Map) map.clone();\n        assertEquals(map.size(), clone.size());\n        assertEquals(map.get(\"key1\"), clone.get(\"key1\"));\n\n        // Serialization roundtrip\n        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n        ObjectOutputStream oos = new ObjectOutputStream(baos);\n        oos.writeObject(map);\n        oos.close();\n\n        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());\n        ObjectInputStream ois = new ObjectInputStream(bais);\n        Flat3Map deserialized = (Flat3Map) ois.readObject();\n        ois.close();\n\n        assertEquals(map.size(), deserialized.size());\n        assertEquals(\"val1\", deserialized.get(\"key1\"));\n        assertEquals(\"val2\", deserialized.get(\"key2\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4307,
+      "completion_tokens": 1414,
+      "total_tokens": 5721
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 59698,
+      "daily_remaining_tokens": 290302
+    }
+  },
+  "headers": {
+    "x-request-id": "cvkqea1q6yi289lhg8gzco82",
+    "date": "Sun, 04 Oct 2026 03:45:44 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

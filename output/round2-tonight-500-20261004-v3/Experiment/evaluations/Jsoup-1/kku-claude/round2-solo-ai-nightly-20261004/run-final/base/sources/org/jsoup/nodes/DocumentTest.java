@@ -1,0 +1,122 @@
+package org.jsoup.nodes;
+
+import org.jsoup.Jsoup;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class DocumentTest {
+
+    @Test
+    public void testCreateShell() {
+        Document doc = Document.createShell("http://example.com/");
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        Element html = doc.child(0);
+        assertEquals("html", html.tagName());
+        assertEquals(2, html.children().size());
+        assertEquals("head", html.child(0).tagName());
+        assertEquals("body", html.child(1).tagName());
+        assertEquals("http://example.com/", doc.head().baseUri());
+        assertEquals("http://example.com/", doc.body().baseUri());
+    }
+
+    @Test
+    public void testTitleGetterEmptyAndTrimmed() {
+        Document doc = Document.createShell("");
+        assertEquals("", doc.title());
+
+        doc.head().appendElement("title").text("  Hello World  \n");
+        assertEquals("Hello World", doc.title());
+    }
+
+    @Test
+    public void testTitleSetterCreatesAndUpdates() {
+        Document doc = Document.createShell("");
+        doc.title("First Title");
+        assertEquals("First Title", doc.title());
+        assertEquals(1, doc.getElementsByTag("title").size());
+
+        doc.title("Second Title");
+        assertEquals("Second Title", doc.title());
+        assertEquals(1, doc.getElementsByTag("title").size());
+    }
+
+    @Test
+    public void testTitleSetterEscapesText() {
+        Document doc = Document.createShell("");
+        doc.title("<b>Bold</b>");
+        Element titleEl = doc.getElementsByTag("title").first();
+        assertEquals("<b>Bold</b>", titleEl.text());
+        assertFalse(titleEl.html().contains("<b>"));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testTitleSetterNullThrows() {
+        Document doc = Document.createShell("");
+        doc.title(null);
+    }
+
+    @Test
+    public void testNormaliseMovesStrayText() {
+        Document doc = new Document("");
+        doc.appendText("stray text");
+        doc.normalise();
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        assertTrue(doc.body().text().contains("stray text"));
+    }
+
+    @Test
+    public void testNormaliseIdempotent() {
+        Document doc = Jsoup.parse("<html><head><title>T</title></head><body>Hi</body></html>");
+        doc.normalise();
+        String firstPass = doc.outerHtml();
+        doc.normalise();
+        String secondPass = doc.outerHtml();
+        assertEquals(firstPass, secondPass);
+        assertEquals(1, doc.getElementsByTag("head").size());
+        assertEquals(1, doc.getElementsByTag("body").size());
+    }
+
+    @Test
+    public void testHeadAndBodyStableReferences() {
+        Document doc = Document.createShell("");
+        Element head1 = doc.head();
+        Element body1 = doc.body();
+        doc.normalise();
+        Element head2 = doc.head();
+        Element body2 = doc.body();
+        assertSame(head1, head2);
+        assertSame(body1, body2);
+    }
+
+    @Test
+    public void testTextSetsBodyAndReturnsDocument() {
+        Document doc = Document.createShell("");
+        doc.head().appendElement("title").text("Keep Title");
+        Element result = doc.text("new body text");
+        assertSame(doc, result);
+        assertEquals("new body text", doc.body().text());
+        assertEquals("Keep Title", doc.title());
+    }
+
+    @Test
+    public void testNodeNameAlwaysDocument() {
+        Document doc1 = new Document("");
+        assertEquals("#document", doc1.nodeName());
+
+        Document doc2 = Document.createShell("http://example.com/");
+        doc2.title("Something");
+        assertEquals("#document", doc2.nodeName());
+    }
+
+    @Test
+    public void testCreateElementUsesDocumentBaseUri() {
+        Document doc = Document.createShell("http://example.com/");
+        Element el = doc.createElement("div");
+        assertEquals("div", el.tagName());
+        assertEquals("http://example.com/", el.baseUri());
+        assertNull(el.parent());
+    }
+}

@@ -1,4 +1,23 @@
-# งานล่าสุด — solo algorithms + KKU pilot สำหรับแผนเต็ม
+# งานล่าสุด — เป้า 500 บั๊ก สี่วิธี ส่งคืนนี้
+
+**อัปเดต 4 ต.ค. 2026:** ผู้ใช้ลดเป้าเป็น 500 บั๊ก × 4 วิธี = 2,000 planned jobs
+เลือกครอบคลุม 17 projects ก่อนดูผล เก็บ inventory 854 และผลเก่าแยกกัน
+อ่าน [แผนส่งคืนนี้](docs/api854/SOLO_500_TONIGHT_TH.md)
+และ [รายชื่อ 500 บั๊ก](docs/api854/plans/solo-500-20261004/selected-scope.json)
+ชุดสำรองที่ตรวจแล้ว: [ZIP 17 บั๊ก / 68 outcomes](output/SQA_Round2_500_Target_20261004_CHECKPOINT.zip)
+พร้อม [รายงาน PDF](output/round2-tonight-500-20261004-v3/Report/SQA_Round2_Report.pdf),
+[PowerPoint](output/round2-tonight-500-20261004-v3/Presentation/SQA_Round2.pptx)
+และ [demo ที่ซ้อมครบทั้งสี่วิธี](output/round2-tonight-500-20261004-v3/Presentation/demo-guide.md)
+ดู [สถานะของ checkpoint](output/round2-tonight-500-20261004-v3/Report/data/summary.json)
+หรือ [ตาราง 2,000 jobs](output/round2-tonight-500-20261004-v3/Report/data/final_comparison.csv)
+ผู้ใช้ยืนยันกลับมารันเครื่องเดียวแล้ว; ผลระหว่างรันในเครื่องอยู่ที่
+`output/round2-solo-500-control-20261004/Report/data/summary.json` และยังเปลี่ยนได้
+PENDING/QUOTA_PAUSED และผลไม่ผ่านแยกจาก DONE; เป้าหมายไม่ใช่คำรับรองว่ารันครบแล้ว
+ข้อความด้านล่างเป็นประวัติ checkpoint ก่อนลดเป้า ไม่ใช่ตัวนับล่าสุด
+
+---
+
+# ประวัติ — solo algorithms + KKU pilot สำหรับแผนเต็ม
 
 **Branch ทำงานปัจจุบัน: `Team`** — ย้าย checkpoint จาก `aom 026e83ed` ตามคำสั่งผู้ใช้
 เก็บ `aom` และประวัติเดิมไว้ครบ เมื่อโปรเจคเสร็จค่อยจัดชุดไฟล์สำหรับ repo ใหม่

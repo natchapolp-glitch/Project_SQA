@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:54:25.543436+00:00",
+  "ended_at_utc": "2026-10-04T03:54:28.188421+00:00",
+  "raw_body_sha256": "5686cb8dc4b6baca67fa722853c0bf09a8350d9b41f2827a51522ebc0e990c7d",
+  "body": {
+    "id": "genai-01a1050c-88d2-7ff2-879d-20f9fd7ff9ed",
+    "object": "chat.completion",
+    "created": 1791086069,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.gson;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Type;\nimport java.util.List;\nimport org.junit.Test;\n\npublic class TypeInfoFactoryTest {\n\n  private static class SampleClass<T> {\n    T genericField;\n    T[] genericArrayField;\n    List<T> parameterizedField;\n    String regularField;\n  }\n\n  private static class SubClass extends SampleClass<String> {\n  }\n\n  @Test\n  public void testGetTypeInfoForArrayWithPrimitiveArray() {\n    TypeInfoArray arrayInfo = TypeInfoFactory.getTypeInfoForArray(int[].class);\n    assertNotNull(arrayInfo);\n    assertEquals(int[].class, arrayInfo.getType());\n  }\n\n  @Test\n  public void testGetTypeInfoForArrayWithObjectArray() {\n    TypeInfoArray arrayInfo = TypeInfoFactory.getTypeInfoForArray(String[].class);\n    assertNotNull(arrayInfo);\n    assertEquals(String[].class, arrayInfo.getType());\n  }\n\n  @Test\n  public void testGetTypeInfoForFieldRegular() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"regularField\");\n    TypeInfo typeInfo = TypeInfoFactory.getTypeInfoForField(field, SampleClass.class);\n    assertNotNull(typeInfo);\n    assertEquals(String.class, typeInfo.getType());\n  }\n\n  @Test\n  public void testGetTypeInfoForFieldWithSubClassContext() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"genericField\");\n    Type typeDefiningF = SubClass.class.getGenericSuperclass();\n    TypeInfo typeInfo = TypeInfoFactory.getTypeInfoForField(field, typeDefiningF);\n    assertNotNull(typeInfo);\n    assertEquals(String.class, typeInfo.getType());\n  }\n\n  @Test\n  public void testGetTypeInfoForFieldParameterizedTypeWithContext() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"parameterizedField\");\n    Type typeDefiningF = SubClass.class.getGenericSuperclass();\n    TypeInfo typeInfo = TypeInfoFactory.getTypeInfoForField(field, typeDefiningF);\n    assertNotNull(typeInfo);\n  }\n\n  @Test(expected = UnsupportedOperationException.class)\n  public void testGetTypeInfoForFieldWithoutParameterizedContextThrowsException() throws Exception {\n    Field field = SampleClass.class.getDeclaredField(\"genericField\");\n    TypeInfoFactory.getTypeInfoForField(field, SampleClass.class);\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2021,
+      "completion_tokens": 608,
+      "total_tokens": 2629
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 3118,
+      "daily_remaining_tokens": 346882
+    }
+  },
+  "headers": {
+    "x-request-id": "lgv1r07l7brxzfa46mnbknzp",
+    "date": "Sun, 04 Oct 2026 03:54:29 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

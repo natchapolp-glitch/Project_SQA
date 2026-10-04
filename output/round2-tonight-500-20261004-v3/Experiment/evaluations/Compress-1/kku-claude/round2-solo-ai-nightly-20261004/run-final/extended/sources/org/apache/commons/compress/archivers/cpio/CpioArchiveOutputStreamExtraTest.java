@@ -1,0 +1,72 @@
+package org.apache.commons.compress.archivers.cpio;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+public class CpioArchiveOutputStreamExtraTest {
+
+    @Test
+    public void writeEntryWithOldAsciiFormatSucceeds() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos,
+                CpioConstants.FORMAT_OLD_ASCII);
+        CpioArchiveEntry entry = new CpioArchiveEntry(
+                CpioConstants.FORMAT_OLD_ASCII, "testfile");
+        byte[] data = "hello".getBytes("UTF-8");
+        entry.setSize(data.length);
+        cos.putNextEntry(entry);
+        cos.write(data, 0, data.length);
+        cos.closeArchiveEntry();
+        cos.finish();
+        cos.close();
+        assertTrue(bos.size() > 0);
+    }
+
+    @Test
+    public void writeEntryWithOldBinaryFormatSucceeds() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos,
+                CpioConstants.FORMAT_OLD_BINARY);
+        CpioArchiveEntry entry = new CpioArchiveEntry(
+                CpioConstants.FORMAT_OLD_BINARY, "testfile");
+        byte[] data = "data!".getBytes("UTF-8");
+        entry.setSize(data.length);
+        cos.putNextEntry(entry);
+        cos.write(data, 0, data.length);
+        cos.closeArchiveEntry();
+        cos.finish();
+        cos.close();
+        assertTrue(bos.size() > 0);
+    }
+
+    @Test
+    public void unknownFormatThrowsIllegalArgumentException() {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            new CpioArchiveOutputStream(bos, (short) 9999);
+            fail("Expected IllegalArgumentException for unknown format");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void singleByteWriteIncrementsWrittenAndClosesSuccessfully() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);
+        CpioArchiveEntry entry = new CpioArchiveEntry("onebyte");
+        entry.setSize(1);
+        cos.putNextEntry(entry);
+        cos.write('A');
+        cos.closeArchiveEntry();
+        cos.finish();
+        cos.close();
+        assertTrue(bos.size() > 0);
+    }
+}

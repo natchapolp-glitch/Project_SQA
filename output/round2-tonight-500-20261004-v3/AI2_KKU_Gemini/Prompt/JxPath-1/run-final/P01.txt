@@ -1,0 +1,94 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JxPath-1
+Java 11, JUnit 4
+Modified classes: org.apache.commons.jxpath.ri.model.dom.DOMNodePointer, org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer
+BUGGY API signatures:
+Compiled from "DOMNodePointer.java"
+public class org.apache.commons.jxpath.ri.model.dom.DOMNodePointer extends org.apache.commons.jxpath.ri.model.NodePointer {
+  private static final long serialVersionUID;
+  private org.w3c.dom.Node node;
+  private java.util.Map namespaces;
+  private java.lang.String defaultNamespace;
+  private java.lang.String id;
+  public static final java.lang.String XML_NAMESPACE_URI;
+  public static final java.lang.String XMLNS_NAMESPACE_URI;
+  public org.apache.commons.jxpath.ri.model.dom.DOMNodePointer(org.w3c.dom.Node, java.util.Locale);
+  public org.apache.commons.jxpath.ri.model.dom.DOMNodePointer(org.w3c.dom.Node, java.util.Locale, java.lang.String);
+  public org.apache.commons.jxpath.ri.model.dom.DOMNodePointer(org.apache.commons.jxpath.ri.model.NodePointer, org.w3c.dom.Node);
+  public boolean testNode(org.apache.commons.jxpath.ri.compiler.NodeTest);
+  public static boolean testNode(org.w3c.dom.Node, org.apache.commons.jxpath.ri.compiler.NodeTest);
+  private static boolean equalStrings(java.lang.String, java.lang.String);
+  public org.apache.commons.jxpath.ri.QName getName();
+  public java.lang.String getNamespaceURI();
+  public org.apache.commons.jxpath.ri.model.NodeIterator childIterator(org.apache.commons.jxpath.ri.compiler.NodeTest, boolean, org.apache.commons.jxpath.ri.model.NodePointer);
+  public org.apache.commons.jxpath.ri.model.NodeIterator attributeIterator(org.apache.commons.jxpath.ri.QName);
+  public org.apache.commons.jxpath.ri.model.NodePointer namespacePointer(java.lang.String);
+  public org.apache.commons.jxpath.ri.model.NodeIterator namespaceIterator();
+  public java.lang.String getNamespaceURI(java.lang.String);
+  public java.lang.String getDefaultNamespaceURI();
+  public java.lang.Object getBaseValue();
+  public java.lang.Object getImmediateNode();
+  public boolean isActual();
+  public boolean isCollection();
+  public int getLength();
+  public boolean isLeaf();
+  public boolean isLanguage(java.lang.String);
+  protected java.lang.String getLanguage();
+  public void setValue(java.lang.Object);
+  public org.apache.commons.jxpath.ri.model.NodePointer createChild(org.apache.commons.jxpath.JXPathContext, org.apache.commons.jxpath.ri.QName, int);
+  public org.apache.commons.jxpath.ri.model.NodePointer createChild(org.apache.commons.jxpath.JXPathContext, org.apache.commons.jxpath.ri.QName, int, java.lang.Object);
+  public org.apache.commons.jxpath.ri.model.NodePointer createAttribute(org.apache.commons.jxpath.JXPathContext, org.apache.commons.jxpath.ri.QName);
+  public void remove();
+  public java.lang.String asPath();
+  private java.lang.String escape(java.lang.String);
+  private int getRelativePositionByName();
+  private int getRelativePositionOfElement();
+  private int getRelativePositionOfTextNode();
+  private int getRelativePositionOfPI(java.lang.String);
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public static java.lang.String getPrefix(org.w3c.dom.Node);
+  public static java.lang.String getLocalName(org.w3c.dom.Node);
+  public static java.lang.String getNamespaceURI(org.w3c.dom.Node);
+  public java.lang.Object getValue();
+  private java.lang.String stringValue(org.w3c.dom.Node);
+  public org.apache.commons.jxpath.Pointer getPointerByID(org.apache.commons.jxpath.JXPathContext, java.lang.String);
+  private org.apache.commons.jxpath.AbstractFactory getAbstractFactory(org.apache.commons.jxpath.JXPathContext);
+  public int compareChildNodePointers(org.apache.commons.jxpath.ri.model.NodePointer, org.apache.commons.jxpath.ri.model.NodePointer);
+}
+Compiled from "JDOMNodePointer.java"
+public class org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer extends org.apache.commons.jxpath.ri.model.NodePointer {
+  private static final long serialVersionUID;
+  private java.lang.Object node;
+  private java.lang.String id;
+  public static final java.lang.String XML_NAMESPACE_URI;
+  public static final java.lang.String XMLNS_NAMESPACE_URI;
+  public org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer(java.lang.Object, java.util.Locale);
+  public org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer(java.lang.Object, java.util.Locale, java.lang.String);
+  public org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer(org.apache.commons.jxpath.ri.model.NodePointer, java.lang.Object);
+  public org.apache.commons.jxpath.ri.model.NodeIterator childIterator(org.apache.commons.jxpath.ri.compiler.NodeTest, boolean, org.apache.commons.jxpath.ri.model.NodePointer);
+  public org.apache.commons.jxpath.ri.model.NodeIterator attributeIterator(org.apache.commons.jxpath.ri.QName);
+  public org.apache.commons.jxpath.ri.model.NodeIterator namespaceIterator();
+  public org.apache.commons.jxpath.ri.model.NodePointer namespacePointer(java.lang.String);
+  public java.lang.String getNamespaceURI();
+  private static java.lang.String getNamespaceURI(java.lang.Object);
+  public java.lang.String getNamespaceURI(java.lang.String);
+  public int compareChildNodePointers(org.apache.commons.jxpath.ri.model.NodePointer, org.apache.commons.jxpath.ri.model.NodePointer);
+  public java.lang.Object getBaseValue();
+  public boolean isCollection();
+  public int getLength();
+  public boolean isLeaf();
+  public org.apache.commons.jxpath.ri.QName getName();
+  public java.lang.Object getImmediateNode();
+  public java.lang.Object getValue();
+  public void setValue(java.lang.Object);
+  private void addContent(java.util.List);
+  public boolean testNode(org.apache.commons.jxpath.ri.compiler.NodeTest);
+  public static boolean testNode(org.apache.commons.jxpath.ri.model.NodePointer, java.lang.Object, org.apache.commons.jxpath.ri.compiler.NodeTest);
+  private static boolean equalStrings(java.lang.String, java.lang.String);
+  public static java.lang.String getPrefix(java.lang.Object);
+  public static java.lang.String getLocalName(java.lang.Object);
+  public boolean isLanguage(java.lang.String);
+  protected java.lang.String getLanguage();
+  private org.jdom.Element nodeParent(ja

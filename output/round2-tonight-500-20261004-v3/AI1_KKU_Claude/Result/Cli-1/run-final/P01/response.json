@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:32:58.310351+00:00",
+  "ended_at_utc": "2026-10-04T03:33:04.805076+00:00",
+  "raw_body_sha256": "0cd309d3b3ea612eeaa91085b740bd5e3e19e3dfa173e920e449f28da429b03f",
+  "body": {
+    "id": "gen-1791084778-29bGU9JvNEOZCIvIggVy",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Key behaviors/boundaries to test for `CommandLine`:\n\n1. `hasOption(String)`/`hasOption(char)` return true only for options actually added via `addOption`; false for absent/unknown options, and consistent between char/String forms for same option.\n2. `getOptionValue(String/char)` returns first value for an option with args, `null` if option has no value or option absent.\n3. `getOptionValue(..., String default)` returns default only when option absent or has no value, not when option present with empty/blank value.\n4. `getOptionValues(String/char)` returns all values in insertion order as String[]; returns `null` (not empty array) when option absent or has no values.\n5. `getOptionObject(String/char)` returns type-converted value based on Option's type; returns `null` on absent option or conversion failure.\n6. `getArgs()` returns array reflecting all args added via `addArg`, preserving order; empty array (not null) when none added.\n7. `getArgList()` returns live/backing List equivalent to `getArgs()` content, same ordering.\n8. `getOptions()` returns array of all distinct added Options, size matching number of `addOption` calls (no duplicates for repeated same-option addition semantics per contract).\n9. `iterator()` returns Iterator over Options array equivalent to `getOptions()` content.\n10. Setup: build CommandLine via reflection or package-private methods (`addOption`, `addArg`) since these are only package-visible — tests must reside in `org.apache.commons.cli` package to call them directly.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 622,
+      "output_tokens": 500,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.006244,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.006244,
+        "upstream_inference_prompt_cost": 0.001244,
+        "upstream_inference_completions_cost": 0.005
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 68151,
+      "daily_remaining_tokens": 131849
+    }
+  },
+  "headers": {
+    "x-request-id": "p5e39qr1rn02wiouu9r5lz5o",
+    "date": "Sun, 04 Oct 2026 03:33:05 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

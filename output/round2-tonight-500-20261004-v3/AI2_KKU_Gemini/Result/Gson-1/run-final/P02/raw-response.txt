@@ -1,0 +1,69 @@
+```java
+package com.google.gson;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.List;
+import org.junit.Test;
+
+public class TypeInfoFactoryTest {
+
+  private static class SampleClass<T> {
+    T genericField;
+    T[] genericArrayField;
+    List<T> parameterizedField;
+    String regularField;
+  }
+
+  private static class SubClass extends SampleClass<String> {
+  }
+
+  @Test
+  public void testGetTypeInfoForArrayWithPrimitiveArray() {
+    TypeInfoArray arrayInfo = TypeInfoFactory.getTypeInfoForArray(int[].class);
+    assertNotNull(arrayInfo);
+    assertEquals(int[].class, arrayInfo.getType());
+  }
+
+  @Test
+  public void testGetTypeInfoForArrayWithObjectArray() {
+    TypeInfoArray arrayInfo = TypeInfoFactory.getTypeInfoForArray(String[].class);
+    assertNotNull(arrayInfo);
+    assertEquals(String[].class, arrayInfo.getType());
+  }
+
+  @Test
+  public void testGetTypeInfoForFieldRegular() throws Exception {
+    Field field = SampleClass.class.getDeclaredField("regularField");
+    TypeInfo typeInfo = TypeInfoFactory.getTypeInfoForField(field, SampleClass.class);
+    assertNotNull(typeInfo);
+    assertEquals(String.class, typeInfo.getType());
+  }
+
+  @Test
+  public void testGetTypeInfoForFieldWithSubClassContext() throws Exception {
+    Field field = SampleClass.class.getDeclaredField("genericField");
+    Type typeDefiningF = SubClass.class.getGenericSuperclass();
+    TypeInfo typeInfo = TypeInfoFactory.getTypeInfoForField(field, typeDefiningF);
+    assertNotNull(typeInfo);
+    assertEquals(String.class, typeInfo.getType());
+  }
+
+  @Test
+  public void testGetTypeInfoForFieldParameterizedTypeWithContext() throws Exception {
+    Field field = SampleClass.class.getDeclaredField("parameterizedField");
+    Type typeDefiningF = SubClass.class.getGenericSuperclass();
+    TypeInfo typeInfo = TypeInfoFactory.getTypeInfoForField(field, typeDefiningF);
+    assertNotNull(typeInfo);
+  }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void testGetTypeInfoForFieldWithoutParameterizedContextThrowsException() throws Exception {
+    Field field = SampleClass.class.getDeclaredField("genericField");
+    TypeInfoFactory.getTypeInfoForField(field, SampleClass.class);
+  }
+}
+```

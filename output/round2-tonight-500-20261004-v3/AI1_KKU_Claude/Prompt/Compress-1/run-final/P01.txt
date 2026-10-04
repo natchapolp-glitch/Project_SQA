@@ -1,0 +1,37 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Compress-1
+Java 11, JUnit 4
+Modified classes: org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream
+BUGGY API signatures:
+Compiled from "CpioArchiveOutputStream.java"
+public class org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream extends org.apache.commons.compress.archivers.ArchiveOutputStream implements org.apache.commons.compress.archivers.cpio.CpioConstants {
+  private org.apache.commons.compress.archivers.cpio.CpioArchiveEntry cpioEntry;
+  private boolean closed;
+  private boolean finished;
+  private short entryFormat;
+  private final java.util.HashMap names;
+  private long crc;
+  private long written;
+  private final java.io.OutputStream out;
+  public org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream(java.io.OutputStream, short);
+  public org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream(java.io.OutputStream);
+  private void ensureOpen() throws java.io.IOException;
+  private void setFormat(short);
+  public void putNextEntry(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry) throws java.io.IOException;
+  private void writeHeader(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry) throws java.io.IOException;
+  private void writeNewEntry(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry) throws java.io.IOException;
+  private void writeOldAsciiEntry(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry) throws java.io.IOException;
+  private void writeOldBinaryEntry(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry, boolean) throws java.io.IOException;
+  public void closeArchiveEntry() throws java.io.IOException;
+  public void write(byte[], int, int) throws java.io.IOException;
+  public void finish() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  private void pad(long, int) throws java.io.IOException;
+  private void writeBinaryLong(long, int, boolean) throws java.io.IOException;
+  private void writeAsciiLong(long, int, int) throws java.io.IOException;
+  private void writeCString(java.lang.String) throws java.io.IOException;
+  public void putArchiveEntry(org.apache.commons.compress.archivers.ArchiveEntry) throws java.io.IOException;
+  public void write(int) throws java.io.IOException;
+}
+

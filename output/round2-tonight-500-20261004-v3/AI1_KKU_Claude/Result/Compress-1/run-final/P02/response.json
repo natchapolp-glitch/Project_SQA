@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:49:05.505632+00:00",
+  "ended_at_utc": "2026-10-04T03:49:16.949346+00:00",
+  "raw_body_sha256": "f888fe70081eb3f2eb943e832e718a52540f79ffb224ca2706db880d15a247ac",
+  "body": {
+    "id": "gen-1791085746-QMfMdOBAiAay4IERraYU",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.compress.archivers.cpio;\n\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\npublic class CpioArchiveOutputStreamTest {\n\n    @Test\n    public void writeEntryWithMatchingSizeSucceeds() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"testfile\");\n        byte[] data = \"12345\".getBytes(\"UTF-8\");\n        entry.setSize(data.length);\n        cos.putNextEntry(entry);\n        cos.write(data, 0, data.length);\n        cos.closeArchiveEntry();\n        cos.finish();\n        cos.close();\n        assertTrue(bos.size() > 0);\n    }\n\n    @Test\n    public void closeArchiveEntryWithSizeMismatchThrows() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"testfile\");\n        entry.setSize(10);\n        cos.putNextEntry(entry);\n        cos.write(new byte[]{1, 2, 3}, 0, 3);\n        try {\n            cos.closeArchiveEntry();\n            fail(\"Expected IOException for size mismatch\");\n        } catch (IOException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void writeBeyondDeclaredSizeThrows() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"testfile\");\n        entry.setSize(2);\n        cos.putNextEntry(entry);\n        try {\n            cos.write(new byte[]{1, 2, 3}, 0, 3);\n            fail(\"Expected IOException writing past declared size\");\n        } catch (IOException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void operationsAfterCloseThrow() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        cos.finish();\n        cos.close();\n        try {\n            cos.putNextEntry(new CpioArchiveEntry(\"anything\"));\n            fail(\"Expected IOException after close\");\n        } catch (IOException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void duplicateEntryNameThrows() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        CpioArchiveEntry entry1 = new CpioArchiveEntry(\"dup\");\n        entry1.setSize(0);\n        cos.putNextEntry(entry1);\n        cos.closeArchiveEntry();\n        CpioArchiveEntry entry2 = new CpioArchiveEntry(\"dup\");\n        entry2.setSize(0);\n        try {\n            cos.putNextEntry(entry2);\n            fail(\"Expected IOException for duplicate entry name\");\n        } catch (IOException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void finishWithoutEntriesWritesTrailer() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        cos.finish();\n        cos.close();\n        assertTrue(bos.size() > 0);\n    }\n\n    @Test\n    public void doubleCloseIsSafe() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        cos.finish();\n        cos.close();\n        cos.close();\n    }\n\n    @Test\n    public void writeWithInvalidOffsetThrowsIndexOutOfBounds() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"testfile\");\n        entry.setSize(5);\n        cos.putNextEntry(entry);\n        byte[] data = new byte[]{1, 2, 3};\n        try {\n            cos.write(data, 1, 5);\n            fail(\"Expected IndexOutOfBoundsException\");\n        } catch (IndexOutOfBoundsException expected) {\n            // expected\n        }\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6577,
+      "output_tokens": 1791,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.031064,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.031064,
+        "upstream_inference_prompt_cost": 0.013154,
+        "upstream_inference_completions_cost": 0.01791
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 9941,
+      "daily_remaining_tokens": 190059
+    }
+  },
+  "headers": {
+    "x-request-id": "nhvch4d8swjc4guf5exe2jrc",
+    "date": "Sun, 04 Oct 2026 03:49:19 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

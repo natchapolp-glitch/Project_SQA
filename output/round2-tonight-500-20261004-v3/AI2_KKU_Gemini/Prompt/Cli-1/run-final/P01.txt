@@ -1,0 +1,31 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Cli-1
+Java 11, JUnit 4
+Modified classes: org.apache.commons.cli.CommandLine
+BUGGY API signatures:
+Compiled from "CommandLine.java"
+public class org.apache.commons.cli.CommandLine {
+  private java.util.List args;
+  private java.util.Map options;
+  private java.util.Map names;
+  private java.util.Map hashcodeMap;
+  org.apache.commons.cli.CommandLine();
+  public boolean hasOption(java.lang.String);
+  public boolean hasOption(char);
+  public java.lang.Object getOptionObject(java.lang.String);
+  public java.lang.Object getOptionObject(char);
+  public java.lang.String getOptionValue(java.lang.String);
+  public java.lang.String getOptionValue(char);
+  public java.lang.String[] getOptionValues(java.lang.String);
+  public java.lang.String[] getOptionValues(char);
+  public java.lang.String getOptionValue(java.lang.String, java.lang.String);
+  public java.lang.String getOptionValue(char, java.lang.String);
+  public java.lang.String[] getArgs();
+  public java.util.List getArgList();
+  void addArg(java.lang.String);
+  void addOption(org.apache.commons.cli.Option);
+  public java.util.Iterator iterator();
+  public org.apache.commons.cli.Option[] getOptions();
+}
+

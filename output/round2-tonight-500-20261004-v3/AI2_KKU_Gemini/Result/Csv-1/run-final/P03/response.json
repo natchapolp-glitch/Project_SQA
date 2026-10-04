@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:49:16.318787+00:00",
+  "ended_at_utc": "2026-10-04T02:49:20.329011+00:00",
+  "raw_body_sha256": "0ca55bb9f50f2b228cdc53518e981d6012e3e7d8b4bbbcd22b58e17af65f29fa",
+  "body": {
+    "id": "genai-01a104d0-e1d2-79dd-86e5-9fa667645b6e",
+    "object": "chat.completion",
+    "created": 1791082160,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport org.junit.Test;\n\npublic class ExtendedBufferedReaderTest {\n\n    @Test\n    public void testInitialState() {\n        StringReader reader = new StringReader(\"a\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        assertEquals(ExtendedBufferedReader.UNDEFINED, ebr.readAgain());\n        assertEquals(0, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testReadSingleCharacter() throws IOException {\n        StringReader reader = new StringReader(\"a\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        int ch = ebr.read();\n        assertEquals('a', ch);\n        assertEquals('a', ebr.readAgain());\n        assertEquals(0, ebr.getLineNumber());\n    }\n\n    @Test\n    public void testReadEof() throws IOException {\n        StringReader reader = new StringReader(\"\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        int ch = ebr.read();\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ch);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.readAgain());\n    }\n\n    @Test\n    public void testReadNewlineAndLineNumber() throws IOException {\n        StringReader reader = new StringReader(\"a\\nb\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        assertEquals('a', ebr.read());\n        assertEquals(0, ebr.getLineNumber());\n\n        assertEquals('\\n', ebr.read());\n        assertEquals(1, ebr.getLineNumber());\n\n        assertEquals('b', ebr.read());\n        assertEquals('b', ebr.readAgain());\n    }\n\n    @Test\n    public void testLookAhead() throws IOException {\n        StringReader reader = new StringReader(\"abc\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        assertEquals('a', ebr.lookAhead());\n        // lookAhead should not consume the character\n        assertEquals('a', ebr.read());\n        assertEquals('b', ebr.lookAhead());\n        assertEquals('b', ebr.read());\n    }\n\n    @Test\n    public void testReadZeroLengthArray() throws IOException {\n        StringReader reader = new StringReader(\"abc\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        char[] buf = new char[5];\n        int len = ebr.read(buf, 0, 0);\n        assertEquals(0, len);\n        assertEquals(ExtendedBufferedReader.UNDEFINED, ebr.readAgain());\n    }\n\n    @Test\n    public void testReadIntoArray() throws IOException {\n        StringReader reader = new StringReader(\"abc\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        char[] buf = new char[3];\n        int len = ebr.read(buf, 0, 3);\n        assertEquals(3, len);\n        assertEquals('c', ebr.readAgain());\n        assertEquals('a', buf[0]);\n        assertEquals('b', buf[1]);\n        assertEquals('c', buf[2]);\n    }\n\n    @Test\n    public void testReadArrayWithNewlines() throws IOException {\n        StringReader reader = new StringReader(\"a\\nb\\r\\nc\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        char[] buf = new char[10];\n        int len = ebr.read(buf, 0, 10);\n        assertEquals(6, len);\n        // \\n and \\r\\n count as 2 newlines (one for \\n, one for \\r\\n or \\r + \\n)\n        assertEquals(2, ebr.getLineNumber());\n        assertEquals('c', ebr.readAgain());\n    }\n\n    @Test\n    public void testReadArrayOffset() throws IOException {\n        StringReader reader = new StringReader(\"xyz\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        char[] buf = new char[5];\n        int len = ebr.read(buf, 2, 3);\n        assertEquals(3, len);\n        assertEquals('z', ebr.readAgain());\n        assertEquals('x', buf[2]);\n        assertEquals('y', buf[3]);\n        assertEquals('z', buf[4]);\n    }\n\n    @Test\n    public void testReadLineBasic() throws IOException {\n        StringReader reader = new StringReader(\"line1\\nline2\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        String line1 = ebr.readLine();\n        assertEquals(\"line1\", line1);\n        assertEquals(1, ebr.getLineNumber());\n        assertEquals('1', ebr.readAgain());\n\n        String line2 = ebr.readLine();\n        assertEquals(\"line2\", line2);\n        assertEquals(2, ebr.getLineNumber());\n        assertEquals('2', ebr.readAgain());\n\n        assertNull(ebr.readLine());\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.readAgain());\n    }\n\n    @Test\n    public void testReadLineEmpty() throws IOException {\n        StringReader reader = new StringReader(\"\\n\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        String line = ebr.readLine();\n        assertNotNull(line);\n        assertEquals(\"\", line);\n        assertEquals(1, ebr.getLineNumber());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3632,
+      "completion_tokens": 1287,
+      "total_tokens": 4919
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 95444,
+      "daily_remaining_tokens": 254556
+    }
+  },
+  "headers": {
+    "x-request-id": "b2753xqsygpsm694zbswefvs",
+    "date": "Sun, 04 Oct 2026 02:49:20 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

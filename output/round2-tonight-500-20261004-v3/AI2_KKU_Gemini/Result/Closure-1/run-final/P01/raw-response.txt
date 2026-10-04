@@ -1,0 +1,8 @@
+- Receiver setup requires an initialized `AbstractCompiler`, coding convention, and boolean flags for `removeGlobals`, `modifyCallSites`, and `preserveFunctionExpressionNames`.
+- Valid setup involves constructing `RemoveUnusedVars` via its constructor passing `(compiler, removeGlobals, modifyCallSites, preserveFunctionExpressionNames)`.
+- Behavior boundary: `process(Node externs, Node root)` should execute the compiler pass to clean up unreferenced variables and function arguments.
+- Behavior boundary: `process(Node externs, Node root, SimpleDefinitionFinder definitionFinder)` should correctly handle call-graph optimization passes when provided.
+- Verify removal behavior on local variables vs. global variables based on the `removeGlobals` boolean flag.
+- Verify that unreferenced function arguments are properly stripped when function scopes are traversed and optimized.
+- Test behavior boundaries when variables have side-effect-laden assignments (`assignsByVar` and `assignsByNode`) that must not be incorrectly stripped.
+- Test preservation of function expression names when `preserveFunctionExpressionNames` is set to true.

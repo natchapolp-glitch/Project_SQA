@@ -1,0 +1,69 @@
+{
+  "schema": "solo-ai-nightly.v2",
+  "condition": "buggy-only-signature-analysis-nightly",
+  "offline_path": "/mnt/c/WORK/SQA_PROJECT/Project_SQA/output/round2-solo-pilot-20261004",
+  "offline_protocol_sha256": "d206dcefca2caa09a93451fb8fb4ac3ca5f7b04aa2c0be7c9ec83394b28448a7",
+  "templates": {
+    "P01": "You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.\n\n{context}\n",
+    "P02": "Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.\n\n{context}\n\nPlanning response:\n{analysis}\n",
+    "P03": "This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.\n\n{context}\n\nOriginal generated source:\n{source}\n\nCompile/fixed-validation excerpt:\n{feedback}\n",
+    "P04": "Extend a valid base suite using ONLY new test classes; do not repeat, modify, replace or redefine any base file. Return new COMPLETE Java test files in java fences with at most 4 additional @Test methods total, or exactly NO_CHANGE. Use Java 7-compatible JUnit 4 and meaningful assertions based on documented contracts. Fixed coverage counters/uncovered line numbers are hints; line numbers may differ in buggy source. Use only the supplied buggy context and APIs. No added dependencies, production/build changes, random/time/network/process/file access, assumptions or ignored tests.\n\n{context}\n\nUnchanged base files:\n{source}\n\nFixed coverage:\n{coverage}\n"
+  },
+  "models": {
+    "kku-claude": "claude-sonnet-5",
+    "kku-gemini": "gemini-3.5-flash-lite"
+  },
+  "settings_requested": {
+    "temperature": 0,
+    "max_tokens": 4096,
+    "stream": false
+  },
+  "claude_endpoint": "/messages",
+  "claude_thinking_requested": {
+    "type": "disabled"
+  },
+  "gemini_endpoint": "/chat/completions",
+  "effective_settings_verified": false,
+  "observed_settings_policy": "Request acceptance does not prove effective settings; preserve returned fields",
+  "limits_verified": false,
+  "quota_buckets_verified_distinct": false,
+  "reset_time_verified": false,
+  "post_analysis_admission": "prompt UTF-8 bytes + 4096 output + 8192 buffer; operator guard, not measured framing",
+  "repair_cap": 1,
+  "p02_test_cap": 12,
+  "extension_test_cap": 4,
+  "total_test_cap": 16,
+  "analysis_context_cap_characters": 4000,
+  "p01_context": "metadata and buggy signatures only; no source",
+  "p02_style": "prefer 4-6 concise methods; hard maximum 12",
+  "job_account_policy": "manifest assigns one verified alias per job before dispatch; no within-job key rotation",
+  "predecessor_condition": "solo-ai-pilot.v1; preserve failures separately",
+  "extension_failure_policy": "retain valid unchanged base and rejected extension evidence",
+  "repair_feedback": "compile/fixed stages only, bounded 6000 characters; never buggy results",
+  "quota_policy": "pause unrequested stages; no account switch or automatic HTTP retry within pilot; sealed paused outcomes require explicit reconciliation/new continuation condition",
+  "known_accounts": [
+    "a01",
+    "a02",
+    "a03",
+    "a04",
+    "a05",
+    "a06",
+    "a07",
+    "a08",
+    "a09",
+    "a10"
+  ],
+  "generation_repeats": 1,
+  "source_sha256": {
+    "scripts/study/solo_ai_nightly.py": "c7263efffa7b7347167e54dcaa262101d13b43e27b699c7fb5526c92c16f753d",
+    "scripts/study/solo_batch.py": "2a812cb31546059cbb64e69d95aff4cc81a3e8255dbc6619b029b0a2f3824230",
+    "scripts/study/evaluate.py": "68755e76863a2e826fd7519e2868deda53b7532f0b03ea9bb2e1fbf4fd017c42",
+    "scripts/study/api854/kku_client.py": "68febb3938b69e7504027cc31cc1a2a470cd3e37dfa4d50ebdcf900696a09245",
+    "scripts/study/api854/pack_suite.py": "c4341f218c93a42b135a5a80772ffcbe6625bc8cc8143bcd31136baa4deba62c",
+    "scripts/study/api854/suite_resolver.py": "30b5a6975e08dac8ceb6bf97002e05743cdb2bdc11c9798241c0d3f8e9f7c609",
+    "scripts/study/api854/common.py": "306e9d3a535742aad8e198212b705bf4b05b6b45323a7f5ddba7cfa74c0eeb44"
+  },
+  "read_only_preflight_sha256": "cb092972f7f5697a1b41c2d28ea2f0aec92bb16b7c87d25cb36fbfa6ac66f915",
+  "old_results_pooled": false,
+  "old_gate_or_queue_mutated": false
+}

@@ -1,0 +1,10 @@
+- `withFieldAddWrapped(DurationFieldType, int)` on a `Partial` lacking that duration field type among its supported fields should throw `IllegalArgumentException` (field not supported), not `UnsupportedOperationException` from `UnsupportedDurationField`.
+- `withFieldAddWrapped` with amount 0 should return `this` (or an equal Partial), unchanged, when the field is supported.
+- `withFieldAddWrapped` with a supported field and nonzero amount should wrap correctly within min/max range of that field (e.g., month wrap 12->1), not touching higher fields.
+- `UnsupportedDurationField.getInstance(DurationFieldType)` must return the cached singleton instance for repeated calls with the same type (reference equality), and distinct instances per distinct type.
+- `UnsupportedDurationField.equals()` should return true only for another `UnsupportedDurationField` with the same `DurationFieldType`; false for null, different type, or different class.
+- `isSupported()` must always return false; `isPrecise()` behavior per its fixed contract (false) regardless of type.
+- All mutating methods on `UnsupportedDurationField` (`getValue`, `add`, `getMillis`, `getDifference`, etc.) must throw `UnsupportedOperationException` consistently.
+- `Partial` constructed with a single `DateTimeFieldType` and value should have `size()==1`, correct `getFieldType(0)` and `getValue(0)`.
+- `withField`, `with`, `without` should preserve chronology and immutability (original Partial unmodified) and validate field order/duplicate constraints.
+- `getFormatter()` / `toString(String)` boundary: ensure no exception when Partial has zero fields (empty array) versus one or more fields with formatting round-trip consistency.

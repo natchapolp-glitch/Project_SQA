@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:33:13.279470+00:00",
+  "ended_at_utc": "2026-10-04T04:33:17.857474+00:00",
+  "raw_body_sha256": "98ff744242061367e5944abe2a4b0af927306479086eb1899aa01901bd93fa44",
+  "body": {
+    "id": "genai-01a10530-1263-7f1d-941e-1d726454232a",
+    "object": "chat.completion",
+    "created": 1791088398,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.mockito.internal.invocation;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when;\n\nimport java.lang.reflect.Method;\nimport java.util.Arrays;\nimport java.util.Collections;\nimport java.util.List;\n\nimport org.hamcrest.Matcher;\nimport org.junit.Test;\nimport org.mockito.invocation.Invocation;\nimport org.mockito.invocation.Location;\n\npublic class InvocationMatcherTest {\n\n    public interface SampleService {\n        void simpleMethod(String arg);\n        void overloadedMethod(int arg);\n        void overloadedMethod(String arg);\n        void varargsMethod(String... args);\n    }\n\n    @Test\n    public void testGettersAndConstructors() throws Exception {\n        Method method = SampleService.class.getMethod(\"simpleMethod\", String.class);\n        Invocation invocation = mock(Invocation.class);\n        Location location = mock(Location.class);\n        when(invocation.getMethod()).thenReturn(method);\n        when(invocation.getArguments()).thenReturn(new Object[]{\"test\"});\n        when(invocation.getLocation()).thenReturn(location);\n\n        InvocationMatcher matcher = new InvocationMatcher(invocation, Collections.<Matcher>emptyList());\n\n        assertEquals(method, matcher.getMethod());\n        assertEquals(invocation, matcher.getInvocation());\n        assertNotNull(matcher.getMatchers());\n        assertEquals(location, matcher.getLocation());\n        assertNotNull(matcher.toString());\n    }\n\n    @Test\n    public void testMatches() throws Exception {\n        Method method = SampleService.class.getMethod(\"simpleMethod\", String.class);\n        \n        Invocation inv1 = mock(Invocation.class);\n        when(inv1.getMethod()).thenReturn(method);\n        when(inv1.getMock()).thenReturn(\"mock\");\n        when(inv1.getArguments()).thenReturn(new Object[]{\"hello\"});\n\n        Invocation inv2 = mock(Invocation.class);\n        when(inv2.getMethod()).thenReturn(method);\n        when(inv2.getMock()).thenReturn(\"mock\");\n        when(inv2.getArguments()).thenReturn(new Object[]{\"hello\"});\n\n        Invocation inv3 = mock(Invocation.class);\n        when(inv3.getMethod()).thenReturn(method);\n        when(inv3.getMock()).thenReturn(\"mock\");\n        when(inv3.getArguments()).thenReturn(new Object[]{\"world\"});\n\n        InvocationMatcher matcher = new InvocationMatcher(inv1);\n\n        assertTrue(matcher.matches(inv2));\n        assertFalse(matcher.matches(inv3));\n    }\n\n    @Test\n    public void testHasSameMethod() throws Exception {\n        Method m1 = SampleService.class.getMethod(\"simpleMethod\", String.class);\n        Method m2 = SampleService.class.getMethod(\"overloadedMethod\", int.class);\n\n        Invocation inv1 = mock(Invocation.class);\n        when(inv1.getMethod()).thenReturn(m1);\n        when(inv1.getArguments()).thenReturn(new Object[]{\"test\"});\n\n        Invocation inv2 = mock(Invocation.class);\n        when(inv2.getMethod()).thenReturn(m1);\n        when(inv2.getArguments()).thenReturn(new Object[]{\"test\"});\n\n        Invocation inv3 = mock(Invocation.class);\n        when(inv3.getMethod()).thenReturn(m2);\n        when(inv3.getArguments()).thenReturn(new Object[]{123});\n\n        InvocationMatcher matcher = new InvocationMatcher(inv1);\n\n        assertTrue(matcher.hasSameMethod(inv2));\n        assertFalse(matcher.hasSameMethod(inv3));\n    }\n\n    @Test\n    public void testHasSimilarMethod() throws Exception {\n        Method m1 = SampleService.class.getMethod(\"simpleMethod\", String.class);\n        Method m2 = SampleService.class.getMethod(\"overloadedMethod\", String.class);\n\n        Object mockInstance = new Object();\n\n        Invocation inv1 = mock(Invocation.class);\n        when(inv1.getMethod()).thenReturn(m1);\n        when(inv1.getMock()).thenReturn(mockInstance);\n        when(inv1.isVerified()).thenReturn(false);\n        when(inv1.getArguments()).thenReturn(new Object[]{\"test\"});\n\n        Invocation candidate = mock(Invocation.class);\n        when(candidate.getMethod()).thenReturn(m2);\n        when(candidate.getMock()).thenReturn(mockInstance);\n        when(candidate.isVerified()).thenReturn(true); // verified, so not similar (must be unverified)\n        when(candidate.getArguments()).thenReturn(new Object[]{\"test\"});\n\n        InvocationMatcher matcher = new InvocationMatcher(inv1);\n\n        assertFalse(matcher.hasSimilarMethod(candidate));\n    }\n\n    @Test\n    public void testCreateFromList() throws Exception {\n        Method method = SampleService.class.getMethod(\"simpleMethod\", String.class);\n        Invocation inv1 = mock(Invocation.class);\n        when(inv1.getMethod()).thenReturn(method);\n        when(inv1.getArguments()).thenReturn(new Object[]{\"a\"});\n\n        Invocation inv2 = mock(Invocation.class);\n        when(inv2.getMethod()).thenReturn(method);\n        when(inv2.getArguments()).thenReturn(new Object[]{\"b\"});\n\n        List<Invocation> invocations = Arrays.asList(inv1, inv2);\n        List<InvocationMatcher> matchers = InvocationMatcher.createFrom(invocations);\n\n        assertEquals(2, matchers.size());\n        assertEquals(inv1, matchers.get(0).getInvocation());\n        assertEquals(inv2, matchers.get(1).getInvocation());\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testCaptureArgumentsFromVarargsThrowsUnsupported() throws Exception {\n        Method method = SampleService.class.getMethod(\"varargsMethod\", String[].class);\n        Invocation invocation = mock(Invocation.class);\n        when(invocation.getMethod()).thenReturn(method);\n        when(invocation.getRawArguments()).thenReturn(new Object[]{new String[]{\"a\", \"b\"}});\n\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n        matcher.captureArgumentsFrom(invocation);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4382,
+      "completion_tokens": 1445,
+      "total_tokens": 5827
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 64981,
+      "daily_remaining_tokens": 285019
+    }
+  },
+  "headers": {
+    "x-request-id": "l9z5rjurcd3tlj6fvuvm17ix",
+    "date": "Sun, 04 Oct 2026 04:33:18 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

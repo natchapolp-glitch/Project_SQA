@@ -1,0 +1,10 @@
+- getLocalName(Node)/getLocalName(Object) must strip namespace prefix and return just local part for elements/attributes with prefixed and unprefixed names; verify against QName.getLocalName semantics (bug likely mishandles prefix stripping, e.g. for names without ':' or with multiple ':').
+- getPrefix must return null (or empty) when no namespace prefix present, and correct prefix string when present.
+- compareChildNodePointers must correctly order sibling nodes by document order including same-named elements, text nodes, and mixed node types; test with nodes in various positions (first, middle, last).
+- testNode(NodeTest) must correctly match node type tests (element, text, comment, PI) and name tests (wildcard, namespace-qualified, local-name-only).
+- getNamespaceURI should return correct namespace URI for default namespace, explicit prefix, and no-namespace cases; boundary: root element vs nested elements inheriting namespace.
+- getValue/stringValue must correctly concatenate text content of mixed child nodes (text + element) for whitespace and empty-element cases.
+- isLeaf/isCollection/getLength: boundary tests for nodes with zero children, attribute-only nodes, and text nodes.
+- Receiver setup: build minimal DOM Document via javax.xml.parsers and JDOM Document via org.jdom.input, using Locale.getDefault() for pointer construction; ensure both DOM and JDOM variants are tested in parallel for equivalent expected behavior.
+- equals/hashCode consistency across pointers wrapping the same underlying node instance.
+- getRelativePositionByName/OfElement/OfTextNode private logic indirectly tested via asPath() output correctness for indexed paths (e.g. `/root/child[2]`).

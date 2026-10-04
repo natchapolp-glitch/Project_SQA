@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:33:05.051008+00:00",
+  "ended_at_utc": "2026-10-04T03:33:13.910999+00:00",
+  "raw_body_sha256": "2cd58082bb184af08ce79cf832f308d6deea88ce0dc6365518c1052e37e2a6a5",
+  "body": {
+    "id": "gen-1791084785-97Dbb7vhBT3bqxaRFkvb",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.cli;\n\nimport org.junit.Before;\nimport org.junit.Test;\n\nimport java.util.Iterator;\nimport java.util.List;\n\nimport static org.junit.Assert.*;\n\npublic class CommandLineTest {\n\n    private CommandLine cmd;\n\n    @Before\n    public void setUp() {\n        cmd = new CommandLine();\n    }\n\n    @Test\n    public void testHasOptionTrueAndFalse() throws Exception {\n        Option opt = new Option(\"f\", \"file\", false, \"file option\");\n        cmd.addOption(opt);\n\n        assertTrue(cmd.hasOption(\"f\"));\n        assertTrue(cmd.hasOption('f'));\n        assertFalse(cmd.hasOption(\"x\"));\n        assertFalse(cmd.hasOption('x'));\n    }\n\n    @Test\n    public void testGetOptionValueWithAndWithoutArgs() throws Exception {\n        Option withArg = new Option(\"v\", \"value\", true, \"has value\");\n        withArg.addValue(\"hello\");\n        cmd.addOption(withArg);\n\n        Option noArg = new Option(\"n\", \"noarg\", false, \"no value\");\n        cmd.addOption(noArg);\n\n        assertEquals(\"hello\", cmd.getOptionValue(\"v\"));\n        assertEquals(\"hello\", cmd.getOptionValue('v'));\n        assertNull(cmd.getOptionValue(\"n\"));\n        assertNull(cmd.getOptionValue(\"missing\"));\n    }\n\n    @Test\n    public void testGetOptionValueDefault() throws Exception {\n        Option withArg = new Option(\"v\", \"value\", true, \"has value\");\n        withArg.addValue(\"present\");\n        cmd.addOption(withArg);\n\n        assertEquals(\"present\", cmd.getOptionValue(\"v\", \"default\"));\n        assertEquals(\"default\", cmd.getOptionValue(\"missing\", \"default\"));\n        assertEquals(\"default\", cmd.getOptionValue('m', \"default\"));\n    }\n\n    @Test\n    public void testGetOptionValuesMultiple() throws Exception {\n        Option multi = new Option(\"l\", \"list\", true, \"multi value\");\n        multi.addValue(\"one\");\n        multi.addValue(\"two\");\n        multi.addValue(\"three\");\n        cmd.addOption(multi);\n\n        String[] values = cmd.getOptionValues(\"l\");\n        assertArrayEquals(new String[] {\"one\", \"two\", \"three\"}, values);\n        assertArrayEquals(new String[] {\"one\", \"two\", \"three\"}, cmd.getOptionValues('l'));\n\n        assertNull(cmd.getOptionValues(\"missing\"));\n    }\n\n    @Test\n    public void testGetArgsAndArgList() {\n        assertEquals(0, cmd.getArgs().length);\n        assertTrue(cmd.getArgList().isEmpty());\n\n        cmd.addArg(\"arg1\");\n        cmd.addArg(\"arg2\");\n\n        String[] args = cmd.getArgs();\n        assertArrayEquals(new String[] {\"arg1\", \"arg2\"}, args);\n\n        List argList = cmd.getArgList();\n        assertEquals(2, argList.size());\n        assertEquals(\"arg1\", argList.get(0));\n        assertEquals(\"arg2\", argList.get(1));\n    }\n\n    @Test\n    public void testGetOptionsAndIterator() throws Exception {\n        Option opt1 = new Option(\"a\", \"aaa\", false, \"a option\");\n        Option opt2 = new Option(\"b\", \"bbb\", false, \"b option\");\n        cmd.addOption(opt1);\n        cmd.addOption(opt2);\n\n        Option[] options = cmd.getOptions();\n        assertEquals(2, options.length);\n\n        Iterator it = cmd.iterator();\n        int count = 0;\n        while (it.hasNext()) {\n            Object o = it.next();\n            assertTrue(o instanceof Option);\n            count++;\n        }\n        assertEquals(2, count);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 4304,
+      "output_tokens": 1305,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.021658,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.021658,
+        "upstream_inference_prompt_cost": 0.008608,
+        "upstream_inference_completions_cost": 0.01305
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 73760,
+      "daily_remaining_tokens": 126240
+    }
+  },
+  "headers": {
+    "x-request-id": "ajc6jo6n09980108xng5uzwr",
+    "date": "Sun, 04 Oct 2026 03:33:15 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

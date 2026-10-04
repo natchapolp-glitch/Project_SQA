@@ -1,0 +1,40 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Closure-1
+Java 11, JUnit 4
+Modified classes: com.google.javascript.jscomp.RemoveUnusedVars
+BUGGY API signatures:
+Compiled from "RemoveUnusedVars.java"
+class com.google.javascript.jscomp.RemoveUnusedVars implements com.google.javascript.jscomp.CompilerPass,com.google.javascript.jscomp.OptimizeCalls$CallGraphCompilerPass {
+  private final com.google.javascript.jscomp.AbstractCompiler compiler;
+  private final com.google.javascript.jscomp.CodingConvention codingConvention;
+  private final boolean removeGlobals;
+  private boolean preserveFunctionExpressionNames;
+  private final java.util.Set<com.google.javascript.jscomp.Scope$Var> referenced;
+  private final java.util.List<com.google.javascript.jscomp.Scope$Var> maybeUnreferenced;
+  private final java.util.List<com.google.javascript.jscomp.Scope> allFunctionScopes;
+  private final com.google.common.collect.Multimap<com.google.javascript.jscomp.Scope$Var, com.google.javascript.jscomp.RemoveUnusedVars$Assign> assignsByVar;
+  private final java.util.Map<com.google.javascript.rhino.Node, com.google.javascript.jscomp.RemoveUnusedVars$Assign> assignsByNode;
+  private final com.google.common.collect.Multimap<com.google.javascript.jscomp.Scope$Var, com.google.javascript.rhino.Node> classDefiningCalls;
+  private final com.google.common.collect.Multimap<com.google.javascript.jscomp.Scope$Var, com.google.javascript.jscomp.RemoveUnusedVars$Continuation> continuations;
+  private boolean modifyCallSites;
+  private com.google.javascript.jscomp.RemoveUnusedVars$CallSiteOptimizer callSiteOptimizer;
+  com.google.javascript.jscomp.RemoveUnusedVars(com.google.javascript.jscomp.AbstractCompiler, boolean, boolean, boolean);
+  public void process(com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  public void process(com.google.javascript.rhino.Node, com.google.javascript.rhino.Node, com.google.javascript.jscomp.SimpleDefinitionFinder);
+  private void traverseAndRemoveUnusedReferences(com.google.javascript.rhino.Node);
+  private void traverseNode(com.google.javascript.rhino.Node, com.google.javascript.rhino.Node, com.google.javascript.jscomp.Scope);
+  private boolean isRemovableVar(com.google.javascript.jscomp.Scope$Var);
+  private void traverseFunction(com.google.javascript.rhino.Node, com.google.javascript.jscomp.Scope);
+  private void collectMaybeUnreferencedVars(com.google.javascript.jscomp.Scope);
+  private void removeUnreferencedFunctionArgs(com.google.javascript.jscomp.Scope);
+  private static com.google.javascript.rhino.Node getFunctionArgList(com.google.javascript.rhino.Node);
+  private void interpretAssigns();
+  private void removeAllAssigns(com.google.javascript.jscomp.Scope$Var);
+  private boolean markReferencedVar(com.google.javascript.jscomp.Scope$Var);
+  private void removeUnreferencedVars();
+  static com.google.javascript.rhino.Node access$000(com.google.javascript.rhino.Node);
+  static void access$100(com.google.javascript.jscomp.RemoveUnusedVars, com.google.javascript.rhino.Node, com.google.javascript.jscomp.Scope);
+  static void access$200(com.google.javascript.jscomp.RemoveUnusedVars, com.google.javascript.rhino.Node, com.google.javascript.rhino.Node, com.google.javascript.jscomp.Scope);
+}
+

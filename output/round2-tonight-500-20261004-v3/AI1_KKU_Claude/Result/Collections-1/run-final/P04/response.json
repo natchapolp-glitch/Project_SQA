@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:45:15.911377+00:00",
+  "ended_at_utc": "2026-10-04T03:45:26.732505+00:00",
+  "raw_body_sha256": "21a07e543104a018c71898bebf98fcea4fddb656ceac64204c4f1b322defeb7d",
+  "body": {
+    "id": "gen-1791085518-ua6Q0AIRItbr5pLfndnQ",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.collections.map;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\n\nimport java.util.*;\n\npublic class Flat3MapExtraTest {\n\n    @Test\n    public void testPutDuplicateNullKeyAtSizeTwoUpdatesValue() {\n        // Covers get/put branches for null key when size == 2 (key2 null check, drop-through)\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(null, \"firstNull\");\n\n        assertEquals(2, map.size());\n        assertEquals(\"firstNull\", map.get(null));\n\n        Object old = map.put(null, \"secondNull\");\n        assertEquals(\"firstNull\", old);\n        assertEquals(2, map.size());\n        assertEquals(\"secondNull\", map.get(null));\n        assertEquals(\"1\", map.get(\"a\"));\n    }\n\n    @Test\n    public void testPutAllTriggersConversionWhenCombinedSizeExceedsThree() {\n        // putAll with map.size() >= 4 should convert to delegate mode directly\n        Flat3Map map = new Flat3Map();\n        Map source = new HashMap();\n        source.put(\"a\", \"1\");\n        source.put(\"b\", \"2\");\n        source.put(\"c\", \"3\");\n        source.put(\"d\", \"4\");\n\n        map.putAll(source);\n\n        assertEquals(4, map.size());\n        assertEquals(\"1\", map.get(\"a\"));\n        assertEquals(\"2\", map.get(\"b\"));\n        assertEquals(\"3\", map.get(\"c\"));\n        assertEquals(\"4\", map.get(\"d\"));\n    }\n\n    @Test\n    public void testKeySetValuesEntrySetSizesInFlatMode() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n        map.put(\"c\", \"3\");\n\n        Set keys = map.keySet();\n        Collection values = map.values();\n        Set entries = map.entrySet();\n\n        assertEquals(3, keys.size());\n        assertEquals(3, values.size());\n        assertEquals(3, entries.size());\n        assertTrue(keys.contains(\"a\"));\n        assertTrue(keys.contains(\"b\"));\n        assertTrue(keys.contains(\"c\"));\n        assertTrue(values.contains(\"1\"));\n        assertTrue(values.contains(\"2\"));\n        assertTrue(values.contains(\"3\"));\n    }\n\n    @Test\n    public void testRemoveMiddleEntryThenReaddReachesThreeAgain() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n        map.put(\"c\", \"3\");\n\n        Object removed = map.remove(\"b\");\n        assertEquals(\"2\", removed);\n        assertEquals(2, map.size());\n        assertFalse(map.containsKey(\"b\"));\n        assertEquals(\"1\", map.get(\"a\"));\n        assertEquals(\"3\", map.get(\"c\"));\n\n        map.put(\"d\", \"4\");\n        assertEquals(3, map.size());\n        assertEquals(\"4\", map.get(\"d\"));\n        assertTrue(map.containsKey(\"d\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7380,
+      "output_tokens": 1050,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02526,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02526,
+        "upstream_inference_prompt_cost": 0.01476,
+        "upstream_inference_completions_cost": 0.0105
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 102652,
+      "daily_remaining_tokens": 97348
+    }
+  },
+  "headers": {
+    "x-request-id": "w5iamp7mkg3j9oenso0dtauu",
+    "date": "Sun, 04 Oct 2026 03:45:26 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

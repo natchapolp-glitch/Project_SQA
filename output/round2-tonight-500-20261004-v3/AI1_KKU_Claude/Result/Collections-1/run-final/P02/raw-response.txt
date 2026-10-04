@@ -1,0 +1,161 @@
+```java
+package org.apache.commons.collections.map;
+
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+import java.io.*;
+import java.util.*;
+
+public class Flat3MapTest {
+
+    @Test
+    public void testPutGetContainsWithNulls() {
+        Flat3Map map = new Flat3Map();
+        map.put(null, "nullValueForNullKey");
+        map.put("k1", null);
+        map.put("k2", "v2");
+
+        assertEquals(3, map.size());
+        assertEquals("nullValueForNullKey", map.get(null));
+        assertNull(map.get("k1"));
+        assertEquals("v2", map.get("k2"));
+
+        assertTrue(map.containsKey(null));
+        assertTrue(map.containsKey("k1"));
+        assertTrue(map.containsValue(null));
+        assertTrue(map.containsValue("nullValueForNullKey"));
+        assertFalse(map.containsKey("missing"));
+    }
+
+    @Test
+    public void testDuplicatePutUpdatesValueWithoutResizing() {
+        Flat3Map map = new Flat3Map();
+        map.put("a", "1");
+        map.put("b", "2");
+        map.put("c", "3");
+
+        Object old = map.put("b", "replaced");
+        assertEquals("2", old);
+        assertEquals(3, map.size());
+        assertEquals("1", map.get("a"));
+        assertEquals("replaced", map.get("b"));
+        assertEquals("3", map.get("c"));
+    }
+
+    @Test
+    public void testIteratorSetValueAndRemoveInFlatMode() {
+        Flat3Map map = new Flat3Map();
+        map.put("a", "1");
+        map.put("b", "2");
+        map.put("c", "3");
+
+        MapIteratorSetValue(map, "b", "new2");
+        assertEquals("new2", map.get("b"));
+        assertEquals(3, map.size());
+
+        Iterator it = map.entrySet().iterator();
+        boolean removed = false;
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            if ("a".equals(entry.getKey())) {
+                it.remove();
+                removed = true;
+            }
+        }
+        assertTrue(removed);
+        assertEquals(2, map.size());
+        assertFalse(map.containsKey("a"));
+        assertEquals("new2", map.get("b"));
+        assertEquals("3", map.get("c"));
+    }
+
+    private void MapIteratorSetValue(Flat3Map map, String key, String newValue) {
+        org.apache.commons.collections.MapIterator it = map.mapIterator();
+        while (it.hasNext()) {
+            Object k = it.next();
+            if (key.equals(k)) {
+                it.setValue(newValue);
+            }
+        }
+    }
+
+    @Test
+    public void testConvertToDelegateModeOnFourthPut() {
+        Flat3Map map = new Flat3Map();
+        map.put("a", "1");
+        map.put("b", "2");
+        map.put("c", "3");
+        map.put("d", "4");
+
+        assertEquals(4, map.size());
+        assertEquals("1", map.get("a"));
+        assertEquals("2", map.get("b"));
+        assertEquals("3", map.get("c"));
+        assertEquals("4", map.get("d"));
+
+        Object removed = map.remove("b");
+        assertEquals("2", removed);
+        assertEquals(3, map.size());
+        assertFalse(map.containsKey("b"));
+    }
+
+    @Test
+    public void testEqualsHashCodeAndCloneIndependence() {
+        Flat3Map map1 = new Flat3Map();
+        map1.put("a", "1");
+        map1.put("b", "2");
+
+        Flat3Map map2 = new Flat3Map();
+        map2.put("b", "2");
+        map2.put("a", "1");
+
+        assertEquals(map1, map2);
+        assertEquals(map1.hashCode(), map2.hashCode());
+
+        Flat3Map clone = (Flat3Map) map1.clone();
+        assertEquals(map1, clone);
+        clone.put("c", "3");
+        assertFalse(map1.containsKey("c"));
+        assertEquals(2, map1.size());
+        assertEquals(3, clone.size());
+    }
+
+    @Test
+    public void testSerializationRoundTripFlatMode() throws Exception {
+        Flat3Map map = new Flat3Map();
+        map.put("a", "1");
+        map.put("b", "2");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(map);
+        oos.close();
+
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+        Flat3Map result = (Flat3Map) ois.readObject();
+        ois.close();
+
+        assertEquals(2, result.size());
+        assertEquals("1", result.get("a"));
+        assertEquals("2", result.get("b"));
+        assertEquals(map, result);
+    }
+
+    @Test
+    public void testClearAndRemoveNonexistentKey() {
+        Flat3Map map = new Flat3Map();
+        map.put("a", "1");
+        map.put("b", "2");
+
+        assertNull(map.remove("missing"));
+        assertEquals(2, map.size());
+
+        map.clear();
+        assertEquals(0, map.size());
+        assertTrue(map.isEmpty());
+        assertFalse(map.containsKey("a"));
+        assertNull(map.get("a"));
+    }
+}
+```

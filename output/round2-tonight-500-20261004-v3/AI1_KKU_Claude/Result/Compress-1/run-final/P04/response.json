@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:49:40.535884+00:00",
+  "ended_at_utc": "2026-10-04T03:49:48.482639+00:00",
+  "raw_body_sha256": "db18c9293f6f232adeead51b8b13df38df4d434b3e72857d3116c47971a9bc0c",
+  "body": {
+    "id": "gen-1791085781-GkPgZWLyekQCyLYV5VNM",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.compress.archivers.cpio;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\npublic class CpioArchiveOutputStreamExtraTest {\n\n    @Test\n    public void writeEntryWithOldAsciiFormatSucceeds() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos,\n                CpioConstants.FORMAT_OLD_ASCII);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\n                CpioConstants.FORMAT_OLD_ASCII, \"testfile\");\n        byte[] data = \"hello\".getBytes(\"UTF-8\");\n        entry.setSize(data.length);\n        cos.putNextEntry(entry);\n        cos.write(data, 0, data.length);\n        cos.closeArchiveEntry();\n        cos.finish();\n        cos.close();\n        assertTrue(bos.size() > 0);\n    }\n\n    @Test\n    public void writeEntryWithOldBinaryFormatSucceeds() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos,\n                CpioConstants.FORMAT_OLD_BINARY);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\n                CpioConstants.FORMAT_OLD_BINARY, \"testfile\");\n        byte[] data = \"data!\".getBytes(\"UTF-8\");\n        entry.setSize(data.length);\n        cos.putNextEntry(entry);\n        cos.write(data, 0, data.length);\n        cos.closeArchiveEntry();\n        cos.finish();\n        cos.close();\n        assertTrue(bos.size() > 0);\n    }\n\n    @Test\n    public void unknownFormatThrowsIllegalArgumentException() {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        try {\n            new CpioArchiveOutputStream(bos, (short) 9999);\n            fail(\"Expected IllegalArgumentException for unknown format\");\n        } catch (IllegalArgumentException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void singleByteWriteIncrementsWrittenAndClosesSuccessfully() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cos = new CpioArchiveOutputStream(bos);\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"onebyte\");\n        entry.setSize(1);\n        cos.putNextEntry(entry);\n        cos.write('A');\n        cos.closeArchiveEntry();\n        cos.finish();\n        cos.close();\n        assertTrue(bos.size() > 0);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8039,
+      "output_tokens": 1099,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.027068,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.027068,
+        "upstream_inference_prompt_cost": 0.016078,
+        "upstream_inference_completions_cost": 0.01099
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 19079,
+      "daily_remaining_tokens": 180921
+    }
+  },
+  "headers": {
+    "x-request-id": "aq00ts4gy4yd4mjlca3pkhd8",
+    "date": "Sun, 04 Oct 2026 03:49:49 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,16 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Gson-1
+Java 11, JUnit 4
+Modified classes: com.google.gson.TypeInfoFactory
+BUGGY API signatures:
+Compiled from "TypeInfoFactory.java"
+final class com.google.gson.TypeInfoFactory {
+  private com.google.gson.TypeInfoFactory();
+  public static com.google.gson.TypeInfoArray getTypeInfoForArray(java.lang.reflect.Type);
+  public static com.google.gson.TypeInfo getTypeInfoForField(java.lang.reflect.Field, java.lang.reflect.Type);
+  private static java.lang.reflect.Type getActualType(java.lang.reflect.Type, java.lang.reflect.Type, java.lang.Class<?>);
+  private static java.lang.reflect.Type[] extractRealTypes(java.lang.reflect.Type[], java.lang.reflect.Type, java.lang.Class<?>);
+  private static int getIndex(java.lang.reflect.TypeVariable<?>[], java.lang.reflect.TypeVariable<?>);
+}
+

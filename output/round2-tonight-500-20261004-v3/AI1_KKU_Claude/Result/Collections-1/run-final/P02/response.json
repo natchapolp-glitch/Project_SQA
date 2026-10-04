@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:44:37.957289+00:00",
+  "ended_at_utc": "2026-10-04T03:44:53.371276+00:00",
+  "raw_body_sha256": "bd65254202e87b6ea6a1b80f12789a7bcc98e69ea6315550704aa597ffd58d87",
+  "body": {
+    "id": "gen-1791085480-wbzmcJUfJijGSJqY428z",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.collections.map;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\n\nimport java.io.*;\nimport java.util.*;\n\npublic class Flat3MapTest {\n\n    @Test\n    public void testPutGetContainsWithNulls() {\n        Flat3Map map = new Flat3Map();\n        map.put(null, \"nullValueForNullKey\");\n        map.put(\"k1\", null);\n        map.put(\"k2\", \"v2\");\n\n        assertEquals(3, map.size());\n        assertEquals(\"nullValueForNullKey\", map.get(null));\n        assertNull(map.get(\"k1\"));\n        assertEquals(\"v2\", map.get(\"k2\"));\n\n        assertTrue(map.containsKey(null));\n        assertTrue(map.containsKey(\"k1\"));\n        assertTrue(map.containsValue(null));\n        assertTrue(map.containsValue(\"nullValueForNullKey\"));\n        assertFalse(map.containsKey(\"missing\"));\n    }\n\n    @Test\n    public void testDuplicatePutUpdatesValueWithoutResizing() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n        map.put(\"c\", \"3\");\n\n        Object old = map.put(\"b\", \"replaced\");\n        assertEquals(\"2\", old);\n        assertEquals(3, map.size());\n        assertEquals(\"1\", map.get(\"a\"));\n        assertEquals(\"replaced\", map.get(\"b\"));\n        assertEquals(\"3\", map.get(\"c\"));\n    }\n\n    @Test\n    public void testIteratorSetValueAndRemoveInFlatMode() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n        map.put(\"c\", \"3\");\n\n        MapIteratorSetValue(map, \"b\", \"new2\");\n        assertEquals(\"new2\", map.get(\"b\"));\n        assertEquals(3, map.size());\n\n        Iterator it = map.entrySet().iterator();\n        boolean removed = false;\n        while (it.hasNext()) {\n            Map.Entry entry = (Map.Entry) it.next();\n            if (\"a\".equals(entry.getKey())) {\n                it.remove();\n                removed = true;\n            }\n        }\n        assertTrue(removed);\n        assertEquals(2, map.size());\n        assertFalse(map.containsKey(\"a\"));\n        assertEquals(\"new2\", map.get(\"b\"));\n        assertEquals(\"3\", map.get(\"c\"));\n    }\n\n    private void MapIteratorSetValue(Flat3Map map, String key, String newValue) {\n        org.apache.commons.collections.MapIterator it = map.mapIterator();\n        while (it.hasNext()) {\n            Object k = it.next();\n            if (key.equals(k)) {\n                it.setValue(newValue);\n            }\n        }\n    }\n\n    @Test\n    public void testConvertToDelegateModeOnFourthPut() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n        map.put(\"c\", \"3\");\n        map.put(\"d\", \"4\");\n\n        assertEquals(4, map.size());\n        assertEquals(\"1\", map.get(\"a\"));\n        assertEquals(\"2\", map.get(\"b\"));\n        assertEquals(\"3\", map.get(\"c\"));\n        assertEquals(\"4\", map.get(\"d\"));\n\n        Object removed = map.remove(\"b\");\n        assertEquals(\"2\", removed);\n        assertEquals(3, map.size());\n        assertFalse(map.containsKey(\"b\"));\n    }\n\n    @Test\n    public void testEqualsHashCodeAndCloneIndependence() {\n        Flat3Map map1 = new Flat3Map();\n        map1.put(\"a\", \"1\");\n        map1.put(\"b\", \"2\");\n\n        Flat3Map map2 = new Flat3Map();\n        map2.put(\"b\", \"2\");\n        map2.put(\"a\", \"1\");\n\n        assertEquals(map1, map2);\n        assertEquals(map1.hashCode(), map2.hashCode());\n\n        Flat3Map clone = (Flat3Map) map1.clone();\n        assertEquals(map1, clone);\n        clone.put(\"c\", \"3\");\n        assertFalse(map1.containsKey(\"c\"));\n        assertEquals(2, map1.size());\n        assertEquals(3, clone.size());\n    }\n\n    @Test\n    public void testSerializationRoundTripFlatMode() throws Exception {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n\n        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n        ObjectOutputStream oos = new ObjectOutputStream(baos);\n        oos.writeObject(map);\n        oos.close();\n\n        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));\n        Flat3Map result = (Flat3Map) ois.readObject();\n        ois.close();\n\n        assertEquals(2, result.size());\n        assertEquals(\"1\", result.get(\"a\"));\n        assertEquals(\"2\", result.get(\"b\"));\n        assertEquals(map, result);\n    }\n\n    @Test\n    public void testClearAndRemoveNonexistentKey() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n\n        assertNull(map.remove(\"missing\"));\n        assertEquals(2, map.size());\n\n        map.clear();\n        assertEquals(0, map.size());\n        assertTrue(map.isEmpty());\n        assertFalse(map.containsKey(\"a\"));\n        assertNull(map.get(\"a\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5796,
+      "output_tokens": 1906,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.030652,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.030652,
+        "upstream_inference_prompt_cost": 0.011592,
+        "upstream_inference_completions_cost": 0.01906
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 94222,
+      "daily_remaining_tokens": 105778
+    }
+  },
+  "headers": {
+    "x-request-id": "zz1bz7uzpn4lf3kjpi6no656",
+    "date": "Sun, 04 Oct 2026 03:44:53 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,57 @@
+Extract test suite......................................................... OK
+Running ant (compile.gen.tests)............................................ FAIL
+Executed command:  cd /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f && ant -f /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml -Dd4j.home=/home/team/sqa-round2/defects4j -Dd4j.dir.projects=/home/team/sqa-round2/defects4j/framework/projects -Dbasedir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f -Dd4j.test.dir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f/.test_suite compile.gen.tests 2>&1
+Buildfile: /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml
+
+test-offline:
+
+get-deps:
+
+joda-time-from-maven.compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f/maven-build.xml:77: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+joda-time.compile:
+
+compile:
+     [java] Writing zoneinfo files
+     [java] Writing ZoneInfoMap
+
+compile.gen.tests:
+     [echo] classes.dir: target/classes
+     [echo] build.home: target/classes/..
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-1/f/.test_suite/org/joda/time/Time1Test.java:28: error: no suitable constructor found for Period(int,DurationFieldType)
+    [javac]         Period period = new Period(0, DurationFieldType.eras());
+    [javac]                         ^
+    [javac]     constructor Period.Period(long,PeriodType) is not applicable
+    [javac]       (argument mismatch; DurationFieldType cannot be converted to PeriodType)
+    [javac]     constructor Period.Period(long,Chronology) is not applicable
+    [javac]       (argument mismatch; DurationFieldType cannot be converted to Chronology)
+    [javac]     constructor Period.Period(long,long) is not applicable
+    [javac]       (argument mismatch; DurationFieldType cannot be converted to long)
+    [javac]     constructor Period.Period(ReadableInstant,ReadableInstant) is not applicable
+    [javac]       (argument mismatch; int cannot be converted to ReadableInstant)
+    [javac]     constructor Period.Period(ReadablePartial,ReadablePartial) is not applicable
+    [javac]       (argument mismatch; int cannot be converted to ReadablePartial)
+    [javac]     constructor Period.Period(ReadableInstant,ReadableDuration) is not applicable
+    [javac]       (argument mismatch; int cannot be converted to ReadableInstant)
+    [javac]     constructor Period.Period(ReadableDuration,ReadableInstant) is not applicable
+    [javac]       (argument mismatch; int cannot be converted to ReadableDuration)
+    [javac]     constructor Period.Period(Object,PeriodType) is not applicable
+    [javac]       (argument mismatch; DurationFieldType cannot be converted to PeriodType)
+    [javac]     constructor Period.Period(Object,Chronology) is not applicable
+    [javac]       (argument mismatch; DurationFieldType cannot be converted to Chronology)
+    [javac]     constructor Period.Period(int[],PeriodType) is not applicable
+    [javac]       (argument mismatch; int cannot be converted to int[])
+    [javac] Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 2 seconds
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.

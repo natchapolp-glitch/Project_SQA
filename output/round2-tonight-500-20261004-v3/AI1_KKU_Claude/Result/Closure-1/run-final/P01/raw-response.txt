@@ -1,0 +1,12 @@
+Based on the metadata (RemoveUnusedVars pass, Closure Compiler), here are the key behaviors to test:
+
+- Setup requires a CompilerTestCase/Compiler harness invoking the pass via `process` on parsed ASTs, comparing expected output source after transformation.
+- Function arguments trailing/unused should be removed only when safe (`removeUnreferencedFunctionArgs`); verify unused trailing params are stripped but used-later params are preserved, including when a later param is referenced but earlier ones are not (must keep earlier ones as placeholders, not remove non-trailing ones).
+- Variables referenced only in their own assignment (self-assign) should still be considered unreferenced and removable.
+- Global vars should only be removed when `removeGlobals=true`; with it false, unused globals must remain untouched.
+- Function expressions: name preservation flag (`preserveFunctionExpressionNames`) must keep/discard named function expression names correctly even if unused.
+- Variables used only inside otherwise-unused/removed functions should not count as "referenced" (transitive removal correctness), i.e., removing a function should cascade to remove vars only used inside it.
+- Class-defining calls (e.g., `goog.inherits`-like patterns) referencing a var should keep that var alive only if the class itself is still referenced; test interaction between `classDefiningCalls` and reachability.
+- Assigns-only usage (`assignsByVar`/`interpretAssigns`): a variable only ever assigned (never read) should be removable, including chains of assignment expressions.
+- Call-site argument removal (`modifyCallSites`/`CallSiteOptimizer`) should only modify call sites when the corresponding parameter was actually removed, and must not alter calls with spread/variable arguments count mismatches.
+- Boundary: zero-parameter functions, functions with all parameters used, and empty scopes should be no-ops (output equals input).

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:39:37.306762+00:00",
+  "ended_at_utc": "2026-10-04T04:39:39.768798+00:00",
+  "raw_body_sha256": "c728b995bf4b51a64d3c7954aae95b3a4ad7aca38b0a47c275d164abd3369ba2",
+  "body": {
+    "id": "genai-01a10535-e3b4-7a90-a86c-132024e85ed5",
+    "object": "chat.completion",
+    "created": 1791088780,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.joda.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.joda.time.field.UnsupportedDurationField;\nimport org.junit.Test;\n\npublic class Time1Test {\n\n    @Test\n    public void testPartialWithFieldAddedUnsupported() {\n        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 12);\n        Partial result = partial.withFieldAdded(DurationFieldType.eras(), 0);\n        assertEquals(12, result.get(DateTimeFieldType.hourOfDay()));\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testPartialWithFieldAddedThrowsException() {\n        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 12);\n        partial.withFieldAdded(DurationFieldType.eras(), 1);\n    }\n\n    @Test\n    public void testPartialPlusPeriodUnsupportedZero() {\n        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 10);\n        Period period = new Period(0, DurationFieldType.eras());\n        Partial result = partial.plus(period);\n        assertEquals(10, result.get(DateTimeFieldType.hourOfDay()));\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testPartialPlusPeriodThrowsException() {\n        Partial partial = new Partial(DateTimeFieldType.hourOfDay(), 10);\n        Period period = new Period(1, DurationFieldType.eras());\n        partial.plus(period);\n    }\n\n    @Test\n    public void testUnsupportedDurationFieldGetInstanceAndProperties() {\n        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        assertNotNull(field);\n        assertEquals(DurationFieldType.eras(), field.getType());\n        assertEquals(\"eras\", field.getName());\n        assertTrue(!field.isSupported());\n        assertTrue(field.isPrecise());\n        assertEquals(0L, field.getUnitMillis());\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testUnsupportedDurationFieldAddThrows() {\n        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        field.add(0L, 1);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4713,
+      "completion_tokens": 529,
+      "total_tokens": 5242
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 65775,
+      "daily_remaining_tokens": 284225
+    }
+  },
+  "headers": {
+    "x-request-id": "z7xu740kz4f731d2252u7tk6",
+    "date": "Sun, 04 Oct 2026 04:39:40 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

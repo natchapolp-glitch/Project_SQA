@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:46:22.673981+00:00",
+  "ended_at_utc": "2026-10-04T03:46:25.686048+00:00",
+  "raw_body_sha256": "ea11c4d70abff6e0d919742e60d32093622e039168fa4fcc42c3511791946bb5",
+  "body": {
+    "id": "genai-01a10505-2dca-7772-ae40-0718c05f9f3f",
+    "object": "chat.completion",
+    "created": 1791085587,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.collections.map;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class Flat3MapAdditionalTest {\n\n    @Test\n    public void testEqualsAndHashCode() {\n        Flat3Map map1 = new Flat3Map();\n        map1.put(\"k1\", \"v1\");\n\n        Flat3Map map2 = new Flat3Map();\n        map2.put(\"k1\", \"v1\");\n\n        assertEquals(map1, map2);\n        assertEquals(map1.hashCode(), map2.hashCode());\n\n        Map<String, String> normalMap = new HashMap<String, String>();\n        normalMap.put(\"k1\", \"v1\");\n        assertTrue(map1.equals(normalMap));\n        assertFalse(map1.equals(null));\n        assertFalse(map1.equals(\"string\"));\n    }\n\n    private void assertFalse(boolean condition) {\n        org.junit.Assert.assertFalse(condition);\n    }\n\n    @Test\n    public void testToString() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        String str = map.toString();\n        assertNotNull(str);\n        assertTrue(str.contains(\"a=1\"));\n\n        // Test in delegate mode\n        map.put(\"b\", \"2\");\n        map.put(\"c\", \"3\");\n        map.put(\"d\", \"4\");\n        String delegateStr = map.toString();\n        assertNotNull(delegateStr);\n        assertTrue(delegateStr.contains(\"a=1\"));\n    }\n\n    @Test\n    public void testRemoveVariationsFlatAndDelegate() {\n        Flat3Map map = new Flat3Map();\n        map.put(\"a\", \"1\");\n        map.put(\"b\", \"2\");\n        map.put(\"c\", \"3\");\n        \n        // Remove non-existent key\n        assertNull(map.remove(\"nonexistent\"));\n\n        // Remove from size 3 flat mode\n        assertEquals(\"b\", map.remove(\"b\"));\n        assertEquals(2, map.size());\n        assertNull(map.get(\"b\"));\n\n        // Push into delegate mode\n        map.put(\"d\", \"4\");\n        map.put(\"e\", \"5\");\n        assertEquals(4, map.size());\n\n        // Remove from delegate mode\n        assertEquals(\"4\", map.remove(\"d\"));\n        assertEquals(3, map.size());\n        assertNull(map.remove(\"nonexistent-delegate\"));\n    }\n\n    @Test\n    public void testPutAllLargeMap() {\n        Map<String, String> largeMap = new HashMap<String, String>();\n        for (int i = 0; i < 5; i++) {\n            largeMap.put(\"key\" + i, \"val\" + i);\n        }\n\n        Flat3Map map = new Flat3Map();\n        map.putAll(largeMap);\n        assertEquals(5, map.size());\n        assertEquals(\"val0\", map.get(\"key0\"));\n        assertEquals(\"val4\", map.get(\"key4\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5647,
+      "completion_tokens": 770,
+      "total_tokens": 6417
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 73671,
+      "daily_remaining_tokens": 276329
+    }
+  },
+  "headers": {
+    "x-request-id": "wsqh4n8sxi7slpglv9zbjvak",
+    "date": "Sun, 04 Oct 2026 03:46:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

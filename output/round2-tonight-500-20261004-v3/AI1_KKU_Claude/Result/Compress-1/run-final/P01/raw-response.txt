@@ -1,0 +1,10 @@
+- putNextEntry should throw IOException if entry size does not match actual bytes written when closeArchiveEntry is called (mismatch detection).
+- closeArchiveEntry() called with bytes written count less than entry's declared size must throw IOException ("size mismatch"); equal size should succeed silently.
+- write(byte[], int, int) should throw if written bytes exceed entry's declared size (overflow detection).
+- putNextEntry/write after close() or finish() should throw IOException (ensureOpen checks "closed"/"finished" stream state).
+- write with negative len, offset, or offset+len > array length should throw IndexOutOfBoundsException (per OutputStream.write contract); len==0 should be no-op even on closed/finished stream per convention (check actual behavior vs contract—verify).
+- putNextEntry called twice without closeArchiveEntry in between should either auto-close previous entry or throw—verify expected contract (likely closes previous entry implicitly).
+- finish() without any entries should succeed and write trailer record ("TRAILER!!!") properly.
+- Duplicate entry names across putNextEntry calls may be checked/rejected (uses HashMap names) — verify duplicate-name handling behavior.
+- close() should call finish() if not already finished, then close underlying stream; double close() should be safe (no exception).
+- Need CpioArchiveEntry fixtures with varying size/name to set up receiver state for each test (small content, zero-length entry, name with special chars).

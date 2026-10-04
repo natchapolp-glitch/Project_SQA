@@ -1,0 +1,103 @@
+```java
+package com.google.gson;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.junit.Test;
+
+public class TypeInfoFactoryTest {
+
+  static class Holder<T> {
+    T value;
+    List<T> listValue;
+  }
+
+  static class StringHolder extends Holder<String> {
+  }
+
+  static class Container {
+    int[] intArray;
+    String[] stringArray;
+    List<String>[] genericArray;
+  }
+
+  private Type parameterizedType(final Type rawType, final Type... args) {
+    return new ParameterizedType() {
+      @Override
+      public Type[] getActualTypeArguments() {
+        return args;
+      }
+
+      @Override
+      public Type getRawType() {
+        return rawType;
+      }
+
+      @Override
+      public Type getOwnerType() {
+        return null;
+      }
+    };
+  }
+
+  @Test
+  public void testGetTypeInfoForArray_simpleArray() {
+    TypeInfoArray info = TypeInfoFactory.getTypeInfoForArray(int[].class);
+    assertEquals(int.class, info.getComponentRawType());
+  }
+
+  @Test
+  public void testGetTypeInfoForArray_objectArray() {
+    TypeInfoArray info = TypeInfoFactory.getTypeInfoForArray(String[].class);
+    assertEquals(String.class, info.getComponentRawType());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testGetTypeInfoForArray_nonArrayThrows() {
+    TypeInfoFactory.getTypeInfoForArray(String.class);
+  }
+
+  @Test
+  public void testGetTypeInfoForField_plainType() throws Exception {
+    Field field = Container.class.getDeclaredField("stringArray");
+    TypeInfo info = TypeInfoFactory.getTypeInfoForField(field, Container.class);
+    assertEquals(String[].class, info.getRawClass());
+  }
+
+  @Test
+  public void testGetTypeInfoForField_typeVariableResolved() throws Exception {
+    Field field = Holder.class.getDeclaredField("value");
+    Type parameterizedHolder = parameterizedType(Holder.class, String.class);
+    TypeInfo info = TypeInfoFactory.getTypeInfoForField(field, parameterizedHolder);
+    assertEquals(String.class, info.getRawClass());
+  }
+
+  @Test
+  public void testGetTypeInfoForField_parameterizedListResolved() throws Exception {
+    Field field = Holder.class.getDeclaredField("listValue");
+    Type parameterizedHolder = parameterizedType(Holder.class, String.class);
+    TypeInfo info = TypeInfoFactory.getTypeInfoForField(field, parameterizedHolder);
+    assertEquals(List.class, info.getRawClass());
+    assertTrue(info.getActualType() instanceof ParameterizedType);
+    ParameterizedType pt = (ParameterizedType) info.getActualType();
+    assertEquals(String.class, pt.getActualTypeArguments()[0]);
+  }
+
+  @Test
+  public void testGetTypeInfoForField_typeVariableWithoutParameterizedTypeThrows() throws Exception {
+    Field field = Holder.class.getDeclaredField("value");
+    try {
+      TypeInfoFactory.getTypeInfoForField(field, Holder.class);
+      fail("Expected UnsupportedOperationException");
+    } catch (UnsupportedOperationException expected) {
+    }
+  }
+}
+```

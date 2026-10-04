@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:41:53.611757+00:00",
+  "ended_at_utc": "2026-10-04T03:41:55.904936+00:00",
+  "raw_body_sha256": "42f418a4542bda2dc842dd79a17658d7ab18d6ba3e9d109b8732352aafd190ba",
+  "body": {
+    "id": "genai-01a10501-07f2-7961-b0bd-772c05b63526",
+    "object": "chat.completion",
+    "created": 1791085316,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.codec.language;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.apache.commons.codec.EncoderException;\nimport org.junit.Test;\n\npublic class Codec1AdditionalTest {\n\n    @Test\n    public void testCaverphoneAdditionalCoverage() {\n        Caverphone caverphone = new Caverphone();\n        assertNotNull(caverphone.encode(\"rough\"));\n        assertNotNull(caverphone.encode(\"tough\"));\n        assertNotNull(caverphone.encode(\"enough\"));\n        assertNotNull(caverphone.encode(\"gnat\"));\n        assertNotNull(caverphone.encode(\"mb\"));\n    }\n\n    @Test\n    public void testMetaphoneAdditionalCoverage() {\n        Metaphone metaphone = new Metaphone();\n        assertNotNull(metaphone.metaphone(\"KNIGHT\"));\n        assertNotNull(metaphone.metaphone(\"AEON\"));\n        assertNotNull(metaphone.metaphone(\"WRONG\"));\n        assertNotNull(metaphone.metaphone(\"WHILE\"));\n    }\n\n    @Test\n    public void testSoundexUtilsDifferenceNullCases() throws EncoderException {\n        Caverphone caverphone = new Caverphone();\n        assertEquals(0, SoundexUtils.difference(caverphone, null, \"Test\"));\n        assertEquals(0, SoundexUtils.difference(caverphone, \"Test\", null));\n        assertEquals(0, SoundexUtils.difference(caverphone, null, null));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5312,
+      "completion_tokens": 352,
+      "total_tokens": 5664
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 58968,
+      "daily_remaining_tokens": 291032
+    }
+  },
+  "headers": {
+    "x-request-id": "p6lcmtmps7n9n4qy4yr0zvvh",
+    "date": "Sun, 04 Oct 2026 03:41:56 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

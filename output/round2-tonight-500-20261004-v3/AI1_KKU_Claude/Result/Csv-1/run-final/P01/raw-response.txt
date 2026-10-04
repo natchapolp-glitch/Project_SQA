@@ -1,0 +1,11 @@
+```
+- read(): single char reads update lastChar; verify '\n' increments lineCounter, other chars don't, EOF sets lastChar=END_OF_STREAM without incrementing counter
+- readAgain(): returns UNDEFINED before any read; returns lastChar after read()/read(buf)/readLine(), unaffected by lookAhead()
+- read(char[],int,int): length==0 returns 0 without touching lastChar/lineCounter; normal read sets lastChar to last char read; EOF (-1) sets lastChar=END_OF_STREAM
+- read(buf): line counting across buffer boundaries - '\n' following '\r' from previous buffer segment (boundary via lastChar) should not double-count; '\r\n' within buffer counts once; lone '\r' and lone '\n' each count
+- readLine(): strips terminator, sets lastChar to last char of line (or END_OF_STREAM if empty-at-EOF/null), increments lineCounter once per call; EOF (null) sets lastChar=END_OF_STREAM without incrementing
+- lookAhead(): returns next char without consuming (subsequent read() still returns it); returns END_OF_STREAM at EOF; does not modify lastChar or lineCounter
+- getLineNumber(): starts at 0, reflects increments from read()/read(buf)/readLine() combos; mixed CRLF/LF/CR sequences across methods
+- Interleaving read() then read(char[]) then readLine() to check lastChar/lineCounter consistency across method boundaries
+- Receiver setup: wrap StringReader with ExtendedBufferedReader; use varied strings: empty, single char, multiline with \n, \r\n, \r only, no trailing terminator
+```

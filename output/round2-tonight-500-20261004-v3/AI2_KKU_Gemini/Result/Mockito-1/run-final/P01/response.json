@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:32:20.052775+00:00",
+  "ended_at_utc": "2026-10-04T04:32:22.216042+00:00",
+  "raw_body_sha256": "9afec8bbd8ebc65d000e2fad0d99a8592f73f594388f1ae51abe9aaa94920ed8",
+  "body": {
+    "id": "genai-01a1052f-4b10-7339-93bd-f5a5facaac14",
+    "object": "chat.completion",
+    "created": 1791088347,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "Valid receiver setup: Instantiate `InvocationMatcher` with a mock/real `Invocation` and a valid list of Hamcrest `Matcher` instances.\nBehavior: `matches(Invocation)` should correctly compare the candidate invocation against the stored invocation and matchers.\nBoundary: Candidate invocation with a different method than the stored invocation should return `false` for `matches`.\nBoundary: Candidate invocation with mismatched argument counts or types should safely return `false` without throwing exceptions.\nBehavior: `captureArgumentsFrom(Invocation)` should extract arguments and feed them to any argument captors present in the matchers.\nBoundary: Varargs invocations where matchers list length differs from method parameters due to expansion or zero-arg varargs.\nBehavior: `hasSameMethod(Invocation)` checks if both invocations target the exact same `Method` object.\nBehavior: `hasSimilarMethod(Invocation)` checks method signature compatibility (name, parameter types) despite potentially different declaring classes.\nBehavior: `createFrom(List<Invocation>)` should transform a list of invocations into a list of corresponding `InvocationMatcher` instances.\nBoundary: Empty or null-containing argument lists and matcher lists during construction or matching.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 484,
+      "completion_tokens": 245,
+      "total_tokens": 729
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 55398,
+      "daily_remaining_tokens": 294602
+    }
+  },
+  "headers": {
+    "x-request-id": "xh2h6sfeenk6wsaywbj08wah",
+    "date": "Sun, 04 Oct 2026 04:32:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

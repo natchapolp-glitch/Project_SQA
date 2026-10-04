@@ -1,0 +1,160 @@
+```java
+package com.fasterxml.jackson.databind.ser;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.introspect.*;
+import com.fasterxml.jackson.databind.util.NameTransformer;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+public class BeanPropertyWriterTest {
+
+    static class SampleBean {
+        public String fieldProperty = "testValue";
+        public String getMethodProperty() { return "methodValue"; }
+    }
+
+    @Test
+    public void testRenameAndNameMethods() throws Exception {
+        TypeFactory tf = TypeFactory.defaultInstance();
+        JavaType type = tf.constructType(String.class);
+        AnnotatedField fieldMember = new AnnotatedField(SampleBean.class.getDeclaredField("fieldProperty"), null);
+        BeanPropertyDefinition propDef = new SimpleBeanPropertyDefinition(PropertyName.construct("origName"));
+        
+        BeanPropertyWriter bpw = new BeanPropertyWriter(
+                propDef, fieldMember, null, type, null, null, null, false, null);
+
+        assertEquals("origName", bpw.getName());
+        assertEquals("origName", bpw.getSerializedName().getValue());
+
+        BeanPropertyWriter renamed = bpw.rename(NameTransformer.simpleTransform("prefix_", "_suffix"));
+        assertEquals("prefix_origName_suffix", renamed.getName());
+        assertNotSame(bpw, renamed);
+    }
+
+    @Test
+    public void testInternalSettings() throws Exception {
+        TypeFactory tf = TypeFactory.defaultInstance();
+        JavaType type = tf.constructType(String.class);
+        AnnotatedField fieldMember = new AnnotatedField(SampleBean.class.getDeclaredField("fieldProperty"), null);
+        BeanPropertyDefinition propDef = new SimpleBeanPropertyDefinition(PropertyName.construct("prop"));
+        
+        BeanPropertyWriter bpw = new BeanPropertyWriter(
+                propDef, fieldMember, null, type, null, null, null, false, null);
+
+        assertNull(bpw.getInternalSetting("key1"));
+        assertNull(bpw.setInternalSetting("key1", "val1"));
+        assertEquals("val1", bpw.getInternalSetting("key1"));
+        assertEquals("val1", bpw.setInternalSetting("key1", "val2"));
+        assertEquals("val2", bpw.getInternalSetting("key1"));
+        assertEquals("val2", bpw.removeInternalSetting("key1"));
+        assertNull(bpw.getInternalSetting("key1"));
+    }
+
+    @Test
+    public void testAssignSerializerValidAndInvalid() throws Exception {
+        TypeFactory tf = TypeFactory.defaultInstance();
+        JavaType type = tf.constructType(String.class);
+        AnnotatedField fieldMember = new AnnotatedField(SampleBean.class.getDeclaredField("fieldProperty"), null);
+        BeanPropertyDefinition propDef = new SimpleBeanPropertyDefinition(PropertyName.construct("prop"));
+        
+        BeanPropertyWriter bpw = new BeanPropertyWriter(
+                propDef, fieldMember, null, type, null, null, null, false, null);
+
+        assertFalse(bpw.hasSerializer());
+        assertNull(bpw.getSerializer());
+
+        JsonSerializer<Object> ser1 = new JsonSerializer<Object>() {
+            @Override
+            public void serialize(Object value, com.fasterxml.jackson.core.JsonGenerator gen, SerializerProvider serializers) {}
+        };
+        JsonSerializer<Object> ser2 = new JsonSerializer<Object>() {
+            @Override
+            public void serialize(Object value, com.fasterxml.jackson.core.JsonGenerator gen, SerializerProvider serializers) {}
+        };
+
+        bpw.assignSerializer(ser1);
+        assertTrue(bpw.hasSerializer());
+        assertSame(ser1, bpw.getSerializer());
+
+        bpw.assignSerializer(ser1);
+
+        try {
+            bpw.assignSerializer(ser2);
+            fail("Expected IllegalStateException on overriding serializer");
+        } catch (IllegalStateException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testAssignNullSerializerValidAndInvalid() throws Exception {
+        TypeFactory tf = TypeFactory.defaultInstance();
+        JavaType type = tf.constructType(String.class);
+        AnnotatedField fieldMember = new AnnotatedField(SampleBean.class.getDeclaredField("fieldProperty"), null);
+        BeanPropertyDefinition propDef = new SimpleBeanPropertyDefinition(PropertyName.construct("prop"));
+        
+        BeanPropertyWriter bpw = new BeanPropertyWriter(
+                propDef, fieldMember, null, type, null, null, null, false, null);
+
+        assertFalse(bpw.hasNullSerializer());
+
+        JsonSerializer<Object> nullSer1 = new JsonSerializer<Object>() {
+            @Override
+            public void serialize(Object value, com.fasterxml.jackson.core.JsonGenerator gen, SerializerProvider serializers) {}
+        };
+        JsonSerializer<Object> nullSer2 = new JsonSerializer<Object>() {
+            @Override
+            public void serialize(Object value, com.fasterxml.jackson.core.JsonGenerator gen, SerializerProvider serializers) {}
+        };
+
+        bpw.assignNullSerializer(nullSer1);
+        assertTrue(bpw.hasNullSerializer());
+
+        bpw.assignNullSerializer(nullSer1);
+
+        try {
+            bpw.assignNullSerializer(nullSer2);
+            fail("Expected IllegalStateException on overriding null serializer");
+        } catch (IllegalStateException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testPropertyTypeAndMemberAccessors() throws Exception {
+        TypeFactory tf = TypeFactory.defaultInstance();
+        JavaType type = tf.constructType(String.class);
+        AnnotatedField fieldMember = new AnnotatedField(SampleBean.class.getDeclaredField("fieldProperty"), null);
+        BeanPropertyDefinition propDef = new SimpleBeanPropertyDefinition(PropertyName.construct("prop"));
+        
+        BeanPropertyWriter bpw = new BeanPropertyWriter(
+                propDef, fieldMember, null, type, null, null, null, true, "DEFAULT");
+
+        assertEquals(String.class, bpw.getPropertyType());
+        assertEquals(String.class, bpw.getRawSerializationType());
+        assertSame(type, bpw.getType());
+        assertNotNull(bpw.getMember());
+        assertTrue(bpw.willSuppressNulls());
+        assertFalse(bpw.isRequired());
+        assertNotNull(bpw.toString());
+    }
+
+    @Test
+    public void testUnwrappingWriterCreation() throws Exception {
+        TypeFactory tf = TypeFactory.defaultInstance();
+        JavaType type = tf.constructType(String.class);
+        AnnotatedField fieldMember = new AnnotatedField(SampleBean.class.getDeclaredField("fieldProperty"), null);
+        BeanPropertyDefinition propDef = new SimpleBeanPropertyDefinition(PropertyName.construct("prop"));
+        
+        BeanPropertyWriter bpw = new BeanPropertyWriter(
+                propDef, fieldMember, null, type, null, null, null, false, null);
+
+        BeanPropertyWriter unwrapped = bpw.unwrappingWriter(NameTransformer.simpleTransform("pre_", ""));
+        assertNotNull(unwrapped);
+        assertNotSame(bpw, unwrapped);
+    }
+}
+```

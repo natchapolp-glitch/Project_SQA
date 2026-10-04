@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:57:15.102456+00:00",
+  "ended_at_utc": "2026-10-04T03:57:36.160601+00:00",
+  "raw_body_sha256": "a14733ce7f0e6fd36c627ed3aa89bb6c0c52feb9a2103f347bb0cda1e8381006",
+  "body": {
+    "id": "gen-1791086236-dbeSOYdaVr5Z4gnlsowV",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.core.io;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\nimport java.math.BigDecimal;\n\npublic class NumberInputTest {\n\n    @Test\n    public void testParseIntCharArrayAndString() {\n        char[] digits = \"12345\".toCharArray();\n        assertEquals(12345, NumberInput.parseInt(digits, 0, 5));\n        assertEquals(12345, NumberInput.parseInt(\"12345\"));\n        assertEquals(-12345, NumberInput.parseInt(\"-12345\"));\n        assertEquals(Integer.MAX_VALUE, NumberInput.parseInt(String.valueOf(Integer.MAX_VALUE)));\n        assertEquals(0, NumberInput.parseInt(\"0\"));\n    }\n\n    @Test\n    public void testParseLongVariants() {\n        assertEquals(123456789012L, NumberInput.parseLong(\"123456789012\"));\n        assertEquals(Long.MAX_VALUE, NumberInput.parseLong(String.valueOf(Long.MAX_VALUE)));\n        char[] digits = \"123456789012\".toCharArray();\n        assertEquals(123456789012L, NumberInput.parseLong(digits, 0, digits.length));\n    }\n\n    @Test\n    public void testInLongRangeBoundaries() {\n        String maxLongNoSign = String.valueOf(Long.MAX_VALUE);\n        assertTrue(NumberInput.inLongRange(maxLongNoSign, false));\n        String minLongNoSign = String.valueOf(Long.MIN_VALUE).substring(1);\n        assertTrue(NumberInput.inLongRange(minLongNoSign, true));\n\n        String overMax = \"9223372036854775808\";\n        assertFalse(NumberInput.inLongRange(overMax, false));\n\n        String shortStr = \"123\";\n        assertTrue(NumberInput.inLongRange(shortStr, false));\n\n        char[] digits = maxLongNoSign.toCharArray();\n        assertTrue(NumberInput.inLongRange(digits, 0, digits.length, false));\n    }\n\n    @Test\n    public void testParseAsIntLongDoubleFallback() {\n        assertEquals(42, NumberInput.parseAsInt(\"42\", -1));\n        assertEquals(-1, NumberInput.parseAsInt(\"notanumber\", -1));\n        assertEquals(42L, NumberInput.parseAsLong(\"42\", -1L));\n        assertEquals(-1L, NumberInput.parseAsLong(\"bad\", -1L));\n        assertEquals(3.14, NumberInput.parseAsDouble(\"3.14\", -1.0), 0.0001);\n        assertEquals(-1.0, NumberInput.parseAsDouble(\"bad\", -1.0), 0.0001);\n    }\n\n    @Test\n    public void testParseDoubleValidAndInvalid() {\n        assertEquals(3.14, NumberInput.parseDouble(\"3.14\"), 0.0001);\n        assertEquals(Double.parseDouble(NumberInput.NASTY_SMALL_DOUBLE),\n                NumberInput.parseDouble(NumberInput.NASTY_SMALL_DOUBLE), 0.0);\n        try {\n            NumberInput.parseDouble(\"not-a-double\");\n            fail(\"Expected NumberFormatException\");\n        } catch (NumberFormatException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testParseBigDecimalVariants() {\n        BigDecimal expected = new BigDecimal(\"12345.6789\");\n        assertEquals(expected, NumberInput.parseBigDecimal(\"12345.6789\"));\n\n        char[] chars = \"12345.6789\".toCharArray();\n        assertEquals(expected, NumberInput.parseBigDecimal(chars));\n\n        char[] padded = \"XX12345.6789YY\".toCharArray();\n        assertEquals(expected, NumberInput.parseBigDecimal(padded, 2, 10));\n\n        try {\n            NumberInput.parseBigDecimal(\"not-a-number\");\n            fail(\"Expected NumberFormatException\");\n        } catch (NumberFormatException e) {\n            // expected\n        }\n    }\n}\n```\n\n```java\npackage com.fasterxml.jackson.core.util;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\n\npublic class TextBufferTest {\n\n    @Test\n    public void testAppendAndContentsAsString() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        tb.append('a');\n        tb.append(\"bcdef\".toCharArray(), 0, 5);\n        tb.append(\"ghi\", 0, 3);\n        assertEquals(\"abcdefghi\", tb.contentsAsString());\n        assertEquals(9, tb.size());\n    }\n\n    @Test\n    public void testContentsAsArrayMatchesString() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        tb.append(\"hello\", 0, 5);\n        char[] arr = tb.contentsAsArray();\n        assertEquals(\"hello\", new String(arr));\n        assertEquals(\"hello\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testSegmentGrowthAcrossBoundary() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < 5000; i++) {\n            char c = (char) ('a' + (i % 26));\n            tb.append(c);\n            sb.append(c);\n        }\n        assertEquals(sb.toString(), tb.contentsAsString());\n        assertEquals(sb.length(), tb.size());\n    }\n\n    @Test\n    public void testContentsAsDoubleAndDecimal() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        tb.append(\"3.14159\", 0, 7);\n        assertEquals(3.14159, tb.contentsAsDouble(), 0.00001);\n        assertEquals(new java.math.BigDecimal(\"3.14159\"), tb.contentsAsDecimal());\n    }\n\n    @Test\n    public void testResetWithSharedAndUnshareOnAppend() {\n        char[] shared = \"shared-data\".toCharArray();\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithShared(shared, 0, shared.length);\n        assertEquals(\"shared-data\", tb.contentsAsString());\n        tb.append('X');\n        assertEquals(\"shared-dataX\", tb.contentsAsString());\n        assertEquals(\"shared-data\", new String(shared));\n    }\n\n    @Test\n    public void testResetWithCopyIndependence() {\n        char[] source = \"copydata\".toCharArray();\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithCopy(source, 0, source.length);\n        source[0] = 'Z';\n        assertEquals(\"copydata\", tb.contentsAsString());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6482,
+      "output_tokens": 2420,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.037164,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.037164,
+        "upstream_inference_prompt_cost": 0.012964,
+        "upstream_inference_completions_cost": 0.0242
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 11134,
+      "daily_remaining_tokens": 188866
+    }
+  },
+  "headers": {
+    "x-request-id": "s4yg62o6osr14qrcv7cwhfcm",
+    "date": "Sun, 04 Oct 2026 03:57:36 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

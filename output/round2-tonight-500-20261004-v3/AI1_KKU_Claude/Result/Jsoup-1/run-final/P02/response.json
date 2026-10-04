@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:11:10.226664+00:00",
+  "ended_at_utc": "2026-10-04T04:11:21.128391+00:00",
+  "raw_body_sha256": "b6b495824a0a1592b1bfed4543dfff4b5023e7d85e797db219017c134ba9616f",
+  "body": {
+    "id": "gen-1791087071-i0DY6U2tsz9hBLKgb1JM",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jsoup.nodes;\n\nimport org.jsoup.Jsoup;\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class DocumentTest {\n\n    @Test\n    public void testCreateShell() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n        Element html = doc.child(0);\n        assertEquals(\"html\", html.tagName());\n        assertEquals(2, html.children().size());\n        assertEquals(\"head\", html.child(0).tagName());\n        assertEquals(\"body\", html.child(1).tagName());\n        assertEquals(\"http://example.com/\", doc.head().baseUri());\n        assertEquals(\"http://example.com/\", doc.body().baseUri());\n    }\n\n    @Test\n    public void testTitleGetterEmptyAndTrimmed() {\n        Document doc = Document.createShell(\"\");\n        assertEquals(\"\", doc.title());\n\n        doc.head().appendElement(\"title\").text(\"  Hello World  \\n\");\n        assertEquals(\"Hello World\", doc.title());\n    }\n\n    @Test\n    public void testTitleSetterCreatesAndUpdates() {\n        Document doc = Document.createShell(\"\");\n        doc.title(\"First Title\");\n        assertEquals(\"First Title\", doc.title());\n        assertEquals(1, doc.getElementsByTag(\"title\").size());\n\n        doc.title(\"Second Title\");\n        assertEquals(\"Second Title\", doc.title());\n        assertEquals(1, doc.getElementsByTag(\"title\").size());\n    }\n\n    @Test\n    public void testTitleSetterEscapesText() {\n        Document doc = Document.createShell(\"\");\n        doc.title(\"<b>Bold</b>\");\n        Element titleEl = doc.getElementsByTag(\"title\").first();\n        assertEquals(\"<b>Bold</b>\", titleEl.text());\n        assertFalse(titleEl.html().contains(\"<b>\"));\n    }\n\n    @Test(expected = NullPointerException.class)\n    public void testTitleSetterNullThrows() {\n        Document doc = Document.createShell(\"\");\n        doc.title(null);\n    }\n\n    @Test\n    public void testNormaliseMovesStrayText() {\n        Document doc = new Document(\"\");\n        doc.appendText(\"stray text\");\n        doc.normalise();\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n        assertTrue(doc.body().text().contains(\"stray text\"));\n    }\n\n    @Test\n    public void testNormaliseIdempotent() {\n        Document doc = Jsoup.parse(\"<html><head><title>T</title></head><body>Hi</body></html>\");\n        doc.normalise();\n        String firstPass = doc.outerHtml();\n        doc.normalise();\n        String secondPass = doc.outerHtml();\n        assertEquals(firstPass, secondPass);\n        assertEquals(1, doc.getElementsByTag(\"head\").size());\n        assertEquals(1, doc.getElementsByTag(\"body\").size());\n    }\n\n    @Test\n    public void testHeadAndBodyStableReferences() {\n        Document doc = Document.createShell(\"\");\n        Element head1 = doc.head();\n        Element body1 = doc.body();\n        doc.normalise();\n        Element head2 = doc.head();\n        Element body2 = doc.body();\n        assertSame(head1, head2);\n        assertSame(body1, body2);\n    }\n\n    @Test\n    public void testTextSetsBodyAndReturnsDocument() {\n        Document doc = Document.createShell(\"\");\n        doc.head().appendElement(\"title\").text(\"Keep Title\");\n        Element result = doc.text(\"new body text\");\n        assertSame(doc, result);\n        assertEquals(\"new body text\", doc.body().text());\n        assertEquals(\"Keep Title\", doc.title());\n    }\n\n    @Test\n    public void testNodeNameAlwaysDocument() {\n        Document doc1 = new Document(\"\");\n        assertEquals(\"#document\", doc1.nodeName());\n\n        Document doc2 = Document.createShell(\"http://example.com/\");\n        doc2.title(\"Something\");\n        assertEquals(\"#document\", doc2.nodeName());\n    }\n\n    @Test\n    public void testCreateElementUsesDocumentBaseUri() {\n        Document doc = Document.createShell(\"http://example.com/\");\n        Element el = doc.createElement(\"div\");\n        assertEquals(\"div\", el.tagName());\n        assertEquals(\"http://example.com/\", el.baseUri());\n        assertNull(el.parent());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2470,
+      "output_tokens": 1520,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02014,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02014,
+        "upstream_inference_prompt_cost": 0.00494,
+        "upstream_inference_completions_cost": 0.0152
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 101806,
+      "daily_remaining_tokens": 98194
+    }
+  },
+  "headers": {
+    "x-request-id": "jf5wirmm3144rmnyvh5w3o4n",
+    "date": "Sun, 04 Oct 2026 04:11:23 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "account_assignments": [
+    {
+      "alias": "a01",
+      "host": "champ-pc1",
+      "quota_status": "pending_observation"
+    }
+  ],
+  "api_policy": "champ-pc1 sends all owners; keys/ledger stay on one host; no automatic account switch",
+  "cpu_claim_policy": "one CPU stage per host; queue lease decides among assigned host pool",
+  "job_owner_immutable": true,
+  "live_workers_started": false,
+  "other_accounts": "unassigned; assign only after observed quota and notification before switch",
+  "runners": [
+    {
+      "account_coordinator": true,
+      "approaches": [
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "global_api_limit": 2,
+      "max_outstanding_per_account": 1,
+      "owners": [
+        "champ",
+        "beam",
+        "aom"
+      ],
+      "role": "champ",
+      "stages": [
+        "generate"
+      ],
+      "worker_id": "champ-pc1"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "beam"
+      ],
+      "role": "beam",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "beam-pc1"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "beam"
+      ],
+      "role": "beam",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "beam-pc2"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "beam"
+      ],
+      "role": "beam",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "beam-pc3"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "aom",
+        "champ"
+      ],
+      "role": "aom",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "aom-pc1"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "aom",
+        "champ"
+      ],
+      "role": "aom",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "aom-pc2"
+    }
+  ],
+  "schema_version": 1,
+  "status": "proposal_pending_team_host_review"
+}

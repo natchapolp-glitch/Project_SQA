@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:sqa:api854:record:v1",
+  "title": "API854 evidence record v1",
+  "description": "Interchange schema; queue.py additionally verifies actual files, lease/stage, registered model and generated source/suite hashes.",
+  "type": "object",
+  "required": ["protocol_hash", "artifacts"],
+  "properties": {
+    "protocol_hash": {"$ref": "#/$defs/hash"},
+    "source_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "suite_hash": {"$ref": "#/$defs/hash"},
+    "suite_path": {"type": "string", "minLength": 1},
+    "test_methods": {"type": "integer", "minimum": 1, "maximum": 30},
+    "artifacts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/artifact"}},
+    "account_alias": {"type": "string", "pattern": "^a[0-9]{2}$"},
+    "requested_model": {"type": ["string", "integer"]},
+    "actual_model": {"type": ["string", "integer", "null"]},
+    "prompt_hash": {"$ref": "#/$defs/hash"},
+    "request_hash": {"$ref": "#/$defs/hash"},
+    "raw_response_hash": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "response_id": {"type": ["string", "null"]},
+    "response_received": {"type": "boolean"},
+    "usage": {"type": ["object", "null"]},
+    "model_quota": {"type": ["object", "null"]},
+    "processing_history": {"type": "array", "items": {"type": "object"}},
+    "compile_valid": {"type": "boolean"},
+    "fixed_passes": {"type": "array", "items": {"type": "boolean"}, "maxItems": 2},
+    "meaningful_assertions": {"type": "boolean"},
+    "target_executed": {"type": "boolean"},
+    "buggy_measured": {"type": "boolean"},
+    "coverage_measured": {"type": "boolean"},
+    "fault_detected": {"type": ["boolean", "null"]},
+    "line_covered": {"type": ["integer", "null"], "minimum": 0},
+    "line_total": {"type": ["integer", "null"], "minimum": 0},
+    "condition_covered": {"type": ["integer", "null"], "minimum": 0},
+    "condition_total": {"type": ["integer", "null"], "minimum": 0},
+    "evidence_roles": {"type": "object", "additionalProperties": {"$ref": "#/$defs/hash"}},
+    "reason": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "artifact": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/hash"},
+        "uri": {"type": "string", "pattern": "^/artifact/[a-f0-9]{64}/[a-f0-9]{32}/[a-f0-9]{64}$"},
+        "role": {"type": "string"}
+      }
+    }
+  }
+}

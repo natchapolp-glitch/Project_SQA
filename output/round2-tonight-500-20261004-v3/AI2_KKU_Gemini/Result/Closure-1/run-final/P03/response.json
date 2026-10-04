@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:38:12.009176+00:00",
+  "ended_at_utc": "2026-10-04T03:38:14.477021+00:00",
+  "raw_body_sha256": "cc74df4ff5e64c41dcfc05bf5b00379d5fb69f0c350492fc0d2b6defd0b49a2d",
+  "body": {
+    "id": "genai-01a104fd-acd5-7b2e-8ce1-5c8a73387d6b",
+    "object": "chat.completion",
+    "created": 1791085096,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\nimport com.google.javascript.rhino.Token;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertNotNull;\n\npublic class RemoveUnusedVarsTest {\n\n  @Test\n  public void testConstructorAndProcess() {\n    Compiler compiler = new Compiler();\n    CompilerOptions options = new CompilerOptions();\n    compiler.initOptions(options);\n\n    RemoveUnusedVars remover = new RemoveUnusedVars(compiler, true, true, false);\n    assertNotNull(remover);\n\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    remover.process(externs, root);\n  }\n\n  @Test\n  public void testProcessWithDefinitionFinder() {\n    Compiler compiler = new Compiler();\n    CompilerOptions options = new CompilerOptions();\n    compiler.initOptions(options);\n\n    RemoveUnusedVars remover = new RemoveUnusedVars(compiler, true, false, true);\n    assertNotNull(remover);\n\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    SimpleDefinitionFinder defFinder = new SimpleDefinitionFinder(compiler);\n    defFinder.process(externs, root);\n\n    remover.process(externs, root, defFinder);\n  }\n\n  @Test\n  public void testRemoveGlobalsDisabled() {\n    Compiler compiler = new Compiler();\n    CompilerOptions options = new CompilerOptions();\n    compiler.initOptions(options);\n\n    RemoveUnusedVars remover = new RemoveUnusedVars(compiler, false, false, false);\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    \n    remover.process(externs, root);\n    assertNotNull(compiler);\n  }\n\n  @Test\n  public void testModifyCallSitesEnabled() {\n    Compiler compiler = new Compiler();\n    CompilerOptions options = new CompilerOptions();\n    compiler.initOptions(options);\n\n    RemoveUnusedVars remover = new RemoveUnusedVars(compiler, true, true, true);\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n\n    remover.process(externs, root);\n    assertNotNull(remover);\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5398,
+      "completion_tokens": 549,
+      "total_tokens": 5947
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 54669,
+      "daily_remaining_tokens": 295331
+    }
+  },
+  "headers": {
+    "x-request-id": "ug2h04ung43qgt58n4afew8y",
+    "date": "Sun, 04 Oct 2026 03:38:16 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,7 @@
+1. Valid receiver setup: Instantiate `TextBuffer` using a `BufferRecycler` instance (or null if supported by constructor).
+2. Boundary behavior: `NumberInput.parseInt`, `parseLong`, and `inLongRange` must correctly handle char array offsets and lengths without IndexOutOfBoundsException.
+3. Overflow boundaries: `NumberInput` range checks (`inLongRange`, `MAX_LONG_STR`, `MIN_LONG_STR_NO_SIGN`) must accurately parse numbers near `Long.MIN_VALUE` and `Long.MAX_VALUE`.
+4. Exceptional behavior: `NumberInput.parseBigDecimal` and `TextBuffer.contentsAsDecimal` must throw `NumberFormatException` on malformed inputs or strings exceeding reasonable bounds.
+5. TextBuffer state boundaries: `resetWithShared`, `resetWithCopy`, and `resetWithString` must properly initialize internal pointers and lengths.
+6. TextBuffer mutation: `append` methods and segment expansion (`expandCurrentSegment`, `finishCurrentSegment`) must preserve character data integrity across segment boundaries.
+7. Result conversion: `contentsAsString` and `contentsAsArray` must return accurate representations reflecting the exact current size and offsets of the text buffer.

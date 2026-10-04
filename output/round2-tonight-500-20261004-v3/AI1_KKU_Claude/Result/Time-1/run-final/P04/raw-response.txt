@@ -1,0 +1,47 @@
+```java
+package org.joda.time;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+public class PartialExtraTest {
+
+    @Test
+    public void testWithFieldAddedNewField() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 6);
+        Partial result = p.withFieldAdded(DurationFieldType.years(), 1);
+        assertEquals(2, result.size());
+        assertEquals(DateTimeFieldType.year(), result.getFieldType(0));
+        assertEquals(1, result.getValue(0));
+    }
+
+    @Test
+    public void testWithFieldAddedZeroAmountReturnsEqual() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 6);
+        Partial result = p.withFieldAdded(DurationFieldType.years(), 0);
+        assertEquals(p, result);
+    }
+
+    @Test
+    public void testPlusAndMinusPeriod() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 6);
+        Partial plus = p.plus(Period.months(2));
+        assertEquals(8, plus.getValue(0));
+
+        Partial minus = p.minus(Period.months(2));
+        assertEquals(4, minus.getValue(0));
+    }
+
+    @Test
+    public void testIsMatchReadablePartial() {
+        Partial p1 = new Partial(DateTimeFieldType.monthOfYear(), 6);
+        Partial p2 = new Partial(DateTimeFieldType.monthOfYear(), 6);
+        Partial p3 = new Partial(DateTimeFieldType.monthOfYear(), 7);
+        assertTrue(p1.isMatch(p2));
+        assertTrue(!p1.isMatch(p3));
+    }
+}
+```

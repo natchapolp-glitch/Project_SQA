@@ -1,5 +1,12 @@
 # ทำต่อทีละขั้น — ผู้ใช้ทำทุกหน้าที่เอง
 
+**แผนปัจจุบัน 4 ต.ค. 2026:** ผู้ใช้ลดเป้าเป็น 500 บั๊ก × 4 วิธี = 2,000 jobs
+ตาม [selected-scope.json](plans/solo-500-20261004/selected-scope.json)
+เลือกแบบ round robin ครอบคลุม 17 projects ก่อนดูผล เก็บ inventory 854 เดิมแยกไว้
+ข้อความและตัวเลข pilot ด้านล่างเป็น checkpoint เก่า ไม่ใช่สถานะปัจจุบัน
+ดูผลปัจจุบันที่ [summary.json](../../output/round2-solo-500-control-20261004/Report/data/summary.json)
+และ [แผนส่งคืนนี้](SOLO_500_TONIGHT_TH.md)
+
 ทำบน branch `Team` ตามคำสั่งย้ายงานล่าสุด ไม่รอออม/บีม/แชมป์ และไม่สร้างคำรับแทนเพื่อน
 เป้าหมายเดิมคือ 854 active bugs / 17 projects × 4 วิธี = 3,416 planned jobs
 เก็บผลไม่ผ่านและข้อจำกัดตามจริง ไม่บังคับให้ทุก job valid หรือพบ fault

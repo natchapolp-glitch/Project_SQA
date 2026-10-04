@@ -3,8 +3,33 @@
 วันที่ 4 ตุลาคม 2026 — เป็นแผนและรายการงาน ยังไม่ใช่ผลทดลอง 854 บั๊กที่รันแล้ว
 
 เริ่ม implementation ตาม [ลำดับงานทีละขั้น](SOLO_STEP_BY_STEP_TH.md) แล้ว
-ดูตัวเลขที่รันจริงใน `output/round2-solo-pilot-20261004/Report/data/summary.json`
+ดูตัวเลขรวมล่าสุดใน `output/round2-solo-ai-pilot-20261004/Report/data/combined_summary.json`
 ยังไม่ใช่ full run; ส่วน “สิ่งที่ทำในรอบวางแผนนี้” ท้ายเอกสารเป็นประวัติรอบวางแผน
+
+## ตรวจแนวทางเทียบเพื่อนและเอกสารวิชาอีกครั้ง — 4 ตุลาคม 2026
+
+อ่าน PDF ต้นฉบับรอบ 2 ของผู้ใช้ และ README/ai_final_protocol.md/ai_summary.md
+ของ branch เพื่อน `jiratchaya_673380510-1` อีกครั้งแล้ว แนวหลักตรงกัน:
+สอง algorithms + สอง AI สร้าง JUnit บน Defects4J, ตรวจ fixed/buggy/coverage,
+เก็บผลไม่ผ่านและค่าที่วัดไม่ได้ตามจริง, เปรียบเทียบแล้วจัด code/tests/prompts/configs/report/presentation/demo
+ใช้วิธีของทีมเราและ KKU ตามคำสั่งผู้ใช้ ไม่เปลี่ยนเป็นวิธีของเพื่อน
+PDF ข้อ 1.7 อนุญาตให้ทำซ้ำ ไม่กำหนดว่าต้องสำเร็จทุกบั๊กหรือกำหนดจำนวนรอบตายตัว
+ข้อ 2.2 ระบุ Java projects ทุกรายการ; เลข 854 เป็น inventory/ขอบเขตแผนนี้ ไม่ใช่เลขที่พิมพ์ใน PDF
+หากทำไม่ครบ ต้องระบุ projects/bugs ที่ยังค้าง ไม่รับรองว่าครบเอกสารวิชา
+
+พบความต่างที่ต้องจัดการก่อน prospective batch ใหม่ โดยไม่แก้ sealed pilot:
+
+- P01 ของเพื่อนใช้ metadata/signatures เท่านั้น; pilot เราส่ง source ด้วย จึงต้องย่อ P01 ของ batch ใหม่
+- เพื่อนไม่ใช้ hard provider output cap ใน optimized protocol; pilot เรา request 4096 และ Sonnet Lang truncated
+  ต้องประกาศ output policy ของ batch ใหม่ให้เหมือนกันทั้งสอง AI แล้วเก็บ incomplete เป็นผล ไม่ retry เพื่อให้ได้ผลดี
+- pilot ใช้ a01 เท่านั้น; batch ใหม่ต้องผูก alias ต่อ job ก่อนส่ง และใช้ remaining quota ที่สังเกตจริง
+  จำนวนคีย์ไม่ใช่หลักฐานว่าเป็นสิบ quota buckets; continuation ของ quota pause ต้องเก็บ predecessor และไม่เพิ่มจำนวนบั๊กซ้ำ
+- ผลผ่าน/non-detecting, fixed-invalid, output-incomplete, infra/unsupported และ quota/not-started ต้องแยกกัน
+  ผล model failure ที่เก็บแล้วเดินต่อได้ ไม่รอให้ทุก suite ผ่านหรือให้ทุก declaration รองรับก่อนขยาย
+
+จำนวน 50–100 bugs ใน 24 ชั่วโมงเป็นเป้าหมายเบื้องต้น ไม่ใช่ throughput ที่วัดแล้วหรือคำรับรอง
+ก่อนขยายเต็มให้วัด 10–20 bugs กระจาย projects และข้อมูล quota จริงตามแผนเดิม
+ไม่เพิ่ม candidate/peer verdict/Gate A รุ่นเก่าเป็นเงื่อนไขขวางแผน solo นี้
 
 ## ผู้ดำเนินงานล่าสุด: คนเดียว
 

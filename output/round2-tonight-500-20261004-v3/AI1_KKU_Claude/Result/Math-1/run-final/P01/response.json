@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:52:24.933402+00:00",
+  "ended_at_utc": "2026-10-04T02:52:30.593285+00:00",
+  "raw_body_sha256": "69b6ae22d5322a57f779479c1ce607fa3edd74f32e6bf243334757d45db65cb7",
+  "body": {
+    "id": "gen-1791082346-bLY467Dbedp9KWANS4KV",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Verify `BigFraction(num, den)` reduces sign correctly: negative denominator, negative numerator, both negative → result numerator carries sign, denominator positive.\n- Check zero numerator cases: `BigFraction(0, den)` always normalizes to 0/1 regardless of den sign.\n- Construct with GCD >1 (e.g., 4/8) and confirm reduction to lowest terms (1/2).\n- Boundary: denominator zero throws ZeroException/MathArithmeticException; null numerator/denominator throws NullArgumentException.\n- Boundary with BigInteger.MIN_VALUE-like large values and GCD=1 (coprime) leaves values unchanged.\n- Cross-check `Fraction` (int-based) analogous reduction/sign-normalization behavior for int overflow edge cases (e.g., Integer.MIN_VALUE as numerator/denominator).\n- Confirm equals/hashCode/compareTo consistency between differently-constructed but equal-value fractions (e.g., 2/4 vs 1/2).\n- Use double-constructor and continued-fraction constructors to confirm exact/approximate conversions converge within epsilon or maxDenominator.\n- Validate getNumerator/getDenominator return reduced, sign-normalized values matching constructor contract.\n- Confirm pow, reciprocal, add/subtract/multiply/divide preserve reduced form and correct sign after operations on edge-case fractions (negative, zero).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7304,
+      "output_tokens": 496,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.019568,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.019568,
+        "upstream_inference_prompt_cost": 0.014608,
+        "upstream_inference_completions_cost": 0.00496
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 169545,
+      "daily_remaining_tokens": 30455
+    }
+  },
+  "headers": {
+    "x-request-id": "oapz4di08j3ux4fwcun9nlgg",
+    "date": "Sun, 04 Oct 2026 02:52:32 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

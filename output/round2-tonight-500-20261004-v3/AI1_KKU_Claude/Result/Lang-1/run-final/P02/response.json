@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:51:07.862025+00:00",
+  "ended_at_utc": "2026-10-04T02:51:35.406111+00:00",
+  "raw_body_sha256": "01053fa35d0b601e750dac1a5672e2a830c255fd4c95b267b1e23518c5f0dcb6",
+  "body": {
+    "id": "gen-1791082268-p5kCriOFmogkgJnEnv9V",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.lang3.math;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nimport org.junit.Test;\n\npublic class NumberUtilsTest {\n\n    @Test\n    public void testToIntLongFloatDoubleDefaults() {\n        assertEquals(0, NumberUtils.toInt(null));\n        assertEquals(0, NumberUtils.toInt(\"\"));\n        assertEquals(1, NumberUtils.toInt(\"1\"));\n        assertEquals(5, NumberUtils.toInt(\"abc\", 5));\n        assertEquals(1L, NumberUtils.toLong(\"1\"));\n        assertEquals(0L, NumberUtils.toLong(null));\n        assertEquals(2L, NumberUtils.toLong(\"xyz\", 2L));\n        assertEquals(1.5f, NumberUtils.toFloat(\"1.5\"), 0.0f);\n        assertEquals(0.0f, NumberUtils.toFloat(null), 0.0f);\n        assertEquals(1.1f, NumberUtils.toFloat(\"\", 1.1f), 0.0f);\n        assertEquals(1.5d, NumberUtils.toDouble(\"1.5\"), 0.0d);\n        assertEquals(0.0d, NumberUtils.toDouble(null), 0.0d);\n        assertEquals(1.1d, NumberUtils.toDouble(\"\", 1.1d), 0.0d);\n        assertEquals((byte) 0, NumberUtils.toByte(null));\n        assertEquals((byte) 1, NumberUtils.toByte(\"1\"));\n        assertEquals((byte) 9, NumberUtils.toByte(\"bad\", (byte) 9));\n        assertEquals((short) 0, NumberUtils.toShort(null));\n        assertEquals((short) 1, NumberUtils.toShort(\"1\"));\n        assertEquals((short) 9, NumberUtils.toShort(\"bad\", (short) 9));\n    }\n\n    @Test\n    public void testCreateNumberNullAndEmpty() {\n        assertNull(NumberUtils.createNumber(null));\n        try {\n            NumberUtils.createNumber(\"\");\n            fail(\"Expected NumberFormatException for empty string\");\n        } catch (final NumberFormatException expected) {\n            // expected per contract\n        }\n    }\n\n    @Test\n    public void testCreateNumberHexAndTypeQualifiers() {\n        final Number hex = NumberUtils.createNumber(\"0xABCD\");\n        assertEquals(0xABCD, hex.intValue());\n        assertTrue(hex instanceof Integer);\n\n        final Number hexLong = NumberUtils.createNumber(\"0xABCDL\");\n        assertEquals(0xABCDL, hexLong.longValue());\n        assertTrue(hexLong instanceof Long);\n\n        final Number negHex = NumberUtils.createNumber(\"-0x1A\");\n        assertEquals(-0x1A, negHex.intValue());\n\n        final Number floatVal = NumberUtils.createNumber(\"1.5F\");\n        assertTrue(floatVal instanceof Float);\n        assertEquals(1.5f, floatVal.floatValue(), 0.0f);\n\n        final Number doubleVal = NumberUtils.createNumber(\"1.5D\");\n        assertTrue(doubleVal instanceof Double);\n        assertEquals(1.5d, doubleVal.doubleValue(), 0.0d);\n\n        final Number longVal = NumberUtils.createNumber(\"123L\");\n        assertTrue(longVal instanceof Long);\n        assertEquals(123L, longVal.longValue());\n    }\n\n    @Test\n    public void testCreateNumberOverflowToBigInteger() {\n        final String bigValue = \"123456789012345678901234567890\";\n        final Number number = NumberUtils.createNumber(bigValue);\n        assertTrue(number instanceof BigInteger);\n        assertEquals(new BigInteger(bigValue), number);\n    }\n\n    @Test\n    public void testCreateNumberMalformedStringsThrow() {\n        final String[] malformed = { \"1.1.1\", \"--1.1\", \"--\", \"1.1L\", \"L\", \".\" };\n        for (final String s : malformed) {\n            try {\n                NumberUtils.createNumber(s);\n                fail(\"Expected NumberFormatException for input: \" + s);\n            } catch (final NumberFormatException expected) {\n                // expected\n            }\n        }\n    }\n\n    @Test\n    public void testCreateIntegerLongFloatDoubleNullHandling() {\n        assertNull(NumberUtils.createInteger(null));\n        assertNull(NumberUtils.createLong(null));\n        assertNull(NumberUtils.createFloat(null));\n        assertNull(NumberUtils.createDouble(null));\n        assertNull(NumberUtils.createBigInteger(null));\n        assertNull(NumberUtils.createBigDecimal(null));\n\n        assertEquals(Integer.valueOf(12), NumberUtils.createInteger(\"12\"));\n        assertEquals(Long.valueOf(12L), NumberUtils.createLong(\"12\"));\n        assertEquals(Float.valueOf(1.2f), NumberUtils.createFloat(\"1.2\"));\n        assertEquals(Double.valueOf(1.2d), NumberUtils.createDouble(\"1.2\"));\n        assertEquals(BigInteger.valueOf(12), NumberUtils.createBigInteger(\"12\"));\n        assertEquals(new BigDecimal(\"1.2\"), NumberUtils.createBigDecimal(\"1.2\"));\n\n        try {\n            NumberUtils.createInteger(\"abc\");\n            fail(\"Expected NumberFormatException\");\n        } catch (final NumberFormatException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testIsDigitsAndIsNumber() {\n        assertFalse(NumberUtils.isDigits(null));\n        assertFalse(NumberUtils.isDigits(\"\"));\n        assertTrue(NumberUtils.isDigits(\"12345\"));\n        assertFalse(NumberUtils.isDigits(\"12.345\"));\n        assertFalse(NumberUtils.isDigits(\"-12345\"));\n        assertFalse(NumberUtils.isDigits(\"abc\"));\n\n        assertFalse(NumberUtils.isNumber(null));\n        assertFalse(NumberUtils.isNumber(\"\"));\n        assertTrue(NumberUtils.isNumber(\"12.3\"));\n        assertTrue(NumberUtils.isNumber(\"-12.3\"));\n        assertTrue(NumberUtils.isNumber(\"0x1A\"));\n        assertFalse(NumberUtils.isNumber(\".\"));\n        assertFalse(NumberUtils.isNumber(\"1.1.1\"));\n        assertFalse(NumberUtils.isNumber(\"abc\"));\n    }\n\n    @Test\n    public void testMinMaxArraysValidAndInvalid() {\n        assertEquals(1, NumberUtils.min(new int[] { 3, 1, 2 }));\n        assertEquals(3, NumberUtils.max(new int[] { 3, 1, 2 }));\n        assertEquals(1L, NumberUtils.min(new long[] { 3L, 1L, 2L }));\n        assertEquals(3L, NumberUtils.max(new long[] { 3L, 1L, 2L }));\n        assertEquals((short) 1, NumberUtils.min(new short[] { 3, 1, 2 }));\n        assertEquals((short) 3, NumberUtils.max(new short[] { 3, 1, 2 }));\n        assertEquals((byte) 1, NumberUtils.min(new byte[] { 3, 1, 2 }));\n        assertEquals((byte) 3, NumberUtils.max(new byte[] { 3, 1, 2 }));\n        assertEquals(1.0d, NumberUtils.min(new double[] { 3.0, 1.0, 2.0 }), 0.0d);\n        assertEquals(3.0d, NumberUtils.max(new double[] { 3.0, 1.0, 2.0 }), 0.0d);\n        assertEquals(1.0f, NumberUtils.min(new float[] { 3.0f, 1.0f, 2.0f }), 0.0f);\n        assertEquals(3.0f, NumberUtils.max(new float[] { 3.0f, 1.0f, 2.0f }), 0.0f);\n\n        // single element array\n        assertEquals(5, NumberUtils.min(new int[] { 5 }));\n        assertEquals(5, NumberUtils.max(new int[] { 5 }));\n\n        try {\n            NumberUtils.min((int[]) null);\n            fail(\"Expected IllegalArgumentException for null array\");\n        } catch (final IllegalArgumentException expected) {\n            // expected\n        }\n\n        try {\n            NumberUtils.max(new int[0]);\n            fail(\"Expected IllegalArgumentException for empty array\");\n        } catch (final IllegalArgumentException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testMinMaxThreeArgOverloads() {\n        assertEquals(1, NumberUtils.min(3, 1, 2));\n        assertEquals(3, NumberUtils.max(3, 1, 2));\n        assertEquals(1L, NumberUtils.min(3L, 1L, 2L));\n        assertEquals(3L, NumberUtils.max(3L, 1L, 2L));\n        assertEquals((short) 1, NumberUtils.min((short) 3, (short) 1, (short) 2));\n        assertEquals((short) 3, NumberUtils.max((short) 3, (short) 1, (short) 2));\n        assertEquals((byte) 1, NumberUtils.min((byte) 3, (byte) 1, (byte) 2));\n        assertEquals((byte) 3, NumberUtils.max((byte) 3, (byte) 1, (byte) 2));\n        assertEquals(1.0d, NumberUtils.min(3.0, 1.0, 2.0), 0.0d);\n        assertEquals(3.0d, NumberUtils.max(3.0, 1.0, 2.0), 0.0d);\n        assertEquals(1.0f, NumberUtils.min(3.0f, 1.0f, 2.0f), 0.0f);\n        assertEquals(3.0f, NumberUtils.max(3.0f, 1.0f, 2.0f), 0.0f);\n\n        // equal values\n        assertEquals(5, NumberUtils.min(5, 5, 5));\n        assertEquals(5, NumberUtils.max(5, 5, 5));\n\n        // negative/positive mixed\n        assertEquals(-10, NumberUtils.min(-10, 0, 10));\n        assertEquals(10, NumberUtils.max(-10, 0, 10));\n    }\n\n    @Test\n    public void testConstantsValues() {\n        assertEquals(Long.valueOf(0L), NumberUtils.LONG_ZERO);\n        assertEquals(Long.valueOf(1L), NumberUtils.LONG_ONE);\n        assertEquals(Long.valueOf(-1L), NumberUtils.LONG_MINUS_ONE);\n        assertEquals(Integer.valueOf(0), NumberUtils.INTEGER_ZERO);\n        assertEquals(Integer.valueOf(1), NumberUtils.INTEGER_ONE);\n        assertEquals(Integer.valueOf(-1), NumberUtils.INTEGER_MINUS_ONE);\n        assertEquals(Short.valueOf((short) 0), NumberUtils.SHORT_ZERO);\n        assertEquals(Byte.valueOf((byte) 1), NumberUtils.BYTE_ONE);\n        assertEquals(Double.valueOf(-1.0d), NumberUtils.DOUBLE",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "max_tokens",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6981,
+      "output_tokens": 4096,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.054922,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.054922,
+        "upstream_inference_prompt_cost": 0.013962,
+        "upstream_inference_completions_cost": 0.04096
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 161745,
+      "daily_remaining_tokens": 38255
+    }
+  },
+  "headers": {
+    "x-request-id": "opxrwhdb05drm1bupvxfbp2m",
+    "date": "Sun, 04 Oct 2026 02:51:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

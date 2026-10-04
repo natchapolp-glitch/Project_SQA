@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:37:17.389788+00:00",
+  "ended_at_utc": "2026-10-04T03:37:25.342241+00:00",
+  "raw_body_sha256": "0206e62876c6912a41c8acd1f65aa3d2c5dfc484bd61a09f400bbadc2b964da0",
+  "body": {
+    "id": "gen-1791085039-4oVyeuXDZ77r80MGBbL1",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.google.javascript.jscomp;\n\nimport static org.junit.Assert.assertTrue;\n\nimport org.junit.Before;\nimport org.junit.Test;\n\npublic class RemoveUnusedVarsTest extends CompilerTestCase {\n\n  private boolean removeGlobal;\n  private boolean preserveFunctionExpressionNames;\n  private boolean modifyCallSites;\n\n  public RemoveUnusedVarsTest() {\n    super(\"\");\n  }\n\n  @Before\n  @Override\n  public void setUp() throws Exception {\n    super.setUp();\n    removeGlobal = true;\n    preserveFunctionExpressionNames = false;\n    modifyCallSites = false;\n    enableNormalize();\n  }\n\n  @Override\n  protected CompilerPass getProcessor(Compiler compiler) {\n    return new RemoveUnusedVars(\n        compiler, removeGlobal, preserveFunctionExpressionNames, modifyCallSites);\n  }\n\n  @Test\n  public void testRemoveUnusedGlobalVar() {\n    test(\"var x = 1;\", \"\");\n  }\n\n  @Test\n  public void testKeepUnusedGlobalVarWhenRemoveGlobalsFalse() {\n    removeGlobal = false;\n    testSame(\"var x = 1;\");\n  }\n\n  @Test\n  public void testRemoveUnusedLocalVarInFunction() {\n    test(\n        \"function f() { var x = 1; return 2; }\",\n        \"function f() { return 2; }\");\n  }\n\n  @Test\n  public void testKeepUsedVar() {\n    testSame(\"function f() { var x = 1; return x; }\");\n  }\n\n  @Test\n  public void testSelfAssignIsRemovable() {\n    test(\n        \"function f() { var x = 1; x = 2; }\",\n        \"function f() {}\");\n  }\n\n  @Test\n  public void testRemoveUnreferencedFunctionDeclaration() {\n    test(\n        \"function f() {} function g() { return 1; } g();\",\n        \"function g() { return 1; } g();\");\n  }\n\n  @Test\n  public void testKeepFunctionExpressionNameWhenPreserved() {\n    preserveFunctionExpressionNames = true;\n    testSame(\"var f = function g() {};\");\n  }\n\n  @Test\n  public void testNoOpWhenAllVarsUsed() {\n    testSame(\"function f(a, b) { return a + b; } f(1, 2);\");\n  }\n\n  @Test\n  public void testEmptyScopeNoOp() {\n    testSame(\"\");\n  }\n\n  @Test\n  public void testTransitiveRemovalOfVarOnlyUsedInUnusedFunction() {\n    test(\n        \"function f() { var y = 1; return y; }\",\n        \"\");\n  }\n\n  @Test\n  public void testRemoveUnusedVarInNestedBlock() {\n    test(\n        \"function f() { if (true) { var x = 1; } return 2; }\",\n        \"function f() { if (true) {} return 2; }\");\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6802,
+      "output_tokens": 991,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.023514,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.023514,
+        "upstream_inference_prompt_cost": 0.013604,
+        "upstream_inference_completions_cost": 0.00991
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 79156,
+      "daily_remaining_tokens": 120844
+    }
+  },
+  "headers": {
+    "x-request-id": "inayuoxm1mrwkk406cro8lsh",
+    "date": "Sun, 04 Oct 2026 03:37:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

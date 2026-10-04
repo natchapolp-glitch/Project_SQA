@@ -1,0 +1,10 @@
+- `createShell(baseUri)` should produce html>head,body structure; verify tags/order and baseUri propagation.
+- `title()` getter: returns empty string when no title element exists, trims whitespace/newlines from title text when present.
+- `title(String)` setter: should create title element in head if missing and set text; must escape/encode text properly, not insert raw HTML.
+- `title(String)` called with null should throw (per contract) or be validated—check expected exception behavior.
+- `normalise()` should ensure exactly one head and one body, moving stray head/body-destined nodes into proper location, and move text/nodes outside html into body.
+- `normalise()` should be idempotent: calling twice yields same structure/html without duplicating head/body or losing content.
+- `head()`/`body()` should return existing elements if present without duplicating when called multiple times or after normalise().
+- `outerHtml()` should include doctype if present and reflect normalised structure with correct nesting/indentation.
+- `text(String)` on Document should set body's text (not replace whole doc structure) and return the Document itself for chaining.
+- `nodeName()` should always return `"#document"` regardless of receiver state.
