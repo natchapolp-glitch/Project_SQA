@@ -2,6 +2,9 @@
 
 สถานะ: PLAN ONLY. ยังไม่มีผลทดลองใหม่
 
+ผู้ใช้ทำทุกหน้าที่เองคนเดียวบน branch `aom`; execution policy ใน layout.json ระบุ workflow เดียว
+ไม่ต้องรอคำรับจากเพื่อน ขอบเขตและสถานะ PENDING เดิมไม่เปลี่ยนจากการเปลี่ยนผู้ดำเนินงาน
+
 อ่าน [แผนเต็ม](../../AOM_FRIEND_LAYOUT_FULL_SUBMISSION_PLAN_TH.md)
 
 - cases.csv: 854 active bugs / 17 projects จาก installed index ของเรา

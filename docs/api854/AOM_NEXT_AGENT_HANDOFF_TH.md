@@ -1,5 +1,12 @@
 # Latest requested plan: full-scope experiment with the friend's submission layout
 
+Latest execution update (2026-10-04): ผู้ใช้ทำทุกหน้าที่เองคนเดียว ใช้ branch `aom` ต่อ
+รวมการเตรียม รัน ตรวจผล และทำสิ่งส่งมอบไว้ใน workflow เดียว ไม่รอเพื่อนตรวจ/รับงาน
+คำสั่งแบ่งออม/บีม/แชมป์ด้านล่างเป็นประวัติ ไม่ใช่ dependencies ของงานใหม่
+ใช้ automated checks + self-review; ห้ามแต่ง peer verdict และห้ามเปลี่ยนหลักฐานเก่า
+CPU หนึ่ง slot ตามเครื่องจริง; KKU Sonnet 5 + Gemini 3.5 Flash Lite และ scope เดิมคงไว้
+แจ้งก่อนส่ง KKU ใหม่/ขยาย full batch/เปลี่ยน condition โดยไม่เพิ่มการขออนุมัติจากเพื่อน
+
 อ่าน [AOM_FRIEND_LAYOUT_FULL_SUBMISSION_PLAN_TH.md](AOM_FRIEND_LAYOUT_FULL_SUBMISSION_PLAN_TH.md)
 ผู้ใช้ขอแผนเริ่มทดลองเหมือนเพื่อนและมีทุกหมวดส่งงาน
 ตรวจ branch เพื่อน `jiratchaya_673380510-1`: AI summaries มี 854 attempted cases ต่อวิธี
