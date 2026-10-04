@@ -1,4 +1,20 @@
-# Latest requested plan: full-scope experiment with the friend's submission layout
+# Latest implementation: single-operator offline pilot
+
+อ่าน [SOLO_STEP_BY_STEP_TH.md](SOLO_STEP_BY_STEP_TH.md) ก่อน
+Runner ใหม่ `scripts/study/solo_batch.py` ทำ verified inventory/context/algorithms/report ได้
+ชุดปัจจุบัน `output/round2-solo-pilot-20261004` ใช้ v12 fixtures เดิม พร้อม invocation counts
+Offline pilot Csv-1/Lang-1/Math-1 × CMA-ES/FSCS-ART เสร็จ 6 outcomes ทุก suite30tests;
+fixed twiceผ่าน, executed/target_checks30/skipped0ทุกstage, ไม่พบfaultทั้ง6ในdomainนี้
+verify_solo_pilot.py ตรวจ context/counters/sourcepins/resume แล้วผ่าน หลักฐานไม่เปลี่ยน
+ดู Report/data/summary.json สำหรับตัวเลขล่าสุด; ไม่มี KKU requests ใหม่และ AI workflow ยัง pending
+อย่าขยาย `round2-full-study-20261004`: เป็น diagnostic/null-fixture cohort ที่ coverage ต่ำ
+รักษาผลและ implementation snapshot เดิม ไม่ pool สอง cohorts หรือ Csv historical เข้าด้วยกัน
+ขั้นถัดไปหลัง offline pilot คือ AI stage protocol/templates/access/quota และ pilot ทั้งสองโมเดล
+ไม่รอคำรับจากเพื่อน ไม่กลับไปปิด shared Gate A/candidate recipes เพื่อขวางแผนใหม่นี้
+
+---
+
+# Requested plan: full-scope experiment with the friend's submission layout
 
 Latest execution update (2026-10-04): ผู้ใช้ทำทุกหน้าที่เองคนเดียว ใช้ branch `aom` ต่อ
 รวมการเตรียม รัน ตรวจผล และทำสิ่งส่งมอบไว้ใน workflow เดียว ไม่รอเพื่อนตรวจ/รับงาน

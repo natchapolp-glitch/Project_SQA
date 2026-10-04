@@ -2,6 +2,10 @@
 
 วันที่ 4 ตุลาคม 2026 — เป็นแผนและรายการงาน ยังไม่ใช่ผลทดลอง 854 บั๊กที่รันแล้ว
 
+เริ่ม implementation ตาม [ลำดับงานทีละขั้น](SOLO_STEP_BY_STEP_TH.md) แล้ว
+ดูตัวเลขที่รันจริงใน `output/round2-solo-pilot-20261004/Report/data/summary.json`
+ยังไม่ใช่ full run; ส่วน “สิ่งที่ทำในรอบวางแผนนี้” ท้ายเอกสารเป็นประวัติรอบวางแผน
+
 ## ผู้ดำเนินงานล่าสุด: คนเดียว
 
 ผู้ใช้รับทุกหน้าที่เองตามคำสั่งล่าสุดวันที่ 4 ตุลาคม 2026 ทำงานต่อบน branch `aom`
@@ -171,7 +175,8 @@ Git history และชุด Csv-1 ที่ส่งแล้วเก็บ�
 
 ## สถานะและเกณฑ์เสร็จ
 
-Outcome ต้องแยก `DONE`, `INVALID_AFTER_REPAIR`, `OUTPUT_INCOMPLETE`, `UNSUPPORTED`,
+Outcome ต้องแยก `DONE`, `INVALID_GENERATED_SUITE` (algorithm ไม่มี AI repair),
+`INVALID_AFTER_REPAIR`, `OUTPUT_INCOMPLETE`, `UNSUPPORTED`,
 `INFRA_ERROR`/`TIMEOUT` ออกจาก `PENDING`/`QUOTA_PAUSED`
 ให้เหตุผลและ stage จริงเสมอ; unsupported ไม่แปลว่าส่ง AI request แล้ว
 `attempted` นับเมื่อมี attempt ที่บันทึกจริง; `provider_requested` และ `evaluated` เป็นคนละตัวเลข

@@ -1,4 +1,12 @@
-# แผนขยายล่าสุด — โครงชุดส่งตาม repo เพื่อน
+# งานล่าสุด — solo offline pilot สำหรับแผนเต็ม
+
+เริ่ม implementation แล้ว อ่าน [ลำดับงานทีละขั้น](docs/api854/SOLO_STEP_BY_STEP_TH.md)
+และ [ชุด pilot ปัจจุบัน](output/round2-solo-pilot-20261004/README.md)
+มี runner เลือกบั๊ก/resume/checkpoint และตารางผลกับงานค้าง; ยังไม่เรียก KKU ในชุดใหม่
+ดู [ตัวนับล่าสุด](output/round2-solo-pilot-20261004/Report/data/summary.json)
+สำหรับจำนวนที่รันจริง ไม่อ้างว่า planned jobs ทั้งหมดเสร็จแล้ว
+
+## แผนขยาย — โครงชุดส่งตาม repo เพื่อน
 
 ผู้ดำเนินงานล่าสุดทำทุกหน้าที่เองคนเดียวบน branch `aom` รวมการรัน ตรวจผล และสิ่งส่งมอบ
 ไว้ใน workflow เดียว ไม่ต้องรอคำรับจากเพื่อน; ประวัติแบ่งงานเดิมเก็บไว้เป็น provenance
@@ -6,7 +14,7 @@
 ผู้ใช้ขอแผนทดลอง 854 บั๊กด้วย 4 วิธีและจัดหมวดสิ่งส่งมอบตาม repo เพื่อน
 อ่าน [แผนเต็ม](docs/api854/AOM_FRIEND_LAYOUT_FULL_SUBMISSION_PLAN_TH.md)
 และ [blueprint โครงไฟล์/รายการงาน](docs/api854/plans/friend-layout-full-v1/README.md)
-รายการใหม่มี 854 บั๊ก / 3,416 planned jobs ทั้งหมด `PENDING` ยังไม่ได้รัน batch หรือเรียก KKU ในรอบวางแผนนี้
+Blueprint ตอนวางแผนมี 854 บั๊ก / 3,416 planned jobs ทั้งหมด `PENDING`; ผลปัจจุบันดูชุด pilot ข้างต้น
 ผลและไฟล์ด้านล่างเป็นชุด Csv-1 ที่ทำเสร็จแล้ว ไม่ใช่ผลครบ 854 บั๊ก
 
 ---
