@@ -1,4 +1,14 @@
-# SQA รอบ 2 — Csv-1 บั๊กเดียว / 4 วิธี
+# แผนขยายล่าสุด — โครงชุดส่งตาม repo เพื่อน
+
+ผู้ใช้ขอแผนทดลอง 854 บั๊กด้วย 4 วิธีและจัดหมวดสิ่งส่งมอบตาม repo เพื่อน
+อ่าน [แผนเต็ม](docs/api854/AOM_FRIEND_LAYOUT_FULL_SUBMISSION_PLAN_TH.md)
+และ [blueprint โครงไฟล์/รายการงาน](docs/api854/plans/friend-layout-full-v1/README.md)
+รายการใหม่มี 854 บั๊ก / 3,416 planned jobs ทั้งหมด `PENDING` ยังไม่ได้รัน batch หรือเรียก KKU ในรอบวางแผนนี้
+ผลและไฟล์ด้านล่างเป็นชุด Csv-1 ที่ทำเสร็จแล้ว ไม่ใช่ผลครบ 854 บั๊ก
+
+---
+
+# ชุดส่งที่ทำแล้ว — Csv-1 บั๊กเดียว / 4 วิธี
 
 กรณีศึกษา Defects4J Csv-1 เปรียบเทียบ **CMA-ES, FSCS-ART, KKU Claude Sonnet 5 และ Gemini 3.5 Flash Lite**
 ชุดส่งปัจจุบันอยู่บน branch `aom` ใช้ผลจริงหนึ่ง generated suite ต่อวิธี

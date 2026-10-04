@@ -1,4 +1,20 @@
-# Current submission: one bug, Csv-1, four methods
+# Latest requested plan: full-scope experiment with the friend's submission layout
+
+อ่าน [AOM_FRIEND_LAYOUT_FULL_SUBMISSION_PLAN_TH.md](AOM_FRIEND_LAYOUT_FULL_SUBMISSION_PLAN_TH.md)
+ผู้ใช้ขอแผนเริ่มทดลองเหมือนเพื่อนและมีทุกหมวดส่งงาน
+ตรวจ branch เพื่อน `jiratchaya_673380510-1`: AI summaries มี 854 attempted cases ต่อวิธี
+Algorithm summaries ยังเป็น template และ Presentation ยังมีเพียง .gitkeep; อย่าอ้างว่าทุกส่วนของเพื่อนเสร็จ
+Blueprint อยู่ใน `plans/friend-layout-full-v1`: cases 854 / projects 17 / jobs 3,416 ทั้งหมด PENDING
+เสนอใช้ core CMA-ES/FSCS-ART เดิม, KKU Sonnet 5 + Gemini 3.5 Flash Lite เท่านั้น,
+compact buggy-only AI context, bounded repair และ batch runner ใหม่ที่ resume/status/report ได้
+ไม่ pool Csv fixed-assisted เดิมเข้าผลใหม่ ไม่ flip Gate A/primary หรือเริ่ม live queue รุ่นเก่า
+ขั้นแรกเมื่อเริ่ม implementation คือทำ inventory/context/runner/report schema และ pilot 3 bugs ก่อน full batch
+รอบนี้ทำแผน/blueprint เท่านั้น ไม่มี batch runner ใหม่ ไม่มี KKU requests หรือ queue mutations
+ชุด Csv-1 ด้านล่างยังเป็นชุดส่งที่ทำสำเร็จแล้วและเก็บไว้ครบ
+
+---
+
+# Previous completed submission: one bug, Csv-1, four methods
 
 คำสั่งล่าสุดของผู้ใช้: ส่งหนึ่งบั๊กตามรูปแบบเพื่อน ทำสิ่งส่งมอบครบทุกส่วน
 อ่าน [AOM_SINGLE_BUG_SUBMISSION_TH.md](AOM_SINGLE_BUG_SUBMISSION_TH.md) ก่อน

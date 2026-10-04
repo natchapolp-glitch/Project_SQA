@@ -1,0 +1,193 @@
+{
+  "schema": "submission-layout-blueprint.v1",
+  "status": "PLAN_ONLY_NOT_EXECUTED",
+  "date_bangkok": "2026-10-04",
+  "reference_repository": "https://github.com/MammamiaPizza/ProjectSQAGroup11",
+  "reference_branch": "jiratchaya_673380510-1",
+  "reference_commit_at_review": "d83054f9e08cca12b716fb569b338ece64fbf1cf",
+  "scope": {
+    "planned_bugs": 854,
+    "projects": 17,
+    "methods": 4,
+    "generation_repeats": 1,
+    "planned_jobs": 3416
+  },
+  "inventory_source": "experiments/configs/api854-20261003/installed-active-bugs.json",
+  "inventory_sha256": "5f91294bdd7f537e917125cd7abbcbe0eb76fb1cd9e6d424215a2f13d7b6c609",
+  "inventory_case_counts": {
+    "Chart": 26,
+    "Cli": 39,
+    "Closure": 174,
+    "Codec": 18,
+    "Collections": 28,
+    "Compress": 47,
+    "Csv": 16,
+    "Gson": 18,
+    "JacksonCore": 26,
+    "JacksonDatabind": 110,
+    "JacksonXml": 6,
+    "Jsoup": 93,
+    "JxPath": 22,
+    "Lang": 61,
+    "Math": 106,
+    "Mockito": 38,
+    "Time": 26
+  },
+  "folder_mapping": {
+    "cmaes": "Algorithm1_CMAES",
+    "fscs-art": "Algorithm2_FSCSART",
+    "kku-claude": "AI1_KKU_Claude",
+    "kku-gemini": "AI2_KKU_Gemini"
+  },
+  "peer_folder_mapping": {
+    "Algorithm1_NSGAII": "Algorithm1_CMAES",
+    "Algorithm2_SymbolicExecution": "Algorithm2_FSCSART",
+    "AI1_ChatGPT": "AI1_KKU_Claude",
+    "AI2_GitHubCopilot": "AI2_KKU_Gemini"
+  },
+  "layout": {
+    "Algorithm1_CMAES": [
+      "Code/",
+      "Configuration/",
+      "Result_Round1/<case>/run-final/",
+      "Result_Round2/",
+      "Test/<case>/run-final/"
+    ],
+    "Algorithm2_FSCSART": [
+      "Code/",
+      "Configuration/",
+      "Result_Round1/<case>/run-final/",
+      "Result_Round2/",
+      "Test/<case>/run-final/"
+    ],
+    "AI1_KKU_Claude": [
+      "Prompt/01_analyze_context.txt",
+      "Prompt/02_generate_suite.txt",
+      "Prompt/03_repair_suite.txt",
+      "Prompt/04_extend_coverage.txt",
+      "Prompt/<case>/run-final/",
+      "Result/<case>/run-final/",
+      "TestCode/<case>/run-final/",
+      "docs/setup/"
+    ],
+    "AI2_KKU_Gemini": [
+      "Prompt/01_analyze_context.txt",
+      "Prompt/02_generate_suite.txt",
+      "Prompt/03_repair_suite.txt",
+      "Prompt/04_extend_coverage.txt",
+      "Prompt/<case>/run-final/",
+      "Result/<case>/run-final/",
+      "TestCode/<case>/run-final/",
+      "docs/setup/"
+    ],
+    "Experiment": [
+      "README.md",
+      "cases.csv",
+      "context-template.md",
+      "protocol/",
+      "contexts/<case>/",
+      "automation/",
+      "evaluations/<case>/<method>/run-final/",
+      "ai-results/",
+      "diagnostics/",
+      "archive/"
+    ],
+    "Report": [
+      "README.md",
+      "SQA_Round2_Report.pdf",
+      "report-source.md",
+      "benchmark_status.md",
+      "figures/",
+      "data/ai/case_results.csv",
+      "data/ai/summary.json",
+      "data/cmaes/case_results.csv",
+      "data/cmaes/summary.json",
+      "data/fscs_art/case_results.csv",
+      "data/fscs_art/summary.json",
+      "data/final_comparison.csv",
+      "summaries/ai_summary.md",
+      "summaries/cmaes_summary.md",
+      "summaries/fscs_art_summary.md",
+      "summaries/final_comparison.md"
+    ],
+    "Presentation": [
+      "README.md",
+      "SQA_Round2.pptx",
+      "demo-guide.md",
+      "demo.sh",
+      "demo-results/"
+    ],
+    "README.md": []
+  },
+  "proposed_condition": {
+    "ai_context": "buggy-only deterministic compact context; no fixed source or patch",
+    "algorithm_oracle": "fixed-reference observations; disclosed separately from AI knowledge",
+    "models": {
+      "kku-claude": "claude-sonnet-5",
+      "kku-gemini": "gemini-3.5-flash-lite"
+    },
+    "ai_origin": "https://gen.ai.kku.ac.th",
+    "temperature": 0,
+    "requested_max_tokens": 4096,
+    "effective_settings_verified": false,
+    "current_quota_verified": false,
+    "frozen": false,
+    "live_enabled": false,
+    "source_character_budget": 12000,
+    "p02_method_cap": 12,
+    "p04_added_method_cap": 4,
+    "p03_repair_call_cap": 1,
+    "algorithm_seed": 101,
+    "algorithm_proposed_vector_budget": 30,
+    "cpu_slots_local": 1,
+    "pilot_cases": [
+      "Csv-1",
+      "Lang-1",
+      "Math-1"
+    ]
+  },
+  "request_counts_if_all_cases_reach_ai": {
+    "base_p01_p02": 3416,
+    "max_p01_p02_p03_p04": 6832,
+    "actually_sent_in_this_plan": 0
+  },
+  "progress": {
+    "actually_attempted_jobs": 0,
+    "actually_evaluated_jobs": 0,
+    "pending_jobs": 3416,
+    "new_api_requests": 0
+  },
+  "old_csv_delivery": "output/round2-single-bug-20261004",
+  "old_results_pooled_into_new_cohort": false,
+  "round2_generation_completed": false,
+  "inherited_gate_or_queue_mutated": false,
+  "required_outcome_fields": [
+    "case",
+    "project",
+    "bug_id",
+    "method",
+    "run_id",
+    "protocol_hash",
+    "state",
+    "attempted",
+    "provider_requested",
+    "valid_on_fixed",
+    "fault_detected",
+    "executed_tests",
+    "skipped_tests",
+    "line_covered",
+    "line_total",
+    "branch_or_condition_metric_type",
+    "branch_or_condition_covered",
+    "branch_or_condition_total",
+    "generation_seconds",
+    "evaluation_seconds",
+    "prompt_tokens",
+    "completion_tokens",
+    "model_id",
+    "settings",
+    "evidence_paths"
+  ],
+  "missing_metric_policy": "null; never substitute 0; count denominators separately",
+  "estimate_policy": "Measure the pilot and the 10-20-case batch; no promised completion date before current quota/runtime measurements"
+}
