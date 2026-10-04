@@ -1,5 +1,9 @@
 # Latest implementation: single-operator offline pilot
 
+Latest branch update: ทำต่อบน **`Team`** ตามคำสั่งผู้ใช้ ย้ายฐานจาก `aom 026e83ed`
+งานและ receipts ไม่เปลี่ยน; `aom` คงเดิม ประวัติที่ระบุ branch aom ด้านล่างยังเป็น provenance
+อ่าน [REPOSITORY_MIGRATION_PLAN_TH.md](REPOSITORY_MIGRATION_PLAN_TH.md) สำหรับ repo ใหม่ภายหลัง
+
 อ่าน [SOLO_STEP_BY_STEP_TH.md](SOLO_STEP_BY_STEP_TH.md) ก่อน
 Runner ใหม่ `scripts/study/solo_batch.py` ทำ verified inventory/context/algorithms/report ได้
 ชุดปัจจุบัน `output/round2-solo-pilot-20261004` ใช้ v12 fixtures เดิม พร้อม invocation counts
