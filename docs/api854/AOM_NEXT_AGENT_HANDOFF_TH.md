@@ -1,4 +1,19 @@
-# Current checkpoint: peer results received and condition-separated report v6 published
+# Current user plan: close a submission package in the friend's format
+
+อ่าน [AOM_SUBMISSION_FIRST_PLAN_TH.md](AOM_SUBMISSION_FIRST_PLAN_TH.md) ก่อนทำงานต่อ.
+ผู้ใช้ขอปรับแผนให้มีสิ่งส่งมอบทุกส่วนแบบ repo เพื่อน: ใช้ Csv-1 Messages ที่มีผลครบ4วิธี
+ทำรายงาน PDF/สไลด์/demo/ชุดโค้ด-tests-prompts-configs-resultsทันที และเก็บ17projectsเดิมเป็นภาคผนวก.
+พัก854/candidates/Gson oracle/AIใหม่จากเส้นทางงานส่ง. อย่ากลับไปทำGsonตามhistorical taskด้านล่าง.
+ไม่เปลี่ยนGateA/primary/queue/sourceguards; ไม่อ้างว่าหนึ่งบั๊กครบข้อกำหนดทุกproject.
+Fetched peerล่าสุด: Beam f3484746 Compressเสร็จตามเอกสาร, Champ8389043b/7e295e3bมีJackson112/solo handoff.
+Aomยังไม่รับตรวจraw packetsสองชุดใหม่นี้; ใช้เป็นadditional evidenceหลังตรวจ ไม่ขวางCsvส่ง.
+Csvcanonical tableจากreportv6/Beamcountedrecords; fixedcontext/oracleและdomainimbalanceเปิดเผยในรายงาน.
+รอบวางแผนนี้ยังไม่ได้สร้างPDF/PPTX/demo/ZIPใหม่ และไม่ได้เรียกKKU.
+สถานะ/คำสั่งเก่าด้านล่างเก็บเป็นประวัติ; คำขอล่าสุดในแชทและแผนใหม่นี้มีผลเหนือhistorical priorities.
+
+---
+
+# Historical checkpoint: peer results received and condition-separated report v6 published
 
 อ่าน [AOM_READY_PEER_RESULTS_TH.md](AOM_READY_PEER_RESULTS_TH.md) และ
 [ข้อความส่งทีม](AOM_TO_TEAM_MESSAGE_TH.md) ก่อน. Branch aom; ready-results-first, candidatesพัก.

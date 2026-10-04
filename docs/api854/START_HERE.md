@@ -1,4 +1,14 @@
-Current Aom checkpoint: [peer Csv/Jsoup results and latest condition-separated report](AOM_READY_PEER_RESULTS_TH.md). Received exact Champ a4c723ad/Beam2c0e92fc/Champ e9c63718; independently checked 24 JUnit XML reports, archive/source/input/runtime/host/count/coverage bindings and 1364 original peer Git blobs. Report v6 includes native5bugs/24outcomes with invalids, and fullD4J3bugs across hosts; Csv alone has valid full results for all four methods. v12/v13 and host replays remain separate. No new CPU/API/queue calls; focused tests14 passed. Compress2 native-valid algorithms await Beam D4J; Gson structural Type oracle is next prospective Aom work. [Next-agent handoff](AOM_NEXT_AGENT_HANDOFF_TH.md) and [team messages](AOM_TO_TEAM_MESSAGE_TH.md) describe the next work.
+# แผนล่าสุดจากผู้ใช้: ปิดชุดส่งก่อนขยายการทดลอง
+
+อ่าน [AOM_SUBMISSION_FIRST_PLAN_TH.md](AOM_SUBMISSION_FIRST_PLAN_TH.md) ก่อน.
+ใช้ Csv-1 Messages ครบ4วิธีทำPDF/สไลด์/demo/ชุดโค้ด-tests-prompts-configs-resultsตามรูปแบบrepoเพื่อน;
+เก็บ17projectsเดิมเป็นภาคผนวก. พัก854/candidates/Gson/AIใหม่จากเส้นทางงานส่ง.
+แผนนี้ยังไม่ใช่ชุดส่งที่สร้างเสร็จ และไม่เปลี่ยนGateA/primary/queueหรือข้อจำกัดตามโจทย์.
+สถานะและแผนรุ่นเก่าด้านล่างเป็นประวัติ; ใช้ [handoffล่าสุด](AOM_NEXT_AGENT_HANDOFF_TH.md).
+
+---
+
+Historical Aom checkpoint: [peer Csv/Jsoup results and latest condition-separated report](AOM_READY_PEER_RESULTS_TH.md). Received exact Champ a4c723ad/Beam2c0e92fc/Champ e9c63718; independently checked 24 JUnit XML reports, archive/source/input/runtime/host/count/coverage bindings and 1364 original peer Git blobs. Report v6 includes native5bugs/24outcomes with invalids, and fullD4J3bugs across hosts; Csv alone has valid full results for all four methods. v12/v13 and host replays remain separate. No new CPU/API/queue calls; focused tests14 passed. Compress2 native-valid algorithms await Beam D4J; Gson structural Type oracle is next prospective Aom work. [Next-agent handoff](AOM_NEXT_AGENT_HANDOFF_TH.md) and [team messages](AOM_TO_TEAM_MESSAGE_TH.md) describe the next work.
 
 Previous Aom checkpoint: [Cli unordered-options oracle and real algorithm outcomes](AOM_CLI_UNORDERED_RESULTS_TH.md). Cli16 reference and 15 Java controls passed; fresh CMA/FSCS30 suites completed fixed twice, buggy and coverage with counters30/0/30 and no fault. Scoped preparation v2 supplies the new prompt/recipe/worksheet to both KKU models; both AI outcomes in this new condition remain pending. Old FSCS raw mismatch and failed Hamcrest environment attempt retained; unchanged-suite replay v2 repairs only framework dependency and restores it exactly. Primary0/GateAfalse/reserve null.
 

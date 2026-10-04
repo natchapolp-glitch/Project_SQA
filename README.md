@@ -1,4 +1,16 @@
-Latest Aom composition: [shared Graphics2D v12 development inputs](docs/api854/AOM_GRAPHICS_V12_HANDOFF_TH.md). 20 bugs; 403 selected / 288 exclusions of 691. Current proof v5; v11 preserved. Historical v10 scoped acceptance closed; final semantic/host/provider/team gate decision pending, pilot closed.
+# Current plan: prepare the Round 2 submission from measured results
+
+[แผนปิดชุดส่งตามรูปแบบ repo เพื่อน](docs/api854/AOM_SUBMISSION_FIRST_PLAN_TH.md)
+และ [handoff ล่าสุดของออม](docs/api854/AOM_NEXT_AGENT_HANDOFF_TH.md).
+ใช้ Csv-1 Messages ที่มี full Defects4J results ครบ 4 วิธีเป็นกรณีหลักสำหรับรายงาน สไลด์ และ demo;
+เก็บผลเดิม 17 projects เป็นภาคผนวกที่แยกรุ่น/เงื่อนไข. พักการขยาย 854/candidates จากเส้นทางงานส่ง.
+**รอบนี้เป็นการปรับแผน ยังไม่ได้สร้าง PDF/PPTX/demo/ZIP ใหม่ และยังไม่รับรองครบขอบเขตทั้งหมดตามโจทย์.**
+ดู [ตารางผลที่ออมตรวจรับแล้ว](docs/api854/AOM_READY_PEER_RESULTS_TH.md).
+สถานะรุ่นก่อนหน้าด้านล่างเก็บเป็นประวัติ ไม่ใช่สิ่งที่ต้องทำให้ครบก่อนเริ่มเขียนรายงาน.
+
+---
+
+Historical Aom composition: [shared Graphics2D v12 development inputs](docs/api854/AOM_GRAPHICS_V12_HANDOFF_TH.md). 20 bugs; 403 selected / 288 exclusions of 691. Current proof v5; v11 preserved. Historical v10 scoped acceptance closed; final semantic/host/provider/team gate decision pending, pilot closed.
 
 Latest Aom composition: [shared Chronology v11 development inputs](docs/api854/AOM_CHRONOLOGY_V11_HANDOFF_TH.md). 20 bugs; 396 selected / 295 exclusions of 691. Use preparation/protocol suffix v3; final semantic/host/provider review pending, Gate A/pilot closed.
 
