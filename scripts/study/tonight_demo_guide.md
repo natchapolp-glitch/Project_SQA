@@ -39,3 +39,38 @@ python3 -B Presentation/demo.py --case Csv-1 --replay \
 
 Replay ใช้ suite เดิม ไม่เพิ่มจำนวน bugs หรือ generation rounds และไม่ต้องใช้ API key
 ถ้าคืนนี้ยังไม่ครบ ให้ระบุจำนวนที่ทำจริงจาก snapshot ไม่ใช้ 500 เป็นจำนวนที่เสร็จ
+
+## บท demo ประมาณ 5 นาที
+
+- นาที 0–1: เปิด `Report/data/summary.json` ของชุดที่กำลังนำเสนอ อ่านจำนวนจริง
+  แยก `planned_bugs`, `recorded_bugs`, `bugs_four_methods_recorded` และ
+  `bugs_four_methods_evaluated` เป้า 500 ไม่ใช่จำนวนที่ทำเสร็จ
+- นาที 1–2: แสดง Csv-1 ทั้งสี่วิธีด้วยคำสั่งขั้น 3 และเปิด
+  `Presentation/rehearsal/receipt.json` ถ้ามี ทุกวิธีประเมินครบแต่ไม่พบ fault
+  อธิบายว่า fixed ผ่านสองครั้งเพิ่มความเชื่อมั่นในการตรวจ suite เดิม ไม่ใช่ generation สองรอบ
+- นาที 2–3: แสดงตัวอย่างตรวจพบ fault จริงด้วยสองคำสั่งด้านล่าง
+  แล้วเปิด `measurement/record.json` และ log ของ fixed-1/fixed-2/buggy
+  ภายใต้ `Experiment/evaluations/<case>/<method>/offline/run-final`
+- นาที 3–4: เปิด Lang-1/Sonnet ที่ output ไม่ครบ และ Cli-1 ที่ classpath ขาด Hamcrest
+  ผลสร้างโค้ดไม่ผ่านกับ infrastructure failure ต้องแยกกัน ทั้งสองอย่างไม่ใช่ product fault
+- นาที 4–5: เปิดตาราง/กราฟ coverage ในรายงาน อ่าน denominator ของแต่ละวิธีจากชุดนี้
+  แล้วแสดง code/configurations/prompts/raw answers/archives และ `SHA256SUMS.txt`
+  ระบุข้อจำกัดและงานที่ยังค้างจาก snapshot ที่ส่งจริง
+
+คำสั่งแสดงผลที่ตรวจพบ fault ไม่รัน Java และไม่เรียก AI จึงใช้ระหว่าง batch ได้:
+
+```bash
+python3 -B Presentation/demo.py --case Compress-1 --method cmaes
+python3 -B Presentation/demo.py --case Time-1 --method fscs-art
+```
+
+หลักฐานเดิมของ Compress-1/CMA-ES: fixed failures 0 และ 0; buggy failures 3
+คือ `generated4`, `generated9`, `generated10` จัดเป็นหนึ่งบั๊กที่ตรวจพบ ไม่ใช่สามบั๊ก
+Time-1/CMA-ES และ Time-1/FSCS-ART มี fixed failures 0 ทั้งสองรอบ
+และ buggy failures วิธีละ 1 ทั้งสองวิธีตรวจบั๊กเดียวกัน ไม่เพิ่มจำนวน unique bugs
+ผลตัวอย่างนี้เป็นหลักฐานที่มีอยู่แล้ว ไม่ใช่ผลทั้งหมดของเป้า 500
+
+ถ้าใช้ snapshot สำรอง 17 บั๊ก ต้องพูดว่าเป็น checkpoint 17 บั๊ก;
+ถ้าใช้ชุด final ให้อ่านตัวเลขใหม่จากไฟล์ใน ZIP final ห้ามนำตัวนับสดที่ใหม่กว่าไปแทน
+ผลใน ZIP เก่า ขณะ batch ใช้ CPU ให้แสดง stored results และหลักฐาน rehearsal
+อย่าเปิด `--replay` ชนกับ worker ที่กำลังรัน

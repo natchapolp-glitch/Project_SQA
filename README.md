@@ -8,6 +8,7 @@
 พร้อม [รายงาน PDF](output/round2-tonight-500-20261004-v3/Report/SQA_Round2_Report.pdf),
 [PowerPoint](output/round2-tonight-500-20261004-v3/Presentation/SQA_Round2.pptx)
 และ [demo ที่ซ้อมครบทั้งสี่วิธี](output/round2-tonight-500-20261004-v3/Presentation/demo-guide.md)
+มี [บทนำเสนอประมาณ 5 นาทีพร้อมตัวอย่างพบ fault และผลไม่ผ่าน](docs/api854/SOLO_PRESENTATION_CUE_TH.md)
 ดู [สถานะของ checkpoint](output/round2-tonight-500-20261004-v3/Report/data/summary.json)
 หรือ [ตาราง 2,000 jobs](output/round2-tonight-500-20261004-v3/Report/data/final_comparison.csv)
 ผู้ใช้ยืนยันกลับมารันเครื่องเดียวแล้ว; ผลระหว่างรันในเครื่องอยู่ที่
