@@ -1,0 +1,12 @@
+Useful behaviors, boundaries, and setup to test for `Timer`:
+
+1. **Constructor**: `new Timer(durationMillis)` should store duration without starting the timer implicitly (verify `isCounting()` semantics depend on `start()` being called).
+2. **Valid receiver setup**: Always call `start()` before relying on `isCounting()`, since `startTime` is only initialized there.
+3. **Zero duration**: `new Timer(0).start()` → `isCounting()` should return `false` immediately (duration elapsed instantly).
+4. **Positive duration, immediately after start**: `isCounting()` should return `true` right after `start()` when `durationMillis > 0`.
+5. **Duration elapsed boundary**: After sleeping/mocking time ≥ durationMillis, `isCounting()` should return `false`.
+6. **Duration not yet elapsed**: After less than durationMillis has passed, `isCounting()` should return `true`.
+7. **Negative duration**: `new Timer(-1)` behavior—should likely be treated as already expired (`isCounting()` false) rather than throwing.
+8. **Multiple start() calls**: Calling `start()` again should reset `startTime`, restarting the countdown (verify `isCounting()` reflects new start point).
+9. **isCounting() without start()**: Document/verify behavior (e.g., may throw or use default `startTime=0`, treating it as already expired since current time ≫ 0+duration).
+10. **Large duration values**: Use `Long.MAX_VALUE` to ensure no overflow issues causing incorrect `false` due to arithmetic overflow in boundary check.

@@ -1,0 +1,9 @@
+- `toLocale(String)` must correctly parse valid language, country, and variant strings (e.g., "en", "en_US", "en_US_WIN").
+- `toLocale(String)` should handle lower/upper case correctly or follow standard locale parsing rules.
+- `toLocale(String)` must throw `IllegalArgumentException` or `NullPointerException` for malformed inputs (e.g., empty string, incorrect length/format).
+- `localeLookupList(Locale)` should generate a hierarchical fallback list (variant -> country -> language -> default).
+- `localeLookupList(Locale, Locale)` should generate the fallback list ending with the specified default locale.
+- `localeLookupList` methods must handle null inputs safely (returning empty list or throwing appropriately per contract).
+- `isAvailableLocale(Locale)` should return true if the locale is present in `availableLocaleList()`, false otherwise.
+- `languagesByCountry(String)` and `countriesByLanguage(String)` should return unmodifiable or valid lists of matching locales.
+- Valid receiver setup: All methods are `public static`, so no instance creation of `LocaleUtils` is required for testing.

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:37:08.312330+00:00",
+  "ended_at_utc": "2026-10-04T03:37:17.119273+00:00",
+  "raw_body_sha256": "83a0fdbd8dae0b2ab0e118d60732d4e71354060c48223e72c6cbbf4f0d77011a",
+  "body": {
+    "id": "gen-1791085029-8jIT28DJokYwrGrONcaV",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Based on the metadata (RemoveUnusedVars pass, Closure Compiler), here are the key behaviors to test:\n\n- Setup requires a CompilerTestCase/Compiler harness invoking the pass via `process` on parsed ASTs, comparing expected output source after transformation.\n- Function arguments trailing/unused should be removed only when safe (`removeUnreferencedFunctionArgs`); verify unused trailing params are stripped but used-later params are preserved, including when a later param is referenced but earlier ones are not (must keep earlier ones as placeholders, not remove non-trailing ones).\n- Variables referenced only in their own assignment (self-assign) should still be considered unreferenced and removable.\n- Global vars should only be removed when `removeGlobals=true`; with it false, unused globals must remain untouched.\n- Function expressions: name preservation flag (`preserveFunctionExpressionNames`) must keep/discard named function expression names correctly even if unused.\n- Variables used only inside otherwise-unused/removed functions should not count as \"referenced\" (transitive removal correctness), i.e., removing a function should cascade to remove vars only used inside it.\n- Class-defining calls (e.g., `goog.inherits`-like patterns) referencing a var should keep that var alive only if the class itself is still referenced; test interaction between `classDefiningCalls` and reachability.\n- Assigns-only usage (`assignsByVar`/`interpretAssigns`): a variable only ever assigned (never read) should be removable, including chains of assignment expressions.\n- Call-site argument removal (`modifyCallSites`/`CallSiteOptimizer`) should only modify call sites when the corresponding parameter was actually removed, and must not alter calls with spread/variable arguments count mismatches.\n- Boundary: zero-parameter functions, functions with all parameters used, and empty scopes should be no-ops (output equals input).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1557,
+      "output_tokens": 639,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.009504,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.009504,
+        "upstream_inference_prompt_cost": 0.003114,
+        "upstream_inference_completions_cost": 0.00639
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 71363,
+      "daily_remaining_tokens": 128637
+    }
+  },
+  "headers": {
+    "x-request-id": "rxsf94iba6fqrgyry1lbpp0r",
+    "date": "Sun, 04 Oct 2026 03:37:18 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

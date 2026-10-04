@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:41:09.230668+00:00",
+  "ended_at_utc": "2026-10-04T09:41:17.885602+00:00",
+  "raw_body_sha256": "a07cb4438c2b3a3d7f2e3f0edbf5d59f0b289be82ec87d2d8409df8bc807f7d5",
+  "body": {
+    "id": "gen-1791106870-87vAcK4vTkJvIvg5uvOo",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `with(DateTimeFieldType, int)`: verify value within field's min/max for the given type; adding a new type should insert it in correct sorted order (by duration), existing type should just replace value; verify index-ordering consistency after insertion so field order matches duration-based comparator rules (e.g., year before month before day).\n- `withField`/`withFieldAdded`/`withFieldAddWrapped`/`withPeriodAdded`: check boundary wrap behavior (e.g., month 12 + 1 wraps to 1 with wrapped variant, non-wrapped should overflow upward or throw depending on field) and that unsupported duration field types throw `IllegalArgumentException`.\n- `without(DateTimeFieldType)`: removing nonexistent type is no-op (returns equal Partial); removing existing type reduces size by 1 and preserves relative order of remaining types/values.\n- `isMatch(ReadableInstant)` / `isMatch(ReadablePartial)`: must return true only if all field types/values in Partial match the target; mismatched/missing field types should return false, not throw.\n- Constructors: verify duplicate field types throw `IllegalArgumentException`; null type/array arguments throw `IllegalArgumentException`/`NullPointerException` as documented; mismatched array lengths throw `IllegalArgumentException`.\n- `getValue(int)`/`getFieldType(int)`: boundary check index 0 and size-1 valid, index == size() or negative throws `IndexOutOfBoundsException`.\n- `property(DateTimeFieldType)`: unsupported field type throws `IllegalArgumentException`; valid type returns Property wrapping correct value.\n- `toString(String)`/`toString(String, Locale)`: verify pattern formatting correctness for simple multi-field Partial (e.g., year-month).\n- `plus`/`minus` with `ReadablePeriod`: confirm only supported fields are modified; unsupported ones in period but absent in Partial are ignored silently, not throwing.\n- Chronology preservation: `withChronologyRetainFields` keeps field values unchanged, only changes chronology; verify with non-ISO chronology (e.g., Buddhist) that field rules differ but values preserved.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1315,
+      "output_tokens": 746,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.01009,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.01009,
+        "upstream_inference_prompt_cost": 0.00263,
+        "upstream_inference_completions_cost": 0.00746
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 171922,
+      "daily_remaining_tokens": 28078
+    }
+  },
+  "headers": {
+    "x-request-id": "va0k0vwsy05zx65pg40s2wji",
+    "date": "Sun, 04 Oct 2026 09:41:20 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

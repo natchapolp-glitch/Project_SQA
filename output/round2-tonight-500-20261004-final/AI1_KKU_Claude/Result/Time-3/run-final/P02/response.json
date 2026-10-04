@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:11:55.595089+00:00",
+  "ended_at_utc": "2026-10-04T08:12:10.386151+00:00",
+  "raw_body_sha256": "7cd60aeaf4c3c99d466972c3adbe5fb5236868f1b07d03e2723796e63e24479b",
+  "body": {
+    "id": "gen-1791101518-glswofsNS95hcJBzM1US",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.joda.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\n\nimport org.junit.Test;\n\npublic class MutableDateTimeTest {\n\n    @Test\n    public void testSetRoundingFloor() {\n        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);\n        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);\n        assertEquals(MutableDateTime.ROUND_FLOOR, mdt.getRoundingMode());\n        assertEquals(mdt.getChronology().hourOfDay(), mdt.getRoundingField());\n        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);\n        assertEquals(expected.getMillis(), mdt.getMillis());\n    }\n\n    @Test\n    public void testSetRoundingCeiling() {\n        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);\n        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_CEILING);\n        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 11, 0, 0, 0, DateTimeZone.UTC);\n        assertEquals(expected.getMillis(), mdt.getMillis());\n    }\n\n    @Test\n    public void testSetRoundingNullClearsRounding() {\n        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);\n        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);\n        mdt.setRounding(null);\n        assertNull(mdt.getRoundingField());\n        assertEquals(MutableDateTime.ROUND_NONE, mdt.getRoundingMode());\n        long before = mdt.getMillis();\n        mdt.setMillis(before + 12345L);\n        assertEquals(before + 12345L, mdt.getMillis());\n    }\n\n    @Test\n    public void testSetMillisRoundedWhenRoundingSet() {\n        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);\n        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);\n        MutableDateTime unrounded = new MutableDateTime(2000, 1, 1, 10, 45, 0, 0, DateTimeZone.UTC);\n        mdt.setMillis(unrounded.getMillis());\n        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);\n        assertEquals(expected.getMillis(), mdt.getMillis());\n    }\n\n    @Test\n    public void testAddRoundsResult() {\n        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);\n        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);\n        mdt.add(90L * 60L * 1000L);\n        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 11, 0, 0, 0, DateTimeZone.UTC);\n        assertEquals(expected.getMillis(), mdt.getMillis());\n    }\n\n    @Test\n    public void testSetRoundingSingleArgDefaultsToFloor() {\n        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);\n        mdt.setRounding(mdt.getChronology().hourOfDay());\n        assertEquals(MutableDateTime.ROUND_FLOOR, mdt.getRoundingMode());\n        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);\n        assertEquals(expected.getMillis(), mdt.getMillis());\n    }\n\n    @Test\n    public void testCopyPreservesMillisNotRoundingState() {\n        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);\n        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);\n        MutableDateTime copy = mdt.copy();\n        assertEquals(mdt.getMillis(), copy.getMillis());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7461,
+      "output_tokens": 1750,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.032422,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.032422,
+        "upstream_inference_prompt_cost": 0.014922,
+        "upstream_inference_completions_cost": 0.0175
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 142363,
+      "daily_remaining_tokens": 57637
+    }
+  },
+  "headers": {
+    "x-request-id": "frhn46z5631pkmw124fugyzb",
+    "date": "Sun, 04 Oct 2026 08:12:11 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:04:24.648452+00:00",
+  "ended_at_utc": "2026-10-04T09:04:36.588041+00:00",
+  "raw_body_sha256": "c168ad39c0b6294532245bd51f488f59f6560e0cd2a167776ba8fb556d8cb972",
+  "body": {
+    "id": "gen-1791104667-fQc80aJ4CUO3eRwEQIgG",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.dataformat.xml.ser;\n\nimport java.util.*;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.dataformat.xml.XmlMapper;\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;\n\nimport static org.junit.Assert.*;\n\npublic class XmlSerializerProviderTest\n{\n    static class SimplePojo {\n        public String name = \"value\";\n    }\n\n    @JacksonXmlRootElement(localName = \"customRoot\")\n    static class NamedRootPojo {\n        public String field = \"data\";\n    }\n\n    static class NullFieldPojo {\n        public String present = \"ok\";\n        public String missing = null;\n    }\n\n    @Test\n    public void testSerializeNullRootProducesWrapperElement() throws Exception {\n        XmlMapper mapper = new XmlMapper();\n        String xml = mapper.writeValueAsString(null);\n        assertNotNull(xml);\n        assertTrue(xml.contains(\"<null\"));\n        assertTrue(xml.contains(\"</null>\") || xml.endsWith(\"/>\"));\n    }\n\n    @Test\n    public void testSerializeNullWithConfiguredRootNameUsesThatName() throws Exception {\n        XmlMapper mapper = new XmlMapper();\n        mapper.setConfig(mapper.getSerializationConfig().withRootName(\"myRoot\"));\n        String xml = mapper.writerWithRootName(\"myRoot\").writeValueAsString(null);\n        assertNotNull(xml);\n        assertTrue(xml.contains(\"myRoot\"));\n    }\n\n    @Test\n    public void testSerializePlainPojoProducesRootElementWithFields() throws Exception {\n        XmlMapper mapper = new XmlMapper();\n        SimplePojo pojo = new SimplePojo();\n        String xml = mapper.writeValueAsString(pojo);\n        assertTrue(xml.contains(\"<SimplePojo>\"));\n        assertTrue(xml.contains(\"<name>value</name>\"));\n        assertTrue(xml.contains(\"</SimplePojo>\"));\n    }\n\n    @Test\n    public void testSerializeNamedRootPojoUsesAnnotatedRootName() throws Exception {\n        XmlMapper mapper = new XmlMapper();\n        NamedRootPojo pojo = new NamedRootPojo();\n        String xml = mapper.writeValueAsString(pojo);\n        assertTrue(xml.contains(\"<customRoot>\"));\n        assertTrue(xml.contains(\"<field>data</field>\"));\n        assertTrue(xml.contains(\"</customRoot>\"));\n    }\n\n    @Test\n    public void testSerializeListProducesRepeatedItemElements() throws Exception {\n        XmlMapper mapper = new XmlMapper();\n        List<String> values = new ArrayList<String>();\n        values.add(\"a\");\n        values.add(\"b\");\n        String xml = mapper.writeValueAsString(values);\n        assertNotNull(xml);\n        int firstIdx = xml.indexOf(\"<item>a</item>\");\n        int secondIdx = xml.indexOf(\"<item>b</item>\");\n        assertTrue(firstIdx >= 0);\n        assertTrue(secondIdx > firstIdx);\n    }\n\n    @Test\n    public void testNestedNullFieldDoesNotAffectRootHandling() throws Exception {\n        XmlMapper mapper = new XmlMapper();\n        NullFieldPojo pojo = new NullFieldPojo();\n        String xml = mapper.writeValueAsString(pojo);\n        assertTrue(xml.contains(\"<NullFieldPojo>\"));\n        assertTrue(xml.contains(\"<present>ok</present>\"));\n        assertTrue(xml.contains(\"</NullFieldPojo>\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7318,
+      "output_tokens": 1301,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.027646,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.027646,
+        "upstream_inference_prompt_cost": 0.014636,
+        "upstream_inference_completions_cost": 0.01301
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 174043,
+      "daily_remaining_tokens": 25957
+    }
+  },
+  "headers": {
+    "x-request-id": "dxlzgxoyph4sycpyknlxvn7r",
+    "date": "Sun, 04 Oct 2026 09:04:36 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

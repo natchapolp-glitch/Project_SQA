@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:02:40.464077+00:00",
+  "ended_at_utc": "2026-10-04T04:02:57.130375+00:00",
+  "raw_body_sha256": "f31d73244eb24568d4d2e9fc0b3f9048e25c925033585d247ced079107de43de",
+  "body": {
+    "id": "gen-1791086563-lV1XyopB1ivB5GXOHmqk",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.databind.ser;\n\nimport static org.junit.Assert.*;\n\nimport java.io.StringWriter;\nimport java.util.Iterator;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.core.JsonGenerator;\nimport com.fasterxml.jackson.databind.JsonSerializer;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.SerializerProvider;\nimport com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;\n\npublic class BeanPropertyWriterTest {\n\n    public static class Simple {\n        public String name = \"foo\";\n        public int age = 42;\n    }\n\n    private ObjectMapper mapper = new ObjectMapper();\n\n    private BeanPropertyWriter[] getWriters(Class<?> cls) throws Exception {\n        JsonSerializer<Object> ser = mapper.getSerializerProvider()\n                .findValueSerializer(cls, null);\n        if (!(ser instanceof BeanSerializerBase)) {\n            throw new IllegalStateException(\"Not a BeanSerializerBase: \" + ser);\n        }\n        Iterator<com.fasterxml.jackson.databind.ser.PropertyWriter> it =\n                ((BeanSerializerBase) ser).properties();\n        java.util.List<BeanPropertyWriter> list = new java.util.ArrayList<BeanPropertyWriter>();\n        while (it.hasNext()) {\n            com.fasterxml.jackson.databind.ser.PropertyWriter pw = it.next();\n            list.add((BeanPropertyWriter) pw);\n        }\n        return list.toArray(new BeanPropertyWriter[0]);\n    }\n\n    private BeanPropertyWriter findWriter(Class<?> cls, String name) throws Exception {\n        for (BeanPropertyWriter w : getWriters(cls)) {\n            if (w.getName().equals(name)) {\n                return w;\n            }\n        }\n        throw new IllegalStateException(\"No writer named \" + name);\n    }\n\n    @Test\n    public void testGetNameAndType() throws Exception {\n        BeanPropertyWriter nameWriter = findWriter(Simple.class, \"name\");\n        assertEquals(\"name\", nameWriter.getName());\n        assertEquals(String.class, nameWriter.getPropertyType());\n\n        BeanPropertyWriter ageWriter = findWriter(Simple.class, \"age\");\n        assertEquals(\"age\", ageWriter.getName());\n        assertEquals(int.class, ageWriter.getPropertyType());\n    }\n\n    @Test\n    public void testGetValueViaAccessor() throws Exception {\n        Simple bean = new Simple();\n        bean.name = \"hello\";\n        BeanPropertyWriter nameWriter = findWriter(Simple.class, \"name\");\n        Object val = nameWriter.get(bean);\n        assertEquals(\"hello\", val);\n    }\n\n    @Test\n    public void testRenameProducesNewInstanceWithTransformedName() throws Exception {\n        BeanPropertyWriter orig = findWriter(Simple.class, \"name\");\n        com.fasterxml.jackson.databind.util.NameTransformer transformer =\n                new com.fasterxml.jackson.databind.util.NameTransformer() {\n                    @Override\n                    public String transform(String name) {\n                        return \"prefix_\" + name;\n                    }\n                    @Override\n                    public String reverse(String transformed) {\n                        return transformed;\n                    }\n                };\n        BeanPropertyWriter renamed = orig.rename(transformer);\n        assertNotSame(orig, renamed);\n        assertEquals(\"prefix_name\", renamed.getName());\n        assertEquals(\"name\", orig.getName());\n    }\n\n    @Test\n    public void testRenameNoOpReturnsSameInstance() throws Exception {\n        BeanPropertyWriter orig = findWriter(Simple.class, \"name\");\n        com.fasterxml.jackson.databind.util.NameTransformer identity =\n                com.fasterxml.jackson.databind.util.NameTransformer.NOP;\n        BeanPropertyWriter result = orig.rename(identity);\n        assertSame(orig, result);\n    }\n\n    @Test\n    public void testAssignSerializerUpdatesHasSerializer() throws Exception {\n        BeanPropertyWriter writer = findWriter(Simple.class, \"name\");\n        writer.assignSerializer(null);\n        assertFalse(writer.hasSerializer());\n\n        JsonSerializer<Object> ser = new StdScalarSerializer<Object>(Object.class, false) {\n            @Override\n            public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) {\n            }\n        };\n        writer.assignSerializer(ser);\n        assertTrue(writer.hasSerializer());\n        assertSame(ser, writer.getSerializer());\n    }\n\n    @Test\n    public void testInternalSettingsLifecycle() throws Exception {\n        BeanPropertyWriter writer = findWriter(Simple.class, \"name\");\n        assertNull(writer.getInternalSetting(\"key\"));\n\n        Object prev = writer.setInternalSetting(\"key\", \"value1\");\n        assertNull(prev);\n        assertEquals(\"value1\", writer.getInternalSetting(\"key\"));\n\n        Object old = writer.setInternalSetting(\"key\", \"value2\");\n        assertEquals(\"value1\", old);\n        assertEquals(\"value2\", writer.getInternalSetting(\"key\"));\n\n        Object removed = writer.removeInternalSetting(\"key\");\n        assertEquals(\"value2\", removed);\n        assertNull(writer.getInternalSetting(\"key\"));\n    }\n\n    @Test\n    public void testSerializeAsFieldWritesValue() throws Exception {\n        ObjectMapper m = new ObjectMapper();\n        StringWriter sw = new StringWriter();\n        JsonGenerator gen = m.getFactory().createGenerator(sw);\n        SerializerProvider provider = m.getSerializerProvider();\n\n        Simple bean = new Simple();\n        bean.name = \"bar\";\n\n        BeanPropertyWriter writer = findWriter(Simple.class, \"name\");\n\n        gen.writeStartObject();\n        writer.serializeAsField(bean, gen, provider);\n        gen.writeEndObject();\n        gen.close();\n\n        String json = sw.toString();\n        assertTrue(json.contains(\"\\\"name\\\"\"));\n        assertTrue(json.contains(\"bar\"));\n    }\n\n    @Test\n    public void testGetSerializedNameMatchesName() throws Exception {\n        BeanPropertyWriter writer = findWriter(Simple.class, \"age\");\n        assertEquals(\"age\", writer.getSerializedName().getValue());\n        assertEquals(writer.getName(), writer.getSerializedName().getValue());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 10556,
+      "output_tokens": 2330,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.044412,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.044412,
+        "upstream_inference_prompt_cost": 0.021112,
+        "upstream_inference_completions_cost": 0.0233
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 26353,
+      "daily_remaining_tokens": 173647
+    }
+  },
+  "headers": {
+    "x-request-id": "qirz7u241jk73u74z01xzdif",
+    "date": "Sun, 04 Oct 2026 04:02:57 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

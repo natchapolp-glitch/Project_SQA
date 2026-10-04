@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:49:00.273062+00:00",
+  "ended_at_utc": "2026-10-04T02:49:02.397209+00:00",
+  "raw_body_sha256": "dcdd0bb1a598d037a76cb3dcc042fcdfd3ac3d1cdf36c615a9dbed7dec52fb8a",
+  "body": {
+    "id": "genai-01a104d0-a213-7a43-9d06-9d07a45c6396",
+    "object": "chat.completion",
+    "created": 1791082144,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Initialize `ExtendedBufferedReader` with a `StringReader` or `CharArrayReader` containing various line endings (`\\n`, `\\r`, `\\r\\n`).\n2. Test `read()` behavior tracking `lastChar` and `lineCounter` across standard chars, newlines, and EOF (`END_OF_STREAM`).\n3. Verify `readAgain()` returns `UNDEFINED` initially, the correct last read character otherwise, or `END_OF_STREAM` at EOF.\n4. Test block `read(char[], int, int)` with `length == 0` returning `0` without modifying `lastChar` or state.\n5. Test block `read(char[], int, int)` boundary where `offset > 0` and the first buffer char's newline check references `buf[i-1]` vs `lastChar`.\n6. Test `readLine()` behavior for tracking `lineCounter` increment and setting `lastChar` correctly on valid lines vs returning `null` at EOF.\n7. Test `lookAhead()` without consuming characters, ensuring subsequent `read()` returns the peeked character and state remains unchanged.\n8. Test `getLineNumber()` increments accurately for mixed line endings (`\\r`, `\\n`, `\\r\\n`) across `read()`, array `read()`, and `readLine()`.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1520,
+      "completion_tokens": 285,
+      "total_tokens": 1805
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 87381,
+      "daily_remaining_tokens": 262619
+    }
+  },
+  "headers": {
+    "x-request-id": "o1n55cwid2glpd12esu552c4",
+    "date": "Sun, 04 Oct 2026 02:49:04 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

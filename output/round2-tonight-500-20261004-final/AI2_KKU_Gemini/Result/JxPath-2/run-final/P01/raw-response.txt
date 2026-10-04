@@ -1,0 +1,10 @@
+- Subclasses must correctly implement `computeContextDependent()`, `computeValue(EvalContext)`, and `compute(EvalContext)`.
+- `isContextDependent()` must cache and return the result of `computeContextDependent()` once computed.
+- `computeValue(EvalContext)` evaluates and returns the expression result for the given context.
+- `compute(EvalContext)` returns the primary evaluation value, often identical or closely related to `computeValue`.
+- `iterate(EvalContext)` returns an iterator over the evaluation result collection or nodes.
+- `iteratePointers(EvalContext)` returns an iterator over pointers for the evaluation result.
+- EvalContext parameter can be validly instantiated or mocked depending on the concrete expression type.
+- Boundary: `EvalContext` passed as null should be handled safely or throw appropriate runtime exceptions according to contract.
+- Constants `ZERO`, `ONE`, and `NOT_A_NUMBER` should be available for numeric expression evaluations and comparisons.
+- Receiver setup requires initializing a concrete subclass of `Expression` with valid child expressions or nodes.

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:28:27.383180+00:00",
+  "ended_at_utc": "2026-10-04T08:28:38.871735+00:00",
+  "raw_body_sha256": "547373b7e15c44d1b416f3506b9fb143e2e77437009d59b4ae7c298cf0f7a9d8",
+  "body": {
+    "id": "gen-1791102509-YOKKZ1DdF5VvTrySo5bu",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Looking at this, I'll focus on testable, documented behaviors of `NamedType` using the real `JSTypeRegistry` and `ErrorReporter`, since `NamedType` is package-private and I can test from its own package.\n\n```java\npackage com.google.javascript.rhino.jstype;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport com.google.javascript.rhino.ErrorReporter;\nimport com.google.javascript.rhino.jstype.StaticScope;\nimport com.google.javascript.rhino.jstype.StaticSlot;\n\nimport org.junit.Before;\nimport org.junit.Test;\n\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class NamedTypeTest {\n\n  private JSTypeRegistry registry;\n  private List<String> warnings;\n  private ErrorReporter testReporter;\n\n  private static class EmptyScope implements StaticScope<JSType> {\n    @Override\n    public StaticSlot<JSType> getSlot(String name) {\n      return null;\n    }\n    @Override\n    public StaticScope<JSType> getParentScope() {\n      return null;\n    }\n  }\n\n  @Before\n  public void setUp() {\n    registry = new JSTypeRegistry(null);\n    warnings = new ArrayList<String>();\n    testReporter = new ErrorReporter() {\n      @Override\n      public void warning(String message, String sourceName, int line, int lineOffset) {\n        warnings.add(message);\n      }\n      @Override\n      public void error(String message, String sourceName, int line, int lineOffset) {\n        warnings.add(message);\n      }\n    };\n  }\n\n  @Test\n  public void testGetReferencedTypeBeforeResolution() {\n    NamedType namedType = new NamedType(registry, \"Foo\", \"test.js\", 1, 1);\n    JSType referenced = namedType.getReferencedType();\n    assertNotNull(referenced);\n    assertTrue(referenced.isUnknownType());\n  }\n\n  @Test\n  public void testHasReferenceNameTrueForNonEmpty() {\n    NamedType namedType = new NamedType(registry, \"Foo\", \"test.js\", 1, 1);\n    assertTrue(namedType.hasReferenceName());\n    assertEquals(\"Foo\", namedType.getReferenceName());\n  }\n\n  @Test\n  public void testIsNamedTypeAndNominalType() {\n    NamedType namedType = new NamedType(registry, \"Foo\", \"test.js\", 1, 1);\n    assertTrue(namedType.isNamedType());\n    assertTrue(namedType.isNominalType());\n  }\n\n  @Test\n  public void testResolveViaRegistrySucceeds() {\n    JSType numberType = registry.getNativeType(JSTypeNative.NUMBER_TYPE);\n    registry.declareType(\"MyNumber\", numberType);\n    NamedType namedType = new NamedType(registry, \"MyNumber\", \"test.js\", 1, 1);\n    JSType resolved = namedType.resolveInternal(testReporter, new EmptyScope());\n    assertTrue(warnings.isEmpty());\n    assertTrue(resolved.isEquivalentTo(numberType)\n        || namedType.getReferencedType().isEquivalentTo(numberType));\n  }\n\n  @Test\n  public void testUnresolvedTypeTriggersWarning() {\n    NamedType namedType = new NamedType(registry, \"UnknownFoo\", \"test.js\", 1, 1);\n    namedType.resolveInternal(testReporter, new EmptyScope());\n    assertFalse(warnings.isEmpty());\n    boolean found = false;\n    for (String w : warnings) {\n      if (w.contains(\"UnknownFoo\")) {\n        found = true;\n      }\n    }\n    assertTrue(found);\n  }\n\n  @Test\n  public void testSetValidatorReturnsTrueOnFirstCall() {\n    NamedType namedType = new NamedType(registry, \"Foo\", \"test.js\", 1, 1);\n    com.google.common.base.Predicate<JSType> validator =\n        new com.google.common.base.Predicate<JSType>() {\n          @Override\n          public boolean apply(JSType input) {\n            return true;\n          }\n        };\n    assertTrue(namedType.setValidator(validator));\n  }\n\n  @Test\n  public void testGetReferencedTypeAfterResolution() {\n    JSType numberType = registry.getNativeType(JSTypeNative.NUMBER_TYPE);\n    registry.declareType(\"MyNumber2\", numberType);\n    NamedType namedType = new NamedType(registry, \"MyNumber2\", \"test.js\", 1, 1);\n    namedType.resolveInternal(testReporter, new EmptyScope());\n    JSType referenced = namedType.getReferencedType();\n    assertNotNull(referenced);\n    assertTrue(referenced.isEquivalentTo(numberType));\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6661,
+      "output_tokens": 1697,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.030292,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.030292,
+        "upstream_inference_prompt_cost": 0.013322,
+        "upstream_inference_completions_cost": 0.01697
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 148056,
+      "daily_remaining_tokens": 51944
+    }
+  },
+  "headers": {
+    "x-request-id": "ljvpou3tn2oit1v3c3hmm53t",
+    "date": "Sun, 04 Oct 2026 08:28:42 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

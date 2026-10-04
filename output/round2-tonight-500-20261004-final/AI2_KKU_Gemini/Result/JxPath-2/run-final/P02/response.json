@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:12:32.191206+00:00",
+  "ended_at_utc": "2026-10-04T06:12:34.892351+00:00",
+  "raw_body_sha256": "e0cbceac624a690134b0e4a5665d56bddb56ca00726e417a41df58ad6f3118c2",
+  "body": {
+    "id": "genai-01a1058a-f84a-71e1-994f-2e4aaf00882c",
+    "object": "chat.completion",
+    "created": 1791094356,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.jxpath.ri.compiler;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.Iterator;\n\nimport org.apache.commons.jxpath.ri.EvalContext;\nimport org.junit.Test;\n\npublic class ExpressionTest {\n\n    private static class DummyExpression extends Expression {\n        private final boolean dependent;\n        private final Object value;\n\n        public DummyExpression(boolean dependent, Object value) {\n            this.dependent = dependent;\n            this.value = value;\n        }\n\n        @Override\n        public boolean computeContextDependent() {\n            return dependent;\n        }\n\n        @Override\n        public Object computeValue(EvalContext context) {\n            return value;\n        }\n\n        @Override\n        public Object compute(EvalContext context) {\n            return value;\n        }\n    }\n\n    @Test\n    public void testIsContextDependentTrue() {\n        Expression expr = new DummyExpression(true, \"test\");\n        assertTrue(expr.isContextDependent());\n        assertTrue(expr.isContextDependent());\n    }\n\n    @Test\n    public void testIsContextDependentFalse() {\n        Expression expr = new DummyExpression(false, \"test\");\n        assertFalse(expr.isContextDependent());\n        assertFalse(expr.isContextDependent());\n    }\n\n    @Test\n    public void testComputeValue() {\n        Expression expr = new DummyExpression(false, Integer.valueOf(42));\n        Object result = expr.computeValue(null);\n        assertEquals(Integer.valueOf(42), result);\n    }\n\n    @Test\n    public void testCompute() {\n        Expression expr = new DummyExpression(false, \"hello\");\n        Object result = expr.compute(null);\n        assertEquals(\"hello\", result);\n    }\n\n    @Test\n    public void testIterate() {\n        Expression expr = new DummyExpression(false, new String[] { \"a\", \"b\" });\n        Iterator it = expr.iterate(null);\n        assertNotNull(it);\n        assertTrue(it.hasNext());\n        assertEquals(\"a\", it.next());\n        assertTrue(it.hasNext());\n        assertEquals(\"b\", it.next());\n        assertFalse(it.hasNext());\n    }\n\n    @Test\n    public void testValueIterator() {\n        java.util.List<String> list = new java.util.ArrayList<String>();\n        list.add(\"item1\");\n        Iterator baseIt = list.iterator();\n        Expression.ValueIterator valueIterator = new Expression.ValueIterator(baseIt);\n        assertTrue(valueIterator.hasNext());\n        assertEquals(\"item1\", valueIterator.next());\n        assertFalse(valueIterator.hasNext());\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testValueIteratorRemove() {\n        java.util.List<String> list = new java.util.ArrayList<String>();\n        list.add(\"item1\");\n        Expression.ValueIterator valueIterator = new Expression.ValueIterator(list.iterator());\n        valueIterator.remove();\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1796,
+      "completion_tokens": 733,
+      "total_tokens": 2529
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 55094,
+      "daily_remaining_tokens": 294906
+    }
+  },
+  "headers": {
+    "x-request-id": "q9nuqam2nf3gs8oien3pbe7m",
+    "date": "Sun, 04 Oct 2026 06:12:36 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

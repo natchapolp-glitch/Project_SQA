@@ -1,0 +1,10 @@
+- Verify `flatten(Options, String[], boolean)` correctly separates recognized options from non-option arguments, preserving order.
+- Test long-form options (`--option`, `--option=value`) are tokenized intact without bursting.
+- Test short-form single-hyphen options (`-a`, `-abc` clustering of flags) are burst into individual tokens via `burstToken`.
+- Test option requiring an argument correctly consumes the following token as its value, not as a separate option.
+- Test `--` triggers `eatTheRest`/`stopAtNonOption` semantics: all subsequent tokens treated as literal arguments, unprocessed.
+- Test unrecognized option with `stopAtNonOption=true` halts parsing and gobbles remaining tokens as-is.
+- Test unrecognized option with `stopAtNonOption=false` treats unknown token as a plain non-option argument.
+- Test a lone `"-"` is treated as a non-option argument, not an option marker.
+- Test empty args array returns empty flattened array; null Options or null args behavior (should match superclass contract, likely NPE).
+- Test quoted argument values containing spaces/equals signs are preserved verbatim after flattening.

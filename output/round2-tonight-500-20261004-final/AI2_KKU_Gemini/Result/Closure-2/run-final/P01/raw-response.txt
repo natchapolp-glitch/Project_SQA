@@ -1,0 +1,9 @@
+1. Valid receiver setup requires initializing `AbstractCompiler`, `ReverseAbstractInterpreter`, and `JSTypeRegistry` to construct `TypeCheck`.
+2. Test `process(Node externs, Node root)` to execute type checking across AST nodes within a compiler pass context.
+3. Test `processForTesting(Node externs, Node root)` to verify scope creation and returned `Scope` boundaries.
+4. Verify interface and inheritance checks (`CONFLICTING_EXTENDED_TYPE`, `CONFLICTING_IMPLEMENTED_TYPE`, `BAD_IMPLEMENTED_TYPE`).
+5. Verify property inheritance and overriding behaviors (`HIDDEN_SUPERCLASS_PROPERTY`, `UNKNOWN_OVERRIDE`, `INTERFACE_METHOD_OVERRIDE`).
+6. Verify constructor and invocation validation (`NOT_A_CONSTRUCTOR`, `NOT_CALLABLE`, `CONSTRUCTOR_NOT_CALLABLE`, `WRONG_ARGUMENT_COUNT`).
+7. Test property access validation on types and interfaces (`INEXISTENT_PROPERTY`, `ILLEGAL_PROPERTY_CREATION`).
+8. Test handling of explicit type annotations and checks via `reportMissingProperties(boolean)` configuration bounds.
+9. Verify callback methods `shouldTraverse` and `visit` correctly enforce type checking contracts during node traversal.

@@ -1,0 +1,68 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JacksonDatabind-1
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.databind.ser.BeanPropertyWriter
+BUGGY API signatures:
+Compiled from "BeanPropertyWriter.java"
+public class com.fasterxml.jackson.databind.ser.BeanPropertyWriter implements com.fasterxml.jackson.databind.BeanProperty {
+  public static final java.lang.Object MARKER_FOR_EMPTY;
+  protected final com.fasterxml.jackson.databind.introspect.AnnotatedMember _member;
+  protected final com.fasterxml.jackson.databind.util.Annotations _contextAnnotations;
+  protected final com.fasterxml.jackson.databind.JavaType _declaredType;
+  protected final java.lang.reflect.Method _accessorMethod;
+  protected final java.lang.reflect.Field _field;
+  protected java.util.HashMap<java.lang.Object, java.lang.Object> _internalSettings;
+  protected final com.fasterxml.jackson.core.io.SerializedString _name;
+  protected final com.fasterxml.jackson.databind.PropertyName _wrapperName;
+  protected final com.fasterxml.jackson.databind.JavaType _cfgSerializationType;
+  protected com.fasterxml.jackson.databind.JsonSerializer<java.lang.Object> _serializer;
+  protected com.fasterxml.jackson.databind.JsonSerializer<java.lang.Object> _nullSerializer;
+  protected com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap _dynamicSerializers;
+  protected final boolean _suppressNulls;
+  protected final java.lang.Object _suppressableValue;
+  protected final java.lang.Class<?>[] _includeInViews;
+  protected com.fasterxml.jackson.databind.jsontype.TypeSerializer _typeSerializer;
+  protected com.fasterxml.jackson.databind.JavaType _nonTrivialBaseType;
+  protected final boolean _isRequired;
+  public com.fasterxml.jackson.databind.ser.BeanPropertyWriter(com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition, com.fasterxml.jackson.databind.introspect.AnnotatedMember, com.fasterxml.jackson.databind.util.Annotations, com.fasterxml.jackson.databind.JavaType, com.fasterxml.jackson.databind.JsonSerializer<?>, com.fasterxml.jackson.databind.jsontype.TypeSerializer, com.fasterxml.jackson.databind.JavaType, boolean, java.lang.Object);
+  protected com.fasterxml.jackson.databind.ser.BeanPropertyWriter(com.fasterxml.jackson.databind.ser.BeanPropertyWriter);
+  protected com.fasterxml.jackson.databind.ser.BeanPropertyWriter(com.fasterxml.jackson.databind.ser.BeanPropertyWriter, com.fasterxml.jackson.core.io.SerializedString);
+  public com.fasterxml.jackson.databind.ser.BeanPropertyWriter rename(com.fasterxml.jackson.databind.util.NameTransformer);
+  public void assignSerializer(com.fasterxml.jackson.databind.JsonSerializer<java.lang.Object>);
+  public void assignNullSerializer(com.fasterxml.jackson.databind.JsonSerializer<java.lang.Object>);
+  public com.fasterxml.jackson.databind.ser.BeanPropertyWriter unwrappingWriter(com.fasterxml.jackson.databind.util.NameTransformer);
+  public void setNonTrivialBaseType(com.fasterxml.jackson.databind.JavaType);
+  public java.lang.String getName();
+  public com.fasterxml.jackson.databind.JavaType getType();
+  public com.fasterxml.jackson.databind.PropertyName getWrapperName();
+  public boolean isRequired();
+  public <A extends java.lang.annotation.Annotation> A getAnnotation(java.lang.Class<A>);
+  public <A extends java.lang.annotation.Annotation> A getContextAnnotation(java.lang.Class<A>);
+  public com.fasterxml.jackson.databind.introspect.AnnotatedMember getMember();
+  public void depositSchemaProperty(com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor) throws com.fasterxml.jackson.databind.JsonMappingException;
+  public java.lang.Object getInternalSetting(java.lang.Object);
+  public java.lang.Object setInternalSetting(java.lang.Object, java.lang.Object);
+  public java.lang.Object removeInternalSetting(java.lang.Object);
+  public com.fasterxml.jackson.core.io.SerializedString getSerializedName();
+  public boolean hasSerializer();
+  public boolean hasNullSerializer();
+  public boolean willSuppressNulls();
+  public com.fasterxml.jackson.databind.JsonSerializer<java.lang.Object> getSerializer();
+  public com.fasterxml.jackson.databind.JavaType getSerializationType();
+  public java.lang.Class<?> getRawSerializationType();
+  public java.lang.Class<?> getPropertyType();
+  public java.lang.reflect.Type getGenericPropertyType();
+  public java.lang.Class<?>[] getViews();
+  protected boolean isRequired(com.fasterxml.jackson.databind.AnnotationIntrospector);
+  public void depositSchemaProperty(com.fasterxml.jackson.databind.node.ObjectNode, com.fasterxml.jackson.databind.SerializerProvider) throws com.fasterxml.jackson.databind.JsonMappingException;
+  public void serializeAsField(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider) throws java.lang.Exception;
+  public void serializeAsColumn(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider) throws java.lang.Exception;
+  public void serializeAsPlaceholder(java.lang.Object, com.fasterxml.jackson.core.JsonGenerator, com.fasterxml.jackson.databind.SerializerProvider) throws java.lang.Exception;
+  protected com.fasterxml.jackson.databind.JsonSerializer<java.lang.Object> _findAndAddDynamic(com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap, java.lang.Class<?>, com.fasterxml.jackson.databind.SerializerProvider) throws com.fasterxml.jackson.databind.JsonMappingException;
+  public final java.lang.Object get(java.lang.Object) throws java.lang.Exception;
+  protected void _handleSelfReference(java.lang.Object, com.fasterxml.jackson.databind.JsonSerializer<?>) throws com.fasterxml.jackson.databind.JsonMappingException;
+  public java.lang.String toString();
+  static {};
+}
+

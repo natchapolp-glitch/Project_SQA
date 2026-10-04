@@ -1,0 +1,10 @@
+Valid receiver setup: instantiate `CSVRecord` with a string array of values, a mapping of headers to indices (`Map<String, Integer>`), a comment string, and a record number.
+Boundary condition: calling `get(String)` or `get(int)` with column names or indices outside the defined mapping or array bounds.
+Behavior: `get(String)` must correctly retrieve values using the header name from the mapping.
+Behavior: `get(int)` must retrieve values by exact array index without throwing unexpected exceptions when valid.
+Boundary condition: mapping contains keys, but the values array is shorter than the mapped indices (inconsistent state).
+Behavior: `isConsistent()` should return false if the record's value array length differs from mapping expectations, and true otherwise.
+Behavior: `isMapped(String)` should return true only if the given header exists in the mapping.
+Behavior: `isSet(String)` should return true if the header is mapped *and* the corresponding index points to a non-null value within the values array bounds.
+Behavior: `size()` must return the exact length of the underlying values array.
+Behavior: `iterator()` must iterate sequentially over all elements in the values array.

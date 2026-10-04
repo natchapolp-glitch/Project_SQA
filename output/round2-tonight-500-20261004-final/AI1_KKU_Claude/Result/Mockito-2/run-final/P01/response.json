@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:34:39.426730+00:00",
+  "ended_at_utc": "2026-10-04T06:34:45.734258+00:00",
+  "raw_body_sha256": "2c42474b10d87770bd5b648fc4ef9a814bcf8ff20d3771271fa73e1d3db06bee",
+  "body": {
+    "id": "gen-1791095680-JV1fP44ShUULFI9B7iB7",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Useful behaviors, boundaries, and setup to test for `Timer`:\n\n1. **Constructor**: `new Timer(durationMillis)` should store duration without starting the timer implicitly (verify `isCounting()` semantics depend on `start()` being called).\n2. **Valid receiver setup**: Always call `start()` before relying on `isCounting()`, since `startTime` is only initialized there.\n3. **Zero duration**: `new Timer(0).start()` → `isCounting()` should return `false` immediately (duration elapsed instantly).\n4. **Positive duration, immediately after start**: `isCounting()` should return `true` right after `start()` when `durationMillis > 0`.\n5. **Duration elapsed boundary**: After sleeping/mocking time ≥ durationMillis, `isCounting()` should return `false`.\n6. **Duration not yet elapsed**: After less than durationMillis has passed, `isCounting()` should return `true`.\n7. **Negative duration**: `new Timer(-1)` behavior—should likely be treated as already expired (`isCounting()` false) rather than throwing.\n8. **Multiple start() calls**: Calling `start()` again should reset `startTime`, restarting the countdown (verify `isCounting()` reflects new start point).\n9. **isCounting() without start()**: Document/verify behavior (e.g., may throw or use default `startTime=0`, treating it as already expired since current time ≫ 0+duration).\n10. **Large duration values**: Use `Long.MAX_VALUE` to ensure no overflow issues causing incorrect `false` due to arithmetic overflow in boundary check.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 310,
+      "output_tokens": 548,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.0061,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.0061,
+        "upstream_inference_prompt_cost": 0.00062,
+        "upstream_inference_completions_cost": 0.00548
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 91687,
+      "daily_remaining_tokens": 108313
+    }
+  },
+  "headers": {
+    "x-request-id": "cv6g17pzbpzggvkxk7qo6xgs",
+    "date": "Sun, 04 Oct 2026 06:34:46 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

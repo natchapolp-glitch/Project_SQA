@@ -1,0 +1,10 @@
+- Verify `doubleMetaphone(String)` returns empty string for null/empty input, and non-null for normal words (no exceptions thrown).
+- Test known classic examples (e.g., "Smith"/"Smyth", "Catherine", "Jose", "camel") where primary/alternate codes are documented to match historically—used as oracle via known reference encodings.
+- Validate `isDoubleMetaphoneEqual` symmetry and correctness: equal words give true, clearly different words give false; test with alternate-code matching flag true/false.
+- Boundary: very short strings (length 1-2), strings with only silent-start patterns (e.g., "GN", "PN", "WR"), and strings with non-alphabetic/mixed-case characters (cleanInput should uppercase and strip non-letters).
+- Test `maxCodeLen` getter/setter: default value (4), setting smaller/larger values truncates/extends returned code length appropriately.
+- Confirm `encode(Object)` throws `EncoderException` for non-String input, and `EncoderException` vs `ClassCastException` contract for null or wrong type.
+- Confirm `encode(String)` matches `doubleMetaphone(String, false)` behavior (primary code only).
+- Test alternate-code branch: `doubleMetaphone(String, true)` returns alternate encoding, possibly empty if no alternate exists.
+- Edge case: words with repeated adjacent letters (e.g., "CC", "SS") and silent letter clusters (e.g., "GH", "PH", "TH") to ensure consonant-handling logic doesn't throw/produce wrong length.
+- Confirm thread-safety/statelessness: multiple calls with different inputs on same instance don't leak state (maxCodeLen persists across calls as configured).

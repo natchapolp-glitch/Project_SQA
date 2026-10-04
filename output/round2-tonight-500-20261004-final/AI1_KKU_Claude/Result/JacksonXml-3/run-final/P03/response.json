@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:34:35.912381+00:00",
+  "ended_at_utc": "2026-10-04T07:34:45.655888+00:00",
+  "raw_body_sha256": "7b8795bb1971891b6bfd8c0d9a2c2bbddebd687f497fcdccd660578abf719c67",
+  "body": {
+    "id": "gen-1791099276-6JVPnp9PaUIdJxac99vw",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.dataformat.xml.deser;\n\nimport java.io.IOException;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonToken;\nimport com.fasterxml.jackson.dataformat.xml.XmlFactory;\n\npublic class FromXmlParserTest\n{\n    private FromXmlParser createParser(String xml) throws IOException {\n        XmlFactory f = new XmlFactory();\n        return (FromXmlParser) f.createParser(xml);\n    }\n\n    @Test\n    public void testSimpleTextValue() throws IOException {\n        FromXmlParser p = createParser(\"<root>value</root>\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.VALUE_STRING, p.nextToken());\n        assertEquals(\"value\", p.getText());\n        assertEquals(\"value\", p.getValueAsString());\n        assertEquals(JsonToken.END_OBJECT, p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testEmptyElementTextIsEmptyString() throws IOException {\n        FromXmlParser p = createParser(\"<root></root>\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        JsonToken t = p.nextToken();\n        assertEquals(JsonToken.VALUE_STRING, t);\n        assertEquals(\"\", p.getText());\n        assertEquals(JsonToken.END_OBJECT, p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testNextTextValueMatchesNextTokenGetText() throws IOException {\n        FromXmlParser p1 = createParser(\"<root>hello</root>\");\n        assertEquals(JsonToken.START_OBJECT, p1.nextToken());\n        String text1 = p1.nextTextValue();\n        assertEquals(\"hello\", text1);\n        p1.close();\n\n        FromXmlParser p2 = createParser(\"<root>hello</root>\");\n        assertEquals(JsonToken.START_OBJECT, p2.nextToken());\n        assertEquals(JsonToken.VALUE_STRING, p2.nextToken());\n        assertEquals(\"hello\", p2.getText());\n        p2.close();\n    }\n\n    @Test\n    public void testNextTextValueReturnsNullForNonTextToken() throws IOException {\n        FromXmlParser p = createParser(\"<root><child>v</child></root>\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        String val = p.nextTextValue();\n        assertNull(val);\n        assertEquals(JsonToken.START_OBJECT, p.getCurrentToken());\n        p.close();\n    }\n\n    @Test\n    public void testGetValueAsStringWithDefaultOnNonTextToken() throws IOException {\n        FromXmlParser p = createParser(\"<root><child>v</child></root>\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(\"fallback\", p.getValueAsString(\"fallback\"));\n        p.close();\n    }\n\n    @Test\n    public void testRepeatedGetTextCallsIdempotent() throws IOException {\n        FromXmlParser p = createParser(\"<root>repeat</root>\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.VALUE_STRING, p.nextToken());\n        String first = p.getText();\n        String second = p.getText();\n        assertEquals(first, second);\n        assertEquals(\"repeat\", first);\n        p.close();\n    }\n\n    @Test\n    public void testOverrideCurrentNameAffectsGetCurrentName() throws IOException {\n        FromXmlParser p = createParser(\"<root><child>v</child></root>\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, p.nextToken());\n        assertEquals(\"child\", p.getCurrentName());\n        p.overrideCurrentName(\"renamed\");\n        assertEquals(\"renamed\", p.getCurrentName());\n        p.close();\n    }\n\n    @Test\n    public void testCloseIsIdempotentAndSetsClosedFlag() throws IOException {\n        FromXmlParser p = createParser(\"<root>text</root>\");\n        assertFalse(p.isClosed());\n        p.close();\n        assertTrue(p.isClosed());\n        p.close();\n        assertTrue(p.isClosed());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 9105,
+      "output_tokens": 1587,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.03408,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.03408,
+        "upstream_inference_prompt_cost": 0.01821,
+        "upstream_inference_completions_cost": 0.01587
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 139051,
+      "daily_remaining_tokens": 60949
+    }
+  },
+  "headers": {
+    "x-request-id": "gu1m4axlqqbp2rlwxiw42q1z",
+    "date": "Sun, 04 Oct 2026 07:34:47 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

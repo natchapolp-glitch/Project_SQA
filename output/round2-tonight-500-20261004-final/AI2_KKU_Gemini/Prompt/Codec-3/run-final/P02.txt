@@ -1,0 +1,421 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Codec-3
+Java 11, JUnit 4
+Modified classes: org.apache.commons.codec.language.DoubleMetaphone
+
+BUGGY API signatures (may include private members):
+Compiled from "DoubleMetaphone.java"
+public class org.apache.commons.codec.language.DoubleMetaphone implements org.apache.commons.codec.StringEncoder {
+  private static final java.lang.String VOWELS;
+  private static final java.lang.String[] SILENT_START;
+  private static final java.lang.String[] L_R_N_M_B_H_F_V_W_SPACE;
+  private static final java.lang.String[] ES_EP_EB_EL_EY_IB_IL_IN_IE_EI_ER;
+  private static final java.lang.String[] L_T_K_S_N_M_B_Z;
+  protected int maxCodeLen;
+  public org.apache.commons.codec.language.DoubleMetaphone();
+  public java.lang.String doubleMetaphone(java.lang.String);
+  public java.lang.String doubleMetaphone(java.lang.String, boolean);
+  public java.lang.Object encode(java.lang.Object) throws org.apache.commons.codec.EncoderException;
+  public java.lang.String encode(java.lang.String);
+  public boolean isDoubleMetaphoneEqual(java.lang.String, java.lang.String);
+  public boolean isDoubleMetaphoneEqual(java.lang.String, java.lang.String, boolean);
+  public int getMaxCodeLen();
+  public void setMaxCodeLen(int);
+  private int handleAEIOUY(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleC(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleCC(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleCH(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleD(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleG(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int, boolean);
+  private int handleGH(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleH(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleJ(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int, boolean);
+  private int handleL(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleP(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleR(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int, boolean);
+  private int handleS(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int, boolean);
+  private int handleSC(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleT(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleW(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleX(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int);
+  private int handleZ(java.lang.String, org.apache.commons.codec.language.DoubleMetaphone$DoubleMetaphoneResult, int, boolean);
+  private boolean conditionC0(java.lang.String, int);
+  private boolean conditionCH0(java.lang.String, int);
+  private boolean conditionCH1(java.lang.String, int);
+  private boolean conditionL0(java.lang.String, int);
+  private boolean conditionM0(java.lang.String, int);
+  private boolean isSlavoGermanic(java.lang.String);
+  private boolean isVowel(char);
+  private boolean isSilentStart(java.lang.String);
+  private java.lang.String cleanInput(java.lang.String);
+  protected char charAt(java.lang.String, int);
+  private static boolean contains(java.lang.String, int, int, java.lang.String);
+  private static boolean contains(java.lang.String, int, int, java.lang.String, java.lang.String);
+  private static boolean contains(java.lang.String, int, int, java.lang.String, java.lang.String, java.lang.String);
+  private static boolean contains(java.lang.String, int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+  private static boolean contains(java.lang.String, int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+  private static boolean contains(java.lang.String, int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String);
+  protected static boolean contains(java.lang.String, int, int, java.lang.String[]);
+  static {};
+}
+
+
+BUGGY source excerpt: org.apache.commons.codec.language.DoubleMetaphone (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.codec.language;
+
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.StringEncoder;
+
+/**
+ * Encodes a string into a double metaphone value.
+ * This Implementation is based on the algorithm by <CITE>Lawrence Philips</CITE>.
+ * <ul>
+ * <li>Original Article: <a 
+ * href="http://www.cuj.com/documents/s=8038/cuj0006philips/">
+ * http://www.cuj.com/documents/s=8038/cuj0006philips/</a></li>
+ * <li>Original Source Code: <a href="ftp://ftp.cuj.com/pub/2000/1806/philips.zip">
+ * ftp://ftp.cuj.com/pub/2000/1806/philips.zip</a></li>
+ * </ul>
+ * 
+ * @author Apache Software Foundation
+ * @version $Id$
+ */
+public class DoubleMetaphone implements StringEncoder {
+
+    /**
+     * "Vowels" to test for
+     */
+    private static final String VOWELS = "AEIOUY";
+
+    /**
+     * Prefixes when present which are not pronounced
+     */
+    private static final String[] SILENT_START = 
+    { "GN", "KN", "PN", "WR", "PS" };
+    private static final String[] L_R_N_M_B_H_F_V_W_SPACE = 
+    { "L", "R", "N", "M", "B", "H", "F", "V", "W", " " };
+    private static final String[] ES_EP_EB_EL_EY_IB_IL_IN_IE_EI_ER = 
+    { "ES", "EP", "EB", "EL", "EY", "IB", "IL", "IN", "IE", "EI", "ER" };
+    private static final String[] L_T_K_S_N_M_B_Z = 
+    { "L", "T", "K", "S", "N", "M", "B", "Z" };
+
+    /**
+     * Maximum length of an encoding, default is 4
+     */
+    protected int maxCodeLen = 4;
+
+    /**
+     * Creates an instance of this DoubleMetaphone encoder
+     */
+    public DoubleMetaphone() {
+        super();
+    }
+    
+    /**
+     * Encode a value with Double Metaphone
+     *
+     * @param value String to encode
+     * @return an encoded string
+     */
+    public String doubleMetaphone(String value) {
+        return doubleMetaphone(value, false);
+    }
+    
+    /**
+     * Encode a value with Double Metaphone, optionally using the alternate
+     * encoding.
+     *
+     * @param value String to encode
+     * @param alternate use alternate encode
+     * @return an encoded string
+     */
+    public String doubleMetaphone(String value, boolean alternate) {
+        value = cleanInput(value);
+        if (value == null) {
+            return null;
+        }
+        
+        boolean slavoGermanic = isSlavoGermanic(value);
+        int index = isSilentStart(value) ? 1 : 0;
+        
+        DoubleMetaphoneResult result = new DoubleMetaphoneResult(this.getMaxCodeLen());
+        
+        while (!result.isComplete() && index <= value.length() - 1) {
+            switch (value.charAt(index)) {
+            case 'A':
+            case 'E':
+            case 'I':
+            case 'O':
+            case 'U':
+            case 'Y':
+                index = handleAEIOUY(value, result, index);
+                break;
+            case 'B':
+                result.append('P');
+                index = charAt(value, index + 1) == 'B' ? index + 2 : index + 1;
+                break;
+            case '\u00C7':
+                // A C with a Cedilla
+                result.append('S');
+                index++;
+                break; 
+            case 'C':
+                index = handleC(value, result, index);
+                break;
+            case 'D':
+                index = handleD(value, result, index);
+                break;
+            case 'F':
+                result.append('F');
+                index = charAt(value, index + 1) == 'F' ? index + 2 : index + 1;
+                break;
+            case 'G':
+                index = handleG(value, result, index, slavoGermanic);
+                break;
+            case 'H':
+                index = handleH(value, result, index);
+                break;
+            case 'J':
+                index = handleJ(value, result, index, slavoGermanic);
+                break;
+            case 'K':
+                result.append('K');
+                index = charAt(value, index + 1) == 'K' ? index + 2 : index + 1;
+                break;
+            case 'L':
+                index = handleL(value, result, index);
+                break;
+            case 'M':
+                result.append('M');
+                index = conditionM0(value, index) ? index + 2 : index + 1;
+                break;
+            case 'N':
+                result.append('N');
+                index = charAt(value, index + 1) == 'N' ? index + 2 : index + 1;
+                break;
+            case '\u00D1':
+                // N with a tilde (spanish ene)
+                result.append('N');
+                index++;
+                break;
+            case 'P':
+                index = handleP(value, result, index);
+                break;
+            case 'Q':
+                result.append('K');
+                index = charAt(value, index + 1) == 'Q' ? index + 2 : index + 1;
+                break;
+            case 'R':
+                index = handleR(value, result, index, slavoGermanic);
+                break;
+            case 'S':
+                index = handleS(value, result, index, slavoGermanic);
+                break;
+            case 'T':
+                index = handleT(value, result, index);
+                break;
+            case 'V':
+                result.append('F');
+                index = charAt(value, index + 1) == 'V' ? index + 2 : index + 1;
+                break;
+            case 'W':
+                index = handleW(value, result, index);
+                break;
+            case 'X':
+                index = handleX(value, result, index);
+                break;
+            case 'Z':
+                index = handleZ(value, result, index, slavoGermanic);
+                break;
+            default:
+                index++;
+                break;
+            }
+        }
+
+        return alternate ? result.getAlternate() : result.getPrimary();
+    }
+    
+    /**
+     * Encode the value using DoubleMetaphone.  It will only work if 
+     * <code>obj</code> is a <code>String</code> (like <code>Metaphone</code>).
+     *
+     * @param obj Object to encode (should be of type String)
+     * @return An encoded Object (will be of type String)
+     * @throws EncoderException encode parameter is not of type String
+     */
+    public Object encode(Object obj) throws EncoderException {
+        if (!(obj instanceof String)) {
+            throw new EncoderException("DoubleMetaphone encode parameter is not of type String"); 
+        } 
+        return doubleMetaphone((String) obj);
+    }
+
+    /**
+     * Encode the value using DoubleMetaphone.
+     *
+     * @param value String to encode
+     * @return An encoded String
+     */
+    public String encode(String value) {
+        return doubleMetaphone(value);   
+    }
+
+    /**
+     * Check if the Double Metaphone values of two <code>String</code> values
+     * are equal.
+     * 
+     * @param value1 The left-hand side of the encoded {@link String#equals(Object)}.
+     * @param value2 The right-hand side of the encoded {@link String#equals(Object)}.
+     * @return <code>true</code> if the encoded <code>String</code>s are equal;
+     *          <code>false</code> otherwise.
+     * @see #isDoubleMetaphoneEqual(String,String,boolean)
+     */
+    public boolean isDoubleMetaphoneEqual(String value1, String value2) {
+        return isDoubleMetaphoneEqual(value1, value2, false);
+    }
+    
+    /**
+     * Check if the Double Metaphone values of two <code>String</code> values
+     * are equal, optionally using the alternate value.
+     * 
+     * @param value1 The left-hand side of the encoded {@link String#equals(Object)}.
+     * @param value2 The right-hand side of the encoded {@link String#equals(Object)}.
+     * @param alternate use the alternate value if <code>true</code>.
+     * @return <code>true</code> if the encoded <code>String</code>s are equal;
+     *          <code>false</code> otherwise.
+     */
+    public boolean isDoubleMetaphoneEqual(String value1, 
+                                          String value2, 
+                                          boolean alternate) {
+        return doubleMetaphone(value1, alternate).equals(doubleMetaphone
+                                                         (value2, alternate));
+    }
+    
+    /**
+     * Returns the maxCodeLen.
+     * @return int
+     */
+    public int getMaxCodeLen() {
+        return this.maxCodeLen;
+    }
+
+    /**
+     * Sets the maxCodeLen.
+     * @param maxCodeLen The maxCodeLen to set
+     */
+    public void setMaxCodeLen(int maxCodeLen) {
+        this.maxCodeLen = maxCodeLen;
+    }
+
+    //-- BEGIN HANDLERS --//
+
+    /**
+     * Handles 'A', 'E', 'I', 'O', 'U', and 'Y' cases
+     */
+    private int handleAEIOUY(String value, DoubleMetaphoneResult result, int 
+                             index) {
+        if (index == 0) {
+            result.append('A');
+        }
+        return index + 1;
+    }
+    
+    /**
+     * Handles 'C' cases
+     */
+    private int handleC(String value, 
+                        DoubleMetaphoneResult result, 
+                        int index) {
+        if (conditionC0(value, index)) {  // very confusing, moved out
+            result.append('K');
+            index += 2;
+        } else if (index == 0 && contains(value, index, 6, "CAESAR")) {
+            result.append('S');
+            index += 2;
+        } else if (contains(value, index, 2, "CH")) {
+            index = handleCH(value, result, index);
+        } else if (contains(value, index, 2, "CZ") && 
+                   !contains(value, index - 2, 4, "WICZ")) {
+            //-- "Czerny" --//
+            result.append('S', 'X');
+            index += 2;
+        } else if (contains(value, index + 1, 3, "CIA")) {
+            //-- "focaccia" --//
+            result.append('X');
+            index += 3;
+        } else if (contains(value, index, 2, "CC") && 
+                   !(index == 1 && charAt(value, 0) == 'M')) {
+            //-- double "cc" but not "McClelland" --//
+            return handleCC(value, result, index);
+        } else if (contains(value, index, 2, "CK", "CG", "CQ")) {
+            result.append('K');
+            index += 2;
+        } else if (contains(value, index, 2, "CI", "CE", "CY")) {
+            //-- Italian vs. English --//
+            if (contains(value, index, 3, "CIO", "CIE", "CIA")) {
+                result.append('S', 'X');
+            } else {
+                result.append('S');
+            }
+            index += 2;
+        } else {
+            result.append('K');
+            if (contains(value, index + 1, 2, " C", " Q", " G")) { 
+                //-- Mac Caffrey, Mac Gregor --//
+                index += 3;
+            } else if (contains(value, index + 1, 1, "C", "K", "Q") && 
+                       !contains(value, index + 1, 2, "CE", "CI")) {
+                index += 2;
+            } else {
+                index++;
+            }
+        }
+        
+        return index;
+    }
+
+    /**
+     * Handles 'CC' cases
+     */
+    private int handleCC(String value, 
+                         DoubleMetaphoneResult result, 
+                         int index) {
+        if (contains(value, index + 2, 1, "I", "E", "H") && 
+            !contains(value, index + 2, 2, "HU")) {
+            //-- "bellocchio" but not "bacchus" --//
+            if ((index == 1 && charAt(value, index - 1) == 'A') || 
+                conta
+```
+
+
+Planning response:
+- Initialize receiver using `new DoubleMetaphone()` with default maxCodeLen or custom length via `setMaxCodeLen(int)`.
+- Verify null input handling for `doubleMetaphone(String)` and `encode(String)` returning null or empty safely.
+- Verify empty string and whitespace-only string inputs return empty strings or proper phonetic codes.
+- Test `doubleMetaphone(String, boolean)` with alternate encoding flags (`true`/`false`).
+- Test `isDoubleMetaphoneEqual(String, String)` and `isDoubleMetaphoneEqual(String, String, boolean)` for matching phonetic keys.
+- Check boundary handling of `maxCodeLen` (e.g., very short limits like 1 or 2, and default length 4).
+- Test words starting with silent start prefixes or special consonant combinations handled by `handle...` methods.
+- Test `encode(Object)` throwing `EncoderException` on non-String objects, and returning encoded `String` on valid Strings.
+- Verify `isSlavoGermanic` and vowel checks behavior on edge-case strings (e.g., containing 'W', 'K', 'CZ', 'WITZ').
+- Check string cleanup behavior (`cleanInput`) for non-alpha characters and case insensitivity.

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:56:29.661626+00:00",
+  "ended_at_utc": "2026-10-04T06:56:31.885711+00:00",
+  "raw_body_sha256": "f3769698e3ae0bb06ac5b3f872093a03652c210b8f0c3136bf280fec45cb21bd",
+  "body": {
+    "id": "genai-01a105b3-3192-7134-b04a-5c5e35b452c3",
+    "object": "chat.completion",
+    "created": 1791096992,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\nimport com.google.javascript.rhino.Token;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertNotNull;\n\npublic class FlowSensitiveInlineVariablesTest {\n\n  @Test\n  public void testConstructorAndProcess() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    pass.process(externs, root);\n    assertNotNull(pass);\n  }\n\n  @Test\n  public void testEnterAndExitScope() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    Node fn = Node.newString(Token.FUNCTION, \"function() {}\");\n    Scope scope = new Scope(null, fn);\n    NodeTraversal t = new NodeTraversal(compiler, pass, null);\n    pass.enterScope(t);\n    pass.exitScope(t);\n    assertNotNull(pass);\n  }\n\n  @Test\n  public void testVisitCallback() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    NodeTraversal t = new NodeTraversal(compiler, pass, null);\n    Node n = new Node(Token.NAME, \"x\");\n    pass.visit(t, n, null);\n    assertNotNull(pass);\n  }\n\n  @Test\n  public void testProcessWithSimpleFunction() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    Node fn = Node.newString(Token.FUNCTION, \"f\");\n    fn.addChildToBack(Node.newString(Token.NAME, \"f\"));\n    fn.addChildToBack(new Node(Token.PARAM_LIST));\n    Node block = new Node(Token.BLOCK);\n    fn.addChildToBack(block);\n    root.addChildToBack(fn);\n\n    pass.process(externs, root);\n    assertNotNull(compiler);\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5447,
+      "completion_tokens": 531,
+      "total_tokens": 5978
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 87863,
+      "daily_remaining_tokens": 262137
+    }
+  },
+  "headers": {
+    "x-request-id": "s08w0ehc69iq3i8a71l1oqoq",
+    "date": "Sun, 04 Oct 2026 06:56:32 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

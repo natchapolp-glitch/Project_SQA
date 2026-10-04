@@ -1,0 +1,12 @@
+**Key behaviors/contracts to test:**
+
+1. `resetWithEmpty()` → `size()==0`, `getTextBuffer()` returns valid array, `contentsAsString()` returns `""`.
+2. `resetWithShared(buf, offset, len)` → `size()==len`, `getTextOffset()==offset`, `hasTextAsCharacters()==true`, no copy made (shares reference until mutated).
+3. `resetWithCopy(buf, offset, len)` → contents equal to source slice, but underlying buffer must be independent (mutating original array afterward shouldn't change contents).
+4. `resetWithString(str)` → `contentsAsString()` equals original string (fast path), `size()` matches length.
+5. `append(char)` repeatedly beyond initial segment capacity must trigger segment expansion (`expand`), preserving all appended chars in `contentsAsArray()`/`contentsAsString()`.
+6. `append(char[], int, int)` and `append(String, int, int)` with partial ranges must only append the specified sub-range, and large inputs spanning multiple segments must be reassembled correctly via `contentsAsString()`.
+7. `getCurrentSegment()`/`expandCurrentSegment()`/`expandCurrentSegment(int)` must return arrays with length >= requested, preserving previously written current-segment content.
+8. `finishCurrentSegment()` moves current segment into segment list and returns a new current segment array (non-null), with `size()` reflecting total of previous segments + current content length.
+9. `contentsAsDouble()`/`contentsAsDecimal()` on numeric text (e.g., `"123.45"`) parse correctly; invalid text should throw `NumberFormatException`.
+10. `ensureNotShared()` on a shared-input buffer must unshare (copy) so subsequent `append` doesn't corrupt original shared source array; boundary cases: zero-length input, `resetWithShared` with `len==0`, `setCurrentLength(0)` resets size correctly.

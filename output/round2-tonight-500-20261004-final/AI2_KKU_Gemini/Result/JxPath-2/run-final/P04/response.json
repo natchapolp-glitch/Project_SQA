@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:13:00.205759+00:00",
+  "ended_at_utc": "2026-10-04T06:13:03.323654+00:00",
+  "raw_body_sha256": "ffc1e2a6639ee7c2b985179a4b0e4871b604a640d5aaf37f561a3993bbe05fba",
+  "body": {
+    "id": "genai-01a1058b-6558-7454-905d-3b6be72f41eb",
+    "object": "chat.completion",
+    "created": 1791094383,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.jxpath.ri.compiler;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.Collections;\nimport java.util.Iterator;\nimport java.util.Locale;\n\nimport org.apache.commons.jxpath.Pointer;\nimport org.apache.commons.jxpath.ri.EvalContext;\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.model.NodePointer;\nimport org.junit.Test;\n\npublic class ExpressionAdditionalTest {\n\n    private static class DummyExpression extends Expression {\n        private final Object value;\n\n        public DummyExpression(Object value) {\n            this.value = value;\n        }\n\n        @Override\n        public boolean computeContextDependent() {\n            return false;\n        }\n\n        @Override\n        public Object computeValue(EvalContext context) {\n            return value;\n        }\n\n        @Override\n        public Object compute(EvalContext context) {\n            return value;\n        }\n    }\n\n    @Test\n    public void testIterateWithEvalContextResult() {\n        DummyExpression expr = new DummyExpression(null) {\n            @Override\n            public Object compute(EvalContext context) {\n                return new Expression.ValueIterator(Collections.emptyList().iterator());\n            }\n        };\n        Iterator it = expr.iterate(null);\n        assertNotNull(it);\n        assertFalse(it.hasNext());\n    }\n\n    @Test\n    public void testIteratePointersNullResult() {\n        DummyExpression expr = new DummyExpression(null);\n        Iterator it = expr.iteratePointers(null);\n        assertNotNull(it);\n        assertFalse(it.hasNext());\n    }\n\n    @Test\n    public void testPointerIteratorRemoveUnsupported() {\n        Expression.PointerIterator pointerIterator = new Expression.PointerIterator(\n                Collections.emptyIterator(), new QName(\"test\"), Locale.getDefault());\n        boolean thrown = false;\n        try {\n            pointerIterator.remove();\n        } catch (UnsupportedOperationException e) {\n            thrown = true;\n        }\n        assertTrue(thrown);\n    }\n\n    @Test\n    public void testValueIteratorWithPointer() {\n        Pointer pointer = new Pointer() {\n            public Object getNode() { return \"nodeValue\"; }\n            public Object getValue() { return \"val\"; }\n            public void setValue(Object value) {}\n            public Pointer getImmediateParentPointer() { return null; }\n            public NodePointer getNodePointer() { return null; }\n            public boolean isActual() { return true; }\n            public boolean isCollection() { return false; }\n            public int getLength() { return 1; }\n            public Object getImmediateNode() { return \"nodeValue\"; }\n            public Locale getLocale() { return Locale.getDefault(); }\n        };\n\n        java.util.List<Object> list = new java.util.ArrayList<Object>();\n        list.add(pointer);\n        Expression.ValueIterator valueIterator = new Expression.ValueIterator(list.iterator());\n        assertTrue(valueIterator.hasNext());\n        assertEquals(\"val\", valueIterator.next());\n        assertFalse(valueIterator.hasNext());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2428,
+      "completion_tokens": 766,
+      "total_tokens": 3194
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 58288,
+      "daily_remaining_tokens": 291712
+    }
+  },
+  "headers": {
+    "x-request-id": "m1wasfngrmnub7o43z6kdfz0",
+    "date": "Sun, 04 Oct 2026 06:13:03 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

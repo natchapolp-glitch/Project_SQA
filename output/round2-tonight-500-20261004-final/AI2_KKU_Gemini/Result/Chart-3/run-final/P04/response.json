@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:48:18.559806+00:00",
+  "ended_at_utc": "2026-10-04T06:48:21.737810+00:00",
+  "raw_body_sha256": "e57025f6b8213d18c0cda2d655bfc84897fc5286096ba1e6e724bc7eb496bfb0",
+  "body": {
+    "id": "genai-01a105ab-b983-7fed-9d90-a617ca43f595",
+    "object": "chat.completion",
+    "created": 1791096502,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.data.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.junit.Test;\n\npublic class TimeSeriesAdditionalTest {\n\n    @Test\n    public void testAddOrUpdateUpdatesExistingPeriod() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        series.addOrUpdate(p1, 10.0);\n        assertEquals(1, series.getItemCount());\n        assertEquals(10.0, series.getValue(0).doubleValue(), 0.0000001);\n\n        series.addOrUpdate(p1, 25.0);\n        assertEquals(1, series.getItemCount());\n        assertEquals(25.0, series.getValue(0).doubleValue(), 0.0000001);\n        assertEquals(25.0, series.getMaxY(), 0.0000001);\n    }\n\n    @Test\n    public void testRemoveAgedItems() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        series.setMaximumItemAge(1L);\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        RegularTimePeriod p2 = new Day(3, 1, 2020);\n\n        series.add(p1, 10.0);\n        series.add(p2, 20.0);\n        \n        assertEquals(1, series.getItemCount());\n        assertEquals(p2, series.getTimePeriod(0));\n    }\n\n    @Test\n    public void testUpdateByIndex() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        series.add(p1, 10.0);\n        assertEquals(10.0, series.getMinY(), 0.0000001);\n\n        series.update(0, 50.0);\n        assertEquals(50.0, series.getMaxY(), 0.0000001);\n        assertEquals(50.0, series.getValue(0).doubleValue(), 0.0000001);\n    }\n\n    @Test\n    public void testCreateCopyByIndexRange() throws CloneNotSupportedException {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        RegularTimePeriod p2 = new Day(2, 1, 2020);\n        RegularTimePeriod p3 = new Day(3, 1, 2020);\n        series.add(p1, 10.0);\n        series.add(p2, 20.0);\n        series.add(p3, 30.0);\n\n        TimeSeries copy = series.createCopy(0, 1);\n        assertNotNull(copy);\n        assertEquals(2, copy.getItemCount());\n        assertEquals(10.0, copy.getMinY(), 0.0000001);\n        assertEquals(20.0, copy.getMaxY(), 0.0000001);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6494,
+      "completion_tokens": 780,
+      "total_tokens": 7274
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 63923,
+      "daily_remaining_tokens": 286077
+    }
+  },
+  "headers": {
+    "x-request-id": "hzmgdtcm71cge7971j0e8q15",
+    "date": "Sun, 04 Oct 2026 06:48:22 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

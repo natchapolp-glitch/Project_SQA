@@ -1,0 +1,37 @@
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class CSVRecordAdditionalTest {
+
+    @Test
+    public void testValuesMethod() {
+        String[] values = new String[] { "A", "B" };
+        CSVRecord record = new CSVRecord(values, null, null, 1L);
+        assertEquals(values, record.values());
+    }
+
+    @Test
+    public void testNullValuesHandling() {
+        CSVRecord record = new CSVRecord(null, null, null, 1L);
+        assertEquals(0, record.size());
+        assertNotNull(record.values());
+    }
+
+    @Test
+    public void testGetByNameInconsistentRecord() {
+        String[] values = new String[] { "Val1" };
+        Map<String, Integer> mapping = new HashMap<String, Integer>();
+        mapping.put("First", 0);
+        mapping.put("Second", 1); // mapping index 1 is out of bounds for values length 1
+
+        CSVRecord record = new CSVRecord(values, mapping, null, 1L);
+        assertEquals("Val1", record.get("First"));
+    }
+}

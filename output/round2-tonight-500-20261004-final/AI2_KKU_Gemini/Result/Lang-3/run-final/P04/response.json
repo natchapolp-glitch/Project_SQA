@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:18:19.493929+00:00",
+  "ended_at_utc": "2026-10-04T06:18:21.817678+00:00",
+  "raw_body_sha256": "7704e14d1c1a60af5a6ce30e68c30318e01a7b1b85c499a853c31909448b3975",
+  "body": {
+    "id": "genai-01a10590-4410-71c3-aa3f-5ff84aa9676d",
+    "object": "chat.completion",
+    "created": 1791094703,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.lang3.math;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.junit.Test;\n\npublic class NumberUtilsLang3AdditionalTest {\n\n    @Test\n    public void testToByte() {\n        assertEquals((byte) 0, NumberUtils.toByte(null));\n        assertEquals((byte) 0, NumberUtils.toByte(\"\"));\n        assertEquals((byte) 123, NumberUtils.toByte(\"123\"));\n        assertEquals((byte) 42, NumberUtils.toByte(\"invalid\", (byte) 42));\n    }\n\n    @Test\n    public void testToShort() {\n        assertEquals((short) 0, NumberUtils.toShort(null));\n        assertEquals((short) 0, NumberUtils.toShort(\"\"));\n        assertEquals((short) 123, NumberUtils.toShort(\"123\"));\n        assertEquals((short) 42, NumberUtils.toShort(\"invalid\", (short) 42));\n    }\n\n    @Test\n    public void testCreateBigDecimalAndBigInteger() {\n        assertNotNull(NumberUtils.createBigDecimal(\"123.45\"));\n        assertEquals(new BigDecimal(\"123.45\"), NumberUtils.createBigDecimal(\"123.45\"));\n        assertNotNull(NumberUtils.createBigInteger(\"12345\"));\n        assertEquals(new BigInteger(\"12345\"), NumberUtils.createBigInteger(\"12345\"));\n    }\n\n    @Test\n    public void testCreateFloatAndDouble() {\n        assertEquals(Float.valueOf(1.5f), NumberUtils.createFloat(\"1.5\"));\n        assertEquals(Double.valueOf(2.5d), NumberUtils.createDouble(\"2.5\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6323,
+      "completion_tokens": 423,
+      "total_tokens": 6746
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 81235,
+      "daily_remaining_tokens": 268765
+    }
+  },
+  "headers": {
+    "x-request-id": "w94r5nepyv5g33e2chjtdt7x",
+    "date": "Sun, 04 Oct 2026 06:18:23 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

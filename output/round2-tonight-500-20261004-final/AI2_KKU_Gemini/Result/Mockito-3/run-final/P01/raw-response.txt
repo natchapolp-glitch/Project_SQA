@@ -1,0 +1,10 @@
+Valid receiver setup: instantiate `InvocationMatcher` with a valid `Invocation` and an appropriate list of Hamcrest `Matcher` instances.
+`matches(Invocation)` should return true when the candidate invocation matches both the method and arguments of the stored invocation/matchers.
+`matches(Invocation)` must safely handle candidate invocations with differing argument lengths or types without throwing unhandled exceptions.
+`hasSameMethod(Invocation)` returns true if and only if the candidate invocation targets the exact same reflective `Method`.
+`hasSimilarMethod(Invocation)` returns true if the candidate invocation has a similar method signature (e.g., erasure/overloading compatibility).
+`captureArgumentsFrom(Invocation)` correctly extracts argument values using the configured matchers that implement `CapturesArguments`.
+`getMatchers()` returns the exact list of Hamcrest matchers supplied at construction or synthesized default matchers (e.g., `Any`).
+`createFrom(List<Invocation>)` correctly transforms a list of invocations into a corresponding list of `InvocationMatcher` objects.
+Boundary condition: handling empty matcher lists or when the provided matcher list size does not match the method argument count.
+Boundary condition: invoking methods with varargs or null arguments against strict Hamcrest matchers.

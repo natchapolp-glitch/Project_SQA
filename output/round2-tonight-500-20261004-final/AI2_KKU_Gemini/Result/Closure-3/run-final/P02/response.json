@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:56:17.064759+00:00",
+  "ended_at_utc": "2026-10-04T06:56:19.503119+00:00",
+  "raw_body_sha256": "3b3319fae4eb20b630d15008a1986e3a1623e33a8e08c23ab36ce0d19a98c627",
+  "body": {
+    "id": "genai-01a105b3-0ae0-7bcf-b7db-db50c0a5170d",
+    "object": "chat.completion",
+    "created": 1791096982,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertNotNull;\n\npublic class FlowSensitiveInlineVariablesTest {\n\n  @Test\n  public void testConstructorAndProcess() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    pass.process(externs, root);\n    assertNotNull(pass);\n  }\n\n  @Test\n  public void testEnterAndExitScope() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    Node fn = Node.newString(Token.FUNCTION, \"function() {}\");\n    Scope scope = new Scope(null, fn);\n    NodeTraversal t = new NodeTraversal(compiler, pass, null);\n    pass.enterScope(t);\n    pass.exitScope(t);\n    assertNotNull(pass);\n  }\n\n  @Test\n  public void testVisitCallback() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    NodeTraversal t = new NodeTraversal(compiler, pass, null);\n    Node n = new Node(Token.NAME, \"x\");\n    pass.visit(t, n, null);\n    assertNotNull(pass);\n  }\n\n  @Test\n  public void testProcessWithSimpleFunction() {\n    Compiler compiler = new Compiler();\n    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    Node fn = Node.newString(Token.FUNCTION, \"f\");\n    fn.addChildToBack(Node.newString(Token.NAME, \"f\"));\n    fn.addChildToBack(new Node(Token.PARAM_LIST));\n    Node block = new Node(Token.BLOCK);\n    fn.addChildToBack(block);\n    root.addChildToBack(fn);\n\n    pass.process(externs, root);\n    assertNotNull(compiler);\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4326,
+      "completion_tokens": 518,
+      "total_tokens": 4844
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 81885,
+      "daily_remaining_tokens": 268115
+    }
+  },
+  "headers": {
+    "x-request-id": "vhm96i39srvvarcs3bggnbmw",
+    "date": "Sun, 04 Oct 2026 06:56:22 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

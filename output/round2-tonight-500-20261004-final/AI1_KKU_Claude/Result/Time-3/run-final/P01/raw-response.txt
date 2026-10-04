@@ -1,0 +1,10 @@
+- setRounding(field, mode): after setting, verify setMillis/add/set round result according to mode (FLOOR truncates down, CEILING rounds up, HALF_* rounds to nearest with tie-breaking) against the rounding field's unit (e.g. hourOfDay field rounds to whole hours).
+- setRounding(field) alone (no mode) should default to ROUND_NONE behavior semantics—verify getRoundingMode() default and that values are unaffected.
+- setRounding(null) should clear rounding (getRoundingField() returns null, getRoundingMode() == ROUND_NONE), and subsequent setMillis should not round.
+- Boundary: rounding exactly at half-way point for each HALF_* mode (HALF_FLOOR rounds down on tie, HALF_CEILING rounds up on tie, HALF_EVEN rounds to even).
+- After setRounding, calling setMillis(long) must apply rounding to the new value (not just to future adds).
+- add(long)/add(ReadableDuration)/add(ReadablePeriod) after setRounding should round post-addition result.
+- setMillis(ReadableInstant) with rounding set should also round.
+- Invalid mode argument to setRounding(field, mode) (e.g. mode out of enum range) — determine expected IllegalArgumentException per contract.
+- copy()/clone() should preserve rounding field and mode on the new instance per ReadWritableDateTime contract (verify if documented).
+- Verify getRoundingField()/getRoundingMode() getters reflect last setRounding call accurately, including transitions between different fields/modes.

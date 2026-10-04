@@ -1,0 +1,10 @@
+Valid receiver setup: Instantiate `TarArchiveOutputStream` wrapping a `ByteArrayOutputStream`.
+Behavior: `setLongFileMode()` accepts `LONGFILE_ERROR`, `LONGFILE_TRUNCATE`, or `LONGFILE_GNU`.
+Boundary: Writing entry names exceeding standard Tar header length limits (100 bytes).
+Behavior: Under `LONGFILE_ERROR`, long entry names should throw an exception.
+Behavior: Under `LONGFILE_TRUNCATE`, long entry names should be truncated without error.
+Behavior: Under `LONGFILE_GNU`, long entry names should be written using GNU longname extension entries.
+Boundary: Writing data whose total size matches, exceeds, or falls short of `TarArchiveEntry` size.
+Behavior: `closeArchiveEntry()` validates that the written bytes match the entry's declared size.
+Behavior: `finish()` writes the EOF records without closing the underlying stream.
+Behavior: `close()` finishes the stream and closes the underlying output stream.

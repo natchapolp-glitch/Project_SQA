@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:17:59.274356+00:00",
+  "ended_at_utc": "2026-10-04T09:18:07.205105+00:00",
+  "raw_body_sha256": "c520037b39d0654ac44b8de670494c3ae8d265960d4820ece136fc13ef4cadd6",
+  "body": {
+    "id": "gen-1791105481-gaU8LJj5QBt1Y1obaGQi",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `toLocale(String)`: valid formats \"en\", \"en_GB\", \"en_GB_VAR\" must parse correctly; null input should throw NullPointerException; malformed strings (wrong case, wrong length, bad separators) should throw IllegalArgumentException; boundary around 2-letter vs 3-letter language codes, and empty country with variant (e.g. \"en__POSIX\") should be accepted.\n- `languagesByCountry(String)`: null or unknown country code should return empty (non-null) list, not throw; valid country code (e.g. \"GB\") should return list containing locales with that country and a language set; result list must be unmodifiable; repeated calls should return same cached/equal content.\n- `countriesByLanguage(String)`: same contract as above but keyed by language code (e.g. \"en\"); null/unknown language returns empty list; result unmodifiable.\n- `localeLookupList(Locale)` and `localeLookupList(Locale, Locale)`: null primary locale should return empty list (or NPE per contract—verify against javadoc); list must start with the most specific locale and progressively drop variant, then country, then language; must include default locale at end when provided; no duplicate entries; returned list unmodifiable.\n- `availableLocaleList()`/`availableLocaleSet()`: must be non-empty, contain `Locale.getDefault()` or at least standard locales like `Locale.US`; returned collections unmodifiable; set and list should contain same elements.\n- `isAvailableLocale(Locale)`: true for locales in `availableLocaleList()`, false for a clearly bogus locale (e.g. new Locale(\"xx\",\"XX\")); null should return false (per typical contract) rather than throw.\n- Static initializer (`cLanguagesByCountry`, `cCountriesByLanguage`) must be lazily/correctly populated exactly once — verify no `ConcurrentModificationException` or stale caching across multiple calls with different/same keys.\n- Verify thread-safety is not directly testable but consistency across repeated calls (idempotence) can be asserted.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 627,
+      "output_tokens": 680,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008054,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008054,
+        "upstream_inference_prompt_cost": 0.001254,
+        "upstream_inference_completions_cost": 0.0068
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 163839,
+      "daily_remaining_tokens": 36161
+    }
+  },
+  "headers": {
+    "x-request-id": "txgab3mb41zt9gpdgmnel3ub",
+    "date": "Sun, 04 Oct 2026 09:18:10 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

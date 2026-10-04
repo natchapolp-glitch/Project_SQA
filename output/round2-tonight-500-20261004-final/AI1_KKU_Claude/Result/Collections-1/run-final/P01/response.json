@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:44:32.131308+00:00",
+  "ended_at_utc": "2026-10-04T03:44:37.749245+00:00",
+  "raw_body_sha256": "bdd9562cbd92bbd889dc68ebcea8f0ced94c8e05d5b76d796b97314db2d7e30c",
+  "body": {
+    "id": "gen-1791085473-znipVUNYePq3NNBqgxVg",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Setup: new Flat3Map(), put 3 entries (fills internal slots), then call entrySet().iterator() or mapIterator() and use setValue()/remove() to test in-place (non-delegate) mode mutation correctness.\n- setValue on iterator for key1/key2/key3 slots must update corresponding get(key) result without converting to delegate map.\n- Iterator.remove() on each of the 3 slots must correctly shift remaining entries (test removing slot1, slot2, slot3 individually, verifying remaining keys/values and size).\n- containsKey/containsValue/get with null key and null value as valid entries (Flat3Map allows nulls).\n- Duplicate put with existing key should update value, not increase size, and not disturb other slots.\n- Transition boundary: put 4th entry triggers convertToMap(); verify behavior (get/put/remove/iterator) still correct after delegate conversion.\n- equals()/hashCode() consistency with java.util.Map contract, including comparing two Flat3Maps with same entries in different insertion order.\n- clone() must produce independent copy (mutating clone shouldn't affect original) in both small (<=3) and delegate (>3) modes.\n- Serialization round-trip (writeObject/readObject) preserving entries and size in both modes.\n- remove() on nonexistent key returns null and leaves map unchanged; clear() resets size to 0 and nulls out slots.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1302,
+      "output_tokens": 470,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007304,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007304,
+        "upstream_inference_prompt_cost": 0.002604,
+        "upstream_inference_completions_cost": 0.0047
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 86520,
+      "daily_remaining_tokens": 113480
+    }
+  },
+  "headers": {
+    "x-request-id": "r0x4zzpm71j52h52wa2b5l7n",
+    "date": "Sun, 04 Oct 2026 03:44:39 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

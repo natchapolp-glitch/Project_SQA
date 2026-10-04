@@ -1,0 +1,458 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: JacksonDatabind-2
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.databind.util.TokenBuffer
+
+BUGGY API signatures (may include private members):
+Compiled from "TokenBuffer.java"
+public class com.fasterxml.jackson.databind.util.TokenBuffer extends com.fasterxml.jackson.core.JsonGenerator {
+  protected static final int DEFAULT_GENERATOR_FEATURES;
+  protected com.fasterxml.jackson.core.ObjectCodec _objectCodec;
+  protected int _generatorFeatures;
+  protected boolean _closed;
+  protected boolean _hasNativeTypeIds;
+  protected boolean _hasNativeObjectIds;
+  protected boolean _mayHaveNativeIds;
+  protected com.fasterxml.jackson.databind.util.TokenBuffer$Segment _first;
+  protected com.fasterxml.jackson.databind.util.TokenBuffer$Segment _last;
+  protected int _appendAt;
+  protected java.lang.Object _typeId;
+  protected java.lang.Object _objectId;
+  protected boolean _hasNativeId;
+  protected com.fasterxml.jackson.core.json.JsonWriteContext _writeContext;
+  public com.fasterxml.jackson.databind.util.TokenBuffer(com.fasterxml.jackson.core.ObjectCodec);
+  public com.fasterxml.jackson.databind.util.TokenBuffer(com.fasterxml.jackson.core.ObjectCodec, boolean);
+  public com.fasterxml.jackson.databind.util.TokenBuffer(com.fasterxml.jackson.core.JsonParser);
+  public com.fasterxml.jackson.core.Version version();
+  public com.fasterxml.jackson.core.JsonParser asParser();
+  public com.fasterxml.jackson.core.JsonParser asParser(com.fasterxml.jackson.core.ObjectCodec);
+  public com.fasterxml.jackson.core.JsonParser asParser(com.fasterxml.jackson.core.JsonParser);
+  public com.fasterxml.jackson.core.JsonToken firstToken();
+  public com.fasterxml.jackson.databind.util.TokenBuffer append(com.fasterxml.jackson.databind.util.TokenBuffer) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void serialize(com.fasterxml.jackson.core.JsonGenerator) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public com.fasterxml.jackson.databind.util.TokenBuffer deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException, com.fasterxml.jackson.core.JsonProcessingException;
+  public java.lang.String toString();
+  private final void _appendNativeIds(java.lang.StringBuilder);
+  public com.fasterxml.jackson.core.JsonGenerator enable(com.fasterxml.jackson.core.JsonGenerator$Feature);
+  public com.fasterxml.jackson.core.JsonGenerator disable(com.fasterxml.jackson.core.JsonGenerator$Feature);
+  public boolean isEnabled(com.fasterxml.jackson.core.JsonGenerator$Feature);
+  public int getFeatureMask();
+  public com.fasterxml.jackson.core.JsonGenerator setFeatureMask(int);
+  public com.fasterxml.jackson.core.JsonGenerator useDefaultPrettyPrinter();
+  public com.fasterxml.jackson.core.JsonGenerator setCodec(com.fasterxml.jackson.core.ObjectCodec);
+  public com.fasterxml.jackson.core.ObjectCodec getCodec();
+  public final com.fasterxml.jackson.core.json.JsonWriteContext getOutputContext();
+  public boolean canWriteBinaryNatively();
+  public void flush() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public boolean isClosed();
+  public final void writeStartArray() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeEndArray() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeStartObject() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeEndObject() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeFieldName(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeFieldName(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeString(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeString(char[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeString(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawUTF8String(byte[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeUTF8String(byte[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(java.lang.String, int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(char[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(char) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawValue(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawValue(java.lang.String, int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawValue(char[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(short) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(long) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(double) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(float) throws java.io.IOE
+
+BUGGY source excerpt: com.fasterxml.jackson.databind.util.TokenBuffer (truncated=True)
+```java
+package com.fasterxml.jackson.databind.util;
+
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.TreeMap;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.base.ParserMinimalBase;
+import com.fasterxml.jackson.core.json.JsonReadContext;
+import com.fasterxml.jackson.core.json.JsonWriteContext;
+import com.fasterxml.jackson.core.util.ByteArrayBuilder;
+import com.fasterxml.jackson.databind.*;
+
+/**
+ * Utility class used for efficient storage of {@link JsonToken}
+ * sequences, needed for temporary buffering.
+ * Space efficient for different sequence lengths (especially so for smaller
+ * ones; but not significantly less efficient for larger), highly efficient
+ * for linear iteration and appending. Implemented as segmented/chunked
+ * linked list of tokens; only modifications are via appends.
+ *<p>
+ * Note that before version 2.0, this class was located in the "core"
+ * bundle, not data-binding; but since it was only used by data binding,
+ * was moved here to reduce size of core package
+ */
+public class TokenBuffer
+/* Won't use JsonGeneratorBase, to minimize overhead for validity
+ * checking
+ */
+    extends JsonGenerator
+{
+    protected final static int DEFAULT_GENERATOR_FEATURES = JsonGenerator.Feature.collectDefaults();
+
+    /*
+    /**********************************************************
+    /* Configuration
+    /**********************************************************
+     */
+
+    /**
+     * Object codec to use for stream-based object
+     * conversion through parser/generator interfaces. If null,
+     * such methods can not be used.
+     */
+    protected ObjectCodec _objectCodec;
+
+    /**
+     * Bit flag composed of bits that indicate which
+     * {@link com.fasterxml.jackson.core.JsonGenerator.Feature}s
+     * are enabled.
+     *<p>
+     * NOTE: most features have no effect on this class
+     */
+    protected int _generatorFeatures;
+
+    protected boolean _closed;
+
+    /**
+     * @since 2.3
+     */
+    protected boolean _hasNativeTypeIds;
+
+    /**
+     * @since 2.3
+     */
+    protected boolean _hasNativeObjectIds;
+
+    /**
+     * @since 2.3
+     */
+    protected boolean _mayHaveNativeIds;
+    
+    /*
+    /**********************************************************
+    /* Token buffering state
+    /**********************************************************
+     */
+
+    /**
+     * First segment, for contents this buffer has
+     */
+    protected Segment _first;
+
+    /**
+     * Last segment of this buffer, one that is used
+     * for appending more tokens
+     */
+    protected Segment _last;
+    
+    /**
+     * Offset within last segment, 
+     */
+    protected int _appendAt;
+
+    /**
+     * If native type ids supported, this is the id for following
+     * value (or first token of one) to be written.
+     */
+    protected Object _typeId;
+
+    /**
+     * If native object ids supported, this is the id for following
+     * value (or first token of one) to be written.
+     */
+    protected Object _objectId;
+
+    /**
+     * Do we currnetly have a native type or object id buffered?
+     */
+    protected boolean _hasNativeId = false;
+
+    /*
+    /**********************************************************
+    /* Output state
+    /**********************************************************
+     */
+
+    protected JsonWriteContext _writeContext;
+
+    /*
+    /**********************************************************
+    /* Life-cycle
+    /**********************************************************
+     */
+
+    /**
+     * @param codec Object codec to use for stream-based object
+     *   conversion through parser/generator interfaces. If null,
+     *   such methods can not be used.
+     *   
+     * @deprecated since 2.3 preferred variant is one that takes {@link JsonParser} or additional boolean parameter.
+     */
+    @Deprecated
+    public TokenBuffer(ObjectCodec codec) {
+        this(codec, false);
+    }
+
+    /**
+     * @param codec Object codec to use for stream-based object
+     *   conversion through parser/generator interfaces. If null,
+     *   such methods can not be used.
+     * @param hasNativeIds Whether resulting {@link JsonParser} (if created)
+     *   is considered to support native type and object ids
+     */
+    public TokenBuffer(ObjectCodec codec, boolean hasNativeIds)
+    {
+        _objectCodec = codec;
+        _generatorFeatures = DEFAULT_GENERATOR_FEATURES;
+        _writeContext = JsonWriteContext.createRootContext(null);
+        // at first we have just one segment
+        _first = _last = new Segment();
+        _appendAt = 0;
+        _hasNativeTypeIds = hasNativeIds;
+        _hasNativeObjectIds = hasNativeIds;
+
+        _mayHaveNativeIds = _hasNativeTypeIds | _hasNativeObjectIds;
+    }
+
+    /**
+     * @since 2.3
+     */
+    public TokenBuffer(JsonParser jp)
+    {
+        _objectCodec = jp.getCodec();
+        _generatorFeatures = DEFAULT_GENERATOR_FEATURES;
+        _writeContext = JsonWriteContext.createRootContext(null);
+        // at first we have just one segment
+        _first = _last = new Segment();
+        _appendAt = 0;
+        _hasNativeTypeIds = jp.canReadTypeId();
+        _hasNativeObjectIds = jp.canReadObjectId();
+        _mayHaveNativeIds = _hasNativeTypeIds | _hasNativeObjectIds;
+    }
+    
+    @Override
+    public Version version() {
+        return com.fasterxml.jackson.databind.cfg.PackageVersion.VERSION;
+    }
+
+    /**
+     * Method used to create a {@link JsonParser} that can read contents
+     * stored in this buffer. Will use default <code>_objectCodec</code> for
+     * object conversions.
+     *<p>
+     * Note: instances are not synchronized, that is, they are not thread-safe
+     * if there are concurrent appends to the underlying buffer.
+     * 
+     * @return Parser that can be used for reading contents stored in this buffer
+     */
+    public JsonParser asParser()
+    {
+        return asParser(_objectCodec);
+    }
+
+    /**
+     * Method used to create a {@link JsonParser} that can read contents
+     * stored in this buffer.
+     *<p>
+     * Note: instances are not synchronized, that is, they are not thread-safe
+     * if there are concurrent appends to the underlying buffer.
+     *
+     * @param codec Object codec to use for stream-based object
+     *   conversion through parser/generator interfaces. If null,
+     *   such methods can not be used.
+     * 
+     * @return Parser that can be used for reading contents stored in this buffer
+     */
+    public JsonParser asParser(ObjectCodec codec)
+    {
+        return new Parser(_first, codec, _hasNativeTypeIds, _hasNativeObjectIds);
+    }
+
+    /**
+     * @param src Parser to use for accessing source information
+     *    like location, configured codec
+     */
+    public JsonParser asParser(JsonParser src)
+    {
+        Parser p = new Parser(_first, src.getCodec(), _hasNativeTypeIds, _hasNativeObjectIds);
+        p.setLocation(src.getTokenLocation());
+        return p;
+    }
+    
+    /*
+    /**********************************************************
+    /* Additional accessors
+    /**********************************************************
+     */
+
+    public JsonToken firstToken() {
+        if (_first != null) {
+            return _first.type(0);
+        }
+        return null;
+    }
+    
+    /*
+    /**********************************************************
+    /* Other custom methods not needed for implementing interfaces
+    /**********************************************************
+     */
+
+    /**
+     * Helper method that will append contents of given buffer into this
+     * buffer.
+     * Not particularly optimized; can be made faster if there is need.
+     * 
+     * @return This buffer
+     */
+    @SuppressWarnings("resource")
+    public TokenBuffer append(TokenBuffer other)
+        throws IOException, JsonGenerationException
+    {
+        // Important? If source has native ids, need to store
+        if (!_hasNativeTypeIds) {  
+            _hasNativeTypeIds = other.canWriteTypeId();
+        }
+        if (!_hasNativeObjectIds) {
+            _hasNativeObjectIds = other.canWriteObjectId();
+        }
+        _mayHaveNativeIds = _hasNativeTypeIds | _hasNativeObjectIds;
+        
+        JsonParser jp = other.asParser();
+        while (jp.nextToken() != null) {
+            copyCurrentStructure(jp);
+        }
+        return this;
+    }
+    
+    /**
+     * Helper method that will write all contents of this buffer
+     * using given {@link JsonGenerator}.
+     *<p>
+     * Note: this method would be enough to implement
+     * <code>JsonSerializer</code>  for <code>TokenBuffer</code> type;
+     * but we can not have upwards
+     * references (from core to mapper package); and as such we also
+     * can not take second argument.
+     */
+    public void serialize(JsonGenerator jgen)
+        throws IOException, JsonGenerationException
+    {
+        Segment segment = _first;
+        int ptr = -1;
+
+        final boolean checkIds = _mayHaveNativeIds;
+        boolean hasIds = checkIds && (segment.hasIds());
+
+        while (true) {
+            if (++ptr >= Segment.TOKENS_PER_SEGMENT) {
+                ptr = 0;
+                segment = segment.next();
+                if (segment == null) break;
+                hasIds = checkIds && (segment.hasIds());
+            }
+            JsonToken t = segment.type(ptr);
+            if (t == null) break;
+
+            if (hasIds) {
+                Object id = segment.findObjectId(ptr);
+                if (id != null) {
+                    jgen.writeObjectId(id);
+                }
+                id = segment.findTypeId(ptr);
+                if (id != null) {
+                    jgen.writeTypeId(id);
+                }
+            }
+            
+            // Note: copied from 'copyCurrentEvent'...
+            switch (t) {
+            case START_OBJECT:
+                jgen.writeStartObject();
+                break;
+            case END_OBJECT:
+                jgen.writeEndObject();
+                break;
+            case START_ARRAY:
+                jgen.writeStartArray();
+                break;
+            case END_ARRAY:
+                jgen.writeEndArray();
+                break;
+            case FIELD_NAME:
+            {
+                // 13-Dec-2010, tatu: Maybe we should start using different type tokens to reduce casting?
+                Object ob = segment.get(ptr);
+                if (ob instanceof SerializableString) {
+                    jgen.writeFieldName((SerializableString) ob);
+                } else {
+                    jgen.writeFieldName((String) ob);
+                }
+            }
+                break;
+            case VALUE_STRING:
+                {
+                    Object ob = segment.get(ptr);
+                    if (ob instanceof SerializableString) {
+                        jgen.writeString((SerializableString) ob);
+                    } else {
+                        jgen.writeString((String) ob);
+                    }
+                }
+                break;
+            case VALUE_NUMBER_INT:
+                {
+                    Object n = segment.get(ptr);
+                    if (n instanceof Integer) {
+                        jgen.writeNumber((Integer) n);
+                    } else if (n instanceof BigInteger) {
+                        jgen.writeNumber((BigInteger) n);
+                    } else if (n instanceof Long) {
+                        jgen.writeNumber((Long) n);
+                    } else if (n instanceof Short) {
+                        jgen.writeNumber((Short) n);
+                    } else {
+                        jgen.writeNumber(((Number) n).intValue());
+                    }
+                }
+                break;
+            case VALUE_NUMBER_FLOAT:
+                {
+                    Object n = segment.get(ptr);
+                    if (n instanceof Double) {
+                        jgen.writeNumber(((Double) n).doubleValue());
+                    } else if (n instanceof BigDecimal) {
+                        jgen.writeNumber((BigDecimal) n);
+         
+```
+
+
+Planning response:
+- `writeNumber(BigInteger)` and `writeNumber(BigDecimal)` must accept `null` without throwing NPE, consistent with Jackson's contract of serializing null numeric arguments as JSON null (writeNull()).
+- Setup: construct `TokenBuffer(ObjectCodec)` (e.g., `new TokenBuffer(null, false)`), then call `writeStartArray()`/`writeStartObject()` or write at root before invoking writeNumber with null BigInteger/BigDecimal.
+- Verify resulting token stream (via `asParser()`) yields `JsonToken.VALUE_NULL` at that position, not a numeric token or an exception.
+- Boundary: test both standalone root-level null number write and null number write as object field value / array element.
+- Also verify non-null BigInteger/BigDecimal still produce `VALUE_NUMBER_INT`/`VALUE_NUMBER_FLOAT` correctly (regression contrast).
+- Confirm no corruption of `_hasNativeTypeIds`/`_appendAt` state after writing null numeric value.
+- Check `getBigIntegerValue()`/`getDecimalValue()` via resulting JsonParser throw appropriately or return null consistent with underlying JsonToken.VALUE_NULL semantics (per JsonParser contract, likely returns null or throws if value accessed on null token—confirm against JsonParser doc, not buggy code).
+- Test `toString()` doesn't throw on buffer containing a null-value entry.
+- Use JUnit `assertEquals` for token type and `assertNull`/`assertNotNull` for value content, avoiding reliance on internal Segment layout.

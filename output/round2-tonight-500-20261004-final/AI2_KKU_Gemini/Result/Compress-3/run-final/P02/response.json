@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:09:51.904474+00:00",
+  "ended_at_utc": "2026-10-04T07:09:55.446320+00:00",
+  "raw_body_sha256": "0d57d151222b98e61c858440d1af3d4fd321de9470414ffe3c5935791f8fe3ba",
+  "body": {
+    "id": "genai-01a105bf-7bb0-74e8-a8ce-5331b85feca2",
+    "object": "chat.completion",
+    "created": 1791097797,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.compress.archivers.tar;\n\nimport org.junit.Test;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\npublic class TarArchiveOutputStreamTest {\n\n    @Test\n    public void testGetRecordSizeDefault() {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n        assertEquals(TarBuffer.DEFAULT_RCDSIZE, tarOut.getRecordSize());\n    }\n\n    @Test\n    public void testGetRecordSizeCustom() {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out, 1024, 512);\n        assertEquals(512, tarOut.getRecordSize());\n    }\n\n    @Test(expected = RuntimeException.class)\n    public void testLongFileModeError() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n        tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_ERROR);\n\n        String longName = \"thisisareallylongfilenamethatexceedsthestandardtarheaderlimitofonehundredcharactersandshoulddefinitelytriggertheerrorhandlingwhenmodeiserrorsettozero\";\n        TarArchiveEntry entry = new TarArchiveEntry(longName);\n        tarOut.putArchiveEntry(entry);\n    }\n\n    @Test\n    public void testLongFileModeTruncate() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n        tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_TRUNCATE);\n\n        String longName = \"thisisareallylongfilenamethatexceedsthestandardtarheaderlimitofonehundredcharactersandshoulddefinitelytriggerthetruncationwhenmodeistruncate\";\n        TarArchiveEntry entry = new TarArchiveEntry(longName);\n        tarOut.putArchiveEntry(entry);\n        tarOut.closeArchiveEntry();\n        tarOut.finish();\n        tarOut.close();\n        assertNotNull(out.toByteArray());\n    }\n\n    @Test\n    public void testLongFileModeGnu() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n        tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);\n\n        String longName = \"thisisareallylongfilenamethatexceedsthestandardtarheaderlimitofonehundredcharactersandshouldusegnuextensionswhenmodeisgnu\";\n        TarArchiveEntry entry = new TarArchiveEntry(longName);\n        entry.setSize(0);\n        tarOut.putArchiveEntry(entry);\n        tarOut.closeArchiveEntry();\n        tarOut.finish();\n        tarOut.close();\n        assertNotNull(out.toByteArray());\n    }\n\n    @Test(expected = IOException.class)\n    public void testWriteExceedsEntrySize() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n\n        TarArchiveEntry entry = new TarArchiveEntry(\"test.txt\");\n        entry.setSize(5);\n        tarOut.putArchiveEntry(entry);\n\n        byte[] data = \"too long data\".getBytes();\n        tarOut.write(data, 0, data.length);\n    }\n\n    @Test(expected = IOException.class)\n    public void testCloseArchiveEntryUnderwritten() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n\n        TarArchiveEntry entry = new TarArchiveEntry(\"test.txt\");\n        entry.setSize(10);\n        tarOut.putArchiveEntry(entry);\n\n        byte[] data = \"short\".getBytes();\n        tarOut.write(data, 0, data.length);\n        tarOut.closeArchiveEntry();\n    }\n\n    @Test\n    public void testFinishAndClose() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n\n        TarArchiveEntry entry = new TarArchiveEntry(\"empty.txt\");\n        entry.setSize(0);\n        tarOut.putArchiveEntry(entry);\n        tarOut.closeArchiveEntry();\n\n        tarOut.finish();\n        tarOut.close();\n        \n        assertEquals(true, out.size() > 0);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3654,
+      "completion_tokens": 1052,
+      "total_tokens": 4706
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 73791,
+      "daily_remaining_tokens": 276209
+    }
+  },
+  "headers": {
+    "x-request-id": "hz1lmvagwjsf82vxdh7nyl7v",
+    "date": "Sun, 04 Oct 2026 07:09:57 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

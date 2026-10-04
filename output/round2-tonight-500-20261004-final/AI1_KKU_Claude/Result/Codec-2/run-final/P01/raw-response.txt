@@ -1,0 +1,12 @@
+**Relevant behaviors/contracts to test:**
+
+1. `encodeBase64(byte[])` on empty array returns empty byte array (not null).
+2. `encodeBase64(null)` returns null (documented null-safety).
+3. `decodeBase64(byte[])` round-trips with `encodeBase64` for various lengths (0,1,2,3,4,...n bytes) to cover padding/modulus boundaries.
+4. `encodeBase64Chunked` inserts CRLF every CHUNK_SIZE (76) encoded chars, including final line termination.
+5. `isArrayByteBase64`/`isBase64(byte)` correctly classify valid Base64 chars, pad '=', whitespace, and invalid bytes.
+6. `discardWhitespace` removes only whitespace (space, \n, \r, \t), leaving other bytes untouched.
+7. `encodeInteger`/`decodeInteger` round-trip for zero, positive, negative, and large BigIntegers (sign/leading-byte handling).
+8. `encodeBase64URLSafe` uses URL-safe table (`-`/`_`) and omits padding.
+9. Streaming API (`encode(byte[],int,int)` then `readResults`) behaves correctly across multiple calls with partial chunks (receiver state: `modulus`, `buf`, `pos` correctly reset/sized via constructors with different `lineLength`).
+10. Constructor validation: negative/invalid `lineLength` or `lineSeparator` containing Base64 characters should throw `IllegalArgumentException`.

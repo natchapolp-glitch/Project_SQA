@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:41:21.104162+00:00",
+  "ended_at_utc": "2026-10-04T09:41:24.875492+00:00",
+  "raw_body_sha256": "21aba673a891e6b0e6dd9effccbf25a77a3671a0703fcaf0c574265f81529943",
+  "body": {
+    "id": "genai-01a1064a-30d2-7b90-8ee3-7e90fe2bd0fa",
+    "object": "chat.completion",
+    "created": 1791106887,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.joda.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNotSame;\nimport static org.junit.Assert.assertTrue;\n\nimport org.junit.Test;\n\npublic class PartialTest {\n\n    @Test\n    public void testEmptyConstructor() {\n        Partial p = new Partial();\n        assertEquals(0, p.size());\n        assertNotNull(p.getChronology());\n    }\n\n    @Test\n    public void testFieldAndValueConstructor() {\n        Partial p = new Partial(DateTimeFieldType.year(), 2023);\n        assertEquals(1, p.size());\n        assertEquals(DateTimeFieldType.year(), p.getFieldType(0));\n        assertEquals(2023, p.getValue(0));\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testFieldAndValueConstructorNullType() {\n        new Partial(null, 2023);\n    }\n\n    @Test\n    public void testArrayConstructorValidOrdering() {\n        DateTimeFieldType[] types = new DateTimeFieldType[] {\n            DateTimeFieldType.year(),\n            DateTimeFieldType.monthOfYear(),\n            DateTimeFieldType.dayOfMonth()\n        };\n        int[] values = new int[] { 2023, 6, 15 };\n        Partial p = new Partial(types, values);\n        assertEquals(3, p.size());\n        assertEquals(2023, p.getValue(0));\n        assertEquals(6, p.getValue(1));\n        assertEquals(15, p.getValue(2));\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testArrayConstructorInvalidOrdering() {\n        DateTimeFieldType[] types = new DateTimeFieldType[] {\n            DateTimeFieldType.monthOfYear(),\n            DateTimeFieldType.year()\n        };\n        int[] values = new int[] { 6, 2023 };\n        new Partial(types, values);\n    }\n\n    @Test\n    public void testWithNewField() {\n        Partial p = new Partial(DateTimeFieldType.year(), 2023);\n        Partial updated = p.with(DateTimeFieldType.monthOfYear(), 5);\n        assertEquals(1, p.size());\n        assertEquals(2, updated.size());\n        assertEquals(DateTimeFieldType.year(), updated.getFieldType(0));\n        assertEquals(DateTimeFieldType.monthOfYear(), updated.getFieldType(1));\n        assertEquals(2023, updated.getValue(0));\n        assertEquals(5, updated.getValue(1));\n    }\n\n    @Test\n    public void testWithExistingFieldUpdatesValue() {\n        Partial p = new Partial(DateTimeFieldType.year(), 2023);\n        Partial updated = p.with(DateTimeFieldType.year(), 2024);\n        assertEquals(2023, p.getValue(0));\n        assertEquals(2024, updated.getValue(0));\n    }\n\n    @Test\n    public void testWithoutField() {\n        DateTimeFieldType[] types = new DateTimeFieldType[] {\n            DateTimeFieldType.year(),\n            DateTimeFieldType.monthOfYear()\n        };\n        int[] values = new int[] { 2023, 6 };\n        Partial p = new Partial(types, values);\n        Partial updated = p.without(DateTimeFieldType.monthOfYear());\n        assertEquals(2, p.size());\n        assertEquals(1, updated.size());\n        assertEquals(DateTimeFieldType.year(), updated.getFieldType(0));\n        assertEquals(2023, updated.getValue(0));\n    }\n\n    @Test\n    public void testWithoutNonExistentField() {\n        Partial p = new Partial(DateTimeFieldType.year(), 2023);\n        Partial updated = p.without(DateTimeFieldType.monthOfYear());\n        assertEquals(1, updated.size());\n        assertEquals(2023, updated.getValue(0));\n    }\n\n    @Test\n    public void testWithFieldAdd() {\n        Partial p = new Partial(DateTimeFieldType.year(), 2023);\n        Partial updated = p.withFieldAdded(DurationFieldType.years(), 5);\n        assertEquals(2023, p.getValue(0));\n        assertEquals(2028, updated.getValue(0));\n    }\n\n    @Test\n    public void testIsMatchReadablePartial() {\n        DateTimeFieldType[] types = new DateTimeFieldType[] {\n            DateTimeFieldType.monthOfYear(),\n            DateTimeFieldType.dayOfMonth()\n        };\n        int[] values = new int[] { 6, 15 };\n        Partial p = new Partial(types, values);\n\n        LocalDate dateMatch = new LocalDate(2023, 6, 15);\n        LocalDate dateNoMatch = new LocalDate(2023, 6, 16);\n\n        assertTrue(p.isMatch(dateMatch));\n        assertFalse(p.isMatch(dateNoMatch));\n    }\n\n    @Test\n    public void testToStringFormats() {\n        Partial p = new Partial(DateTimeFieldType.year(), 2023);\n        assertNotNull(p.toString());\n        assertNotNull(p.toStringList());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4288,
+      "completion_tokens": 1211,
+      "total_tokens": 5499
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 130721,
+      "daily_remaining_tokens": 219279
+    }
+  },
+  "headers": {
+    "x-request-id": "j2c00cp35pblj8783eg2h76f",
+    "date": "Sun, 04 Oct 2026 09:41:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

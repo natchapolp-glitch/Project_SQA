@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:38:30.805388+00:00",
+  "ended_at_utc": "2026-10-04T06:38:32.679003+00:00",
+  "raw_body_sha256": "5e15a2afc50261426044ef92446311c8ad572288fac2e14e44186aa7207d07f4",
+  "body": {
+    "id": "genai-01a105a2-c213-7d89-9dc3-ad6937921313",
+    "object": "chat.completion",
+    "created": 1791095915,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.mockito.internal.util;\n\nimport org.junit.Test;\nimport org.mockito.exceptions.misusing.FriendlyReminderException;\n\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class TimerTest {\n\n    @Test(expected = FriendlyReminderException.class)\n    public void testInitialStateIsNotCounting() {\n        Timer timer = new Timer(1000L);\n        assertFalse(timer.isCounting());\n    }\n\n    @Test\n    public void testIsCountingAfterStart() {\n        Timer timer = new Timer(1000L);\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void testTimerWithZeroDuration() {\n        Timer timer = new Timer(0L);\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void testTimerExpiration() throws InterruptedException {\n        Timer timer = new Timer(1L);\n        timer.start();\n        Thread.sleep(5L);\n        assertFalse(timer.isCounting());\n    }\n\n    @Test\n    public void testRestartTimer() throws InterruptedException {\n        Timer timer = new Timer(1L);\n        timer.start();\n        Thread.sleep(5L);\n        assertFalse(timer.isCounting());\n\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test(expected = FriendlyReminderException.class)\n    public void testNegativeDuration() {\n        Timer timer = new Timer(-100L);\n        timer.start();\n        assertFalse(timer.isCounting());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1597,
+      "completion_tokens": 389,
+      "total_tokens": 1986
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 48615,
+      "daily_remaining_tokens": 301385
+    }
+  },
+  "headers": {
+    "x-request-id": "thnzhjklnpoic9xjx6usxpze",
+    "date": "Sun, 04 Oct 2026 06:38:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

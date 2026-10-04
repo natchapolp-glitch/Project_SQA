@@ -1,0 +1,580 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Csv-4
+Java 11, JUnit 4
+Modified classes: org.apache.commons.csv.CSVParser
+
+BUGGY API signatures (may include private members):
+Compiled from "CSVParser.java"
+public final class org.apache.commons.csv.CSVParser implements java.lang.Iterable<org.apache.commons.csv.CSVRecord>, java.io.Closeable {
+  private final org.apache.commons.csv.CSVFormat format;
+  private final java.util.Map<java.lang.String, java.lang.Integer> headerMap;
+  private final org.apache.commons.csv.Lexer lexer;
+  private final java.util.List<java.lang.String> record;
+  private long recordNumber;
+  private final org.apache.commons.csv.Token reusableToken;
+  public static org.apache.commons.csv.CSVParser parse(java.io.File, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  public static org.apache.commons.csv.CSVParser parse(java.lang.String, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  public static org.apache.commons.csv.CSVParser parse(java.net.URL, java.nio.charset.Charset, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  public org.apache.commons.csv.CSVParser(java.io.Reader, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  private void addRecordValue();
+  public void close() throws java.io.IOException;
+  public long getCurrentLineNumber();
+  public java.util.Map<java.lang.String, java.lang.Integer> getHeaderMap();
+  public long getRecordNumber();
+  public java.util.List<org.apache.commons.csv.CSVRecord> getRecords() throws java.io.IOException;
+  private java.util.Map<java.lang.String, java.lang.Integer> initializeHeader() throws java.io.IOException;
+  public boolean isClosed();
+  public java.util.Iterator<org.apache.commons.csv.CSVRecord> iterator();
+  org.apache.commons.csv.CSVRecord nextRecord() throws java.io.IOException;
+}
+
+
+BUGGY source excerpt: org.apache.commons.csv.CSVParser (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.csv;
+
+import static org.apache.commons.csv.Token.Type.TOKEN;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+/**
+ * Parses CSV files according to the specified format.
+ *
+ * Because CSV appears in many different dialects, the parser supports many formats by allowing the
+ * specification of a {@link CSVFormat}.
+ *
+ * The parser works record wise. It is not possible to go back, once a record has been parsed from the input stream.
+ *
+ * <h4>Creating instances</h4>
+ * There are several static factory methods that can be used to create instances for various types of resources:
+ * <p>
+ * <ul>
+ *     <li>{@link #parse(java.io.File, CSVFormat)}</li>
+ *     <li>{@link #parse(String, CSVFormat)}</li>
+ *     <li>{@link #parse(java.net.URL, java.nio.charset.Charset, CSVFormat)}</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Alternatively parsers can also be created by passing a {@link Reader} directly to the sole constructor.
+ * 
+ * For those who like fluent APIs, parsers can be created using {@link CSVFormat#parse(java.io.Reader)} as a shortcut:
+ * </p>
+ * <pre>
+ * for(CSVRecord record : CSVFormat.EXCEL.parse(in)) {
+ *     ...
+ * }
+ * </pre>
+ *
+ * <h4>Parsing record wise</h4>
+ * <p>
+ * To parse a CSV input from a file, you write:
+ * </p>
+ *
+ * <pre>
+ * File csvData = new File(&quot;/path/to/csv&quot;);
+ * CSVParser parser = CSVParser.parse(csvData, CSVFormat.RFC4180);
+ * for (CSVRecord csvRecord : parser) {
+ *     ...
+ * }
+ * </pre>
+ *
+ * <p>
+ * This will read the parse the contents of the file using the
+ * <a href="http://tools.ietf.org/html/rfc4180" target="_blank">RFC 4180</a> format.
+ * </p>
+ *
+ * <p>
+ * To parse CSV input in a format like Excel, you write:
+ * </p>
+ *
+ * <pre>
+ * CSVParser parser = CSVParser.parse(csvData, CSVFormat.EXCEL);
+ * for (CSVRecord csvRecord : parser) {
+ *     ...
+ * }
+ * </pre>
+ *
+ * <p>
+ * If the predefined formats don't match the format at hands, custom formats can be defined. More information about
+ * customising CSVFormats is available in {@link CSVFormat CSVFormat JavaDoc}.
+ * </p>
+ *
+ * <h4>Parsing into memory</h4>
+ * <p>
+ * If parsing record wise is not desired, the contents of the input can be read completely into memory.
+ * </p>
+ *
+ * <pre>
+ * Reader in = new StringReader(&quot;a;b\nc;d&quot;);
+ * CSVParser parser = new CSVParser(in, CSVFormat.EXCEL);
+ * List&lt;CSVRecord&gt; list = parser.getRecords();
+ * </pre>
+ *
+ * <p>
+ * There are two constraints that have to be kept in mind:
+ * </p>
+ *
+ * <p>
+ * <ol>
+ *     <li>Parsing into memory starts at the current position of the parser. If you have already parsed records from
+ *     the input, those records will not end up in the in memory representation of your CSV data.</li>
+ *     <li>Parsing into memory may consume a lot of system resources depending on the input. For example if you're
+ *     parsing a 150MB file of CSV data the contents will be read completely into memory.</li>
+ * </ol>
+ * </p>
+ *
+ * <h4>Notes</h4>
+ * <p>
+ * Internal parser state is completely covered by the format and the reader-state.
+ * </p>
+ *
+ * @version $Id$
+ *
+ * @see <a href="package-summary.html">package documentation for more details</a>
+ */
+public final class CSVParser implements Iterable<CSVRecord>, Closeable {
+
+    /**
+     * Creates a parser for the given {@link File}.
+     *
+     * @param file
+     *            a CSV file. Must not be null.
+     * @param format
+     *            the CSVFormat used for CSV parsing. Must not be null.
+     * @return a new parser
+     * @throws IllegalArgumentException
+     *             If the parameters of the format are inconsistent or if either file or format are null.
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    public static CSVParser parse(File file, final CSVFormat format) throws IOException {
+        Assertions.notNull(file, "file");
+        Assertions.notNull(format, "format");
+
+        return new CSVParser(new FileReader(file), format);
+    }
+
+    /**
+     * Creates a parser for the given {@link String}.
+     *
+     * @param string
+     *            a CSV string. Must not be null.
+     * @param format
+     *            the CSVFormat used for CSV parsing. Must not be null.
+     * @return a new parser
+     * @throws IllegalArgumentException
+     *             If the parameters of the format are inconsistent or if either string or format are null.
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    public static CSVParser parse(String string, final CSVFormat format) throws IOException {
+        Assertions.notNull(string, "string");
+        Assertions.notNull(format, "format");
+
+        return new CSVParser(new StringReader(string), format);
+    }
+
+    /**
+     * Creates a parser for the given URL.
+     *
+     * <p>
+     * If you do not read all records from the given {@code url}, you should call {@link #close()} on the parser, unless
+     * you close the {@code url}.
+     * </p>
+     *
+     * @param url
+     *            a URL. Must not be null.
+     * @param charset
+     *            the charset for the resource. Must not be null.
+     * @param format
+     *            the CSVFormat used for CSV parsing. Must not be null.
+     * @return a new parser
+     * @throws IllegalArgumentException
+     *             If the parameters of the format are inconsistent or if either url, charset or format are null.
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    public static CSVParser parse(URL url, Charset charset, final CSVFormat format) throws IOException {
+        Assertions.notNull(url, "url");
+        Assertions.notNull(charset, "charset");
+        Assertions.notNull(format, "format");
+
+        return new CSVParser(new InputStreamReader(url.openStream(),
+                             charset == null ? Charset.forName("UTF-8") : charset), format);
+    }
+
+    // the following objects are shared to reduce garbage
+
+    private final CSVFormat format;
+
+    /** A mapping of column names to column indices */
+    private final Map<String, Integer> headerMap;
+
+    private final Lexer lexer;
+
+    /** A record buffer for getRecord(). Grows as necessary and is reused. */
+    private final List<String> record = new ArrayList<String>();
+
+    private long recordNumber;
+
+    private final Token reusableToken = new Token();
+
+    /**
+     * Customized CSV parser using the given {@link CSVFormat}
+     *
+     * <p>
+     * If you do not read all records from the given {@code reader}, you should call {@link #close()} on the parser,
+     * unless you close the {@code reader}.
+     * </p>
+     *
+     * @param reader
+     *            a Reader containing CSV-formatted input. Must not be null.
+     * @param format
+     *            the CSVFormat used for CSV parsing. Must not be null.
+     * @throws IllegalArgumentException
+     *             If the parameters of the format are inconsistent or if either reader or format are null.
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    public CSVParser(final Reader reader, final CSVFormat format) throws IOException {
+        Assertions.notNull(reader, "reader");
+        Assertions.notNull(format, "format");
+
+        format.validate();
+        this.format = format;
+        this.lexer = new Lexer(format, new ExtendedBufferedReader(reader));
+        this.headerMap = this.initializeHeader();
+    }
+
+    private void addRecordValue() {
+        final String input = this.reusableToken.content.toString();
+        final String nullString = this.format.getNullString();
+        if (nullString == null) {
+            this.record.add(input);
+        } else {
+            this.record.add(input.equalsIgnoreCase(nullString) ? null : input);
+        }
+    }
+
+    /**
+     * Closes resources.
+     *
+     * @throws IOException
+     *             If an I/O error occurs
+     */
+    public void close() throws IOException {
+        if (this.lexer != null) {
+            this.lexer.close();
+        }
+    }
+
+    /**
+     * Returns the current line number in the input stream.
+     * <p/>
+     * ATTENTION: If your CSV input has multi-line values, the returned number does not correspond to the record number.
+     *
+     * @return current line number
+     */
+    public long getCurrentLineNumber() {
+        return this.lexer.getCurrentLineNumber();
+    }
+
+    /**
+     * Returns a copy of the header map that iterates in column order.
+     * <p>
+     * The map keys are column names. The map values are 0-based indices.
+     * </p>
+     * @return a copy of the header map that iterates in column order.
+     */
+    public Map<String, Integer> getHeaderMap() {
+        return new LinkedHashMap<String, Integer>(this.headerMap);
+    }
+
+    /**
+     * Returns the current record number in the input stream.
+     * <p/>
+     * ATTENTION: If your CSV input has multi-line values, the returned number does not correspond to the line number.
+     *
+     * @return current line number
+     */
+    public long getRecordNumber() {
+        return this.recordNumber;
+    }
+
+    /**
+     * Parses the CSV input according to the given format and returns the content as a list of
+     * {@link CSVRecord CSVRecords}.
+     * <p/>
+     * The returned content starts at the current parse-position in the stream.
+     *
+     * @return list of {@link CSVRecord CSVRecords}, may be empty
+     * @throws IOException
+     *             on parse error or input read-failure
+     */
+    public List<CSVRecord> getRecords() throws IOException {
+        final List<CSVRecord> records = new ArrayList<CSVRecord>();
+        CSVRecord rec;
+        while ((rec = this.nextRecord()) != null) {
+            records.add(rec);
+        }
+        return records;
+    }
+
+    /**
+     * Initializes the name to index mapping if the format defines a header.
+     */
+    private Map<String, Integer> initializeHeader() throws IOException {
+        Map<String, Integer> hdrMap = null;
+        final String[] formatHeader = this.format.getHeader();
+        if (formatHeader != null) {
+            hdrMap = new LinkedHashMap<String, Integer>();
+
+            String[] header = null;
+            if (formatHeader.length == 0) {
+                // read the header from the first line of the file
+                final CSVRecord record = this.nextRecord();
+                if (record != null) {
+                    header = record.values();
+                }
+            } else {
+                if (this.format.getSkipHeaderRecord()) {
+                    this.nextRecord();
+                }
+                header = formatHeader;
+            }
+
+            // build the name to index mappings
+            if (header != null) {
+                for (int i = 0; i < header.length; i++) {
+                    hdrMap.put(header[i], Integer.valueOf(i));
+                }
+            }
+        }
+        retu
+```
+
+
+Original generated source:
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class CSVParserTest {
+
+    @Test
+    public void testGetRecordsSimple() throws IOException {
+        String csv = "a,b,c\n1,2,3\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("a", records.get(0).get(0));
+        assertEquals("b", records.get(0).get(1));
+        assertEquals("c", records.get(0).get(2));
+        assertEquals("1", records.get(1).get(0));
+        assertEquals("2", records.get(1).get(1));
+        assertEquals("3", records.get(1).get(2));
+        parser.close();
+    }
+
+    @Test
+    public void testHeaderMapAutoDetected() throws IOException {
+        String csv = "name,age\nJohn,30\nJane,25\n";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader();
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        Map<String, Integer> headerMap = parser.getHeaderMap();
+        assertEquals(Integer.valueOf(0), headerMap.get("name"));
+        assertEquals(Integer.valueOf(1), headerMap.get("age"));
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("John", records.get(0).get("name"));
+        assertEquals("30", records.get(0).get("age"));
+        parser.close();
+    }
+
+    @Test
+    public void testExplicitHeaderSkipsRecord() throws IOException {
+        String csv = "name,age\nJohn,30\n";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader("name", "age").withSkipHeaderRecord(true);
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(1, records.size());
+        assertEquals("John", records.get(0).get("name"));
+        parser.close();
+    }
+
+    @Test
+    public void testIgnoreEmptyLines() throws IOException {
+        String csv = "a,b\n\n1,2\n\n3,4\n";
+        CSVFormat format = CSVFormat.DEFAULT.withIgnoreEmptyLines(true);
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(3, records.size());
+        parser.close();
+    }
+
+    @Test
+    public void testQuotedMultilineField() throws IOException {
+        String csv = "a,\"b\nc\",d\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(1, records.size());
+        assertEquals("b\nc", records.get(0).get(1));
+        parser.close();
+    }
+
+    @Test
+    public void testCommentLinesSkipped() throws IOException {
+        String csv = "# comment\na,b\n# another comment\n1,2\n";
+        CSVFormat format = CSVFormat.DEFAULT.withCommentMarker('#');
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("a", records.get(0).get(0));
+        assertEquals("1", records.get(1).get(0));
+        parser.close();
+    }
+
+    @Test
+    public void testCloseIdempotentAndIsClosed() throws IOException {
+        CSVParser parser = new CSVParser(new StringReader("a,b\n"), CSVFormat.DEFAULT);
+        assertFalse(parser.isClosed());
+        parser.close();
+        assertTrue(parser.isClosed());
+        parser.close();
+        assertTrue(parser.isClosed());
+    }
+
+    @Test
+    public void testEmptyInputYieldsNoRecords() throws IOException {
+        CSVParser parser = new CSVParser(new StringReader(""), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertTrue(records.isEmpty());
+        parser.close();
+    }
+
+    @Test
+    public void testIteratorMatchesGetRecords() throws IOException {
+        String csv = "1,2\n3,4\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        Iterator<CSVRecord> it = parser.iterator();
+        assertTrue(it.hasNext());
+        CSVRecord first = it.next();
+        assertEquals("1", first.get(0));
+        assertTrue(it.hasNext());
+        CSVRecord second = it.next();
+        assertEquals("3", second.get(0));
+        assertFalse(it.hasNext());
+        parser.close();
+    }
+
+    @Test
+    public void testRecordNumberIncrements() throws IOException {
+        String csv = "a\nb\nc\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        assertEquals(0, parser.getRecordNumber());
+        CSVRecord r1 = parser.nextRecord();
+        assertEquals(1, r1.getRecordNumber());
+        assertEquals(1, parser.getRecordNumber());
+        CSVRecord r2 = parser.nextRecord();
+        assertEquals(2, r2.getRecordNumber());
+        parser.close();
+    }
+
+    @Test
+    public void testConstructorNullReaderThrows() throws IOException {
+        try {
+            new CSVParser(null, CSVFormat.DEFAULT);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testNoTrailingEmptyRecordWithoutFinalNewline() throws IOException {
+        String csv = "1,2\n3,4";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        parser.close();
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+Extract test suite......................................................... OK
+Running ant (compile.gen.tests)............................................ FAIL
+Executed command:  cd /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-4/f && ant -f /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml -Dd4j.home=/home/team/sqa-round2/defects4j -Dd4j.dir.projects=/home/team/sqa-round2/defects4j/framework/projects -Dbasedir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-4/f -Dd4j.test.dir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-4/f/.test_suite compile.gen.tests 2>&1
+Buildfile: /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml
+
+test-offline:
+
+get-deps:
+
+commons-csv-from-maven.compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-4/f/maven-build.xml:79: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+compile:
+
+compile.gen.tests:
+     [echo] classes.dir: target/classes
+     [echo] build.home: target/classes/..
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-4/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-4/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-4/f/.test_suite/org/apache/commons/csv/CSVParserTest.java:79: error: cannot find symbol
+    [javac]         CSVFormat format = CSVFormat.DEFAULT.withCommentMarker('#');
+    [javac]                                             ^
+    [javac]   symbol:   method withCommentMarker(char)
+    [javac]   location: variable DEFAULT of type CSVFormat
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 1 second
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

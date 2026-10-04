@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:11:49.048688+00:00",
+  "ended_at_utc": "2026-10-04T08:11:55.422925+00:00",
+  "raw_body_sha256": "6ef86e420ea8603c07006bb56fc0e2848ef6bc9871fb9fc9c1ea71beb8c6639d",
+  "body": {
+    "id": "gen-1791101511-iFfdOkKp7HfNUhBS2SYB",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- setRounding(field, mode): after setting, verify setMillis/add/set round result according to mode (FLOOR truncates down, CEILING rounds up, HALF_* rounds to nearest with tie-breaking) against the rounding field's unit (e.g. hourOfDay field rounds to whole hours).\n- setRounding(field) alone (no mode) should default to ROUND_NONE behavior semantics—verify getRoundingMode() default and that values are unaffected.\n- setRounding(null) should clear rounding (getRoundingField() returns null, getRoundingMode() == ROUND_NONE), and subsequent setMillis should not round.\n- Boundary: rounding exactly at half-way point for each HALF_* mode (HALF_FLOOR rounds down on tie, HALF_CEILING rounds up on tie, HALF_EVEN rounds to even).\n- After setRounding, calling setMillis(long) must apply rounding to the new value (not just to future adds).\n- add(long)/add(ReadableDuration)/add(ReadablePeriod) after setRounding should round post-addition result.\n- setMillis(ReadableInstant) with rounding set should also round.\n- Invalid mode argument to setRounding(field, mode) (e.g. mode out of enum range) — determine expected IllegalArgumentException per contract.\n- copy()/clone() should preserve rounding field and mode on the new instance per ReadWritableDateTime contract (verify if documented).\n- Verify getRoundingField()/getRoundingMode() getters reflect last setRounding call accurately, including transitions between different fields/modes.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2342,
+      "output_tokens": 536,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.010044,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.010044,
+        "upstream_inference_prompt_cost": 0.004684,
+        "upstream_inference_completions_cost": 0.00536
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 133152,
+      "daily_remaining_tokens": 66848
+    }
+  },
+  "headers": {
+    "x-request-id": "xzame4bl0cose6oruxoegmfw",
+    "date": "Sun, 04 Oct 2026 08:11:58 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

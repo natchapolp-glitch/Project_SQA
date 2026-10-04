@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:43:17.510778+00:00",
+  "ended_at_utc": "2026-10-04T06:43:21.186001+00:00",
+  "raw_body_sha256": "da89eb4c1df6f650219e0c7e9efe98c9176fae6ea68ecb905878221377521552",
+  "body": {
+    "id": "genai-01a105a7-2ade-708c-b778-96347ebedc3c",
+    "object": "chat.completion",
+    "created": 1791096204,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.joda.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.joda.time.chrono.ISOChronology;\nimport org.junit.Test;\n\npublic class PartialTest {\n\n    @Test\n    public void testEmptyPartialConstruction() {\n        Partial partial = new Partial();\n        assertEquals(0, partial.size());\n        assertNotNull(partial.getChronology());\n        assertEquals(ISOChronology.getInstanceUTC(), partial.getChronology());\n    }\n\n    @Test\n    public void testPartialWithFieldAndWithout() {\n        Partial partial = new Partial(DateTimeFieldType.year(), 2023);\n        Partial updated = partial.with(DateTimeFieldType.monthOfYear( ), 6);\n        assertEquals(2, updated.size());\n        assertEquals(2023, updated.get(DateTimeFieldType.year()));\n        assertEquals(6, updated.get(DateTimeFieldType.monthOfYear()));\n\n        Partial reduced = updated.without(DateTimeFieldType.year());\n        assertEquals(1, reduced.size());\n        assertEquals(6, reduced.get(DateTimeFieldType.monthOfYear()));\n    }\n\n    @Test\n    public void testPartialWithFieldAdded() {\n        Partial partial = new Partial(DateTimeFieldType.monthOfYear(), 5);\n        Partial added = partial.withFieldAdded(DurationFieldType.months(), 3);\n        assertEquals(8, added.get(DateTimeFieldType.monthOfYear()));\n    }\n\n    @Test\n    public void testPartialProperty() {\n        Partial partial = new Partial(DateTimeFieldType.dayOfMonth(), 15);\n        Partial.Property property = partial.property(DateTimeFieldType.dayOfMonth());\n        assertNotNull(property);\n        assertEquals(15, property.get());\n        assertEquals(\"dayOfMonth\", property.getName());\n    }\n\n    @Test\n    public void testPartialIsMatch() {\n        Partial partial = new Partial(DateTimeFieldType.year(), 2023)\n                .with(DateTimeFieldType.monthOfYear(), 6);\n        DateTime instant = new DateTime(2023, 6, 15, 12, 0, ISOChronology.getInstanceUTC());\n        assertTrue(partial.isMatch(instant));\n    }\n}\n```\n\n```java\npackage org.joda.time.field;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.joda.time.DurationFieldType;\nimport org.junit.Test;\n\npublic class UnsupportedDurationFieldTest {\n\n    @Test\n    public void testGetInstanceCaching() {\n        UnsupportedDurationField field1 = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        UnsupportedDurationField field2 = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        assertNotNull(field1);\n        assertEquals(field1, field2);\n        assertEquals(DurationFieldType.eras(), field1.getType());\n        assertEquals(\"eras\", field1.getName());\n    }\n\n    @Test\n    public void testFieldProperties() {\n        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.centuries());\n        assertFalse(field.isSupported());\n        assertTrue(field.isPrecise());\n        assertEquals(0L, field.getUnitMillis());\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testGetValueThrowsException() {\n        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        field.getValue(1000L);\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testAddThrowsException() {\n        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        field.add(1000L, 5);\n    }\n\n    @Test(expected = UnsupportedOperationException.class)\n    public void testGetDifferenceThrowsException() {\n        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        field.getDifference(2000L, 1000L);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4719,
+      "completion_tokens": 973,
+      "total_tokens": 5692
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 60331,
+      "daily_remaining_tokens": 289669
+    }
+  },
+  "headers": {
+    "x-request-id": "ikl4ngc4i5ycbid9l1m3nfpo",
+    "date": "Sun, 04 Oct 2026 06:43:24 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

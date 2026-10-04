@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:51:44.501389+00:00",
+  "ended_at_utc": "2026-10-04T08:51:48.416326+00:00",
+  "raw_body_sha256": "72f5c51328f811e942bd3db86f78227fb3865569f7b6368ab628ec6b6fbce6cb",
+  "body": {
+    "id": "genai-01a1061c-c3fd-71fb-9c02-2904e0d5dd9c",
+    "object": "chat.completion",
+    "created": 1791103910,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.gson.stream;\n\nimport org.junit.Test;\n\nimport java.io.IOException;\nimport java.io.StringReader;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class JsonReaderTest {\n\n    @Test\n    public void testBasicObjectAndArrayParsing() throws IOException {\n        String json = \"[\\\"hello\\\", 42, true, null, {\\\"key\\\": \\\"value\\\"}]\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n\n        reader.beginArray();\n        assertTrue(reader.hasNext());\n        assertEquals(\"hello\", reader.nextString());\n        assertTrue(reader.hasNext());\n        assertEquals(42, reader.nextInt());\n        assertTrue(reader.hasNext());\n        assertTrue(reader.nextBoolean());\n        assertTrue(reader.hasNext());\n        reader.nextNull();\n        assertTrue(reader.hasNext());\n\n        reader.beginObject();\n        assertTrue(reader.hasNext());\n        assertEquals(\"key\", reader.nextName());\n        assertEquals(\"value\", reader.nextString());\n        assertFalse(reader.hasNext());\n        reader.endObject();\n\n        assertFalse(reader.hasNext());\n        reader.endArray();\n        reader.close();\n    }\n\n    @Test(expected = IOException.class)\n    public void testStrictPeekTypeMismatchThrows() throws IOException {\n        String json = \"[\\\"not-a-number\\\"]\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        reader.beginArray();\n        reader.nextInt();\n    }\n\n    @Test\n    public void testLenientModeAllowsUnquotedAndSingleQuotes() throws IOException {\n        String json = \"{key: 'value'}\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        reader.setLenient(true);\n\n        reader.beginObject();\n        assertTrue(reader.hasNext());\n        assertEquals(\"key\", reader.nextName());\n        assertEquals(\"value\", reader.nextString());\n        reader.endObject();\n        reader.close();\n    }\n\n    @Test(expected = IOException.class)\n    public void testMalformedJsonThrowsIOException() throws IOException {\n        String json = \"{\\\"key\\\": unclosed_string\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        reader.beginObject();\n        reader.nextName();\n        reader.nextString();\n    }\n\n    @Test\n    public void testSkipValue() throws IOException {\n        String json = \"{\\\"a\\\": [1, 2, {\" +\n                \" \\\"b\\\": 3\" +\n                \"}], \\\"c\\\": 4}\";\n        JsonReader reader = new JsonReader(new StringReader(json));\n        reader.beginObject();\n        assertEquals(\"a\", reader.nextName());\n        reader.skipValue();\n        assertEquals(\"c\", reader.nextName());\n        assertEquals(4, reader.nextInt());\n        reader.endObject();\n        reader.close();\n    }\n}\n```\n\n```java\npackage com.google.gson.stream;\n\nimport org.junit.Test;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class JsonWriterTest {\n\n    @Test\n    public void testBasicDocumentWriting() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter writer = new JsonWriter(stringWriter);\n\n        writer.beginArray();\n        writer.value(\"hello\");\n        writer.value(123);\n        writer.value(true);\n        writer.nullValue();\n        writer.beginObject();\n        writer.name(\"k\").value(\"v\");\n        writer.endObject();\n        writer.endArray();\n        writer.close();\n\n        assertEquals(\"[\\\"hello\\\",123,true,null,{\\\"k\\\":\\\"v\\\"}]\", stringWriter.toString());\n    }\n\n    @Test(expected = IllegalStateException.class)\n    public void testMismatchedEndArrayThrows() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter writer = new JsonWriter(stringWriter);\n        writer.beginArray();\n        writer.endObject();\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testStrictNanInfinityThrows() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter writer = new JsonWriter(stringWriter);\n        writer.beginArray();\n        writer.value(Double.NaN);\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testLenientNanInfinityAllowed() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter writer = new JsonWriter(stringWriter);\n        writer.setLenient(true);\n        writer.beginArray();\n        writer.value(Double.NaN);\n    }\n\n    @Test\n    public void testIndentation() throws IOException {\n        StringWriter stringWriter = new StringWriter();\n        JsonWriter writer = new JsonWriter(stringWriter);\n        writer.setIndent(\"  \");\n        writer.beginObject();\n        writer.name(\"a\").value(1);\n        writer.endObject();\n        writer.close();\n\n        String expected = \"{\\n  \\\"a\\\": 1\\n}\";\n        assertEquals(expected, stringWriter.toString());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7542,
+      "completion_tokens": 1237,
+      "total_tokens": 8779
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 122975,
+      "daily_remaining_tokens": 227025
+    }
+  },
+  "headers": {
+    "x-request-id": "ihsrziuna6qh7fc208d5amkh",
+    "date": "Sun, 04 Oct 2026 08:51:50 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:26:15.921014+00:00",
+  "ended_at_utc": "2026-10-04T07:26:18.015328+00:00",
+  "raw_body_sha256": "cfd1a4cb4e3ce7f4e827f839f6134328e6a1236b8eb04ecb403197afaabfbdad",
+  "body": {
+    "id": "genai-01a105ce-7347-7d05-9bf5-f3d411988cc3",
+    "object": "chat.completion",
+    "created": 1791098778,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Initialize `UTF8StreamJsonParser` with a valid `IOContext`, parser feature flags, an `InputStream`, and a pre-allocated symbol table (`BytesToNameCanonicalizer`).\n2. Test `nextToken()` and `nextFieldName()` behavior across stream buffer boundaries where UTF-8 byte chunks split mid-character or mid-token.\n3. Validate location tracking (`getCurrentLocation()`, `getTokenLocation()`) for correctness when input buffers are reloaded via `loadMore()` or `_loadToHaveAtLeast()`.\n4. Verify proper handling of stream exhaustion and buffer recycling (`_releaseBuffers()`, `_closeInput()`) during parsing operations.\n5. Test numeric parsing boundaries (`_parseNumber`, leading zeroes verification, float parsing) with exact input byte arrays.\n6. Check symbol canonicalization and name parsing methods (`_parseName`, `parseMediumName`, `parseLongName`, `slowParseName`) for valid JSON object keys.\n7. Verify binary data decoding (`getBinaryValue`, `readBinaryValue`, `_readBinary`) using specific `Base64Variant` configurations over stream sources.\n8. Test string extraction methods (`getText()`, `getTextCharacters()`, `getTextLength()`) when tokens span across input buffer boundaries.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1715,
+      "completion_tokens": 263,
+      "total_tokens": 1978
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 68414,
+      "daily_remaining_tokens": 281586
+    }
+  },
+  "headers": {
+    "x-request-id": "ig7eyz9ay5vhunwaeua5plhy",
+    "date": "Sun, 04 Oct 2026 07:26:18 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

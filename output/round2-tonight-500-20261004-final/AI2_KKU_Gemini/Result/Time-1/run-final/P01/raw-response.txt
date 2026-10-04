@@ -1,0 +1,8 @@
+1. Setup `Partial` receivers using valid field types like `DateTimeFieldType.hourOfDay()` or `DateTimeFieldType.centuryOfEra()`.
+2. Test `withFieldAdded` and `withPeriodAdded` on `Partial` when adding durations that span unsupported or zero-unit duration fields.
+3. Verify behavior of `Partial` field additions/subtractions involving fields whose duration fields are instances of `UnsupportedDurationField`.
+4. Check boundary conditions where adding zero or negative amounts to `Partial` fields maintains correctness.
+5. Ensure `UnsupportedDurationField.getInstance(DurationFieldType)` returns cached, non-null singleton instances.
+6. Verify that operations on `UnsupportedDurationField` (like `add`, `getDifference`, `getValue`) correctly throw `UnsupportedOperationException`.
+7. Test `Partial` with multiple fields having mixed supported and unsupported duration/time units.
+8. Validate `Partial` immutability and state retention during field addition or subtraction methods.

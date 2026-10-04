@@ -1,0 +1,177 @@
+```java
+package org.apache.commons.math3.geometry.euclidean.threed;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.geometry.euclidean.threed.Segment;
+import org.apache.commons.math3.geometry.euclidean.threed.SubLine;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+import org.junit.Test;
+
+public class SubLineTest {
+
+    private static final double TOLERANCE = 1e-10;
+
+    @Test
+    public void testIntersectionInsideBothSegments() {
+        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(2, 0, 0));
+        SubLine sub2 = new SubLine(new Vector3D(1, -1, 0), new Vector3D(1, 1, 0));
+        Vector3D inter = sub1.intersection(sub2, true);
+        assertNotNull(inter);
+        assertEquals(1.0, inter.getX(), TOLERANCE);
+        assertEquals(0.0, inter.getY(), TOLERANCE);
+        assertEquals(0.0, inter.getZ(), TOLERANCE);
+    }
+
+    @Test
+    public void testIntersectionOutsideSegmentReturnsNull() {
+        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(1, 0, 0));
+        SubLine sub2 = new SubLine(new Vector3D(5, -1, 0), new Vector3D(5, 1, 0));
+        Vector3D inter = sub1.intersection(sub2, true);
+        assertNull(inter);
+    }
+
+    @Test
+    public void testIntersectionAtEndpointIncludeTrueFalse() {
+        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(1, 0, 0));
+        SubLine sub2 = new SubLine(new Vector3D(1, -1, 0), new Vector3D(1, 1, 0));
+        Vector3D interIncl = sub1.intersection(sub2, true);
+        assertNotNull(interIncl);
+        assertEquals(1.0, interIncl.getX(), TOLERANCE);
+
+        Vector3D interExcl = sub1.intersection(sub2, false);
+        assertNull(interExcl);
+    }
+
+    @Test
+    public void testSkewLinesReturnNull() {
+        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(1, 0, 0));
+        SubLine sub2 = new SubLine(new Vector3D(0, 0, 1), new Vector3D(0, 1, 1));
+        Vector3D inter = sub1.intersection(sub2, true);
+        assertNull(inter);
+    }
+
+    @Test
+    public void testGetSegmentsReturnsEndpoints() {
+        Vector3D start = new Vector3D(0, 0, 0);
+        Vector3D end = new Vector3D(1, 1, 1);
+        SubLine sub = new SubLine(start, end);
+        java.util.List<Segment> segments = sub.getSegments();
+        assertEquals(1, segments.size());
+        Segment seg = segments.get(0);
+        assertEquals(0.0, seg.getStart().distance(start), TOLERANCE);
+        assertEquals(0.0, seg.getEnd().distance(end), TOLERANCE);
+    }
+
+    @Test(expected = MathIllegalArgumentException.class)
+    public void testDegenerateLineThrows() {
+        Vector3D p = new Vector3D(1, 1, 1);
+        new SubLine(p, p);
+    }
+
+    @Test
+    public void testIntersectionSymmetric() {
+        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(2, 0, 0));
+        SubLine sub2 = new SubLine(new Vector3D(1, -1, 0), new Vector3D(1, 1, 0));
+        Vector3D inter1 = sub1.intersection(sub2, true);
+        Vector3D inter2 = sub2.intersection(sub1, true);
+        assertNotNull(inter1);
+        assertNotNull(inter2);
+        assertEquals(0.0, inter1.distance(inter2), TOLERANCE);
+
+        Vector3D inter1f = sub1.intersection(sub2, false);
+        Vector3D inter2f = sub2.intersection(sub1, false);
+        assertNotNull(inter1f);
+        assertNotNull(inter2f);
+        assertEquals(0.0, inter1f.distance(inter2f), TOLERANCE);
+    }
+}
+```
+
+```java
+package org.apache.commons.math3.geometry.euclidean.twod;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
+
+import org.apache.commons.math3.geometry.euclidean.twod.Segment;
+import org.apache.commons.math3.geometry.euclidean.twod.SubLine;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.junit.Test;
+
+public class SubLineTest {
+
+    private static final double TOLERANCE = 1e-10;
+
+    @Test
+    public void testIntersectionInsideBothSegments() {
+        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(2, 0));
+        SubLine sub2 = new SubLine(new Vector2D(1, -1), new Vector2D(1, 1));
+        Vector2D inter = sub1.intersection(sub2, true);
+        assertNotNull(inter);
+        assertEquals(1.0, inter.getX(), TOLERANCE);
+        assertEquals(0.0, inter.getY(), TOLERANCE);
+    }
+
+    @Test
+    public void testIntersectionOutsideSegmentReturnsNull() {
+        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(1, 0));
+        SubLine sub2 = new SubLine(new Vector2D(5, -1), new Vector2D(5, 1));
+        Vector2D inter = sub1.intersection(sub2, true);
+        assertNull(inter);
+    }
+
+    @Test
+    public void testIntersectionAtEndpointIncludeTrueFalse() {
+        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(1, 0));
+        SubLine sub2 = new SubLine(new Vector2D(1, -1), new Vector2D(1, 1));
+        Vector2D interIncl = sub1.intersection(sub2, true);
+        assertNotNull(interIncl);
+        assertEquals(1.0, interIncl.getX(), TOLERANCE);
+
+        Vector2D interExcl = sub1.intersection(sub2, false);
+        assertNull(interExcl);
+    }
+
+    @Test
+    public void testParallelLinesReturnNull() {
+        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(1, 0));
+        SubLine sub2 = new SubLine(new Vector2D(0, 1), new Vector2D(1, 1));
+        Vector2D inter = sub1.intersection(sub2, true);
+        assertNull(inter);
+    }
+
+    @Test
+    public void testGetSegmentsReturnsEndpoints() {
+        Vector2D start = new Vector2D(0, 0);
+        Vector2D end = new Vector2D(3, 4);
+        SubLine sub = new SubLine(start, end);
+        java.util.List<Segment> segments = sub.getSegments();
+        assertEquals(1, segments.size());
+        Segment seg = segments.get(0);
+        assertEquals(0.0, seg.getStart().distance(start), TOLERANCE);
+        assertEquals(0.0, seg.getEnd().distance(end), TOLERANCE);
+    }
+
+    @Test
+    public void testIntersectionSymmetric() {
+        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(2, 0));
+        SubLine sub2 = new SubLine(new Vector2D(1, -1), new Vector2D(1, 1));
+        Vector2D inter1 = sub1.intersection(sub2, true);
+        Vector2D inter2 = sub2.intersection(sub1, true);
+        assertNotNull(inter1);
+        assertNotNull(inter2);
+        assertEquals(0.0, inter1.distance(inter2), TOLERANCE);
+
+        Vector2D inter1f = sub1.intersection(sub2, false);
+        Vector2D inter2f = sub2.intersection(sub1, false);
+        assertNotNull(inter1f);
+        assertNotNull(inter2f);
+        assertEquals(0.0, inter1f.distance(inter2f), TOLERANCE);
+    }
+}
+```

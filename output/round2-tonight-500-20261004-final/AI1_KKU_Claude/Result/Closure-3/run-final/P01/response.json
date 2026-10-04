@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:55:32.849038+00:00",
+  "ended_at_utc": "2026-10-04T06:55:40.230487+00:00",
+  "raw_body_sha256": "ae383aa247eb1bf14d3a0d731035c3464112af150f61dcf4528e3357f27d8cba",
+  "body": {
+    "id": "gen-1791096934-3nZBfGQ0M2SEXZd4dJVY",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Useful behaviors/boundaries to test via `CompilerTestCase` running this pass (as end-to-end AST transformations, since internals are private):\n\n1. **Basic inlining**: `var x = a; use(x);` → `use(a);` when x has single def and single use, no side effects between.\n2. **Non-inlining when side effects intervene**: `var x = foo(); bar(); use(x);` should NOT inline if `bar()` may have side effects affecting `foo()`'s result.\n3. **Multiple uses**: variable with more than one use should not be inlined (candidate requires single reaching use).\n4. **Multiple definitions reaching a use**: if two different defs can reach the same use (e.g. via branching control flow), inlining must be suppressed.\n5. **Self-referencing/circular dependency**: RHS expression referencing the variable being replaced (e.g. `x = x + 1`) must not cause infinite/incorrect inlining.\n6. **Order-of-evaluation preservation**: checkLeftOf/checkRightOf boundaries — expressions with function calls or increments on either side of the use must block inlining if reordering changes side-effect order (e.g. `x = foo(); bar(x, baz())`).\n7. **Loop safety**: definitions inside loops where \"inlinedNewDependencies\" tracking prevents introducing new variable dependencies that weren't previously present (avoiding invalid hoisting across iterations).\n8. **For-loop increment/condition boundaries**: do not inline when target variable used in loop increment/condition created new dependency cycle.\n9. **Scope correctness**: inlining a variable from an outer/different scope into an inner function should not be allowed if it crosses function boundaries incorrectly.\n10. **No-op/idempotence check**: code with no inlineable candidates should remain unchanged (AST equals input).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1435,
+      "output_tokens": 610,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.00897,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.00897,
+        "upstream_inference_prompt_cost": 0.00287,
+        "upstream_inference_completions_cost": 0.0061
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 105064,
+      "daily_remaining_tokens": 94936
+    }
+  },
+  "headers": {
+    "x-request-id": "ivjp499j0bplxvcd7hth1whf",
+    "date": "Sun, 04 Oct 2026 06:55:42 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

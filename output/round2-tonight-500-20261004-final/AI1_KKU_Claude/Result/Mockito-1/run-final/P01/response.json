@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:31:07.491323+00:00",
+  "ended_at_utc": "2026-10-04T04:31:19.081367+00:00",
+  "raw_body_sha256": "04ace3aba67003d6ba2eff156798381422d291460ce7a9ff0458635a96bdf4da",
+  "body": {
+    "id": "gen-1791088270-xNC6rgHzpU2fW7C5Xd4k",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "## Key behaviors, contracts, and boundaries to test\n\n1. **Constructor without matchers**: `new InvocationMatcher(invocation)` should default matchers to equals-based matchers derived from invocation's actual arguments (so `matches(sameInvocation)` returns true).\n\n2. **`matches(Invocation)` — method name/type mismatch**: must return false if invocation's method differs (different name, different declaring class/mock, or different arg count) regardless of matchers.\n\n3. **`matches(Invocation)` — varargs handling**: when the underlying method is varargs, matching should correctly compare individual vararg elements vs. an array matcher (core bug area — e.g., `anyVararg()` matching any number of varargs, and exact array vs. expanded elements).\n\n4. **`hasSameMethod(Invocation)`**: true only when same method (name + parameter types + declaring class) on potentially different invocations; false for overloaded/different-signature methods.\n\n5. **`hasSimilarMethod(Invocation)`**: true for same method name/mock even if invoked via different overload resolution paths (e.g., bridge methods) — boundary case with overridden/generic methods.\n\n6. **`captureArgumentsFrom(Invocation)`**: for `CapturesArgumentsFrom` matchers (e.g., `ArgumentCaptor`), ensure correct argument (including vararg element) is captured — check correct index mapping for vararg vs. fixed args.\n\n7. **`isVarargMatcher` / `isVariableArgument` boundary**: last-parameter vararg position with zero, one, multiple actual varargs supplied; non-vararg method must never be treated as vararg.\n\n8. **`getMatchers()` size consistency**: must equal raw arguments count expected by equals-matcher fallback when no explicit matchers given, even for vararg invocations (flattened vs. array).\n\n9. **`createFrom(List<Invocation>)`**: returns list of `InvocationMatcher`s in same order/size, each wrapping its respective invocation with default equals matchers.\n\n10. **`toString()` / `getLocation()` / `getInvocation()` / `getMethod()`**: simple delegation — verify non-null, correct method object, and invocation identity preserved.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 833,
+      "output_tokens": 744,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.009106,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.009106,
+        "upstream_inference_prompt_cost": 0.001666,
+        "upstream_inference_completions_cost": 0.00744
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 90829,
+      "daily_remaining_tokens": 109171
+    }
+  },
+  "headers": {
+    "x-request-id": "dzzb8i7lnja1miy63srwrmtq",
+    "date": "Sun, 04 Oct 2026 04:31:19 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:22:59.428452+00:00",
+  "ended_at_utc": "2026-10-04T09:23:21.258601+00:00",
+  "raw_body_sha256": "3a6f295e15b6e85a52be4f434dc30ffc285c8c16c5d766d62c4ef5eed51f67a3",
+  "body": {
+    "id": "gen-1791105783-KX0WyKbz2XWt4Bz4ctkU",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.math3.geometry.euclidean.threed;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.apache.commons.math3.exception.MathIllegalArgumentException;\nimport org.apache.commons.math3.geometry.euclidean.threed.Segment;\nimport org.apache.commons.math3.geometry.euclidean.threed.SubLine;\nimport org.apache.commons.math3.geometry.euclidean.threed.Vector3D;\nimport org.junit.Test;\n\npublic class SubLineTest {\n\n    private static final double TOLERANCE = 1e-10;\n\n    @Test\n    public void testIntersectionInsideBothSegments() {\n        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(2, 0, 0));\n        SubLine sub2 = new SubLine(new Vector3D(1, -1, 0), new Vector3D(1, 1, 0));\n        Vector3D inter = sub1.intersection(sub2, true);\n        assertNotNull(inter);\n        assertEquals(1.0, inter.getX(), TOLERANCE);\n        assertEquals(0.0, inter.getY(), TOLERANCE);\n        assertEquals(0.0, inter.getZ(), TOLERANCE);\n    }\n\n    @Test\n    public void testIntersectionOutsideSegmentReturnsNull() {\n        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(1, 0, 0));\n        SubLine sub2 = new SubLine(new Vector3D(5, -1, 0), new Vector3D(5, 1, 0));\n        Vector3D inter = sub1.intersection(sub2, true);\n        assertNull(inter);\n    }\n\n    @Test\n    public void testIntersectionAtEndpointIncludeTrueFalse() {\n        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(1, 0, 0));\n        SubLine sub2 = new SubLine(new Vector3D(1, -1, 0), new Vector3D(1, 1, 0));\n        Vector3D interIncl = sub1.intersection(sub2, true);\n        assertNotNull(interIncl);\n        assertEquals(1.0, interIncl.getX(), TOLERANCE);\n\n        Vector3D interExcl = sub1.intersection(sub2, false);\n        assertNull(interExcl);\n    }\n\n    @Test\n    public void testSkewLinesReturnNull() {\n        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(1, 0, 0));\n        SubLine sub2 = new SubLine(new Vector3D(0, 0, 1), new Vector3D(0, 1, 1));\n        Vector3D inter = sub1.intersection(sub2, true);\n        assertNull(inter);\n    }\n\n    @Test\n    public void testGetSegmentsReturnsEndpoints() {\n        Vector3D start = new Vector3D(0, 0, 0);\n        Vector3D end = new Vector3D(1, 1, 1);\n        SubLine sub = new SubLine(start, end);\n        java.util.List<Segment> segments = sub.getSegments();\n        assertEquals(1, segments.size());\n        Segment seg = segments.get(0);\n        assertEquals(0.0, seg.getStart().distance(start), TOLERANCE);\n        assertEquals(0.0, seg.getEnd().distance(end), TOLERANCE);\n    }\n\n    @Test(expected = MathIllegalArgumentException.class)\n    public void testDegenerateLineThrows() {\n        Vector3D p = new Vector3D(1, 1, 1);\n        new SubLine(p, p);\n    }\n\n    @Test\n    public void testIntersectionSymmetric() {\n        SubLine sub1 = new SubLine(new Vector3D(0, 0, 0), new Vector3D(2, 0, 0));\n        SubLine sub2 = new SubLine(new Vector3D(1, -1, 0), new Vector3D(1, 1, 0));\n        Vector3D inter1 = sub1.intersection(sub2, true);\n        Vector3D inter2 = sub2.intersection(sub1, true);\n        assertNotNull(inter1);\n        assertNotNull(inter2);\n        assertEquals(0.0, inter1.distance(inter2), TOLERANCE);\n\n        Vector3D inter1f = sub1.intersection(sub2, false);\n        Vector3D inter2f = sub2.intersection(sub1, false);\n        assertNotNull(inter1f);\n        assertNotNull(inter2f);\n        assertEquals(0.0, inter1f.distance(inter2f), TOLERANCE);\n    }\n}\n```\n\n```java\npackage org.apache.commons.math3.geometry.euclidean.twod;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.apache.commons.math3.geometry.euclidean.twod.Segment;\nimport org.apache.commons.math3.geometry.euclidean.twod.SubLine;\nimport org.apache.commons.math3.geometry.euclidean.twod.Vector2D;\nimport org.junit.Test;\n\npublic class SubLineTest {\n\n    private static final double TOLERANCE = 1e-10;\n\n    @Test\n    public void testIntersectionInsideBothSegments() {\n        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(2, 0));\n        SubLine sub2 = new SubLine(new Vector2D(1, -1), new Vector2D(1, 1));\n        Vector2D inter = sub1.intersection(sub2, true);\n        assertNotNull(inter);\n        assertEquals(1.0, inter.getX(), TOLERANCE);\n        assertEquals(0.0, inter.getY(), TOLERANCE);\n    }\n\n    @Test\n    public void testIntersectionOutsideSegmentReturnsNull() {\n        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(1, 0));\n        SubLine sub2 = new SubLine(new Vector2D(5, -1), new Vector2D(5, 1));\n        Vector2D inter = sub1.intersection(sub2, true);\n        assertNull(inter);\n    }\n\n    @Test\n    public void testIntersectionAtEndpointIncludeTrueFalse() {\n        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(1, 0));\n        SubLine sub2 = new SubLine(new Vector2D(1, -1), new Vector2D(1, 1));\n        Vector2D interIncl = sub1.intersection(sub2, true);\n        assertNotNull(interIncl);\n        assertEquals(1.0, interIncl.getX(), TOLERANCE);\n\n        Vector2D interExcl = sub1.intersection(sub2, false);\n        assertNull(interExcl);\n    }\n\n    @Test\n    public void testParallelLinesReturnNull() {\n        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(1, 0));\n        SubLine sub2 = new SubLine(new Vector2D(0, 1), new Vector2D(1, 1));\n        Vector2D inter = sub1.intersection(sub2, true);\n        assertNull(inter);\n    }\n\n    @Test\n    public void testGetSegmentsReturnsEndpoints() {\n        Vector2D start = new Vector2D(0, 0);\n        Vector2D end = new Vector2D(3, 4);\n        SubLine sub = new SubLine(start, end);\n        java.util.List<Segment> segments = sub.getSegments();\n        assertEquals(1, segments.size());\n        Segment seg = segments.get(0);\n        assertEquals(0.0, seg.getStart().distance(start), TOLERANCE);\n        assertEquals(0.0, seg.getEnd().distance(end), TOLERANCE);\n    }\n\n    @Test\n    public void testIntersectionSymmetric() {\n        SubLine sub1 = new SubLine(new Vector2D(0, 0), new Vector2D(2, 0));\n        SubLine sub2 = new SubLine(new Vector2D(1, -1), new Vector2D(1, 1));\n        Vector2D inter1 = sub1.intersection(sub2, true);\n        Vector2D inter2 = sub2.intersection(sub1, true);\n        assertNotNull(inter1);\n        assertNotNull(inter2);\n        assertEquals(0.0, inter1.distance(inter2), TOLERANCE);\n\n        Vector2D inter1f = sub1.intersection(sub2, false);\n        Vector2D inter2f = sub2.intersection(sub1, false);\n        assertNotNull(inter1f);\n        assertNotNull(inter2f);\n        assertEquals(0.0, inter1f.distance(inter2f), TOLERANCE);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7043,
+      "output_tokens": 3146,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.045546,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.045546,
+        "upstream_inference_prompt_cost": 0.014086,
+        "upstream_inference_completions_cost": 0.03146
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 175256,
+      "daily_remaining_tokens": 24744
+    }
+  },
+  "headers": {
+    "x-request-id": "y655ewjyfo4as40y35csx37y",
+    "date": "Sun, 04 Oct 2026 09:23:23 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

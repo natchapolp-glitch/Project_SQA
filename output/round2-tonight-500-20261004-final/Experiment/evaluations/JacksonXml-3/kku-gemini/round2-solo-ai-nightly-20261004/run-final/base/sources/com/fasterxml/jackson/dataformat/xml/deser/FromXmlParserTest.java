@@ -1,0 +1,117 @@
+package com.fasterxml.jackson.dataformat.xml.deser;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.util.BufferRecycler;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+public class FromXmlParserTest {
+
+    private FromXmlParser createParser(String xml) throws Exception {
+        XMLInputFactory f = XMLInputFactory.newInstance();
+        XMLStreamReader sr = f.createXMLStreamReader(new StringReader(xml));
+        IOContext ctxt = new IOContext(new BufferRecycler(), sr, false);
+        XmlMapper mapper = new XmlMapper();
+        return new FromXmlParser(ctxt, 0, 0, mapper, sr);
+    }
+
+    @Test
+    public void testVersionAndCodec() throws Exception {
+        FromXmlParser parser = createParser("<root/>");
+        assertNotNull(parser.version());
+        assertNotNull(parser.getCodec());
+        assertTrue(parser.requiresCustomCodec());
+        parser.close();
+    }
+
+    @Test
+    public void testLifecycleAndClose() throws Exception {
+        FromXmlParser parser = createParser("<root/>");
+        assertFalse(parser.isClosed());
+        parser.close();
+        assertTrue(parser.isClosed());
+        parser.close(); // idempotent
+        assertTrue(parser.isClosed());
+    }
+
+    @Test
+    public void testFeatureConfiguration() throws Exception {
+        FromXmlParser parser = createParser("<root/>");
+        FromXmlParser.Feature feature = null;
+        for (FromXmlParser.Feature f : FromXmlParser.Feature.values()) {
+            feature = f;
+            break;
+        }
+        if (feature != null) {
+            parser.enable(feature);
+            assertTrue(parser.isEnabled(feature));
+            parser.disable(feature);
+            assertFalse(parser.isEnabled(feature));
+            parser.configure(feature, true);
+            assertTrue(parser.isEnabled(feature));
+        }
+        assertEquals(parser.getFormatFeatures(), parser.overrideFormatFeatures(15, 15).getFormatFeatures());
+        parser.close();
+    }
+
+    @Test
+    public void testXmlTextElementNameAndConstants() throws Exception {
+        FromXmlParser parser = createParser("<root/>");
+        assertEquals("", FromXmlParser.DEFAULT_UNNAMED_TEXT_PROPERTY);
+        parser.setXMLTextElementName("customValue");
+        assertEquals("customValue", parser._cfgNameForTextElement);
+        parser.close();
+    }
+
+    @Test
+    public void testStaxReaderAccess() throws Exception {
+        FromXmlParser parser = createParser("<root>text</root>");
+        assertNotNull(parser.getStaxReader());
+        parser.close();
+    }
+
+    @Test
+    public void testAddVirtualWrapping() throws Exception {
+        FromXmlParser parser = createParser("<root><item>1</item></root>");
+        Set<String> names = new HashSet<String>();
+        names.add("item");
+        parser.addVirtualWrapping(names);
+        assertNotNull(parser.getParsingContext());
+        parser.close();
+    }
+
+    @Test
+    public void testOverrideCurrentName() throws Exception {
+        FromXmlParser parser = createParser("<root><child>text</child></root>");
+        parser.nextToken(); // START_OBJECT
+        parser.overrideCurrentName("newRoot");
+        assertEquals("newRoot", parser.getParsingContext().getCurrentName());
+        parser.close();
+    }
+
+    @Test
+    public void testEmptyCheck() throws Exception {
+        FromXmlParser parser = createParser("<root/>");
+        assertTrue(parser._isEmpty(""));
+        assertTrue(parser._isEmpty(null));
+        assertTrue(parser._isEmpty("   "));
+        assertFalse(parser._isEmpty("abc"));
+        parser.close();
+    }
+}

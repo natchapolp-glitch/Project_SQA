@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:43:48.309277+00:00",
+  "ended_at_utc": "2026-10-04T07:43:53.895790+00:00",
+  "raw_body_sha256": "fc6c94ec819ac8c9c6352d3fb2eafb52cfe8f20e1353fd69b9f4e348971daeb7",
+  "body": {
+    "id": "gen-1791099830-0ZeVXFtMay5szu8fQQyj",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.jxpath.ri.model.beans;\n\nimport static org.junit.Assert.*;\n\nimport org.apache.commons.jxpath.JXPathInvalidAccessException;\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.model.NodePointer;\nimport org.junit.Before;\nimport org.junit.Test;\n\npublic class NullPropertyPointerExtraTest {\n\n    private NullPropertyPointer pointer;\n\n    @Before\n    public void setUp() {\n        NodePointer root = NodePointer.newNodePointer(\n                new QName(null, \"root\"), new Object(), java.util.Locale.getDefault());\n        NullPointer nullParent = new NullPointer(root, new QName(null, \"parent\"));\n        pointer = new NullPropertyPointer(nullParent);\n    }\n\n    @Test\n    public void testGetValuePointerReturnsNullPointerWithPropertyName() {\n        pointer.setPropertyName(\"foo\");\n        NodePointer valuePointer = pointer.getValuePointer();\n        assertTrue(valuePointer instanceof NullPointer);\n        assertEquals(new QName(\"foo\"), valuePointer.getName());\n    }\n\n    @Test\n    public void testSetValueThrowsWhenParentIsContainer() {\n        try {\n            pointer.setValue(\"value\");\n            fail(\"Expected JXPathInvalidAccessException\");\n        } catch (JXPathInvalidAccessException e) {\n            assertTrue(e.getMessage().contains(\"Cannot set property\"));\n        }\n    }\n\n    @Test\n    public void testAsPathWithoutNameAttributeUsesSuperAsPath() {\n        pointer.setPropertyName(\"bar\");\n        String path = pointer.asPath();\n        assertFalse(path.contains(\"@name\"));\n    }\n\n    @Test\n    public void testSetNameAttributeValueThenGetPropertyNameReflectsValue() {\n        pointer.setNameAttributeValue(\"baz\");\n        assertEquals(\"baz\", pointer.getPropertyName());\n        assertEquals(new QName(\"baz\"), pointer.getName());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 4885,
+      "output_tokens": 733,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.0171,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.0171,
+        "upstream_inference_prompt_cost": 0.00977,
+        "upstream_inference_completions_cost": 0.00733
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 143015,
+      "daily_remaining_tokens": 56985
+    }
+  },
+  "headers": {
+    "x-request-id": "q7ldt4p1je8gff8c6d2fa160",
+    "date": "Sun, 04 Oct 2026 07:43:56 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

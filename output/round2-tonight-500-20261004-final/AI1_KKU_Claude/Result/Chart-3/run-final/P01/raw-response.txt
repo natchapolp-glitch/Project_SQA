@@ -1,0 +1,11 @@
+Focus area: `addOrUpdate(RegularTimePeriod, Number)` / `addOrUpdate(TimeSeriesDataItem)` — known historical bug is incorrect removal/truncation of aged-out items (maximumItemCount handling) when updating an existing period vs adding a new one, and stale min/max Y bounds after update.
+
+Useful behaviors to test:
+- Updating value of an *existing* time period via addOrUpdate should replace the old value, return the old TimeSeriesDataItem (per contract), and leave item count unchanged.
+- Adding a *new* period via addOrUpdate increases item count by one and, if maximumItemCount is exceeded, must remove oldest item(s) so count never exceeds the limit.
+- getMinY()/getMaxY() must reflect correct bounds after an addOrUpdate that changes the extreme value, and after an update that removes the previous min/max (forcing recompute via findBoundsByIteration).
+- addOrUpdate with maximumItemCount=0 should not add any item (series stays empty or unchanged).
+- Return value is null when adding a brand-new item (no prior item existed for that period).
+- Boundary: updating the item that currently holds the series' min or max Y value with a new extreme value, and with NaN, should update bounds correctly.
+- Setup: construct TimeSeries with a Day/Year period class consistently; pre-populate via add() before calling addOrUpdate to set a defined receiver state.
+- Verify series remains sorted by time period and no duplicate periods exist after addOrUpdate.

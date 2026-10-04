@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:07:54.905684+00:00",
+  "ended_at_utc": "2026-10-04T06:07:57.225753+00:00",
+  "raw_body_sha256": "c29d757091a01240863b6116e4aca7a7e8e588ddefc68a045d5d5c4fe03e7ae4",
+  "body": {
+    "id": "genai-01a10586-baad-7841-96d3-6254b7e35d1b",
+    "object": "chat.completion",
+    "created": 1791094078,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jsoup.parser;\n\nimport org.junit.Test;\nimport org.jsoup.nodes.Document;\nimport org.jsoup.nodes.Element;\n\nimport static org.junit.Assert.*;\n\npublic class ParserAdditionalTest {\n\n    @Test\n    public void testParseXmlDeclarationAndCdata() {\n        String html = \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?><root><![CDATA[Some CData content]]></root>\";\n        Document doc = Parser.parse(html, \"http://example.com\");\n        assertNotNull(doc);\n        assertNotNull(doc.select(\"root\").first());\n    }\n\n    @Test\n    public void testParseEmptyStartTagAndEndTag() {\n        String html = \"<div><></></div>\";\n        Document doc = Parser.parseBodyFragment(html, \"http://example.com\");\n        assertNotNull(doc);\n    }\n\n    @Test\n    public void testBaseTagUpdatesBaseUri() {\n        String html = \"<html><head><base href=\\\"http://jsoup.org\\\"></head><body></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com\");\n        assertNotNull(doc);\n        assertEquals(\"http://jsoup.org\", doc.baseUri());\n    }\n\n    @Test\n    public void testParseEmptyAttributeKey() {\n        String html = \"<div =value>Text</div>\";\n        Document doc = Parser.parseBodyFragment(html, \"http://example.com\");\n        assertNotNull(doc);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3910,
+      "completion_tokens": 353,
+      "total_tokens": 4263
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 53072,
+      "daily_remaining_tokens": 296928
+    }
+  },
+  "headers": {
+    "x-request-id": "f48icqbmhbnvg3ww70dzg0ob",
+    "date": "Sun, 04 Oct 2026 06:07:58 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

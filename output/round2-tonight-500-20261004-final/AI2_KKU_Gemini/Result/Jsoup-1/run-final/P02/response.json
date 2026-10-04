@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:12:12.413633+00:00",
+  "ended_at_utc": "2026-10-04T04:12:14.658740+00:00",
+  "raw_body_sha256": "d5c3b57a2e90c23629a9fad0b2db12997aa65813cbfaf09c623335c00cc64557",
+  "body": {
+    "id": "genai-01a1051c-c8c9-7c31-8edd-8ddb6c0bf759",
+    "object": "chat.completion",
+    "created": 1791087134,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jsoup.nodes;\n\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class DocumentTest {\n\n    @Test\n    public void testDocumentConstructorAndNodeName() {\n        Document doc = new Document(\"http://example.com\");\n        assertEquals(\"#document\", doc.nodeName());\n        assertEquals(\"http://example.com\", doc.baseUri());\n    }\n\n    @Test\n    public void testCreateShellStructure() {\n        Document doc = Document.createShell(\"http://example.com\");\n        assertNotNull(doc.head());\n        assertNotNull(doc.body());\n        assertEquals(\"head\", doc.head().nodeName());\n        assertEquals(\"body\", doc.body().nodeName());\n    }\n\n    @Test\n    public void testTitleGetAndSet() {\n        Document doc = Document.createShell(\"http://example.com\");\n        assertEquals(\"\", doc.title());\n\n        doc.title(\"Hello World\");\n        assertEquals(\"Hello World\", doc.title());\n        assertNotNull(doc.getElementsByTag(\"title\").first());\n\n        doc.title(\"New Title\");\n        assertEquals(\"New Title\", doc.title());\n    }\n\n    @Test\n    public void testCreateElement() {\n        Document doc = new Document(\"http://example.com\");\n        Element el = doc.createElement(\"div\");\n        assertEquals(\"div\", el.nodeName());\n        assertEquals(\"http://example.com\", el.baseUri());\n    }\n\n    @Test\n    public void testDocumentText() {\n        Document doc = Document.createShell(\"http://example.com\");\n        doc.text(\"Document Body Text\");\n        assertEquals(\"Document Body Text\", doc.body().text());\n    }\n\n    @Test\n    public void testNormalise() {\n        Document doc = new Document(\"http://example.com\");\n        Document normalised = doc.normalise();\n        assertNotNull(normalised.head());\n        assertNotNull(normalised.body());\n    }\n\n    @Test\n    public void testOuterHtml() {\n        Document doc = Document.createShell(\"http://example.com\");\n        doc.body().text(\"Test Content\");\n        String html = doc.outerHtml();\n        assertTrue(html.contains(\"<html>\"));\n        assertTrue(html.contains(\"Test Content\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1722,
+      "completion_tokens": 526,
+      "total_tokens": 2248
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 66018,
+      "daily_remaining_tokens": 283982
+    }
+  },
+  "headers": {
+    "x-request-id": "xjwmw2irupb14d9sof5vptpx",
+    "date": "Sun, 04 Oct 2026 04:12:14 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,412 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: JacksonXml-4
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider
+
+BUGGY API signatures (may include private members):
+Compiled from "XmlSerializerProvider.java"
+public class com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider extends com.fasterxml.jackson.databind.ser.DefaultSerializerProvider {
+  private static final long serialVersionUID;
+  protected static final javax.xml.namespace.QName ROOT_NAME_FOR_NULL;
+  protected final com.fasterxml.jackson.dataformat.xml.util.XmlRootNameLookup _rootNameLookup;
+  public com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider(com.fasterxml.jackson.dataformat.xml.util.XmlRootNameLookup);
+  public com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider(com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider, com.fasterxml.jackson.databind.SerializationConfig, com.fasterxml.jackson.databind.ser.SerializerFactory);
+  public com.fasterxml.jackson.databind.ser.DefaultSerializerProvider createInstance(com.fasterxml.jackson.databind.SerializationConfig, com.fasterxml.jackson.databind.ser.SerializerFactory);
+  public void serializeValue(com.fasterxml.jackson.core.JsonGenerator, java.lang.Object) throws java.io.IOException;
+  public void serializeValue(com.fasterxml.jackson.core.JsonGenerator, java.lang.Object, com.fasterxml.jackson.databind.JavaType) throws java.io.IOException;
+  public void serializeValue(com.fasterxml.jackson.core.JsonGenerator, java.lang.Object, com.fasterxml.jackson.databind.JavaType, com.fasterxml.jackson.databind.JsonSerializer<java.lang.Object>) throws java.io.IOException;
+  protected void _serializeXmlNull(com.fasterxml.jackson.core.JsonGenerator) throws java.io.IOException;
+  protected void _startRootArray(com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator, javax.xml.namespace.QName) throws java.io.IOException;
+  protected void _initWithRootName(com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator, javax.xml.namespace.QName) throws java.io.IOException;
+  protected javax.xml.namespace.QName _rootNameFromConfig();
+  protected com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator _asXmlGenerator(com.fasterxml.jackson.core.JsonGenerator) throws com.fasterxml.jackson.databind.JsonMappingException;
+  static {};
+}
+
+
+BUGGY source excerpt: com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider (truncated=False)
+```java
+package com.fasterxml.jackson.dataformat.xml.ser;
+
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.PropertyName;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
+import com.fasterxml.jackson.databind.util.TokenBuffer;
+import com.fasterxml.jackson.dataformat.xml.util.StaxUtil;
+import com.fasterxml.jackson.dataformat.xml.util.TypeUtil;
+import com.fasterxml.jackson.dataformat.xml.util.XmlRootNameLookup;
+
+/**
+ * We need to override some parts of
+ * {@link com.fasterxml.jackson.databind.SerializerProvider}
+ * implementation to handle oddities of XML output, like "extra" root element.
+ */
+public class XmlSerializerProvider extends DefaultSerializerProvider
+{
+    // As of 2.7
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * If all we get to serialize is a null, there's no way to figure out
+     * expected root name; so let's just default to something like "&lt;null>"...
+     */
+    protected final static QName ROOT_NAME_FOR_NULL = new QName("null");
+
+    protected final XmlRootNameLookup _rootNameLookup;
+
+    public XmlSerializerProvider(XmlRootNameLookup rootNames)
+    {
+        super();
+        _rootNameLookup = rootNames;
+    }
+
+    public XmlSerializerProvider(XmlSerializerProvider src,
+            SerializationConfig config, SerializerFactory f)
+    {
+        super(src, config, f);
+        _rootNameLookup  = src._rootNameLookup;
+    }
+
+    /*
+    /**********************************************************************
+    /* Overridden methods
+    /**********************************************************************
+     */
+
+    @Override
+    public DefaultSerializerProvider createInstance(SerializationConfig config,
+            SerializerFactory jsf) {
+        return new XmlSerializerProvider(this, config, jsf);
+    }
+
+    @SuppressWarnings("resource")
+    @Override
+    public void serializeValue(JsonGenerator gen, Object value) throws IOException
+    {
+        if (value == null) {
+            _serializeXmlNull(gen);
+            return;
+        }
+        final Class<?> cls = value.getClass();
+        final boolean asArray;
+        final ToXmlGenerator xgen = _asXmlGenerator(gen);
+        if (xgen == null) { // called by convertValue()
+            asArray = false;
+        } else {
+            QName rootName = _rootNameFromConfig();
+            if (rootName == null) {
+                rootName = _rootNameLookup.findRootName(cls, _config);
+            }
+            _initWithRootName(xgen, rootName);
+            asArray = TypeUtil.isIndexedType(cls);
+            if (asArray) {
+                _startRootArray(xgen, rootName);
+            }
+        }
+        
+        // From super-class implementation
+        final JsonSerializer<Object> ser = findTypedValueSerializer(cls, true, null);
+        try {
+            ser.serialize(value, gen, this);
+        } catch (IOException ioe) { // As per [JACKSON-99], pass IOException and subtypes as-is
+            throw ioe;
+        } catch (Exception e) { // but wrap RuntimeExceptions, to get path information
+            String msg = e.getMessage();
+            if (msg == null) {
+                msg = "[no message for "+e.getClass().getName()+"]";
+            }
+            throw JsonMappingException.from(gen, msg, e);
+        }
+        // end of super-class implementation
+
+        if (asArray) {
+            gen.writeEndObject();
+        }
+    }
+
+    @SuppressWarnings("resource")
+    @Override
+    public void serializeValue(JsonGenerator gen, Object value, JavaType rootType)
+        throws IOException
+    {
+        if (value == null) {
+            _serializeXmlNull(gen);
+            return;
+        }
+        final boolean asArray;
+        final ToXmlGenerator xgen = _asXmlGenerator(gen);
+        if (xgen == null) { // called by convertValue()
+            asArray = false;
+        } else {
+            QName rootName = _rootNameFromConfig();
+            if (rootName == null) {
+                rootName = _rootNameLookup.findRootName(rootType, _config);
+            }
+            _initWithRootName(xgen, rootName);
+            asArray = TypeUtil.isIndexedType(rootType);
+            if (asArray) {
+                _startRootArray(xgen, rootName);
+            }
+        }
+
+        final JsonSerializer<Object> ser = findTypedValueSerializer(rootType, true, null);
+        // From super-class implementation
+        try {
+            ser.serialize(value, gen, this);
+        } catch (IOException ioe) { // no wrapping for IO (and derived)
+            throw ioe;
+        } catch (Exception e) { // but others do need to be, to get path etc
+            String msg = e.getMessage();
+            if (msg == null) {
+                msg = "[no message for "+e.getClass().getName()+"]";
+            }
+            throw JsonMappingException.from(gen, msg, e);
+        }
+        // end of super-class implementation
+
+        if (asArray) {
+            gen.writeEndObject();
+        }
+    }
+    
+    // @since 2.1
+    @SuppressWarnings("resource")
+    @Override
+    public void serializeValue(JsonGenerator gen, Object value, JavaType rootType,
+            JsonSerializer<Object> ser) throws IOException
+    {
+        if (value == null) {
+            _serializeXmlNull(gen);
+            return;
+        }
+        final boolean asArray;
+        final ToXmlGenerator xgen = _asXmlGenerator(gen);
+        if (xgen == null) { // called by convertValue()
+            asArray = false;
+        } else {
+            QName rootName = _rootNameFromConfig();
+            if (rootName == null) {
+                rootName = _rootNameLookup.findRootName(rootType, _config);
+            }
+            _initWithRootName(xgen, rootName);
+            asArray = TypeUtil.isIndexedType(rootType);
+            if (asArray) {
+                _startRootArray(xgen, rootName);
+            }
+        }
+        if (ser == null) {
+            ser = findTypedValueSerializer(rootType, true, null);
+        }
+        // From super-class implementation
+        try {
+            ser.serialize(value, gen, this);
+        } catch (IOException ioe) { // no wrapping for IO (and derived)
+            throw ioe;
+        } catch (Exception e) { // but others do need to be, to get path etc
+            String msg = e.getMessage();
+            if (msg == null) {
+                msg = "[no message for "+e.getClass().getName()+"]";
+            }
+            throw JsonMappingException.from(gen, msg, e);
+        }
+        // end of super-class implementation
+        if (asArray) {
+            gen.writeEndObject();
+        }
+    }
+
+    protected void _serializeXmlNull(JsonGenerator jgen) throws IOException
+    {
+        // 14-Nov-2016, tatu: As per [dataformat-xml#213], we may have explicitly
+        //    configured root name...
+        if (jgen instanceof ToXmlGenerator) {
+            _initWithRootName((ToXmlGenerator) jgen, ROOT_NAME_FOR_NULL);
+        }
+        super.serializeValue(jgen, null);
+    }
+    
+    protected void _startRootArray(ToXmlGenerator xgen, QName rootName) throws IOException
+    {
+        xgen.writeStartObject();
+        // Could repeat root name, but what's the point? How to customize?
+        xgen.writeFieldName("item");
+    }    
+
+    protected void _initWithRootName(ToXmlGenerator xgen, QName rootName) throws IOException
+    {
+        /* 28-Nov-2012, tatu: We should only initialize the root
+         *  name if no name has been set, as per [dataformat-xml#42],
+         *  to allow for custom serializers to work.
+         */
+        if (!xgen.setNextNameIfMissing(rootName)) {
+            // however, if we are root, we... insist
+            if (xgen.inRoot()) {
+                xgen.setNextName(rootName);
+            }
+        }
+        xgen.initGenerator();
+        String ns = rootName.getNamespaceURI();
+        /* [dataformat-xml#26] If we just try writing root element with namespace,
+         * we will get an explicit prefix. But we'd rather use the default
+         * namespace, so let's try to force that.
+         */
+        if (ns != null && ns.length() > 0) {
+            try {
+                xgen.getStaxWriter().setDefaultNamespace(ns);
+            } catch (XMLStreamException e) {
+                StaxUtil.throwXmlAsIOException(e);
+            }
+        }
+    }
+
+    protected QName _rootNameFromConfig()
+    {
+        PropertyName name = _config.getFullRootName();
+        if (name == null) {
+            return null;
+        }
+        String ns = name.getNamespace();
+        if (ns == null || ns.isEmpty()) {
+            return new QName(name.getSimpleName());
+        }
+        return new QName(ns, name.getSimpleName());
+    }
+
+    protected ToXmlGenerator _asXmlGenerator(JsonGenerator gen)
+        throws JsonMappingException
+    {
+        // [Issue#71]: When converting, we actually get TokenBuffer, which is fine
+        if (!(gen instanceof ToXmlGenerator)) {
+            // but verify
+            if (!(gen instanceof TokenBuffer)) {
+                throw JsonMappingException.from(gen,
+                        "XmlMapper does not with generators of type other than ToXmlGenerator; got: "+gen.getClass().getName());
+            }
+            return null;
+        }
+        return (ToXmlGenerator) gen;
+    }    
+}
+
+```
+
+
+Original generated source:
+```java
+package com.fasterxml.jackson.dataformat.xml.ser;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
+import javax.xml.namespace.QName;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import com.fasterxml.jackson.databind.util.TokenBuffer;
+import com.fasterxml.jackson.dataformat.xml.util.XmlRootNameLookup;
+
+public class XmlSerializerProviderTest {
+
+    @Test
+    public void testCreateInstance() {
+        XmlRootNameLookup lookup = new XmlRootNameLookup();
+        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);
+        SerializationConfig config = new ObjectMapper().getSerializationConfig();
+        SerializerFactory factory = provider.getSerializerFactory();
+
+        XmlSerializerProvider newProvider = (XmlSerializerProvider) provider.createInstance(config, factory);
+        assertNotNull(newProvider);
+        assertSame(config, newProvider.getConfig());
+    }
+
+    @Test
+    public void testAsXmlGeneratorWithTokenBuffer() throws Exception {
+        XmlRootNameLookup lookup = new XmlRootNameLookup();
+        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);
+        ObjectMapper mapper = new ObjectMapper();
+        TokenBuffer tb = new TokenBuffer(mapper, false);
+
+        ToXmlGenerator xgen = provider._asXmlGenerator(tb);
+        assertNull(xgen);
+    }
+
+    @Test
+    public void testAsXmlGeneratorWithInvalidGenerator() {
+        XmlRootNameLookup lookup = new XmlRootNameLookup();
+        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            mapper.getFactory().createGenerator(new java.io.StringWriter());
+            fail("Expected JsonMappingException");
+        } catch (Exception e) {
+            // expected generator creation or invalid generator test flow
+        }
+    }
+
+    @Test
+    public void testRootNameForNullConstant() {
+        assertNotNull(XmlSerializerProvider.ROOT_NAME_FOR_NULL);
+    }
+
+    @Test
+    public void testRootNameFromConfigWithNull() {
+        XmlRootNameLookup lookup = new XmlRootNameLookup();
+        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);
+        QName qname = provider._rootNameFromConfig();
+        assertNull(qname);
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+d /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f && ant -f /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml -Dd4j.home=/home/team/sqa-round2/defects4j -Dd4j.dir.projects=/home/team/sqa-round2/defects4j/framework/projects -Dbasedir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f -Dd4j.test.dir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f/.test_suite compile.gen.tests 2>&1
+Buildfile: /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml
+
+test-offline:
+
+get-deps:
+
+jackson-dataformat-xml-from-maven.compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f/maven-build.xml:90: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+compile:
+
+compile.gen.tests:
+     [echo] classes.dir: target/classes
+     [echo] build.home: target/classes/..
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JacksonXml-4/f/.test_suite/com/fasterxml/jackson/dataformat/xml/ser/XmlSerializerProviderTest.java:26: error: cannot find symbol
+    [javac]         SerializerFactory factory = provider.getSerializerFactory();
+    [javac]                                             ^
+    [javac]   symbol:   method getSerializerFactory()
+    [javac]   location: variable provider of type XmlSerializerProvider
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 1 second
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

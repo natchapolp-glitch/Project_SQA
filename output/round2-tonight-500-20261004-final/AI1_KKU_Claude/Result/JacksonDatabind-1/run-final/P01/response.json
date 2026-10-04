@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:02:12.649798+00:00",
+  "ended_at_utc": "2026-10-04T04:02:19.525531+00:00",
+  "raw_body_sha256": "0184a052762d68d53a85c261e0a5464c4898c115a3cf28eaac76a169c747c616",
+  "body": {
+    "id": "gen-1791086533-neS2komYF1rd6RViuoA0",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `getRawSerializationType()` should return the raw class of `_cfgSerializationType` only if non-null, else `null`; verify behavior for both set and unset `_cfgSerializationType`, including when `_cfgSerializationType` is a generic/parameterized type.\n- `getRawSerializationType()` vs `getPropertyType()` vs `getSerializationType()` should be consistent: serialization type takes precedence over declared type when configured.\n- `serializeAsField` must skip output (not write anything) when value is null and `_suppressNulls` is true; must write null via `_nullSerializer` when present and not suppressed.\n- `serializeAsField` should suppress output when value equals `_suppressableValue` (e.g., MARKER_FOR_EMPTY semantics or default-value suppression).\n- `serializeAsColumn` must still emit a placeholder/null for suppressed values (to preserve column alignment) rather than skipping entirely — contrast with `serializeAsField`.\n- `get(Object)` should correctly invoke the underlying `_accessorMethod` or `_field` depending on which is set, given a valid bean instance.\n- `rename()` and `unwrappingWriter()` should produce a new `BeanPropertyWriter` with transformed `_name`/`_wrapperName`, leaving original writer unmodified.\n- `assignSerializer` / `assignNullSerializer` should update `_serializer`/`_nullSerializer` and be reflected in `hasSerializer()`/`hasNullSerializer()`.\n- `getInternalSetting`, `setInternalSetting`, `removeInternalSetting` should behave as a map: set then get returns value, remove then get returns null, lazy-init `_internalSettings` only when first set.\n- Boundary: receiver constructed via copy-constructor(s) must preserve all fields from source writer, including `_includeInViews`, `_isRequired`, `_typeSerializer`.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2683,
+      "output_tokens": 644,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.011806,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.011806,
+        "upstream_inference_prompt_cost": 0.005366,
+        "upstream_inference_completions_cost": 0.00644
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 3327,
+      "daily_remaining_tokens": 196673
+    }
+  },
+  "headers": {
+    "x-request-id": "q00gq6e6o0ol1qq2f6mn8093",
+    "date": "Sun, 04 Oct 2026 04:02:20 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,8 @@
+- Valid receiver setup: `populationSize > 0`, `numberOfSuccesses >= 0`, `sampleSize > 0`, with `numberOfSuccesses <= populationSize` and `sampleSize <= populationSize`.
+- Boundary constraint: Constructor must throw exceptions when parameters violate positivity or size rules (`NotPositiveException`, `NotStrictlyPositiveException`, `NumberIsTooLargeException`).
+- Support bounds behavior: `getSupportLowerBound()` must return `Math.max(0, sampleSize - (populationSize - numberOfSuccesses))`.
+- Support bounds behavior: `getSupportUpperBound()` must return `Math.min(sampleSize, numberOfSuccesses)`.
+- Probability behavior: `probability(int x)` must return 0 for $x$ outside the support lower and upper bounds.
+- Cumulative probability behavior: `cumulativeProbability(int x)` must return 0.0 for $x$ below the lower bound and 1.0 for $x$ at or above the upper bound.
+- Variance calculation: `getNumericalVariance()` must return the correct hypergeometric variance formula without arithmetic overflow for large numbers.
+- Numerical precision/boundary: Extreme parameter combinations (e.g., large population sizes near integer limits) must not overflow intermediate calculations.

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:25:28.900495+00:00",
+  "ended_at_utc": "2026-10-04T07:25:49.431272+00:00",
+  "raw_body_sha256": "6bc545b8104a1ed955ed888cbfdc0a320147d6ab64694a2d1c4fc30a1709ceda",
+  "body": {
+    "id": "gen-1791098731-28r8cjzjKGgJf3BxVlZi",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.core.json;\n\nimport static org.junit.Assert.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonToken;\n\npublic class UTF8StreamJsonParserExtraTest {\n\n    private JsonParser createParser(String json) throws IOException {\n        JsonFactory f = new JsonFactory();\n        byte[] bytes = json.getBytes(\"UTF-8\");\n        return f.createParser(new ByteArrayInputStream(bytes));\n    }\n\n    @Test\n    public void testReleaseBufferedWritesRemainingBytes() throws Exception {\n        JsonFactory f = new JsonFactory();\n        String json = \"{\\\"a\\\":1}EXTRA\";\n        JsonParser p = f.createParser(new ByteArrayInputStream(json.getBytes(\"UTF-8\")));\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, p.nextToken());\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(JsonToken.END_OBJECT, p.nextToken());\n\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        int count = p.releaseBuffered(out);\n        assertTrue(count >= 0);\n        p.close();\n    }\n\n    @Test\n    public void testGetTextLengthAndOffsetForString() throws Exception {\n        JsonParser p = createParser(\"\\\"hello world\\\"\");\n        assertEquals(JsonToken.VALUE_STRING, p.nextToken());\n        String text = p.getText();\n        assertEquals(\"hello world\", text);\n        int len = p.getTextLength();\n        int off = p.getTextOffset();\n        char[] chars = p.getTextCharacters();\n        assertEquals(\"hello world\", new String(chars, off, len));\n        p.close();\n    }\n\n    @Test\n    public void testGetValueAsStringWithDefaultForNonString() throws Exception {\n        JsonParser p = createParser(\"12345\");\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        String asString = p.getValueAsString(\"default\");\n        assertEquals(\"12345\", asString);\n        p.close();\n    }\n\n    @Test\n    public void testFieldNameTextCharactersMatchCurrentName() throws Exception {\n        JsonParser p = createParser(\"{\\\"someField\\\":true}\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, p.nextToken());\n        assertEquals(\"someField\", p.getCurrentName());\n        char[] chars = p.getTextCharacters();\n        int len = p.getTextLength();\n        assertEquals(\"someField\", new String(chars, 0, len));\n        p.close();\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 9106,
+      "output_tokens": 1087,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.029082,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.029082,
+        "upstream_inference_prompt_cost": 0.018212,
+        "upstream_inference_completions_cost": 0.01087
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 137735,
+      "daily_remaining_tokens": 62265
+    }
+  },
+  "headers": {
+    "x-request-id": "op9nok9q2vsxfusr8vjp8d7d",
+    "date": "Sun, 04 Oct 2026 07:25:50 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

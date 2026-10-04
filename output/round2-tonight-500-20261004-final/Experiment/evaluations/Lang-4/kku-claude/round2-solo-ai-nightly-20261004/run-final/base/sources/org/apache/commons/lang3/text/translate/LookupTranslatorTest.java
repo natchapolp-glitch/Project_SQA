@@ -1,0 +1,102 @@
+package org.apache.commons.lang3.text.translate;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.StringWriter;
+
+import org.junit.Test;
+
+public class LookupTranslatorTest {
+
+    @Test
+    public void testBasicLookup() throws IOException {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[][]{
+                {"one", "1"}
+        });
+        StringWriter out = new StringWriter();
+        int consumed = lt.translate("one", 0, out);
+        assertEquals(3, consumed);
+        assertEquals("1", out.toString());
+    }
+
+    @Test
+    public void testNoMatchReturnsZero() throws IOException {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[][]{
+                {"one", "1"}
+        });
+        StringWriter out = new StringWriter();
+        int consumed = lt.translate("two", 0, out);
+        assertEquals(0, consumed);
+        assertEquals("", out.toString());
+    }
+
+    @Test
+    public void testGreedyLongestMatchPreferred() throws IOException {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[][]{
+                {"a", "1"},
+                {"ab", "2"},
+                {"abc", "3"}
+        });
+        StringWriter out = new StringWriter();
+        int consumed = lt.translate("abcd", 0, out);
+        assertEquals(3, consumed);
+        assertEquals("3", out.toString());
+    }
+
+    @Test
+    public void testBoundaryNearEndOfInput() throws IOException {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[][]{
+                {"a", "1"},
+                {"ab", "2"},
+                {"abc", "3"}
+        });
+        StringWriter out = new StringWriter();
+        int consumed = lt.translate("xab", 1, out);
+        assertEquals(2, consumed);
+        assertEquals("2", out.toString());
+    }
+
+    @Test
+    public void testIndexAtEndOfInputReturnsZero() throws IOException {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[][]{
+                {"a", "1"}
+        });
+        StringWriter out = new StringWriter();
+        int consumed = lt.translate("a", 1, out);
+        assertEquals(0, consumed);
+        assertEquals("", out.toString());
+    }
+
+    @Test
+    public void testEmptyLookupTableNeverMatches() throws IOException {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[0][]);
+        StringWriter out = new StringWriter();
+        int consumed = lt.translate("anything", 0, out);
+        assertEquals(0, consumed);
+        assertEquals("", out.toString());
+    }
+
+    @Test
+    public void testFullStringTranslateIntegration() {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[][]{
+                {"&", "&amp;"},
+                {"<", "&lt;"}
+        });
+        String result = lt.translate("a < b & c");
+        assertEquals("a &lt; b &amp; c", result);
+    }
+
+    @Test
+    public void testSingleAndMultiCharacterKeysMixed() throws IOException {
+        LookupTranslator lt = new LookupTranslator(new CharSequence[][]{
+                {"x", "X"},
+                {"xy", "XY"},
+                {"xyz", "XYZ"}
+        });
+        StringWriter out = new StringWriter();
+        int consumed = lt.translate("xy", 0, out);
+        assertEquals(2, consumed);
+        assertEquals("XY", out.toString());
+    }
+}

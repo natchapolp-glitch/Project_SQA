@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:44:29.791131+00:00",
+  "ended_at_utc": "2026-10-04T07:44:32.374105+00:00",
+  "raw_body_sha256": "ac87a607173e98054f1fb0b13113e3254c4b5674d965f803ccf1a59df6919ab1",
+  "body": {
+    "id": "genai-01a105df-3091-717a-83ef-540c9cac77f6",
+    "object": "chat.completion",
+    "created": 1791099875,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.jxpath.ri.model.beans;\n\nimport java.util.Locale;\nimport org.apache.commons.jxpath.JXPathContext;\nimport org.apache.commons.jxpath.JXPathInvalidAccessException;\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.model.NodePointer;\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class NullPropertyPointerTest {\n\n    @Test\n    public void testInitialState() {\n        NodePointer parent = new NullPointer(Locale.getDefault(), \"test\");\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n\n        assertEquals(\"*\", pointer.getPropertyName());\n        assertEquals(0, pointer.getLength());\n        assertNull(pointer.getBaseValue());\n        assertNull(pointer.getImmediateNode());\n        assertTrue(pointer.isLeaf());\n        assertFalse(pointer.isActual());\n        assertTrue(pointer.isContainer());\n        assertEquals(0, pointer.getPropertyCount());\n        assertArrayEquals(new String[0], pointer.getPropertyNames());\n    }\n\n    @Test\n    public void testPropertyNameAndNameAttribute() {\n        NodePointer parent = new NullPointer(Locale.getDefault(), \"test\");\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n\n        pointer.setPropertyName(\"foo\");\n        assertEquals(\"foo\", pointer.getPropertyName());\n        assertEquals(\"foo\", pointer.getName().getName());\n\n        pointer.setNameAttributeValue(\"bar's name\");\n        assertEquals(\"bar&apos;s name\", pointer.getPropertyName());\n        assertTrue(pointer.asPath().contains(\"[@name='bar&apos;s name']\"));\n    }\n\n    @Test\n    public void testValuePointer() {\n        NodePointer parent = new NullPointer(Locale.getDefault(), \"test\");\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n        pointer.setPropertyName(\"childProp\");\n\n        NodePointer valuePtr = pointer.getValuePointer();\n        assertNotNull(valuePtr);\n        assertEquals(\"childProp\", valuePtr.getName().getName());\n    }\n\n    @Test(expected = JXPathInvalidAccessException.class)\n    public void testSetValueWithNullParent() {\n        NullPropertyPointer pointer = new NullPropertyPointer(null);\n        pointer.setValue(\"value\");\n    }\n\n    @Test\n    public void testIsCollection() {\n        NodePointer parent = new NullPointer(Locale.getDefault(), \"test\");\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n\n        assertFalse(pointer.isCollection());\n        pointer.setIndex(0);\n        assertTrue(pointer.isCollection());\n    }\n\n    @Test\n    public void testCreateChild() {\n        NodePointer parent = new NullPointer(Locale.getDefault(), \"test\");\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n        JXPathContext context = JXPathContext.newContext(new Object());\n\n        try {\n            pointer.createChild(context, new QName(\"sub\"), 0);\n        } catch (Exception e) {\n            assertNotNull(e);\n        }\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3952,
+      "completion_tokens": 717,
+      "total_tokens": 4669
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 98254,
+      "daily_remaining_tokens": 251746
+    }
+  },
+  "headers": {
+    "x-request-id": "jzqag1053lpci28nyiappwsa",
+    "date": "Sun, 04 Oct 2026 07:44:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

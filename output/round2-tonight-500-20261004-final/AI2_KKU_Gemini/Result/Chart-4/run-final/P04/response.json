@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:20:47.093285+00:00",
+  "ended_at_utc": "2026-10-04T08:20:49.625406+00:00",
+  "raw_body_sha256": "f84c3db7dbb8f9ff94cbc24aeaf94441c3d047b9e9680b67ba8202333c4d09e2",
+  "body": {
+    "id": "genai-01a10600-6859-7df8-9e4b-ecbf787381ba",
+    "object": "chat.completion",
+    "created": 1791102052,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.chart.plot;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\n\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.renderer.xy.StandardXYItemRenderer;\nimport org.jfree.data.xy.DefaultXYDataset;\nimport org.junit.Test;\n\npublic class XYPlotTestAdditional {\n\n    @Test\n    public void testSetDomainAxesArray() {\n        XYPlot plot = new XYPlot();\n        NumberAxis[] axes = new NumberAxis[] {\n            new NumberAxis(\"X1\"),\n            new NumberAxis(\"X2\")\n        };\n        plot.setDomainAxes(axes);\n        assertEquals(2, plot.getDomainAxisCount());\n        assertEquals(axes[0], plot.getDomainAxis(0));\n        assertEquals(axes[1], plot.getDomainAxis(1));\n    }\n\n    @Test\n    public void testSetRangeAxesArray() {\n        XYPlot plot = new XYPlot();\n        NumberAxis[] axes = new NumberAxis[] {\n            new NumberAxis(\"Y1\"),\n            new NumberAxis(\"Y2\")\n        };\n        plot.setRangeAxes(axes);\n        assertEquals(2, plot.getRangeAxisCount());\n        assertEquals(axes[0], plot.getRangeAxis(0));\n        assertEquals(axes[1], plot.getRangeAxis(1));\n    }\n\n    @Test\n    public void testDomainAxisLocationManagement() {\n        XYPlot plot = new XYPlot();\n        plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_LEFT);\n        assertEquals(AxisLocation.BOTTOM_OR_LEFT, plot.getDomainAxisLocation());\n        \n        plot.setDomainAxisLocation(1, AxisLocation.TOP_OR_RIGHT);\n        assertEquals(AxisLocation.TOP_OR_RIGHT, plot.getDomainAxisLocation(1));\n    }\n\n    @Test\n    public void testRangeAxisLocationManagement() {\n        XYPlot plot = new XYPlot();\n        plot.setRangeAxisLocation(AxisLocation.TOP_OR_LEFT);\n        assertEquals(AxisLocation.TOP_OR_LEFT, plot.getRangeAxisLocation());\n        \n        plot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);\n        assertEquals(AxisLocation.BOTTOM_OR_RIGHT, plot.getRangeAxisLocation(1));\n    }\n\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6553,
+      "completion_tokens": 555,
+      "total_tokens": 7108
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 124020,
+      "daily_remaining_tokens": 225980
+    }
+  },
+  "headers": {
+    "x-request-id": "o7rie0xf650dsomuoi26rayl",
+    "date": "Sun, 04 Oct 2026 08:20:52 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

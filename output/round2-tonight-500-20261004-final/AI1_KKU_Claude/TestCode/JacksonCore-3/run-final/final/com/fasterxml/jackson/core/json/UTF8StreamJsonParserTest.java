@@ -1,0 +1,119 @@
+package com.fasterxml.jackson.core.json;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+public class UTF8StreamJsonParserTest {
+
+    private JsonParser createParser(String json) throws IOException {
+        JsonFactory f = new JsonFactory();
+        byte[] bytes = json.getBytes("UTF-8");
+        return f.createParser(new ByteArrayInputStream(bytes));
+    }
+
+    @Test
+    public void testZeroIntegerParsesCorrectly() throws Exception {
+        JsonParser p = createParser("0");
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(0, p.getIntValue());
+        p.close();
+    }
+
+    @Test
+    public void testNegativeZeroParsesCorrectly() throws Exception {
+        JsonParser p = createParser("-0");
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(0, p.getIntValue());
+        p.close();
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void testLeadingZeroRejected() throws Exception {
+        JsonParser p = createParser("01");
+        p.nextToken();
+        p.getIntValue();
+    }
+
+    @Test
+    public void testFloatingPointExponentParsesCorrectly() throws Exception {
+        JsonParser p = createParser("1.0e10");
+        assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
+        assertEquals(1.0e10, p.getDoubleValue(), 0.0001);
+        p.close();
+    }
+
+    @Test
+    public void testNegativeDecimalParsesCorrectly() throws Exception {
+        JsonParser p = createParser("-123.456");
+        assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
+        assertEquals(-123.456, p.getDoubleValue(), 0.0001);
+        assertEquals("-123.456", p.getText());
+        p.close();
+    }
+
+    @Test
+    public void testLargeIntegerAcrossSmallBuffer() throws Exception {
+        JsonFactory f = new JsonFactory();
+        String number = "123456789012345";
+        JsonParser p = f.createParser(new ByteArrayInputStream(number.getBytes("UTF-8")));
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(123456789012345L, p.getLongValue());
+        p.close();
+    }
+
+    @Test
+    public void testFieldNameAndStringValueRoundTrip() throws Exception {
+        JsonParser p = createParser("{\"fieldName\":\"value\"}");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("fieldName", p.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals("value", p.getText());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testMultiByteUtf8TextCharacters() throws Exception {
+        String value = "caf\u00e9";
+        JsonParser p = createParser("\"" + value + "\"");
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals(value, p.getText());
+        char[] chars = p.getTextCharacters();
+        int len = p.getTextLength();
+        int off = p.getTextOffset();
+        assertEquals(value, new String(chars, off, len));
+        p.close();
+    }
+
+    @Test(expected = JsonParseException.class)
+    public void testTruncatedNumberAtEofThrows() throws Exception {
+        JsonParser p = createParser("123.");
+        p.nextToken();
+        p.getDoubleValue();
+    }
+
+    @Test
+    public void testNextFieldNameThenNextTokenStateConsistency() throws Exception {
+        JsonParser p = createParser("{\"a\":1,\"b\":2}");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertTrue(p.nextFieldName(new com.fasterxml.jackson.core.io.SerializedString("a")));
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(1, p.getIntValue());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("b", p.getCurrentName());
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(2, p.getIntValue());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        p.close();
+    }
+}

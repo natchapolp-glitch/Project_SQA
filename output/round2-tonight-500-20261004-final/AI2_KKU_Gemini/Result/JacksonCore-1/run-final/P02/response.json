@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:58:16.757491+00:00",
+  "ended_at_utc": "2026-10-04T03:58:20.603782+00:00",
+  "raw_body_sha256": "eab59464d8fc289c3999428862cd0cd8cde7c56f4a514127c36c96129d778da9",
+  "body": {
+    "id": "genai-01a10510-1193-7fb9-bdbd-1be4e598df3b",
+    "object": "chat.completion",
+    "created": 1791086301,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.core.io;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class NumberInputTest {\n\n    @Test\n    public void testParseIntString() {\n        assertEquals(123456789, NumberInput.parseInt(\"123456789\"));\n        assertEquals(-123, NumberInput.parseInt(\"-123\"));\n        assertEquals(0, NumberInput.parseInt(\"0\"));\n    }\n\n    @Test\n    public void testParseIntChars() {\n        char[] chars = \"  123456  \".toCharArray();\n        assertEquals(123456, NumberInput.parseInt(chars, 2, 6));\n    }\n\n    @Test\n    public void testParseLongString() {\n        assertEquals(1234567890123L, NumberInput.parseLong(\"1234567890123\"));\n        assertEquals(42L, NumberInput.parseLong(\"42\"));\n    }\n\n    @Test\n    public void testInLongRange() {\n        assertTrue(NumberInput.inLongRange(\"9223372036854775807\".toCharArray(), 0, 19, false));\n        assertFalse(NumberInput.inLongRange(\"9223372036854775808\".toCharArray(), 0, 19, false));\n    }\n\n    @Test(expected = NumberFormatException.class)\n    public void testParseBigDecimalInvalid() {\n        NumberInput.parseBigDecimal(\"not-a-number\");\n    }\n\n    @Test\n    public void testParseAsConstants() {\n        assertEquals(100, NumberInput.parseAsInt(\"100\", 10));\n        assertEquals(10, NumberInput.parseAsInt(\"invalid\", 10));\n        assertEquals(200L, NumberInput.parseAsLong(\"200\", 5L));\n        assertEquals(15.5, NumberInput.parseAsDouble(\"15.5\", 1.0), 0.001);\n    }\n}\n```\n\n```java\npackage com.fasterxml.jackson.core.util;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class TextBufferTest {\n\n    @Test\n    public void testResetAndEmpty() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer tb = new TextBuffer(recycler);\n        tb.resetWithEmpty();\n        assertEquals(0, tb.size());\n        assertFalse(tb.hasTextAsCharacters());\n        assertEquals(\"\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testResetWithShared() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer tb = new TextBuffer(recycler);\n        char[] shared = \"Hello World\".toCharArray();\n        tb.resetWithShared(shared, 6, 5);\n        assertEquals(5, tb.size());\n        assertEquals(\"World\", tb.contentsAsString());\n        assertNotNull(tb.getTextBuffer());\n    }\n\n    @Test\n    public void testAppendAndContents() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer tb = new TextBuffer(recycler);\n        tb.resetWithEmpty();\n        tb.append('A');\n        tb.append('B');\n        tb.append(new char[]{'C', 'D'}, 0, 2);\n        tb.append(\"EF\", 0, 2);\n        assertEquals(6, tb.size());\n        assertEquals(\"ABCDEF\", tb.contentsAsString());\n        assertArrayEquals(new char[]{'A', 'B', 'C', 'D', 'E', 'F'}, tb.contentsAsArray());\n    }\n\n    @Test\n    public void testResetWithString() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer tb = new TextBuffer(recycler);\n        tb.resetWithString(\"Jackson\");\n        assertEquals(7, tb.size());\n        assertEquals(\"Jackson\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testSegmentOperations() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer tb = new TextBuffer(recycler);\n        tb.resetWithEmpty();\n        char[] seg = tb.emptyAndGetCurrentSegment();\n        assertNotNull(seg);\n        assertTrue(tb.getCurrentSegmentSize() >= 0);\n        tb.setCurrentLength(3);\n        assertEquals(3, tb.getCurrentSegmentSize());\n        char[] expanded = tb.expandCurrentSegment();\n        assertNotNull(expanded);\n    }\n\n    @Test\n    public void testReleaseBuffers() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer tb = new TextBuffer(recycler);\n        tb.resetWithString(\"Test\");\n        tb.releaseBuffers();\n        assertEquals(0, tb.size());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4492,
+      "completion_tokens": 1160,
+      "total_tokens": 5652
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 6894,
+      "daily_remaining_tokens": 343106
+    }
+  },
+  "headers": {
+    "x-request-id": "cbg14ykuyvspkns0rvfmp4hm",
+    "date": "Sun, 04 Oct 2026 03:58:21 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

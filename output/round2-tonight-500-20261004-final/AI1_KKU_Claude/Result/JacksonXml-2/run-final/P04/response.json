@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:02:23.174660+00:00",
+  "ended_at_utc": "2026-10-04T06:02:33.366754+00:00",
+  "raw_body_sha256": "17cb6088fc71bd9828c5026b85e51f52785571e001c932da32183a010cd0601a",
+  "body": {
+    "id": "gen-1791093745-grWlxtpEWqrxgleEg8Wj",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.dataformat.xml.deser;\n\nimport java.io.StringReader;\n\nimport javax.xml.stream.XMLInputFactory;\nimport javax.xml.stream.XMLStreamReader;\n\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class XmlTokenStreamExtraTest {\n\n    private XmlTokenStream buildStream(String xml) throws Exception {\n        XMLInputFactory f = XMLInputFactory.newInstance();\n        XMLStreamReader reader = f.createXMLStreamReader(new StringReader(xml));\n        reader.next();\n        return new XmlTokenStream(reader, \"test-source\");\n    }\n\n    @Test\n    public void testSkipEndElementThrowsOnWrongToken() throws Exception {\n        XmlTokenStream stream = buildStream(\"<root>hello</root>\");\n        try {\n            stream.skipEndElement();\n            fail(\"Expected IOException\");\n        } catch (java.io.IOException e) {\n            assertTrue(e.getMessage().contains(\"Expected END_ELEMENT\"));\n        }\n    }\n\n    @Test\n    public void testSkipAttributesFromAttributeName() throws Exception {\n        XmlTokenStream stream = buildStream(\"<root attr1=\\\"v1\\\"></root>\");\n\n        int token = stream.next();\n        assertEquals(XmlTokenStream.XML_ATTRIBUTE_NAME, token);\n\n        stream.skipAttributes();\n        assertEquals(XmlTokenStream.XML_START_ELEMENT, stream.getCurrentToken());\n\n        token = stream.next();\n        assertEquals(XmlTokenStream.XML_END_ELEMENT, token);\n    }\n\n    @Test\n    public void testSkipAttributesThrowsOnInvalidState() throws Exception {\n        XmlTokenStream stream = buildStream(\"<root>hello</root>\");\n        stream.next(); // now at XML_TEXT\n\n        try {\n            stream.skipAttributes();\n        } catch (IllegalStateException e) {\n            // acceptable per contract for invalid states, but XML_TEXT is explicitly allowed\n            fail(\"skipAttributes should be a no-op for XML_TEXT state\");\n        }\n        // state should remain unchanged since method documents no-op for XML_TEXT\n        assertEquals(XmlTokenStream.XML_TEXT, stream.getCurrentToken());\n    }\n\n    @Test\n    public void testRepeatStartElementThrowsWhenNotStartElement() throws Exception {\n        XmlTokenStream stream = buildStream(\"<root>hello</root>\");\n        stream.next(); // move to XML_TEXT, not START_ELEMENT\n\n        try {\n            stream.repeatStartElement();\n            fail(\"Expected IllegalStateException\");\n        } catch (IllegalStateException e) {\n            assertTrue(e.getMessage().contains(\"Current state not XML_START_ELEMENT\"));\n        }\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7941,
+      "output_tokens": 1014,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.026022,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.026022,
+        "upstream_inference_prompt_cost": 0.015882,
+        "upstream_inference_completions_cost": 0.01014
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 90829,
+      "daily_remaining_tokens": 109171
+    }
+  },
+  "headers": {
+    "x-request-id": "m1rbzkmomv2mw8wf43q5ysjs",
+    "date": "Sun, 04 Oct 2026 06:02:33 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,136 @@
+package org.apache.commons.codec.language;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.codec.EncoderException;
+import org.junit.Test;
+
+public class DoubleMetaphoneTest {
+
+    @Test
+    public void testNullAndEmptyInput() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        assertEquals(null, metaphone.doubleMetaphone(null));
+        assertEquals("", metaphone.doubleMetaphone(""));
+        assertEquals("", metaphone.doubleMetaphone("   "));
+    }
+
+    @Test
+    public void testKnownEncodings() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        assertEquals("SMT", metaphone.doubleMetaphone("Smith"));
+        assertEquals("SMT", metaphone.doubleMetaphone("Smyth"));
+        assertEquals(metaphone.doubleMetaphone("Smith"), metaphone.doubleMetaphone("Smyth"));
+        assertEquals("JTRN", metaphone.doubleMetaphone("Jane"));
+        assertNotNull(metaphone.doubleMetaphone("Catherine"));
+    }
+
+    @Test
+    public void testIsDoubleMetaphoneEqual() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        assertTrue(metaphone.isDoubleMetaphoneEqual("Smith", "Smyth"));
+        assertTrue(metaphone.isDoubleMetaphoneEqual("Smith", "Smith"));
+        assertFalse(metaphone.isDoubleMetaphoneEqual("Smith", "Jones"));
+        assertTrue(metaphone.isDoubleMetaphoneEqual("Smith", "Smyth", false));
+    }
+
+    @Test
+    public void testSilentStartPrefixes() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        String gn = metaphone.doubleMetaphone("Gnome");
+        String kn = metaphone.doubleMetaphone("Knight");
+        String pn = metaphone.doubleMetaphone("Pneumonia");
+        String wr = metaphone.doubleMetaphone("Wrinkle");
+        String ps = metaphone.doubleMetaphone("Psycho");
+        assertNotNull(gn);
+        assertNotNull(kn);
+        assertNotNull(pn);
+        assertNotNull(wr);
+        assertNotNull(ps);
+        assertFalse(gn.startsWith("KN"));
+    }
+
+    @Test
+    public void testMaxCodeLenGetterSetter() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        assertEquals(4, metaphone.getMaxCodeLen());
+        String longWord = "Czerwinski";
+        String defaultCode = metaphone.doubleMetaphone(longWord);
+        assertTrue(defaultCode.length() <= 4);
+
+        metaphone.setMaxCodeLen(6);
+        assertEquals(6, metaphone.getMaxCodeLen());
+        String longerCode = metaphone.doubleMetaphone(longWord);
+        assertTrue(longerCode.length() <= 6);
+        assertTrue(longerCode.length() >= defaultCode.length());
+
+        metaphone.setMaxCodeLen(1);
+        String shortCode = metaphone.doubleMetaphone(longWord);
+        assertTrue(shortCode.length() <= 1);
+    }
+
+    @Test
+    public void testEncodeObjectThrowsOnNonString() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        try {
+            metaphone.encode(Integer.valueOf(42));
+            org.junit.Assert.fail("Expected EncoderException");
+        } catch (EncoderException e) {
+            assertTrue(e.getMessage().contains("DoubleMetaphone"));
+        }
+    }
+
+    @Test
+    public void testEncodeStringMatchesPrimary() throws EncoderException {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        String value = "Williams";
+        assertEquals(metaphone.doubleMetaphone(value, false), metaphone.encode(value));
+        assertEquals(metaphone.doubleMetaphone(value, false), metaphone.encode((Object) value));
+    }
+
+    @Test
+    public void testAlternateEncoding() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        String primary = metaphone.doubleMetaphone("Smith", false);
+        String alternate = metaphone.doubleMetaphone("Smith", true);
+        assertNotNull(primary);
+        assertNotNull(alternate);
+    }
+
+    @Test
+    public void testMixedCaseAndNonAlphabeticCharacters() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        String upper = metaphone.doubleMetaphone("SMITH");
+        String lower = metaphone.doubleMetaphone("smith");
+        String mixed = metaphone.doubleMetaphone("SmItH");
+        String withSpaces = metaphone.doubleMetaphone("Sm1th!");
+        assertEquals(upper, lower);
+        assertEquals(upper, mixed);
+        assertNotNull(withSpaces);
+    }
+
+    @Test
+    public void testRepeatedConsonantClusters() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        assertNotNull(metaphone.doubleMetaphone("Accord"));
+        assertNotNull(metaphone.doubleMetaphone("Mississippi"));
+        assertNotNull(metaphone.doubleMetaphone("Rough"));
+        assertNotNull(metaphone.doubleMetaphone("Philosophy"));
+        assertNotNull(metaphone.doubleMetaphone("Thought"));
+    }
+
+    @Test
+    public void testStatelessAcrossCalls() {
+        DoubleMetaphone metaphone = new DoubleMetaphone();
+        metaphone.setMaxCodeLen(4);
+        String first = metaphone.doubleMetaphone("Smith");
+        String second = metaphone.doubleMetaphone("Jones");
+        String firstAgain = metaphone.doubleMetaphone("Smith");
+        assertEquals(first, firstAgain);
+        assertFalse(first.equals(second));
+        assertEquals(4, metaphone.getMaxCodeLen());
+    }
+}

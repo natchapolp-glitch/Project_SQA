@@ -1,0 +1,10 @@
+- Verify `getValueAsString()` returns correct current text for a scalar XML element (e.g. `<a>value</a>`), matching `getText()`.
+- Check `getValueAsString(String defaultValue)` returns the actual text when current token has text, not the default.
+- Check default fallback is returned only when no current text is available (e.g. on START_OBJECT/END_OBJECT tokens without text), both single-arg (null) and default-arg variants.
+- Confirm behavior on empty XML element (`<a></a>` or `<a/>`) — text should be empty string, not null/default, per XML module contract (`_isEmpty` logic).
+- Confirm behavior at `VALUE_NULL` token if XML signals null via xsi:nil — getValueAsString should return default/null appropriately.
+- Confirm getText() and getValueAsString() stay consistent across repeated calls without advancing token (idempotent).
+- Boundary: calling getValueAsString before first nextToken() call (parser positioned before any token) should not throw and should follow defaultValue contract.
+- Ensure receiver setup: build XMLStreamReader from simple XML string, wrap into FromXmlParser via XmlFactory/XmlMapper to get real token stream rather than mocks.
+- Test nested element with attribute-only content (no text) returns default, not attribute value.
+- Test after consuming END_DOCUMENT/close(), getValueAsString does not throw unexpected exceptions (may throw IOException per contract if closed).

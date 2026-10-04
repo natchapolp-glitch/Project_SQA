@@ -1,0 +1,12 @@
+Based on CSVParser's documented contract, here are useful test behaviors/boundaries:
+
+1. **Header mapping**: When format has header defined (explicit or `withHeader()` auto-detect from first line), `getHeaderMap()` returns correct name→index mapping; verify with simple and multi-column headers.
+2. **Empty/blank line handling**: Parsing with `withIgnoreEmptyLines(true/false)` should include or skip blank lines, affecting record count and `getRecordNumber()`.
+3. **Record count and content**: `getRecords()` on simple CSV ("a,b,c\n1,2,3\n") returns correct number of CSVRecord objects with correct field values.
+4. **Record/line number tracking**: `getRecordNumber()` increments per record; `getCurrentLineNumber()` tracks physical lines, diverging from record number when records span multiple lines (quoted multi-line fields).
+5. **Iterator behavior**: `iterator()` allows forward-only iteration consistent with `getRecords()`; calling both shouldn't double-consume or corrupt state.
+6. **Trailing newline / no trailing newline**: Input with and without trailing line terminator should not produce a spurious empty trailing record.
+7. **Quoted and escaped fields**: Correct handling of quoted fields containing delimiters, newlines, and escaped quotes — single record spanning multiple physical lines.
+8. **Comment lines**: With `withCommentMarker(char)` set, lines starting with marker are skipped and not counted as records.
+9. **Closing behavior**: `isClosed()` false initially, true after `close()`; `close()` should be idempotent and not throw.
+10. **Empty input**: Parsing an empty string/reader yields zero records without exceptions.

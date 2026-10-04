@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:24:24.237712+00:00",
+  "ended_at_utc": "2026-10-04T06:24:26.728142+00:00",
+  "raw_body_sha256": "321109308c314cec43052d1938b5451d5751cd85a9ad7e5f72ec9373a5bffdd8",
+  "body": {
+    "id": "genai-01a10595-dbf8-7538-b576-12b9e9d6ded8",
+    "object": "chat.completion",
+    "created": 1791095069,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.math3.distribution;\n\nimport org.apache.commons.math3.exception.NotPositiveException;\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class HypergeometricDistributionAdditionalTest {\n\n    @Test(expected = NotPositiveException.class)\n    public void testInvalidNegativeSampleSize() {\n        new HypergeometricDistribution(10, 5, -1);\n    }\n\n    @Test\n    public void testUpperCumulativeProbabilityBoundsAndDomain() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        Assert.assertEquals(1.0, dist.upperCumulativeProbability(2), 1e-12);\n        Assert.assertEquals(0.0, dist.upperCumulativeProbability(6), 1e-12);\n    }\n\n    @Test\n    public void testCumulativeProbabilityDomainEdgeCases() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        Assert.assertEquals(0.0, dist.cumulativeProbability(-5), 1e-12);\n        Assert.assertEquals(1.0, dist.cumulativeProbability(10), 1e-12);\n    }\n\n    @Test\n    public void testInnerCumulativeProbabilityDirections() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        Assert.assertTrue(dist.cumulativeProbability(3) > dist.cumulativeProbability(1));\n        Assert.assertTrue(dist.upperCumulativeProbability(1) > dist.upperCumulativeProbability(4));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4527,
+      "completion_tokens": 366,
+      "total_tokens": 4893
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 74731,
+      "daily_remaining_tokens": 275269
+    }
+  },
+  "headers": {
+    "x-request-id": "yoqevqvojw8ha4j2ffsfwh5f",
+    "date": "Sun, 04 Oct 2026 06:24:29 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

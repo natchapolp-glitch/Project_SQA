@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:55:40.442636+00:00",
+  "ended_at_utc": "2026-10-04T06:55:45.981384+00:00",
+  "raw_body_sha256": "d05985458874f86b6c354d5a5303212abb634062ec58b7f464c926b563b65836",
+  "body": {
+    "id": "gen-1791096943-u7xisKx8sQIl9Jm3SpR0",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\nimport org.junit.Test;\n\npublic class FlowSensitiveInlineVariablesTest extends CompilerTestCase {\n\n  public FlowSensitiveInlineVariablesTest() {\n    super();\n  }\n\n  @Override\n  protected CompilerPass getProcessor(Compiler compiler) {\n    return new FlowSensitiveInlineVariables(compiler);\n  }\n\n  @Override\n  protected int getNumRepetitions() {\n    return 1;\n  }\n\n  @Test\n  public void testBasicInline() {\n    test(\n        \"function f() { var x = 1; return x; }\",\n        \"function f() { var x = 1; return 1; }\");\n  }\n\n  @Test\n  public void testNoInlineWithMultipleUses() {\n    testSame(\n        \"function f() { var x = foo(); bar(x); baz(x); }\");\n  }\n\n  @Test\n  public void testNoInlineAcrossSideEffectingCall() {\n    testSame(\n        \"function f() { var x = foo(); bar(); use(x); }\");\n  }\n\n  @Test\n  public void testNoInlineWithMultipleReachingDefs() {\n    testSame(\n        \"function f(c) { var x; if (c) { x = 1; } else { x = 2; } return x; }\");\n  }\n\n  @Test\n  public void testNoInlineSelfReferencingAssignment() {\n    testSame(\n        \"function f() { var x = 1; x = x + 1; return x; }\");\n  }\n\n  @Test\n  public void testNoChangeWhenNoCandidates() {\n    testSame(\n        \"function f() { var x = 1; var y = 2; return x + y; }\");\n  }\n\n  @Test\n  public void testGlobalScopeNotInlined() {\n    testSame(\"var x = 1; use(x);\");\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6789,
+      "output_tokens": 619,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.019768,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.019768,
+        "upstream_inference_prompt_cost": 0.013578,
+        "upstream_inference_completions_cost": 0.00619
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 112472,
+      "daily_remaining_tokens": 87528
+    }
+  },
+  "headers": {
+    "x-request-id": "bpikiflldjs1n8zrf6v2ymdv",
+    "date": "Sun, 04 Oct 2026 06:55:48 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

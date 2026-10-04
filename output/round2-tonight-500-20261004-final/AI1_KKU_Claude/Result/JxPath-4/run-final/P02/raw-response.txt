@@ -1,0 +1,197 @@
+```java
+package org.apache.commons.jxpath.ri.model.dom;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
+import java.util.Locale;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.apache.commons.jxpath.ri.compiler.NodeTypeTest;
+import org.apache.commons.jxpath.ri.Compiler;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import java.io.ByteArrayInputStream;
+import org.xml.sax.InputSource;
+
+public class DOMNodePointerTest {
+
+    private Document parse(String xml) throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        return db.parse(new InputSource(new ByteArrayInputStream(xml.getBytes("UTF-8"))));
+    }
+
+    @Test
+    public void testGetNamespaceURIExplicit() throws Exception {
+        Document doc = parse("<root xmlns:a='urn:a'><a:child/></root>");
+        Element root = doc.getDocumentElement();
+        Node child = root.getFirstChild();
+        DOMNodePointer pointer = new DOMNodePointer(child, Locale.getDefault());
+        assertEquals("urn:a", pointer.getNamespaceURI());
+    }
+
+    @Test
+    public void testGetNamespaceURINoNamespace() throws Exception {
+        Document doc = parse("<root><child/></root>");
+        Element root = doc.getDocumentElement();
+        Node child = root.getFirstChild();
+        DOMNodePointer pointer = new DOMNodePointer(child, Locale.getDefault());
+        assertNull(pointer.getNamespaceURI());
+    }
+
+    @Test
+    public void testGetPrefixAndLocalName() throws Exception {
+        Document doc = parse("<root xmlns:a='urn:a'><a:child/></root>");
+        Element root = doc.getDocumentElement();
+        Node child = root.getFirstChild();
+        assertEquals("a", DOMNodePointer.getPrefix(child));
+        assertEquals("child", DOMNodePointer.getLocalName(child));
+    }
+
+    @Test
+    public void testTestNodeWithWildcardName() throws Exception {
+        Document doc = parse("<root><child/></root>");
+        Element root = doc.getDocumentElement();
+        Node child = root.getFirstChild();
+        NodeNameTest wildcard = new NodeNameTest(new QName(null, "*"));
+        assertTrue(DOMNodePointer.testNode(child, wildcard));
+    }
+
+    @Test
+    public void testTestNodeTypeText() throws Exception {
+        Document doc = parse("<root>text</root>");
+        Element root = doc.getDocumentElement();
+        Node textNode = root.getFirstChild();
+        NodeTypeTest textTest = new NodeTypeTest(Compiler.NODE_TYPE_TEXT);
+        assertTrue(DOMNodePointer.testNode(textNode, textTest));
+        NodeTypeTest commentTest = new NodeTypeTest(Compiler.NODE_TYPE_COMMENT);
+        assertFalse(DOMNodePointer.testNode(textNode, commentTest));
+    }
+
+    @Test
+    public void testIsLeafAndLength() throws Exception {
+        Document doc = parse("<root><child/><child/></root>");
+        Element root = doc.getDocumentElement();
+        DOMNodePointer rootPointer = new DOMNodePointer(root, Locale.getDefault());
+        assertFalse(rootPointer.isLeaf());
+        assertEquals(1, rootPointer.getLength());
+
+        Node leafChild = root.getFirstChild();
+        DOMNodePointer leafPointer = new DOMNodePointer(leafChild, Locale.getDefault());
+        assertTrue(leafPointer.isLeaf());
+    }
+
+    @Test
+    public void testIsCollectionAlwaysFalse() throws Exception {
+        Document doc = parse("<root/>");
+        Element root = doc.getDocumentElement();
+        DOMNodePointer pointer = new DOMNodePointer(root, Locale.getDefault());
+        assertFalse(pointer.isCollection());
+    }
+}
+```
+
+```java
+package org.apache.commons.jxpath.ri.model.jdom;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
+import java.io.ByteArrayInputStream;
+import java.util.Locale;
+
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.compiler.NodeNameTest;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.Text;
+import org.jdom.input.SAXBuilder;
+import org.junit.Test;
+
+public class JDOMNodePointerTest {
+
+    private Document parse(String xml) throws Exception {
+        SAXBuilder builder = new SAXBuilder();
+        return builder.build(new ByteArrayInputStream(xml.getBytes("UTF-8")));
+    }
+
+    @Test
+    public void testGetNamespaceURIExplicit() throws Exception {
+        Document doc = parse("<root xmlns:a='urn:a'><a:child/></root>");
+        Element root = doc.getRootElement();
+        Element child = (Element) root.getContent().get(0);
+        JDOMNodePointer pointer = new JDOMNodePointer(child, Locale.getDefault());
+        assertEquals("urn:a", pointer.getNamespaceURI());
+    }
+
+    @Test
+    public void testGetNamespaceURINoNamespace() throws Exception {
+        Document doc = parse("<root><child/></root>");
+        Element root = doc.getRootElement();
+        Element child = (Element) root.getContent().get(0);
+        JDOMNodePointer pointer = new JDOMNodePointer(child, Locale.getDefault());
+        assertNull(pointer.getNamespaceURI());
+    }
+
+    @Test
+    public void testGetNamespaceURIByPrefixOnElement() throws Exception {
+        Document doc = parse("<root xmlns:a='urn:a'><a:child/></root>");
+        Element root = doc.getRootElement();
+        JDOMNodePointer pointer = new JDOMNodePointer(root, Locale.getDefault());
+        assertEquals("urn:a", pointer.getNamespaceURI("a"));
+    }
+
+    @Test
+    public void testGetPrefixAndLocalName() throws Exception {
+        Document doc = parse("<root xmlns:a='urn:a'><a:child/></root>");
+        Element root = doc.getRootElement();
+        Element child = (Element) root.getContent().get(0);
+        assertEquals("a", JDOMNodePointer.getPrefix(child));
+        assertEquals("child", JDOMNodePointer.getLocalName(child));
+    }
+
+    @Test
+    public void testIsLeafAndLength() throws Exception {
+        Document doc = parse("<root><child/><child/></root>");
+        Element root = doc.getRootElement();
+        JDOMNodePointer rootPointer = new JDOMNodePointer(root, Locale.getDefault());
+        assertFalse(rootPointer.isLeaf());
+
+        Element child = (Element) root.getContent().get(0);
+        JDOMNodePointer childPointer = new JDOMNodePointer(child, Locale.getDefault());
+        assertTrue(childPointer.isLeaf());
+    }
+
+    @Test
+    public void testIsCollectionAlwaysFalse() throws Exception {
+        Document doc = parse("<root/>");
+        Element root = doc.getRootElement();
+        JDOMNodePointer pointer = new JDOMNodePointer(root, Locale.getDefault());
+        assertFalse(pointer.isCollection());
+    }
+
+    @Test
+    public void testTestNodeWithWildcardName() throws Exception {
+        Document doc = parse("<root><child/></root>");
+        Element root = doc.getRootElement();
+        Element child = (Element) root.getContent().get(0);
+        JDOMNodePointer pointer = new JDOMNodePointer(child, Locale.getDefault());
+        NodeNameTest wildcard = new NodeNameTest(new QName(null, "*"));
+        assertTrue(pointer.testNode(wildcard));
+    }
+}
+```

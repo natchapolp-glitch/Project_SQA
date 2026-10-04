@@ -1,0 +1,8 @@
+1. Initialize `ExtendedBufferedReader` with a `StringReader` or `CharArrayReader` containing various line endings (`\n`, `\r`, `\r\n`).
+2. Test `read()` behavior tracking `lastChar` and `lineCounter` across standard chars, newlines, and EOF (`END_OF_STREAM`).
+3. Verify `readAgain()` returns `UNDEFINED` initially, the correct last read character otherwise, or `END_OF_STREAM` at EOF.
+4. Test block `read(char[], int, int)` with `length == 0` returning `0` without modifying `lastChar` or state.
+5. Test block `read(char[], int, int)` boundary where `offset > 0` and the first buffer char's newline check references `buf[i-1]` vs `lastChar`.
+6. Test `readLine()` behavior for tracking `lineCounter` increment and setting `lastChar` correctly on valid lines vs returning `null` at EOF.
+7. Test `lookAhead()` without consuming characters, ensuring subsequent `read()` returns the peeked character and state remains unchanged.
+8. Test `getLineNumber()` increments accurately for mixed line endings (`\r`, `\n`, `\r\n`) across `read()`, array `read()`, and `readLine()`.

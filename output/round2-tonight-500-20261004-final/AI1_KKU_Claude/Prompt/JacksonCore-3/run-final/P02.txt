@@ -1,0 +1,472 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: JacksonCore-3
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.core.json.UTF8StreamJsonParser
+
+BUGGY API signatures (may include private members):
+Compiled from "UTF8StreamJsonParser.java"
+public class com.fasterxml.jackson.core.json.UTF8StreamJsonParser extends com.fasterxml.jackson.core.base.ParserBase {
+  static final byte BYTE_LF;
+  private static final int[] _icUTF8;
+  protected static final int[] _icLatin1;
+  private static final int[] _icWS;
+  protected com.fasterxml.jackson.core.ObjectCodec _objectCodec;
+  protected final com.fasterxml.jackson.core.sym.BytesToNameCanonicalizer _symbols;
+  protected int[] _quadBuffer;
+  protected boolean _tokenIncomplete;
+  private int _quad1;
+  protected java.io.InputStream _inputStream;
+  protected byte[] _inputBuffer;
+  protected boolean _bufferRecyclable;
+  public com.fasterxml.jackson.core.json.UTF8StreamJsonParser(com.fasterxml.jackson.core.io.IOContext, int, java.io.InputStream, com.fasterxml.jackson.core.ObjectCodec, com.fasterxml.jackson.core.sym.BytesToNameCanonicalizer, byte[], int, int, boolean);
+  public com.fasterxml.jackson.core.ObjectCodec getCodec();
+  public void setCodec(com.fasterxml.jackson.core.ObjectCodec);
+  public int releaseBuffered(java.io.OutputStream) throws java.io.IOException;
+  public java.lang.Object getInputSource();
+  protected final boolean loadMore() throws java.io.IOException;
+  protected final boolean _loadToHaveAtLeast(int) throws java.io.IOException;
+  protected void _closeInput() throws java.io.IOException;
+  protected void _releaseBuffers() throws java.io.IOException;
+  public java.lang.String getText() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public java.lang.String getValueAsString() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public java.lang.String getValueAsString(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  protected final java.lang.String _getText2(com.fasterxml.jackson.core.JsonToken);
+  public char[] getTextCharacters() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int getTextLength() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int getTextOffset() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public byte[] getBinaryValue(com.fasterxml.jackson.core.Base64Variant) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int readBinaryValue(com.fasterxml.jackson.core.Base64Variant, java.io.OutputStream) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  protected int _readBinary(com.fasterxml.jackson.core.Base64Variant, java.io.OutputStream, byte[]) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public com.fasterxml.jackson.core.JsonLocation getTokenLocation();
+  public com.fasterxml.jackson.core.JsonLocation getCurrentLocation();
+  public com.fasterxml.jackson.core.JsonToken nextToken() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final com.fasterxml.jackson.core.JsonToken _nextTokenNotInObject(int) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final com.fasterxml.jackson.core.JsonToken _nextAfterName();
+  public boolean nextFieldName(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final void _isNextTokenNameYes() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final boolean _isNextTokenNameMaybe(int, com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public java.lang.String nextTextValue() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int nextIntValue(int) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public long nextLongValue(long) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public java.lang.Boolean nextBooleanValue() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  protected com.fasterxml.jackson.core.JsonToken _parseNumber(int) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final com.fasterxml.jackson.core.JsonToken _parserNumber2(char[], int, boolean, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final int _verifyNoLeadingZeroes() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final com.fasterxml.jackson.core.JsonToken _parseFloat(char[], int, int, boolean, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private final void _verifyRootSpace(int) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.sym.Name _parseName(int) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.sym.Name parseMediumName(int, int[]) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.sym.Name parseLongName(int) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.sym.Name slowParseName() throws java.io.IOException;
+  private final com.fasterxml.jackson.core.sym.Name parseName(int, int, int) throws java.io.IOException;
+  private final com.fasterxml.jackson.core.sym.Name parseName(int, int, int, int) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.sym.Name parseEscapedName(int[], int, int, int, int) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.sym.Name _handleOddName(int) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.sym.Name _parseAposName() throws java.io.IOException;
+  private final com.fasterxml.jackson.core.sym.Name findName(int, int) throws com.fasterxml.jackson.core.JsonParseException;
+  private final com.fasterxml.jackson.core.sym.Name findName(int, int, int) throws com.fasterxml.jackson.core.JsonParseException;
+  private final com.fasterxml.jackson.core.sym.Name findName(int[], int, int
+
+BUGGY source excerpt: com.fasterxml.jackson.core.json.UTF8StreamJsonParser (truncated=True)
+```java
+package com.fasterxml.jackson.core.json;
+
+import java.io.*;
+import java.util.Arrays;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.base.ParserBase;
+import com.fasterxml.jackson.core.io.CharTypes;
+import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.sym.*;
+import com.fasterxml.jackson.core.util.*;
+
+import static com.fasterxml.jackson.core.JsonTokenId.*;
+
+/**
+ * This is a concrete implementation of {@link JsonParser}, which is
+ * based on a {@link java.io.InputStream} as the input source.
+ *<p>
+ * Note: non-final since version 2.3.
+ */
+public class UTF8StreamJsonParser
+    extends ParserBase
+{
+    final static byte BYTE_LF = (byte) '\n';
+
+    // This is the main input-code lookup table, fetched eagerly
+    private final static int[] _icUTF8 = CharTypes.getInputCodeUtf8();
+
+    // Latin1 encoding is not supported, but we do use 8-bit subset for
+    // pre-processing task, to simplify first pass, keep it fast.
+    protected final static int[] _icLatin1 = CharTypes.getInputCodeLatin1();
+
+    // White-space processing is done all the time, pre-fetch as well
+    private final static int[] _icWS = CharTypes.getInputCodeWS();
+    
+    /*
+    /**********************************************************
+    /* Configuration
+    /**********************************************************
+     */
+
+    /**
+     * Codec used for data binding when (if) requested; typically full
+     * <code>ObjectMapper</code>, but that abstract is not part of core
+     * package.
+     */
+    protected ObjectCodec _objectCodec;
+
+    /**
+     * Symbol table that contains field names encountered so far
+     */
+    final protected BytesToNameCanonicalizer _symbols;
+    
+    /*
+    /**********************************************************
+    /* Parsing state
+    /**********************************************************
+     */
+    
+    /**
+     * Temporary buffer used for name parsing.
+     */
+    protected int[] _quadBuffer = new int[16];
+
+    /**
+     * Flag that indicates that the current token has not yet
+     * been fully processed, and needs to be finished for
+     * some access (or skipped to obtain the next token)
+     */
+    protected boolean _tokenIncomplete = false;
+
+    /**
+     * Temporary storage for partially parsed name bytes.
+     */
+    private int _quad1;
+    
+    /*
+    /**********************************************************
+    /* Input buffering (from former 'StreamBasedParserBase')
+    /**********************************************************
+     */
+    
+    protected InputStream _inputStream;
+
+    /*
+    /**********************************************************
+    /* Current input data
+    /**********************************************************
+     */
+
+    /**
+     * Current buffer from which data is read; generally data is read into
+     * buffer from input source, but in some cases pre-loaded buffer
+     * is handed to the parser.
+     */
+    protected byte[] _inputBuffer;
+
+    /**
+     * Flag that indicates whether the input buffer is recycable (and
+     * needs to be returned to recycler once we are done) or not.
+     *<p>
+     * If it is not, it also means that parser can NOT modify underlying
+     * buffer.
+     */
+    protected boolean _bufferRecyclable;
+    
+    /*
+    /**********************************************************
+    /* Life-cycle
+    /**********************************************************
+     */
+
+    public UTF8StreamJsonParser(IOContext ctxt, int features, InputStream in,
+            ObjectCodec codec, BytesToNameCanonicalizer sym,
+            byte[] inputBuffer, int start, int end,
+            boolean bufferRecyclable)
+    {
+        super(ctxt, features);
+        _inputStream = in;
+        _objectCodec = codec;
+        _symbols = sym;
+        _inputBuffer = inputBuffer;
+        _inputPtr = start;
+        _inputEnd = end;
+        // If we have offset, need to omit that from byte offset, so:
+        _bufferRecyclable = bufferRecyclable;
+    }
+
+    @Override
+    public ObjectCodec getCodec() {
+        return _objectCodec;
+    }
+
+    @Override
+    public void setCodec(ObjectCodec c) {
+        _objectCodec = c;
+    }
+    
+    /*
+    /**********************************************************
+    /* Overrides for life-cycle
+    /**********************************************************
+     */
+
+    @Override
+    public int releaseBuffered(OutputStream out) throws IOException
+    {
+        int count = _inputEnd - _inputPtr;
+        if (count < 1) {
+            return 0;
+        }
+        // let's just advance ptr to end
+        int origPtr = _inputPtr;
+        out.write(_inputBuffer, origPtr, count);
+        return count;
+    }
+
+    @Override
+    public Object getInputSource() {
+        return _inputStream;
+    }
+    
+    /*
+    /**********************************************************
+    /* Overrides, low-level reading
+    /**********************************************************
+     */
+
+    @Override
+    protected final boolean loadMore()
+        throws IOException
+    {
+        _currInputProcessed += _inputEnd;
+        _currInputRowStart -= _inputEnd;
+        
+        if (_inputStream != null) {
+            int count = _inputStream.read(_inputBuffer, 0, _inputBuffer.length);
+            if (count > 0) {
+                _inputPtr = 0;
+                _inputEnd = count;
+                return true;
+            }
+            // End of input
+            _closeInput();
+            // Should never return 0, so let's fail
+            if (count == 0) {
+                throw new IOException("InputStream.read() returned 0 characters when trying to read "+_inputBuffer.length+" bytes");
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Helper method that will try to load at least specified number bytes in
+     * input buffer, possible moving existing data around if necessary
+     */
+    protected final boolean _loadToHaveAtLeast(int minAvailable)
+        throws IOException
+    {
+        // No input stream, no leading (either we are closed, or have non-stream input source)
+        if (_inputStream == null) {
+            return false;
+        }
+        // Need to move remaining data in front?
+        int amount = _inputEnd - _inputPtr;
+        if (amount > 0 && _inputPtr > 0) {
+            _currInputProcessed += _inputPtr;
+            _currInputRowStart -= _inputPtr;
+            System.arraycopy(_inputBuffer, _inputPtr, _inputBuffer, 0, amount);
+            _inputEnd = amount;
+        } else {
+            _inputEnd = 0;
+        }
+        _inputPtr = 0;
+        while (_inputEnd < minAvailable) {
+            int count = _inputStream.read(_inputBuffer, _inputEnd, _inputBuffer.length - _inputEnd);
+            if (count < 1) {
+                // End of input
+                _closeInput();
+                // Should never return 0, so let's fail
+                if (count == 0) {
+                    throw new IOException("InputStream.read() returned 0 characters when trying to read "+amount+" bytes");
+                }
+                return false;
+            }
+            _inputEnd += count;
+        }
+        return true;
+    }
+    
+    @Override
+    protected void _closeInput() throws IOException
+    {
+        /* 25-Nov-2008, tatus: As per [JACKSON-16] we are not to call close()
+         *   on the underlying InputStream, unless we "own" it, or auto-closing
+         *   feature is enabled.
+         */
+        if (_inputStream != null) {
+            if (_ioContext.isResourceManaged() || isEnabled(Feature.AUTO_CLOSE_SOURCE)) {
+                _inputStream.close();
+            }
+            _inputStream = null;
+        }
+    }
+
+    /**
+     * Method called to release internal buffers owned by the base
+     * reader. This may be called along with {@link #_closeInput} (for
+     * example, when explicitly closing this reader instance), or
+     * separately (if need be).
+     */
+    @Override
+    protected void _releaseBuffers() throws IOException
+    {
+        super._releaseBuffers();
+        // Merge found symbols, if any:
+        _symbols.release();
+        if (_bufferRecyclable) {
+            byte[] buf = _inputBuffer;
+            if (buf != null) {
+                _inputBuffer = null;
+                _ioContext.releaseReadIOBuffer(buf);
+            }
+        }
+    }
+
+    /*
+    /**********************************************************
+    /* Public API, data access
+    /**********************************************************
+     */
+
+    @Override
+    public String getText()
+        throws IOException, JsonParseException
+    {
+        if (_currToken == JsonToken.VALUE_STRING) {
+            if (_tokenIncomplete) {
+                _tokenIncomplete = false;
+                _finishString(); // only strings can be incomplete
+            }
+            return _textBuffer.contentsAsString();
+        }
+        return _getText2(_currToken);
+    }
+
+    // // // Let's override default impls for improved performance
+    
+    // @since 2.1
+    @Override
+    public String getValueAsString() throws IOException, JsonParseException
+    {
+        if (_currToken == JsonToken.VALUE_STRING) {
+            if (_tokenIncomplete) {
+                _tokenIncomplete = false;
+                _finishString(); // only strings can be incomplete
+            }
+            return _textBuffer.contentsAsString();
+        }
+        return super.getValueAsString(null);
+    }
+    
+    // @since 2.1
+    @Override
+    public String getValueAsString(String defValue) throws IOException, JsonParseException
+    {
+        if (_currToken == JsonToken.VALUE_STRING) {
+            if (_tokenIncomplete) {
+                _tokenIncomplete = false;
+                _finishString(); // only strings can be incomplete
+            }
+            return _textBuffer.contentsAsString();
+        }
+        return super.getValueAsString(defValue);
+    }
+    
+    protected final String _getText2(JsonToken t)
+    {
+        if (t == null) {
+            return null;
+        }
+        switch (t.id()) {
+        case ID_FIELD_NAME:
+            return _parsingContext.getCurrentName();
+
+        case ID_STRING:
+            // fall through
+        case ID_NUMBER_INT:
+        case ID_NUMBER_FLOAT:
+            return _textBuffer.contentsAsString();
+        default:
+        	return t.asString();
+        }
+    }
+
+    @Override
+    public char[] getTextCharacters()
+        throws IOException, JsonParseException
+    {
+        if (_currToken != null) { // null only before/after document
+            switch (_currToken.id()) {
+                
+            case ID_FIELD_NAME:
+                if (!_nameCopied) {
+                    String name = _parsingContext.getCurrentName();
+                    int nameLen = name.length();
+                    if (_nameCopyBuffer == null) {
+                        _nameCopyBuffer = _ioContext.allocNameCopyBuffer(nameLen);
+                    } else if (_nameCopyBuffer.length < nameLen) {
+                        _nameCopyBuffer = new char[nameLen];
+                    }
+                    name.getChars(0, nameLen, _nameCopyBuffer, 0);
+                    _nameCopied = true;
+                }
+                return _nameCopyBuffer;
+    
+            case ID_STRING:
+                if (_tokenIncomplete) {
+                    _tokenIncomplete = false;
+                    _finishString(); // only strings can be incomplete
+                }
+                // fall through
+            case ID_NUMBER_INT:
+            case ID_NUMBER_FLOAT:
+                return _textBuffer.getTextBuffer();
+                
+            default:
+                return _currToken.asCharArray();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public int getTextLength()
+        throws IOException, JsonParseException
+    {
+        if (_currToken != null) { // null only before/after document
+            switch (_currToken.id()) {
+                
+            case ID_FIELD_NAME:
+                return _parsingContext.getCurrentName().l
+```
+
+
+Planning response:
+**Target area & likely bug surface:** number/name parsing or leading-zero/float handling in UTF8 byte stream parser (`_verifyNoLeadingZeroes`, `_parseNumber`, `_parseFloat`, `parseName` variants) — verify correctness oracle via JSON spec, not implementation.
+
+Useful behaviors/boundaries to test via `JsonFactory.createParser(InputStream/byte[])`:
+
+1. Valid integers: `0`, `-0`, single-digit `0` followed by `}`/`,`/EOF — must parse as zero, not throw.
+2. Leading zero rejection: `01`, `-01`, `00` must throw `JsonParseException` (unless `ALLOW_NUMERIC_LEADING_ZEROS` enabled, which should permit it).
+3. Negative numbers: `-1`, `-123`, `-0.5` correctness; bare `-` alone is invalid.
+4. Floating point: `0.0`, `0.123`, `1.0e10`, `1E-5`, exponent-only forms like `1e5` valid; malformed `1.` or `.1` invalid.
+5. Large integers crossing buffer boundaries (feed via small buffer sizes) to exercise `_loadToHaveAtLeast`/segment boundaries — value correctness preserved across reads.
+6. Field name parsing boundary cases: short/medium/long names spanning buffer refill boundaries, with/without escapes, verifying symbol table correctness (`getCurrentName()`).
+5. Text extraction (`getText()`, `getTextCharacters()`, `getTextLength()`) consistency after number/string parsing, including multi-byte UTF-8 characters.
+8. End-of-input/incomplete token handling: truncated number/string at EOF should throw, not silently return wrong token.
+9. Binary values (`getBinaryValue`) with base64 variants — correctness and no `_tokenIncomplete` corruption affecting next token.
+10. Repeated calls (`nextToken()` after `nextFieldName()`) ensure internal state (`_tokenIncomplete`, `_quad1`/`_quadBuffer`) doesn't leak stale data into subsequent tokens.

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:23:37.391528+00:00",
+  "ended_at_utc": "2026-10-04T06:23:39.336134+00:00",
+  "raw_body_sha256": "0807326fe50ae1df714d2a0aa7b180251b4b71c7fdf1be6ace060c19e4f8c54a",
+  "body": {
+    "id": "genai-01a10595-1b45-765b-bdda-cd25fd9d0556",
+    "object": "chat.completion",
+    "created": 1791095020,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- Valid receiver setup: `populationSize > 0`, `numberOfSuccesses >= 0`, `sampleSize > 0`, with `numberOfSuccesses <= populationSize` and `sampleSize <= populationSize`.\n- Boundary constraint: Constructor must throw exceptions when parameters violate positivity or size rules (`NotPositiveException`, `NotStrictlyPositiveException`, `NumberIsTooLargeException`).\n- Support bounds behavior: `getSupportLowerBound()` must return `Math.max(0, sampleSize - (populationSize - numberOfSuccesses))`.\n- Support bounds behavior: `getSupportUpperBound()` must return `Math.min(sampleSize, numberOfSuccesses)`.\n- Probability behavior: `probability(int x)` must return 0 for $x$ outside the support lower and upper bounds.\n- Cumulative probability behavior: `cumulativeProbability(int x)` must return 0.0 for $x$ below the lower bound and 1.0 for $x$ at or above the upper bound.\n- Variance calculation: `getNumericalVariance()` must return the correct hypergeometric variance formula without arithmetic overflow for large numbers.\n- Numerical precision/boundary: Extreme parameter combinations (e.g., large population sizes near integer limits) must not overflow intermediate calculations.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 530,
+      "completion_tokens": 260,
+      "total_tokens": 790
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 59078,
+      "daily_remaining_tokens": 290922
+    }
+  },
+  "headers": {
+    "x-request-id": "ewv8lmko9x3le5wa1sc4n38q",
+    "date": "Sun, 04 Oct 2026 06:23:40 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

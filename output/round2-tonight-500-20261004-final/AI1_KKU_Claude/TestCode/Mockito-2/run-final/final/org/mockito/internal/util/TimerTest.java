@@ -1,0 +1,54 @@
+package org.mockito.internal.util;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TimerTest {
+
+    @Test
+    public void shouldBeCountingImmediatelyAfterStartWithPositiveDuration() {
+        Timer timer = new Timer(10000);
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void shouldNotBeCountingWhenDurationIsZero() throws InterruptedException {
+        Timer timer = new Timer(0);
+        timer.start();
+        Thread.sleep(5);
+        assertFalse(timer.isCounting());
+    }
+
+    @Test(expected = org.mockito.exceptions.misusing.FriendlyReminderException.class)
+    public void shouldThrowWhenDurationIsNegative() {
+        new Timer(-1);
+    }
+
+    @Test
+    public void shouldRestartCountingWhenStartCalledAgain() {
+        Timer timer = new Timer(10000);
+        timer.start();
+        assertTrue(timer.isCounting());
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void shouldHandleLargeDurationWithoutOverflow() {
+        Timer timer = new Timer(Long.MAX_VALUE);
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void shouldEventuallyStopCountingAfterDurationElapses() throws InterruptedException {
+        Timer timer = new Timer(20);
+        timer.start();
+        assertTrue(timer.isCounting());
+        Thread.sleep(50);
+        assertFalse(timer.isCounting());
+    }
+}

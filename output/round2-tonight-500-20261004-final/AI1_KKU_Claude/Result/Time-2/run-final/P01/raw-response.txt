@@ -1,0 +1,20 @@
+```
+Key behaviors to test:
+
+1. Partial.withFieldAddWrapped(DurationFieldType, int) must wrap the target field value within its min/max bounds
+   (e.g. adding to monthOfYear wraps 12->1), without carrying into other fields, and leave unrelated fields unchanged.
+2. withFieldAddWrapped with amount 0 returns an equal/unchanged Partial (value semantics, likely same values but new instance ok).
+3. withFieldAddWrapped should throw IllegalArgumentException when the DurationFieldType is not supported by this Partial
+   (i.e., no field of that duration type present in iTypes).
+4. withFieldAdded(DurationFieldType, int) with amount 0 should return `this` (no-op identity) per contract; non-zero should add
+   normally and throw on overflow (e.g. DateTimeFieldType.year max) rather than silently wrapping.
+5. UnsupportedDurationField.getInstance(type) must cache and return the *same* instance for repeated calls with equal type
+   (singleton-per-type via cCache), verified via == and equals/hashCode consistency.
+6. UnsupportedDurationField.isSupported() must always return false; isPrecise() reflects unsupported semantics (false).
+7. All arithmetic/mutating methods on UnsupportedDurationField (add, getValue, getMillis, getDifference, etc.) must throw
+   UnsupportedOperationException consistently (via unsupported()).
+8. compareTo(DurationField) for two UnsupportedDurationField instances (or vs itself) should return 0 since both unsupported.
+9. getType()/getName() must return the original DurationFieldType and its name, unaffected by bug area.
+10. Boundary: Partial with multiple fields (e.g. year+month+day) — withFieldAddWrapped on one field must not touch others,
+    even near field boundaries (e.g. day near end-of-month) since Partial fields are independent, not linked like DateTime.
+```

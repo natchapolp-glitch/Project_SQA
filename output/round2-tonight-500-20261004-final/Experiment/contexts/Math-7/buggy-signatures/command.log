@@ -1,0 +1,36 @@
+Compiled from "AbstractIntegrator.java"
+public abstract class org.apache.commons.math3.ode.AbstractIntegrator implements org.apache.commons.math3.ode.FirstOrderIntegrator {
+  protected java.util.Collection<org.apache.commons.math3.ode.sampling.StepHandler> stepHandlers;
+  protected double stepStart;
+  protected double stepSize;
+  protected boolean isLastStep;
+  protected boolean resetOccurred;
+  private java.util.Collection<org.apache.commons.math3.ode.events.EventState> eventsStates;
+  private boolean statesInitialized;
+  private final java.lang.String name;
+  private org.apache.commons.math3.util.Incrementor evaluations;
+  private transient org.apache.commons.math3.ode.ExpandableStatefulODE expandable;
+  public org.apache.commons.math3.ode.AbstractIntegrator(java.lang.String);
+  protected org.apache.commons.math3.ode.AbstractIntegrator();
+  public java.lang.String getName();
+  public void addStepHandler(org.apache.commons.math3.ode.sampling.StepHandler);
+  public java.util.Collection<org.apache.commons.math3.ode.sampling.StepHandler> getStepHandlers();
+  public void clearStepHandlers();
+  public void addEventHandler(org.apache.commons.math3.ode.events.EventHandler, double, double, int);
+  public void addEventHandler(org.apache.commons.math3.ode.events.EventHandler, double, double, int, org.apache.commons.math3.analysis.solvers.UnivariateSolver);
+  public java.util.Collection<org.apache.commons.math3.ode.events.EventHandler> getEventHandlers();
+  public void clearEventHandlers();
+  public double getCurrentStepStart();
+  public double getCurrentSignedStepsize();
+  public void setMaxEvaluations(int);
+  public int getMaxEvaluations();
+  public int getEvaluations();
+  protected void initIntegration(double, double[], double);
+  protected void setEquations(org.apache.commons.math3.ode.ExpandableStatefulODE);
+  public double integrate(org.apache.commons.math3.ode.FirstOrderDifferentialEquations, double, double[], double, double[]) throws org.apache.commons.math3.exception.DimensionMismatchException, org.apache.commons.math3.exception.NumberIsTooSmallException, org.apache.commons.math3.exception.MaxCountExceededException, org.apache.commons.math3.exception.NoBracketingException;
+  public abstract void integrate(org.apache.commons.math3.ode.ExpandableStatefulODE, double) throws org.apache.commons.math3.exception.NumberIsTooSmallException, org.apache.commons.math3.exception.DimensionMismatchException, org.apache.commons.math3.exception.MaxCountExceededException, org.apache.commons.math3.exception.NoBracketingException;
+  public void computeDerivatives(double, double[], double[]) throws org.apache.commons.math3.exception.MaxCountExceededException, org.apache.commons.math3.exception.DimensionMismatchException;
+  protected void setStateInitialized(boolean);
+  protected double acceptStep(org.apache.commons.math3.ode.sampling.AbstractStepInterpolator, double[], double[], double) throws org.apache.commons.math3.exception.MaxCountExceededException, org.apache.commons.math3.exception.DimensionMismatchException, org.apache.commons.math3.exception.NoBracketingException;
+  protected void sanityChecks(org.apache.commons.math3.ode.ExpandableStatefulODE, double) throws org.apache.commons.math3.exception.NumberIsTooSmallException, org.apache.commons.math3.exception.DimensionMismatchException;
+}

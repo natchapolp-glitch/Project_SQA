@@ -1,0 +1,60 @@
+package org.jfree.data.time;
+
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+public class TimeSeriesExtraTest {
+
+    @Test
+    public void setMaximumItemCount_negative_throwsException() {
+        TimeSeries series = new TimeSeries("Test");
+        try {
+            series.setMaximumItemCount(-1);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void setMaximumItemAge_negative_throwsException() {
+        TimeSeries series = new TimeSeries("Test");
+        try {
+            series.setMaximumItemAge(-1L);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void setMaximumItemCount_reducesExistingItems() {
+        TimeSeries series = new TimeSeries("Test");
+        Day day1 = new Day(1, 1, 2010);
+        Day day2 = new Day(2, 1, 2010);
+        Day day3 = new Day(3, 1, 2010);
+        series.add(day1, 10.0);
+        series.add(day2, 20.0);
+        series.add(day3, 30.0);
+
+        series.setMaximumItemCount(2);
+
+        assertEquals(2, series.getItemCount());
+        assertNull(series.getDataItem(day1));
+        assertEquals(20.0, series.getValue(day2).doubleValue(), 0.0001);
+        assertEquals(30.0, series.getValue(day3).doubleValue(), 0.0001);
+    }
+
+    @Test
+    public void getDomainAndRangeDescriptions_defaultValues() {
+        TimeSeries series = new TimeSeries("Test");
+        assertEquals("Time", series.getDomainDescription());
+        assertEquals("Value", series.getRangeDescription());
+
+        series.setDomainDescription("MyDomain");
+        series.setRangeDescription("MyRange");
+
+        assertEquals("MyDomain", series.getDomainDescription());
+        assertEquals("MyRange", series.getRangeDescription());
+    }
+}

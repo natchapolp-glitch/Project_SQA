@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:01:12.290459+00:00",
+  "ended_at_utc": "2026-10-04T06:01:21.680877+00:00",
+  "raw_body_sha256": "fb6f0ef9124d7c952845939cdeaa37d807e31ae21e454ebabeeaf2610f997715",
+  "body": {
+    "id": "gen-1791093674-nHTNonlVkrPJh4tB5tfc",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "**Behaviors to probe:**\n1. Basic single-element XML (`<root>text</root>`) — sequence: START_ELEMENT → TEXT → END_ELEMENT → END, correct localName/namespaceURI/text at each step.\n2. Element with attributes — ATTRIBUTE_NAME/ATTRIBUTE_VALUE pairs emitted in order before TEXT/END_ELEMENT; `hasAttributes()` true/false correctly.\n3. Repeated sibling elements with same name (triggers `repeatElement`/`REPLAY_*` logic) — verify duplicate START_ELEMENT replay produces correct localName and doesn't duplicate attributes/text incorrectly.\n4. Nested elements (parent/child) — correct stack of namespace/localName through descent and ascent, `skipEndElement()` behavior when child has no text.\n5. Mixed content / whitespace-only text nodes — `_collectUntilTag`/`_skipUntilTag` must not misclassify as XML_TEXT vs skip, boundary with CDATA.\n6. Self-closing empty element (`<a/>`) — immediate START_ELEMENT then END_ELEMENT, no TEXT token emitted, text value null/empty.\n7. End-of-document — after root END_ELEMENT, `next()` returns XML_END consistently on repeated calls.\n8. `getCurrentLocation()`/`getTokenLocation()` non-null and consistent across token transitions.\n9. `close()` vs `closeCompletely()` — verify underlying reader closed appropriately, no exceptions on double-close.\n10. Namespaced XML (prefixes/xmlns) — `getNamespaceURI()` correctness for elements/attributes.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1243,
+      "output_tokens": 585,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008336,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008336,
+        "upstream_inference_prompt_cost": 0.002486,
+        "upstream_inference_completions_cost": 0.00585
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 62339,
+      "daily_remaining_tokens": 137661
+    }
+  },
+  "headers": {
+    "x-request-id": "y2l1dvtbva22vb04fmkdug03",
+    "date": "Sun, 04 Oct 2026 06:01:21 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

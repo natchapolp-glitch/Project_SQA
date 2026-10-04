@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:05:37.321655+00:00",
+  "ended_at_utc": "2026-10-04T08:05:44.869160+00:00",
+  "raw_body_sha256": "8445897f65795c9d7b83b8391aebcd98dfb584fdd29afa91c9259563688c81ec",
+  "body": {
+    "id": "gen-1791101138-rnowOnlCbWvC8114dfSU",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "## Key behaviors to verify (oracle = documented contract/Java semantics)\n\n1. **Constructor without matchers**: `InvocationMatcher(Invocation)` must default matchers to argument-equality matchers derived from the invocation's actual arguments (so `matches()` on same invocation returns true).\n\n2. **`matches(Invocation)`**: returns true iff method names are equal, raw arguments count matches, and each matcher matches corresponding argument — must handle varargs invocations correctly (varargs expansion/collapsing).\n\n3. **`hasSameMethod`**: true only when invocation's `Method` objects are equal (same declaring class, name, parameter types) — distinguish from `hasSimilarMethod`.\n\n4. **`hasSimilarMethod`**: true when method name and parameter count/types are \"similar\" per Mockito's relaxed definition (e.g., same name, same arg count, used for suspicious-mock warnings) — must differ from `hasSameMethod` for edge cases (overloaded methods, mock type differences).\n\n5. **Varargs boundary**: invocation with varargs called with different argument counts (0, 1, many) must still match correctly via `safelyArgumentsMatch`.\n\n6. **`captureArgumentsFrom`**: for argument captors, must pull latest invocation's raw arguments into matchers that implement `CapturesArguments`, including varargs arrays element-by-element.\n\n7. **`createFrom(List<Invocation>)`**: must produce one `InvocationMatcher` per invocation, preserving order and count (empty list → empty list).\n\n8. **`getMethod()` / `getInvocation()` / `getMatchers()`**: simple delegation — must return exact underlying objects, not copies.\n\n9. **`toString()`**: must not throw, and should include method name/args in some printable format (non-null, non-empty).\n\n10. **Null/empty-args boundary**: invocation with zero-arg method must not throw NPE in `matches`/`safelyArgumentsMatch`/`captureArgumentsFrom`.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 774,
+      "output_tokens": 677,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008318,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008318,
+        "upstream_inference_prompt_cost": 0.001548,
+        "upstream_inference_completions_cost": 0.00677
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 131006,
+      "daily_remaining_tokens": 68994
+    }
+  },
+  "headers": {
+    "x-request-id": "z8a17nl0t41m491h8utwolip",
+    "date": "Sun, 04 Oct 2026 08:05:46 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,96 @@
+```java
+package org.apache.commons.cli;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Date;
+
+import org.junit.Test;
+
+public class TypeHandlerTest {
+
+    @Test
+    public void testCreateNumberLong() throws Exception {
+        Number n = TypeHandler.createNumber("42");
+        assertTrue(n instanceof Long);
+        assertEquals(42L, n.longValue());
+    }
+
+    @Test
+    public void testCreateNumberDouble() throws Exception {
+        Number n = TypeHandler.createNumber("3.14");
+        assertTrue(n instanceof Double);
+        assertEquals(3.14, n.doubleValue(), 0.0001);
+    }
+
+    @Test(expected = ParseException.class)
+    public void testCreateNumberInvalid() throws Exception {
+        TypeHandler.createNumber("not a number");
+    }
+
+    @Test
+    public void testCreateClassValid() throws Exception {
+        Class<?> c = TypeHandler.createClass("java.lang.String");
+        assertEquals(String.class, c);
+    }
+
+    @Test(expected = ParseException.class)
+    public void testCreateClassInvalid() throws Exception {
+        TypeHandler.createClass("no.such.Class");
+    }
+
+    @Test
+    public void testCreateURLValid() throws Exception {
+        URL url = TypeHandler.createURL("http://commons.apache.org");
+        assertNotNull(url);
+        assertEquals("http://commons.apache.org", url.toString());
+    }
+
+    @Test(expected = ParseException.class)
+    public void testCreateURLInvalid() throws Exception {
+        TypeHandler.createURL("not a url");
+    }
+
+    @Test
+    public void testCreateObjectValid() throws Exception {
+        Object obj = TypeHandler.createObject("java.lang.Object");
+        assertNotNull(obj);
+        assertTrue(obj instanceof Object);
+    }
+
+    @Test(expected = ParseException.class)
+    public void testCreateObjectInvalid() throws Exception {
+        TypeHandler.createObject("no.such.Class");
+    }
+
+    @Test
+    public void testCreateFile() throws Exception {
+        File file = TypeHandler.createFile("/tmp/somefile.txt");
+        assertNotNull(file);
+        assertEquals("/tmp/somefile.txt", file.getPath());
+    }
+
+    @Test
+    public void testCreateValueWithClassDispatch() throws Exception {
+        Object strVal = TypeHandler.createValue("hello", PatternOptionBuilder.STRING_VALUE);
+        assertEquals("hello", strVal);
+
+        Object numVal = TypeHandler.createValue("10", PatternOptionBuilder.NUMBER_VALUE);
+        assertTrue(numVal instanceof Long);
+        assertEquals(10L, ((Number) numVal).longValue());
+
+        Object classVal = TypeHandler.createValue("java.lang.String", PatternOptionBuilder.CLASS_VALUE);
+        assertEquals(String.class, classVal);
+    }
+
+    @Test(expected = ParseException.class)
+    public void testCreateValueWithObjectNonClassThrowsParseException() throws Exception {
+        TypeHandler.createValue("hello", (Object) "not a class instance");
+    }
+}
+```

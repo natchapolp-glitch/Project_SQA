@@ -1,0 +1,477 @@
+Case: JacksonXml-6
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator
+
+BUGGY API signatures (may include private members):
+Compiled from "ToXmlGenerator.java"
+public final class com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator extends com.fasterxml.jackson.core.base.GeneratorBase {
+  protected static final java.lang.String DEFAULT_UNKNOWN_ELEMENT;
+  protected final org.codehaus.stax2.XMLStreamWriter2 _xmlWriter;
+  protected final javax.xml.stream.XMLStreamWriter _originalXmlWriter;
+  protected final boolean _stax2Emulation;
+  protected final com.fasterxml.jackson.core.io.IOContext _ioContext;
+  protected int _formatFeatures;
+  protected com.fasterxml.jackson.dataformat.xml.XmlPrettyPrinter _xmlPrettyPrinter;
+  protected boolean _initialized;
+  protected javax.xml.namespace.QName _nextName;
+  protected boolean _nextIsAttribute;
+  protected boolean _nextIsUnwrapped;
+  protected boolean _nextIsCData;
+  protected java.util.LinkedList<javax.xml.namespace.QName> _elementNameStack;
+  public com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator(com.fasterxml.jackson.core.io.IOContext, int, int, com.fasterxml.jackson.core.ObjectCodec, javax.xml.stream.XMLStreamWriter);
+  public void initGenerator() throws java.io.IOException;
+  protected com.fasterxml.jackson.core.PrettyPrinter _constructDefaultPrettyPrinter();
+  public com.fasterxml.jackson.core.JsonGenerator setPrettyPrinter(com.fasterxml.jackson.core.PrettyPrinter);
+  public java.lang.Object getOutputTarget();
+  public int getOutputBuffered();
+  public int getFormatFeatures();
+  public com.fasterxml.jackson.core.JsonGenerator overrideFormatFeatures(int, int);
+  public com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator enable(com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator$Feature);
+  public com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator disable(com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator$Feature);
+  public final boolean isEnabled(com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator$Feature);
+  public com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator configure(com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator$Feature, boolean);
+  public boolean canWriteFormattedNumbers();
+  public boolean inRoot();
+  public javax.xml.stream.XMLStreamWriter getStaxWriter();
+  public void setNextIsAttribute(boolean);
+  public void setNextIsUnwrapped(boolean);
+  public void setNextIsCData(boolean);
+  public final void setNextName(javax.xml.namespace.QName);
+  public final boolean setNextNameIfMissing(javax.xml.namespace.QName);
+  public void startWrappedValue(javax.xml.namespace.QName, javax.xml.namespace.QName) throws java.io.IOException;
+  public void finishWrappedValue(javax.xml.namespace.QName, javax.xml.namespace.QName) throws java.io.IOException;
+  public void writeRepeatedFieldName() throws java.io.IOException;
+  public final void writeFieldName(java.lang.String) throws java.io.IOException;
+  public final void writeStringField(java.lang.String, java.lang.String) throws java.io.IOException;
+  public final void writeStartArray() throws java.io.IOException;
+  public final void writeEndArray() throws java.io.IOException;
+  public final void writeStartObject() throws java.io.IOException;
+  public final void writeEndObject() throws java.io.IOException;
+  public final void _handleStartObject() throws java.io.IOException;
+  public final void _handleEndObject() throws java.io.IOException;
+  public void writeFieldName(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException;
+  public void writeString(java.lang.String) throws java.io.IOException;
+  public void writeString(char[], int, int) throws java.io.IOException;
+  public void writeString(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException;
+  public void writeRawUTF8String(byte[], int, int) throws java.io.IOException;
+  public void writeUTF8String(byte[], int, int) throws java.io.IOException;
+  public void writeRawValue(java.lang.String) throws java.io.IOException;
+  public void writeRawValue(java.lang.String, int, int) throws java.io.IOException;
+  public void writeRawValue(char[], int, int) throws java.io.IOException;
+  public void writeRawValue(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException;
+  public void writeRaw(java.lang.String) throws java.io.IOException;
+  public void writeRaw(java.lang.String, int, int) throws java.io.IOException;
+  public void writeRaw(char[], int, int) throws java.io.IOException;
+  public void writeRaw(char) throws java.io.IOException;
+  public void writeBinary(com.fasterxml.jackson.core.Base64Variant, byte[], int, int) throws java.io.IOException;
+  private byte[] toFullBuffer(byte[], int, int);
+  public void writeBoolean(boolean) throws java.io.IOException;
+  public void writeNull() throws java.io.IOException;
+  public void writeNumber(int) throws java.io.IOException;
+  public void writeNumber(long) throws java.io.IOException;
+  public void writeNumber(double) throws java.io.IOException;
+  public void writeNumber(float) throws java.io.IOException;
+  public void writeNumber(java.math.BigDecimal) throws java.io.IOException;
+  public void writeNumber(java.math.BigInteger) throws java.io.IOException;
+  public void writeNumber(java.lang.String) throws java.io.IOException, java.lang.UnsupportedOperationException;
+  protected final void _verifyValueWrite(java.lang.String) throws java.io.IOException;
+  public void flush() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  protected void _releaseBuffers();
+  protected boolean checkNextIsUnwrapped();
+  protected void handleMissingName();
+  protected void _reportUnimplementedStax2(java.lang.String) throws java.io.IOException;
+}
+
+
+BUGGY source excerpt: com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator (truncated=True)
+```java
+package com.fasterxml.jackson.dataformat.xml.ser;
+
+import java.io.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.codehaus.stax2.XMLStreamWriter2;
+import org.codehaus.stax2.ri.Stax2WriterAdapter;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.base.GeneratorBase;
+import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.json.JsonWriteContext;
+import com.fasterxml.jackson.dataformat.xml.XmlPrettyPrinter;
+import com.fasterxml.jackson.dataformat.xml.util.DefaultXmlPrettyPrinter;
+import com.fasterxml.jackson.dataformat.xml.util.StaxUtil;
+
+/**
+ * {@link JsonGenerator} that outputs JAXB-style XML output instead of JSON content.
+ * Operation requires calling code (usually either standard Jackson serializers,
+ * or in some cases (like <code>BeanSerializer</code>) customised ones) to do
+ * additional configuration calls beyond regular {@link JsonGenerator} API,
+ * mostly to pass namespace information.
+ */
+public final class ToXmlGenerator
+    extends GeneratorBase
+{
+    /**
+     * If we support optional definition of element names, this is the element
+     * name to use...
+     */
+    protected final static String DEFAULT_UNKNOWN_ELEMENT = "unknown";
+    
+    /**
+     * Enumeration that defines all togglable extra XML-specific features
+     */
+    public enum Feature implements FormatFeature
+    {
+        /**
+         * Feature that controls whether XML declaration should be written before
+         * when generator is initialized (true) or not (false)
+         */
+        WRITE_XML_DECLARATION(false),
+
+        /**
+         * Feature that controls whether output should be done as XML 1.1; if so,
+         * certain aspects may differ from default (1.0) processing: for example,
+         * XML declaration will be automatically added (regardless of setting
+         * <code>WRITE_XML_DECLARATION</code>) as this is required for reader to
+         * know to use 1.1 compliant handling. XML 1.1 can be used to allow quoted
+         * control characters (Ascii codes 0 through 31) as well as additional linefeeds
+         * and name characters.
+         */
+        WRITE_XML_1_1(false)
+        ;
+
+        final boolean _defaultState;
+        final int _mask;
+
+        /**
+         * Method that calculates bit set (flags) of all features that
+         * are enabled by default.
+         */
+        public static int collectDefaults()
+        {
+            int flags = 0;
+            for (Feature f : values()) {
+                if (f.enabledByDefault()) {
+                    flags |= f.getMask();
+                }
+            }
+            return flags;
+        }
+
+        private Feature(boolean defaultState) {
+            _defaultState = defaultState;
+            _mask = (1 << ordinal());
+        }
+
+        @Override public boolean enabledByDefault() { return _defaultState; }
+        @Override public int getMask() { return _mask; }
+        @Override public boolean enabledIn(int flags) { return (flags & getMask()) != 0; }
+    }
+
+    /*
+    /**********************************************************
+    /* Configuration
+    /**********************************************************
+     */
+
+    final protected XMLStreamWriter2 _xmlWriter;
+
+    final protected XMLStreamWriter _originalXmlWriter;
+    
+    /**
+     * Marker flag set if the underlying stream writer has to emulate
+     * Stax2 API: this is problematic if trying to use {@link #writeRaw} calls.
+     */
+    final protected boolean _stax2Emulation;
+    
+    final protected IOContext _ioContext;
+
+    /**
+     * Bit flag composed of bits that indicate which
+     * {@link ToXmlGenerator.Feature}s
+     * are enabled.
+     */
+    protected int _formatFeatures;
+
+    /**
+     * We may need to use XML-specific indentation as well
+     */
+    protected XmlPrettyPrinter _xmlPrettyPrinter;
+    
+    /*
+    /**********************************************************
+    /* XML Output state
+    /**********************************************************
+     */
+
+    /**
+     * Marker set when {@link #initGenerator()} has been called or not.
+     * 
+     * @since 2.2
+     */
+    protected boolean _initialized;
+    
+    /**
+     * Element or attribute name to use for next output call.
+     * Assigned by either code that initiates serialization
+     * or bean serializer.
+     */
+    protected QName _nextName = null;
+
+    /**
+     * Marker flag that indicates whether next name to write
+     * implies an attribute (true) or element (false)
+     */
+    protected boolean _nextIsAttribute = false;
+
+    /**
+     * Marker flag used to indicate that the next write of a (property)
+     * value should be done without using surrounding start/end
+     * elements. Flag is to be cleared once unwrapping has been triggered
+     * once.
+     */
+    protected boolean _nextIsUnwrapped = false;
+
+    /**
+     * Marker flag used to indicate that the next write of a (property)
+     * value should be as CData
+     */
+    protected boolean _nextIsCData = false;
+    
+    /**
+     * To support proper serialization of arrays it is necessary to keep
+     * stack of element names, so that we can "revert" to earlier 
+     */
+    protected LinkedList<QName> _elementNameStack = new LinkedList<QName>();
+    
+    /*
+    /**********************************************************
+    /* Life-cycle
+    /**********************************************************
+     */
+
+    public ToXmlGenerator(IOContext ctxt, int stdFeatures, int xmlFeatures,
+            ObjectCodec codec, XMLStreamWriter sw)
+    {
+        super(stdFeatures, codec);
+        _formatFeatures = xmlFeatures;
+        _ioContext = ctxt;
+        _originalXmlWriter = sw;
+        _xmlWriter = Stax2WriterAdapter.wrapIfNecessary(sw);
+        _stax2Emulation = (_xmlWriter != sw);
+        _xmlPrettyPrinter = (_cfgPrettyPrinter instanceof XmlPrettyPrinter) ?
+        		(XmlPrettyPrinter) _cfgPrettyPrinter : null;
+    }
+
+    /**
+     * Method called before writing any other output, to optionally
+     * output XML declaration.
+     */
+    public void initGenerator()  throws IOException
+    {
+        if (_initialized) {
+            return;
+        }
+        _initialized = true;
+        try {
+            if (Feature.WRITE_XML_1_1.enabledIn(_formatFeatures)) {
+                _xmlWriter.writeStartDocument("UTF-8", "1.1");
+            } else if (Feature.WRITE_XML_DECLARATION.enabledIn(_formatFeatures)) {
+                _xmlWriter.writeStartDocument("UTF-8", "1.0");
+            } else {
+                return;
+            }
+            // as per [dataformat-xml#172], try adding indentation
+            if (_xmlPrettyPrinter != null) {
+                // ... but only if it is likely to succeed:
+                if (!_stax2Emulation) {
+                    _xmlPrettyPrinter.writePrologLinefeed(_xmlWriter);
+                }
+            }
+        } catch (XMLStreamException e) {
+            StaxUtil.throwAsGenerationException(e, this);
+        }
+    }
+
+    /*
+    /**********************************************************
+    /* Overridden methods, configuration
+    /**********************************************************
+     */
+
+    @Override
+    protected PrettyPrinter _constructDefaultPrettyPrinter() {
+        return new DefaultXmlPrettyPrinter();
+    }
+
+    @Override
+    public JsonGenerator setPrettyPrinter(PrettyPrinter pp) {
+        _cfgPrettyPrinter = pp;
+        _xmlPrettyPrinter = (pp instanceof XmlPrettyPrinter) ?
+               (XmlPrettyPrinter) pp : null;
+        return this;
+    }
+
+    @Override
+    public Object getOutputTarget() {
+        // Stax2 does not expose underlying target, so best we can do is to return
+        // the Stax XMLStreamWriter instance:
+        return _originalXmlWriter;
+    }
+
+    /**
+     * Stax2 does not expose buffered content amount, so we can only return
+     * <code>-1</code> from here
+     */
+    @Override
+    public int getOutputBuffered() {
+        return -1;
+    }
+
+    @Override
+    public int getFormatFeatures() {
+        return _formatFeatures;
+    }
+
+    @Override // since 2.7
+    public JsonGenerator overrideFormatFeatures(int values, int mask)
+    {
+        int oldF = _formatFeatures;
+        int newF = (_formatFeatures & ~mask) | (values & mask);
+
+        if (oldF != newF) {
+            _formatFeatures = newF;
+        }
+        return this;
+    }
+
+    /*
+    /**********************************************************
+    /* Extended API, configuration
+    /**********************************************************
+     */
+
+    public ToXmlGenerator enable(Feature f) {
+        _formatFeatures |= f.getMask();
+        return this;
+    }
+
+    public ToXmlGenerator disable(Feature f) {
+        _formatFeatures &= ~f.getMask();
+        return this;
+    }
+
+    public final boolean isEnabled(Feature f) {
+        return (_formatFeatures & f.getMask()) != 0;
+    }
+
+    public ToXmlGenerator configure(Feature f, boolean state) {
+        if (state) {
+            enable(f);
+        } else {
+            disable(f);
+        }
+        return this;
+    }
+
+    @Override
+    public boolean canWriteFormattedNumbers() { return true; }
+
+    // @since 2.7.5
+    public boolean inRoot() {
+        return _writeContext.inRoot();
+    }
+
+    /*
+    /**********************************************************
+    /* Extended API, access to some internal components
+    /**********************************************************
+     */
+
+    /**
+     * Method that allows application direct access to underlying
+     * Stax {@link XMLStreamWriter}. Note that use of writer is
+     * discouraged, and may interfere with processing of this writer;
+     * however, occasionally it may be necessary.
+     *<p>
+     * Note: writer instance will always be of type
+     * {@link org.codehaus.stax2.XMLStreamWriter2} (including
+     * Typed Access API) so upcasts are safe.
+     */
+    public XMLStreamWriter getStaxWriter() {
+        return _xmlWriter;
+    }
+    
+    /*
+    /**********************************************************
+    /* Extended API, passing XML specific settings
+    /**********************************************************
+     */
+
+    public void setNextIsAttribute(boolean isAttribute)
+    {
+        _nextIsAttribute = isAttribute;
+    }
+
+    public void setNextIsUnwrapped(boolean isUnwrapped)
+    {
+        _nextIsUnwrapped = isUnwrapped;
+    }
+
+    public void setNextIsCData(boolean isCData)
+    {
+        _nextIsCData = isCData;
+    }
+    
+    public final void setNextName(QName name)
+    {
+        _nextName = name;
+    }
+
+    /**
+     * Method that does same as {@link #setNextName}, unless
+     * a name has already been set.
+     * 
+     * @since 2.1.2
+     */
+    public final boolean setNextNameIfMissing(QName name)
+    {
+        if (_nextName == null) {
+            _nextName = name;
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Methdod called when a structured (collection, array, map) is being
+     * output.
+     * 
+     * @param wrapperName Element used as wrapper around elements, if any (null if none)
+     * @param wrappedName Element used around individual content items (can not
+     *   be null)
+     */
+    public void startWrappedValue(QName wrapperName, QName wrappedName) throws IOException
+    {
+        if (wrapperName != null) {
+            try {
+                if (_xmlPrettyPrinter != null) {
+                    _xmlPrettyPrinter.writeStartElement(_xmlWriter,
+                            wrapperName.getNamespaceURI(), wrapperName.getLocalPart());
+                } else {
+                    _xmlWriter.writeStartElement(wrapperName.getNamespaceURI(), wrapperName.getLocalPart());
+                }
+            } catch (XMLStreamException e) {
+                StaxUtil.throwAsGenerationException(e, this);
+            }
+        }
+        this.setNextName(wrappedName);
+   
+```

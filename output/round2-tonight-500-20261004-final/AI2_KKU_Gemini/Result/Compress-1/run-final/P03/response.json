@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:50:06.492072+00:00",
+  "ended_at_utc": "2026-10-04T03:50:09.564737+00:00",
+  "raw_body_sha256": "737757518da2e617e2e2870ef66e202181037605afbe67090f7b14e98403e1c0",
+  "body": {
+    "id": "genai-01a10508-9178-7f51-9e8d-51c04def07f6",
+    "object": "chat.completion",
+    "created": 1791085810,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.compress.archivers.cpio;\n\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\npublic class CpioArchiveOutputStreamTest {\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testInvalidFormatConstructor() {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        new CpioArchiveOutputStream(out, (short) 9999);\n    }\n\n    @Test(expected = IOException.class)\n    public void testWriteWithoutEntryThrowsIOException() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out, CpioConstants.FORMAT_NEW);\n        cpioOut.write(new byte[] { 1, 2, 3 }, 0, 3);\n    }\n\n    @Test(expected = IOException.class)\n    public void testPutEntryAfterCloseThrowsIOException() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out, CpioConstants.FORMAT_NEW);\n        cpioOut.close();\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"test.txt\");\n        cpioOut.putNextEntry(entry);\n    }\n\n    @Test(expected = IOException.class)\n    public void testDuplicateEntryNameThrowsIOException() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out, CpioConstants.FORMAT_NEW);\n        \n        CpioArchiveEntry entry1 = new CpioArchiveEntry(\"duplicate.txt\");\n        entry1.setFileSize(0);\n        CpioArchiveEntry entry2 = new CpioArchiveEntry(\"duplicate.txt\");\n        entry2.setFileSize(0);\n\n        try {\n            cpioOut.putNextEntry(entry1);\n            cpioOut.closeArchiveEntry();\n            cpioOut.putNextEntry(entry2);\n        } finally {\n            cpioOut.close();\n        }\n    }\n\n    @Test\n    public void testValidSingleEntryWrite() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out, CpioConstants.FORMAT_NEW);\n        \n        String content = \"Hello CPIO\";\n        CpioArchiveEntry entry = new CpioArchiveEntry(\"hello.txt\");\n        entry.setFileSize(content.getBytes().length);\n        \n        cpioOut.putNextEntry(entry);\n        cpioOut.write(content.getBytes());\n        cpioOut.closeArchiveEntry();\n        cpioOut.finish();\n        cpioOut.close();\n\n        assertTrue(out.size() > 0);\n    }\n\n    @Test\n    public void testFinishWithoutEntries() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        CpioArchiveOutputStream cpioOut = new CpioArchiveOutputStream(out, CpioConstants.FORMAT_NEW);\n        cpioOut.finish();\n        cpioOut.close();\n\n        assertNotNull(out.toByteArray());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5739,
+      "completion_tokens": 750,
+      "total_tokens": 6489
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 12561,
+      "daily_remaining_tokens": 337439
+    }
+  },
+  "headers": {
+    "x-request-id": "pw5guph5t2kiyvraqwkis29d",
+    "date": "Sun, 04 Oct 2026 03:50:10 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:37:54.334058+00:00",
+  "ended_at_utc": "2026-10-04T06:37:56.180135+00:00",
+  "raw_body_sha256": "a6bbde30fdf814e712de62898774ed237fbdafc0f6d2e92886ee8413d52dc524",
+  "body": {
+    "id": "genai-01a105a2-33c1-7100-89ec-ffde9db917bd",
+    "object": "chat.completion",
+    "created": 1791095878,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.mockito.internal.util;\n\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class TimerTest {\n\n    @Test\n    public void testInitialStateIsNotCounting() {\n        Timer timer = new Timer(1000L);\n        assertFalse(timer.isCounting());\n    }\n\n    @Test\n    public void testIsCountingAfterStart() {\n        Timer timer = new Timer(1000L);\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void testTimerWithZeroDuration() {\n        Timer timer = new Timer(0L);\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void testTimerExpiration() throws InterruptedException {\n        Timer timer = new Timer(1L);\n        timer.start();\n        Thread.sleep(5L);\n        assertFalse(timer.isCounting());\n    }\n\n    @Test\n    public void testRestartTimer() throws InterruptedException {\n        Timer timer = new Timer(1L);\n        timer.start();\n        Thread.sleep(5L);\n        assertFalse(timer.isCounting());\n\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void testNegativeDuration() {\n        Timer timer = new Timer(-100L);\n        timer.start();\n        assertFalse(timer.isCounting());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 639,
+      "completion_tokens": 356,
+      "total_tokens": 995
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 46629,
+      "daily_remaining_tokens": 303371
+    }
+  },
+  "headers": {
+    "x-request-id": "jmm27ilnform53mkiufu5q33",
+    "date": "Sun, 04 Oct 2026 06:37:58 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

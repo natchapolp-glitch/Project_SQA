@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:52:40.611115+00:00",
+  "ended_at_utc": "2026-10-04T05:52:49.562729+00:00",
+  "raw_body_sha256": "e272496604ed974507262e6c1e4473a79b6baa10ee3bb6ccffda057ee2b19b2e",
+  "body": {
+    "id": "gen-1791093160-L6luHvbbMFhLzFKrXW8p",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Based on the known Jackson \"invalid token start\" / `_reportInvalidToken` bug class (typically mis-reporting content for unrecognized tokens like `nul`, `tru`, bad numbers), here are relevant test behaviors:\n\n- Verify `_reportInvalidToken` includes the *actually consumed* invalid characters in the exception message, not truncated/wrong text (e.g., input `\"nul\"` or `\"nulx\"` should report what was read, not just \"nul\").\n- Test malformed literals close to valid ones: `\"tru\"`, `\"fals\"`, `\"nulll\"`, `\"nually\"` — exception message should match actual offending chars, for both Reader-based and UTF8Stream-based parsers (parity check).\n- Test invalid number starts (e.g., leading `+`, multiple leading zeros, bare `.`, trailing garbage after number) via `_handleInvalidNumberStart` triggering same message correctness.\n- Boundary: invalid token spanning buffer boundary (requires `loadMore`) — forces char-by-char accumulation path to confirm message captures all buffered + newly loaded chars.\n- Boundary: invalid token at end-of-input (EOF reached mid-token) — message should reflect partial token read before EOF, not throw unrelated NPE/IOOBE.\n- Receiver setup: use `JsonFactory` to create parser over `StringReader`/`String` (ReaderBasedJsonParser) and over `byte[]`/`InputStream` (UTF8StreamJsonParser) with default `ObjectMapper`/`JsonFactory` settings (no custom features) so both receivers are exercised identically.\n- Assert thrown exception type is `JsonParseException` (not generic IOException/RuntimeException) and `getMessage()` contains expected substring.\n- Confirm valid tokens (`true`, `false`, `null`) still parse correctly post-fix (no regression on happy path).\n- Test odd/unquoted value handling (`_handleOddValue`) with similarly malformed non-literal garbage tokens to ensure consistent message formatting.\n- Cross-parser consistency: same malformed input on both parser implementations should yield equivalent exception messages (same reported invalid substring).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2772,
+      "output_tokens": 740,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.012944,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.012944,
+        "upstream_inference_prompt_cost": 0.005544,
+        "upstream_inference_completions_cost": 0.0074
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 57733,
+      "daily_remaining_tokens": 142267
+    }
+  },
+  "headers": {
+    "x-request-id": "lpt91l36j4ih2yxtms6yjb46",
+    "date": "Sun, 04 Oct 2026 05:52:50 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

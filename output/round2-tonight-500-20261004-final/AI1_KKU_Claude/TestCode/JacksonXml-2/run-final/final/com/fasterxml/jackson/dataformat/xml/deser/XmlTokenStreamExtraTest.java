@@ -1,0 +1,73 @@
+package com.fasterxml.jackson.dataformat.xml.deser;
+
+import java.io.StringReader;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class XmlTokenStreamExtraTest {
+
+    private XmlTokenStream buildStream(String xml) throws Exception {
+        XMLInputFactory f = XMLInputFactory.newInstance();
+        XMLStreamReader reader = f.createXMLStreamReader(new StringReader(xml));
+        reader.next();
+        return new XmlTokenStream(reader, "test-source");
+    }
+
+    @Test
+    public void testSkipEndElementThrowsOnWrongToken() throws Exception {
+        XmlTokenStream stream = buildStream("<root>hello</root>");
+        try {
+            stream.skipEndElement();
+            fail("Expected IOException");
+        } catch (java.io.IOException e) {
+            assertTrue(e.getMessage().contains("Expected END_ELEMENT"));
+        }
+    }
+
+    @Test
+    public void testSkipAttributesFromAttributeName() throws Exception {
+        XmlTokenStream stream = buildStream("<root attr1=\"v1\"></root>");
+
+        int token = stream.next();
+        assertEquals(XmlTokenStream.XML_ATTRIBUTE_NAME, token);
+
+        stream.skipAttributes();
+        assertEquals(XmlTokenStream.XML_START_ELEMENT, stream.getCurrentToken());
+
+        token = stream.next();
+        assertEquals(XmlTokenStream.XML_END_ELEMENT, token);
+    }
+
+    @Test
+    public void testSkipAttributesThrowsOnInvalidState() throws Exception {
+        XmlTokenStream stream = buildStream("<root>hello</root>");
+        stream.next(); // now at XML_TEXT
+
+        try {
+            stream.skipAttributes();
+        } catch (IllegalStateException e) {
+            // acceptable per contract for invalid states, but XML_TEXT is explicitly allowed
+            fail("skipAttributes should be a no-op for XML_TEXT state");
+        }
+        // state should remain unchanged since method documents no-op for XML_TEXT
+        assertEquals(XmlTokenStream.XML_TEXT, stream.getCurrentToken());
+    }
+
+    @Test
+    public void testRepeatStartElementThrowsWhenNotStartElement() throws Exception {
+        XmlTokenStream stream = buildStream("<root>hello</root>");
+        stream.next(); // move to XML_TEXT, not START_ELEMENT
+
+        try {
+            stream.repeatStartElement();
+            fail("Expected IllegalStateException");
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("Current state not XML_START_ELEMENT"));
+        }
+    }
+}

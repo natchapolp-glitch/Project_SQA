@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:52:50.185180+00:00",
+  "ended_at_utc": "2026-10-04T07:52:59.125395+00:00",
+  "raw_body_sha256": "5f7967d7a59efa5f3484ebe7543b7794c2a9b0d71e2fcf6fcaf2ef6c8dab896e",
+  "body": {
+    "id": "gen-1791100373-G71BoR7NTvVqyBv7NgfB",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Given Math-3's historical defect is in `linearCombination` (Dekker/Kahan-style compensated summation), focus there:\n\n- Correctness vs naive sum: `linearCombination(a,b)` must match exact dot product to high precision, including cases where naive multiplication/summation loses precision (catastrophic cancellation), e.g. large/small magnitude mixes.\n- Test 2-term, 3-term, 4-term `linearCombination(double...)` overloads separately for consistent results with equivalent array-based call.\n- Verify array overload throws `DimensionMismatchException` when `a.length != b.length`.\n- Boundary: empty arrays (length 0) should return 0.0 without exception.\n- Test with values causing known floating-point round-off traps (e.g. dot products of nearly orthogonal/cancelling vectors) to confirm compensated precision beyond `a[i]*b[i]` naive sum.\n- Test with NaN/Infinity inputs — verify result propagates NaN/Infinity per IEEE semantics.\n- Symmetry: `linearCombination(a,b)` equals `linearCombination(b,a)`.\n- Single-element arrays: result equals `a[0]*b[0]` exactly.\n- Negative and zero values: verify sign handling, -0.0 behavior.\n- Cross-check the double-only overloads (2,3,4-term) against array-based overload with same values for agreement.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1747,
+      "output_tokens": 471,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008204,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008204,
+        "upstream_inference_prompt_cost": 0.003494,
+        "upstream_inference_completions_cost": 0.00471
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 129363,
+      "daily_remaining_tokens": 70637
+    }
+  },
+  "headers": {
+    "x-request-id": "bfyoyv0qyosxmo4ouokrpj07",
+    "date": "Sun, 04 Oct 2026 07:52:59 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

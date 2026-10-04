@@ -1,0 +1,214 @@
+```java
+package org.jsoup.nodes;
+
+import org.jsoup.parser.Parser;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
+import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+
+public class ElementTest {
+
+    @Test
+    public void testElementCreationAndTag() {
+        Tag tag = Tag.valueOf("div");
+        Element el = new Element(tag, "http://example.com");
+        assertEquals("div", el.tagName());
+        assertEquals("div", el.nodeName());
+        assertEquals(tag, el.tag());
+        assertTrue(el.isBlock());
+        assertEquals("http://example.com", el.baseUri());
+    }
+
+    @Test
+    public void testAppendAndPrependChild() {
+        Element parent = new Element(Tag.valueOf("div"), "");
+        Element child1 = new Element(Tag.valueOf("span"), "");
+        Element child2 = new Element(Tag.valueOf("a"), "");
+
+        parent.appendChild(child1);
+        parent.prependChild(child2);
+
+        assertEquals(2, parent.children().size());
+        assertEquals("a", parent.child(0).tagName());
+        assertEquals("span", parent.child(1).tagName());
+        assertEquals(parent, child1.parent());
+        assertEquals(parent, child2.parent());
+    }
+
+    @Test
+    public void testIdAndAttributes() {
+        Element el = new Element(Tag.valueOf("p"), "");
+        el.attr("id", "my-id");
+        el.attr("class", "foo bar");
+
+        assertEquals("my-id", el.id());
+        assertTrue(el.hasClass("foo"));
+        assertTrue(el.hasClass("bar"));
+        assertFalse(el.hasClass("baz"));
+
+        el.addClass("baz");
+        assertTrue(el.hasClass("baz"));
+
+        el.removeClass("foo");
+        assertFalse(el.hasClass("foo"));
+
+        el.toggleClass("bar");
+        assertFalse(el.hasClass("bar"));
+        el.toggleClass("bar");
+        assertTrue(el.hasClass("bar"));
+    }
+
+    @Test
+    public void testTextAndHtml() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        el.text("Hello & welcome");
+        assertEquals("Hello & welcome", el.text());
+        assertTrue(el.hasText());
+
+        el.html("<span>Child</span>");
+        assertEquals("<span>Child</span>", el.html());
+        assertEquals("Child", el.text());
+    }
+
+    @Test
+    public void testSiblingNavigation() {
+        Document doc = Parser.parse("<div><p>First</p><p>Second</p><p>Third</p></div>", "");
+        Element div = doc.select("div").first();
+        Elements pList = div.children();
+
+        assertEquals(3, pList.size());
+        Element p1 = pList.get(0);
+        Element p2 = pList.get(1);
+        Element p3 = pList.get(2);
+
+        assertEquals(p1, p2.previousElementSibling());
+        assertEquals(p3, p2.nextElementSibling());
+        assertNull(p1.previousElementSibling());
+        assertNull(p3.nextElementSibling());
+
+        assertEquals(p1, p1.firstElementSibling());
+        assertEquals(p3, p1.lastElementSibling());
+        assertEquals(Integer.valueOf(0), p1.elementSiblingIndex());
+        assertEquals(Integer.valueOf(1), p2.elementSiblingIndex());
+        assertEquals(Integer.valueOf(2), p3.elementSiblingIndex());
+    }
+
+    @Test
+    public void testClassNamesManagement() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        Set<String> classes = new HashSet<String>();
+        classes.add("c1");
+        classes.add("c2");
+
+        el.classNames(classes);
+        Set<String> fetched = el.classNames();
+        assertEquals(2, fetched.size());
+        assertTrue(fetched.contains("c1"));
+        assertTrue(fetched.contains("c2"));
+
+        assertEquals("c1 c2", el.className());
+    }
+
+    @Test
+    public void testEmptyAndWrap() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        el.appendChild(new Element(Tag.valueOf("span"), ""));
+        assertFalse(el.children().isEmpty());
+
+        el.empty();
+        assertTrue(el.children().isEmpty());
+    }
+}
+```
+
+```java
+package org.jsoup.parser;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class ParserTest {
+
+    @Test
+    public void testParseBasicHtml() {
+        String html = "<html><head><title>Test</title></head><body><div id='d1'>Hello</div></body></html>";
+        Document doc = Parser.parse(html, "http://example.com");
+
+        assertNotNull(doc);
+        assertEquals("Test", doc.title());
+        Element div = doc.getElementById("d1");
+        assertNotNull(div);
+        assertEquals("Hello", div.text());
+    }
+
+    @Test
+    public void testParseBodyFragment() {
+        String fragment = "<p>Fragment text</p>";
+        Document doc = Parser.parseBodyFragment(fragment, "http://example.com");
+
+        assertNotNull(doc);
+        Element p = doc.select("p").first();
+        assertNotNull(p);
+        assertEquals("Fragment text", p.text());
+        assertEquals("body", p.parent().tagName());
+    }
+
+    @Test
+    public void testParseCommentsAndDeclarations() {
+        String html = "<div><!-- Comment --></div>";
+        Document doc = Parser.parse(html, "");
+        assertNotNull(doc);
+        assertTrue(doc.text().isEmpty());
+    }
+}
+```
+
+```java
+package org.jsoup.parser;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class TagTest {
+
+    @Test
+    public void testValueOfKnownBlockTag() {
+        Tag tag = Tag.valueOf("div");
+        assertNotNull(tag);
+        assertEquals("div", tag.getName());
+        assertTrue(tag.isBlock());
+    }
+
+    @Test
+    public void testValueOfKnownInlineTag() {
+        Tag tag = Tag.valueOf("span");
+        assertNotNull(tag);
+        assertEquals("span", tag.getName());
+        assertFalse(tag.isBlock());
+    }
+
+    @Test
+    public void testValueOfUnknownTag() {
+        Tag tag = Tag.valueOf("custom-element");
+        assertNotNull(tag);
+        assertEquals("custom-element", tag.getName());
+        assertFalse(tag.isBlock());
+    }
+
+    @Test
+    public void testCaseInsensitivity() {
+        Tag t1 = Tag.valueOf("DIV");
+        Tag t2 = Tag.valueOf("div");
+        assertSame(t1, t2);
+    }
+}
+```

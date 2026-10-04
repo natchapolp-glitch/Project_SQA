@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:31:21.658313+00:00",
+  "ended_at_utc": "2026-10-04T03:31:25.278551+00:00",
+  "raw_body_sha256": "b0f6a7f00be304c4cc2aa6bcd26b9c3d2b8663d1ba7820aca4fa8554cce1dbda",
+  "body": {
+    "id": "genai-01a104f7-6bb6-73fd-b431-9584591318e0",
+    "object": "chat.completion",
+    "created": 1791084686,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.chart.renderer.category;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertSame;\n\nimport org.jfree.chart.labels.CategoryItemLabelGenerator;\nimport org.jfree.chart.labels.CategorySeriesLabelGenerator;\nimport org.jfree.chart.labels.CategoryToolTipGenerator;\nimport org.jfree.chart.labels.StandardCategoryItemLabelGenerator;\nimport org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;\nimport org.jfree.chart.labels.StandardCategoryToolTipGenerator;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.urls.CategoryURLGenerator;\nimport org.jfree.chart.urls.StandardCategoryURLGenerator;\nimport org.junit.Test;\n\npublic class AbstractCategoryItemRendererTest {\n\n    private static class ConcreteCategoryItemRenderer extends AbstractCategoryItemRenderer {\n        private static final long serialVersionUID = 1L;\n    }\n\n    @Test\n    public void testInitialStateAndPassCount() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertEquals(1, renderer.getPassCount());\n        assertNull(renderer.getPlot());\n        assertNotNull(renderer.getLegendItemLabelGenerator());\n    }\n\n    @Test\n    public void testPlotAssociation() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        CategoryPlot plot = new CategoryPlot();\n        renderer.setPlot(plot);\n        assertSame(plot, renderer.getPlot());\n        \n        renderer.setPlot(null);\n        assertNull(renderer.getPlot());\n    }\n\n    @Test\n    public void testLegendItemLabelGenerator() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        CategorySeriesLabelGenerator generator = new StandardCategorySeriesLabelGenerator(\"Series: {0}\");\n        renderer.setLegendItemLabelGenerator(generator);\n        assertSame(generator, renderer.getLegendItemLabelGenerator());\n    }\n\n    @Test\n    public void testItemLabelGeneratorFallback() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertNull(renderer.getItemLabelGenerator(0, 0, true));\n        assertNull(renderer.getSeriesItemLabelGenerator(0));\n        assertNull(renderer.getBaseItemLabelGenerator());\n\n        CategoryItemLabelGenerator baseGen = new StandardCategoryItemLabelGenerator();\n        renderer.setBaseItemLabelGenerator(baseGen);\n        assertSame(baseGen, renderer.getBaseItemLabelGenerator());\n        assertSame(baseGen, renderer.getItemLabelGenerator(0, 0, true));\n\n        CategoryItemLabelGenerator seriesGen = new StandardCategoryItemLabelGenerator();\n        renderer.setSeriesItemLabelGenerator(0, seriesGen);\n        assertSame(seriesGen, renderer.getSeriesItemLabelGenerator(0));\n        assertSame(seriesGen, renderer.getItemLabelGenerator(0, 0, true));\n        assertSame(baseGen, renderer.getItemLabelGenerator(1, 0, true));\n    }\n\n    @Test\n    public void testToolTipGeneratorFallback() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertNull(renderer.getToolTipGenerator(0, 0, true));\n\n        CategoryToolTipGenerator baseGen = new StandardCategoryToolTipGenerator();\n        renderer.setBaseToolTipGenerator(baseGen);\n        assertSame(baseGen, renderer.getBaseToolTipGenerator());\n        assertSame(baseGen, renderer.getToolTipGenerator(0, 0, true));\n\n        CategoryToolTipGenerator seriesGen = new StandardCategoryToolTipGenerator();\n        renderer.setSeriesToolTipGenerator(0, seriesGen);\n        assertSame(seriesGen, renderer.getSeriesToolTipGenerator(0));\n        assertSame(seriesGen, renderer.getToolTipGenerator(0, 0, true));\n    }\n\n    @Test\n    public void testURLGeneratorFallback() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertNull(renderer.getURLGenerator(0, 0, true));\n\n        CategoryURLGenerator baseGen = new StandardCategoryURLGenerator();\n        renderer.setBaseURLGenerator(baseGen);\n        assertSame(baseGen, renderer.getBaseURLGenerator());\n        assertSame(baseGen, renderer.getURLGenerator(0, 0, true));\n\n        CategoryURLGenerator seriesGen = new StandardCategoryURLGenerator();\n        renderer.setSeriesURLGenerator(0, seriesGen);\n        assertSame(seriesGen, renderer.getSeriesURLGenerator(0));\n        assertSame(seriesGen, renderer.getURLGenerator(0, 0, true));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5540,
+      "completion_tokens": 1054,
+      "total_tokens": 6594
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 54845,
+      "daily_remaining_tokens": 295155
+    }
+  },
+  "headers": {
+    "x-request-id": "kq2tbv6mfm2st2w0mg59o5mp",
+    "date": "Sun, 04 Oct 2026 03:31:26 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

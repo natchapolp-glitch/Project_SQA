@@ -1,0 +1,82 @@
+package com.google.javascript.jscomp;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.jstype.JSTypeRegistry;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TypeCheckTest {
+
+  private Compiler compiler;
+  private JSTypeRegistry typeRegistry;
+  private ReverseAbstractInterpreter reverseInterpreter;
+  private TypeCheck typeCheck;
+
+  @Before
+  public void setUp() {
+    compiler = new Compiler();
+    typeRegistry = compiler.getTypeRegistry();
+    reverseInterpreter = new CodingConventionRegistry(compiler);
+    typeCheck = new TypeCheck(
+        compiler,
+        reverseInterpreter,
+        typeRegistry,
+        CheckLevel.WARNING,
+        CheckLevel.OFF);
+  }
+
+  @Test
+  public void testProcessValidatesAST() {
+    Node externs = new Node(Token.BLOCK);
+    Node root = new Node(Token.BLOCK);
+    typeCheck.process(externs, root);
+    assertNotNull(compiler.getErrorManager());
+  }
+
+  @Test
+  public void testProcessForTestingReturnsScope() {
+    Node externs = new Node(Token.BLOCK);
+    Node root = new Node(Token.BLOCK);
+    Scope scope = typeCheck.processForTesting(externs, root);
+    assertNotNull(scope);
+  }
+
+  @Test
+  public void testReportMissingPropertiesConfiguration() {
+    TypeCheck configured = typeCheck.reportMissingProperties(false);
+    assertNotNull(configured);
+  }
+
+  @Test
+  public void testShouldTraverseReturnsTrue() {
+    NodeTraversal traversal = new NodeTraversal(compiler, typeCheck);
+    Node n = new Node(Token.BLOCK);
+    boolean result = typeCheck.shouldTraverse(traversal, n, n);
+    assertTrue(result);
+  }
+
+  @Test
+  public void testVisitNodeDoesNotThrow() {
+    NodeTraversal traversal = new NodeTraversal(compiler, typeCheck);
+    Node n = new Node(Token.TRUE);
+    typeCheck.visit(traversal, n, n);
+    assertNotNull(compiler);
+  }
+
+  private static class CodingConventionRegistry extends GoogleCodingConvention {
+    private final AbstractCompiler compiler;
+
+    public CodingConventionRegistry(AbstractCompiler compiler) {
+      this.compiler = compiler;
+    }
+
+    @Override
+    public ReverseAbstractInterpreter createReverseAbstractInterpreter(
+        CodingConvention convention, JSTypeRegistry typeRegistry) {
+      return new SemanticReverseAbstractInterpreter(convention, typeRegistry);
+    }
+  }
+}

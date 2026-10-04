@@ -1,0 +1,7 @@
+1. Valid receiver setup requires initializing `XmlSerializerProvider` with a valid `XmlRootNameLookup` instance.
+2. `createInstance` boundary behavior must properly copy configuration and factory state into a new provider instance.
+3. `serializeValue` overloads must correctly handle null values by delegating to XML-specific null handling (`ROOT_NAME_FOR_NULL`).
+4. `_asXmlGenerator` should successfully cast or unwrap a standard `JsonGenerator` into a `ToXmlGenerator`.
+5. `_asXmlGenerator` must throw a `JsonMappingException` when passed a non-XML generator implementation.
+6. `_initWithRootName` and `_startRootArray` boundaries should correctly write root names using the provided `QName`.
+7. `_rootNameFromConfig` behavior must correctly extract configured root names from the serialization configuration.

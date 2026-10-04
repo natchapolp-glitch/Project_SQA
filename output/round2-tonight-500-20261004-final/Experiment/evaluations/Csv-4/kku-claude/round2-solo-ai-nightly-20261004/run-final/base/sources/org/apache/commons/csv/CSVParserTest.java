@@ -1,0 +1,152 @@
+package org.apache.commons.csv;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class CSVParserTest {
+
+    @Test
+    public void testGetRecordsSimple() throws IOException {
+        String csv = "a,b,c\n1,2,3\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("a", records.get(0).get(0));
+        assertEquals("b", records.get(0).get(1));
+        assertEquals("c", records.get(0).get(2));
+        assertEquals("1", records.get(1).get(0));
+        assertEquals("2", records.get(1).get(1));
+        assertEquals("3", records.get(1).get(2));
+        parser.close();
+    }
+
+    @Test
+    public void testHeaderMapAutoDetected() throws IOException {
+        String csv = "name,age\nJohn,30\nJane,25\n";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader();
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        Map<String, Integer> headerMap = parser.getHeaderMap();
+        assertEquals(Integer.valueOf(0), headerMap.get("name"));
+        assertEquals(Integer.valueOf(1), headerMap.get("age"));
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("John", records.get(0).get("name"));
+        assertEquals("30", records.get(0).get("age"));
+        parser.close();
+    }
+
+    @Test
+    public void testExplicitHeaderSkipsRecord() throws IOException {
+        String csv = "name,age\nJohn,30\n";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader("name", "age").withSkipHeaderRecord(true);
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(1, records.size());
+        assertEquals("John", records.get(0).get("name"));
+        parser.close();
+    }
+
+    @Test
+    public void testIgnoreEmptyLines() throws IOException {
+        String csv = "a,b\n\n1,2\n\n3,4\n";
+        CSVFormat format = CSVFormat.DEFAULT.withIgnoreEmptyLines(true);
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(3, records.size());
+        parser.close();
+    }
+
+    @Test
+    public void testQuotedMultilineField() throws IOException {
+        String csv = "a,\"b\nc\",d\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(1, records.size());
+        assertEquals("b\nc", records.get(0).get(1));
+        parser.close();
+    }
+
+    @Test
+    public void testCommentLinesSkipped() throws IOException {
+        String csv = "# comment\na,b\n# another comment\n1,2\n";
+        CSVFormat format = CSVFormat.DEFAULT.withCommentMarker('#');
+        CSVParser parser = new CSVParser(new StringReader(csv), format);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("a", records.get(0).get(0));
+        assertEquals("1", records.get(1).get(0));
+        parser.close();
+    }
+
+    @Test
+    public void testCloseIdempotentAndIsClosed() throws IOException {
+        CSVParser parser = new CSVParser(new StringReader("a,b\n"), CSVFormat.DEFAULT);
+        assertFalse(parser.isClosed());
+        parser.close();
+        assertTrue(parser.isClosed());
+        parser.close();
+        assertTrue(parser.isClosed());
+    }
+
+    @Test
+    public void testEmptyInputYieldsNoRecords() throws IOException {
+        CSVParser parser = new CSVParser(new StringReader(""), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertTrue(records.isEmpty());
+        parser.close();
+    }
+
+    @Test
+    public void testIteratorMatchesGetRecords() throws IOException {
+        String csv = "1,2\n3,4\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        Iterator<CSVRecord> it = parser.iterator();
+        assertTrue(it.hasNext());
+        CSVRecord first = it.next();
+        assertEquals("1", first.get(0));
+        assertTrue(it.hasNext());
+        CSVRecord second = it.next();
+        assertEquals("3", second.get(0));
+        assertFalse(it.hasNext());
+        parser.close();
+    }
+
+    @Test
+    public void testRecordNumberIncrements() throws IOException {
+        String csv = "a\nb\nc\n";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        assertEquals(0, parser.getRecordNumber());
+        CSVRecord r1 = parser.nextRecord();
+        assertEquals(1, r1.getRecordNumber());
+        assertEquals(1, parser.getRecordNumber());
+        CSVRecord r2 = parser.nextRecord();
+        assertEquals(2, r2.getRecordNumber());
+        parser.close();
+    }
+
+    @Test
+    public void testConstructorNullReaderThrows() throws IOException {
+        try {
+            new CSVParser(null, CSVFormat.DEFAULT);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testNoTrailingEmptyRecordWithoutFinalNewline() throws IOException {
+        String csv = "1,2\n3,4";
+        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);
+        List<CSVRecord> records = parser.getRecords();
+        assertEquals(2, records.size());
+        parser.close();
+    }
+}

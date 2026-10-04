@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:06:59.176864+00:00",
+  "ended_at_utc": "2026-10-04T08:07:03.174280+00:00",
+  "raw_body_sha256": "88c0d031d6f49b347bcecbeeee6d2630969823688da11136d8ed471b5be1e385",
+  "body": {
+    "id": "genai-01a105f3-c95a-7d13-8b94-27cd2deab1ba",
+    "object": "chat.completion",
+    "created": 1791101225,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.mockito.internal.invocation;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.mockito.Mockito.mock;\n\nimport java.lang.reflect.Method;\nimport java.util.ArrayList;\nimport java.util.Collections;\nimport java.util.List;\n\nimport org.hamcrest.Matcher;\nimport org.hamcrest.core.IsEqual;\nimport org.mockito.invocation.Invocation;\nimport org.mockito.invocation.Location;\nimport org.mockito.internal.matchers.CapturesArguments;\n\nimport org.junit.Test;\n\npublic class InvocationMatcherTest {\n\n    public interface SampleService {\n        void simpleMethod(String arg);\n        void varargsMethod(String... args);\n    }\n\n    private Invocation mockInvocation(String methodName, Class<?>[] parameterTypes, Object[] arguments) {\n        Invocation invocation = mock(Invocation.class);\n        try {\n            Method method = SampleService.class.getMethod(methodName, parameterTypes);\n            org.mockito.Mockito.when(invocation.getMethod()).thenReturn(method);\n            org.mockito.Mockito.when(invocation.getArguments()).thenReturn(arguments);\n            org.mockito.Mockito.when(invocation.getRawArguments()).thenReturn(arguments);\n            org.mockito.Mockito.when(invocation.getMock()).thenReturn(new Object());\n            org.mockito.Mockito.when(invocation.getLocation()).thenReturn(mock(Location.class));\n        } catch (Exception e) {\n            throw new RuntimeException(e);\n        }\n        return invocation;\n    }\n\n    @Test\n    public void testGettersAndConstructors() {\n        Invocation invocation = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"test\" });\n        List<Matcher> matchers = new ArrayList<Matcher>();\n        matchers.add(new IsEqual<Object>(\"test\"));\n\n        InvocationMatcher invocationMatcher = new InvocationMatcher(invocation, matchers);\n\n        assertEquals(invocation, invocationMatcher.getInvocation());\n        assertEquals(invocation.getMethod(), invocationMatcher.getMethod());\n        assertEquals(matchers, invocationMatcher.getMatchers());\n        assertNotNull(invocationMatcher.getLocation());\n        assertNotNull(invocationMatcher.toString());\n    }\n\n    @Test\n    public void testDefaultMatcherCreation() {\n        Invocation invocation = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"test\" });\n        InvocationMatcher invocationMatcher = new InvocationMatcher(invocation);\n\n        assertNotNull(invocationMatcher.getMatchers());\n        assertFalse(invocationMatcher.getMatchers().isEmpty());\n    }\n\n    @Test\n    public void testMatches() {\n        Invocation invocation1 = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"foo\" });\n        Invocation invocation2 = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"foo\" });\n        Object sharedMock = new Object();\n        try {\n            org.mockito.Mockito.when(invocation1.getMock()).thenReturn(sharedMock);\n            org.mockito.Mockito.when(invocation2.getMock()).thenReturn(sharedMock);\n        } catch (Exception e) {\n        }\n\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n        assertTrue(matcher.matches(invocation2));\n    }\n\n    @Test\n    public void testHasSameMethod() {\n        Invocation invocation1 = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"foo\" });\n        Invocation invocation2 = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"bar\" });\n        Invocation invocation3 = mockInvocation(\"varargsMethod\", new Class<?>[] { String[].class }, new Object[] { new String[] { \"foo\" } });\n\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n\n        assertTrue(matcher.hasSameMethod(invocation2));\n        assertFalse(matcher.hasSameMethod(invocation3));\n    }\n\n    @Test\n    public void testCreateFromList() {\n        Invocation invocation1 = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"foo\" });\n        Invocation invocation2 = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"bar\" });\n        List<Invocation> list = new ArrayList<Invocation>();\n        list.add(invocation1);\n        list.add(invocation2);\n\n        List<InvocationMatcher> matchers = InvocationMatcher.createFrom(list);\n\n        assertEquals(2, matchers.size());\n        assertEquals(invocation1, matchers.get(0).getInvocation());\n        assertEquals(invocation2, matchers.get(1).getInvocation());\n    }\n\n    @Test\n    public void testCaptureArgumentsFrom() {\n        Invocation invocation = mockInvocation(\"simpleMethod\", new Class<?>[] { String.class }, new Object[] { \"capturedValue\" });\n        \n        final List<Object> captured = new ArrayList<Object>();\n        Matcher capturingMatcher = new CapturesArguments() {\n            public void captureFrom(Object value) {\n                captured.add(value);\n            }\n            public boolean matches(Object item) {\n                return true;\n            }\n            public void describeTo(org.hamcrest.Description description) {\n            }\n        };\n\n        List<Matcher> matchers = new ArrayList<Matcher>();\n        matchers.add(capturingMatcher);\n\n        InvocationMatcher invocationMatcher = new InvocationMatcher(invocation, matchers);\n        invocationMatcher.captureArgumentsFrom(invocation);\n\n        assertEquals(1, captured.size());\n        assertEquals(\"capturedValue\", captured.get(0));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2148,
+      "completion_tokens": 1322,
+      "total_tokens": 3470
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 84299,
+      "daily_remaining_tokens": 265701
+    }
+  },
+  "headers": {
+    "x-request-id": "l5nkfh00ip61v2xp4uy21oj7",
+    "date": "Sun, 04 Oct 2026 08:07:05 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

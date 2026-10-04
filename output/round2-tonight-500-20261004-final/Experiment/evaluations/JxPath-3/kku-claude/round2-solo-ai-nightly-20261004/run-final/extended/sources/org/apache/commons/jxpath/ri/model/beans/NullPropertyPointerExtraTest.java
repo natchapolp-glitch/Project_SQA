@@ -1,0 +1,54 @@
+package org.apache.commons.jxpath.ri.model.beans;
+
+import static org.junit.Assert.*;
+
+import org.apache.commons.jxpath.JXPathInvalidAccessException;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.junit.Before;
+import org.junit.Test;
+
+public class NullPropertyPointerExtraTest {
+
+    private NullPropertyPointer pointer;
+
+    @Before
+    public void setUp() {
+        NodePointer root = NodePointer.newNodePointer(
+                new QName(null, "root"), new Object(), java.util.Locale.getDefault());
+        NullPointer nullParent = new NullPointer(root, new QName(null, "parent"));
+        pointer = new NullPropertyPointer(nullParent);
+    }
+
+    @Test
+    public void testGetValuePointerReturnsNullPointerWithPropertyName() {
+        pointer.setPropertyName("foo");
+        NodePointer valuePointer = pointer.getValuePointer();
+        assertTrue(valuePointer instanceof NullPointer);
+        assertEquals(new QName("foo"), valuePointer.getName());
+    }
+
+    @Test
+    public void testSetValueThrowsWhenParentIsContainer() {
+        try {
+            pointer.setValue("value");
+            fail("Expected JXPathInvalidAccessException");
+        } catch (JXPathInvalidAccessException e) {
+            assertTrue(e.getMessage().contains("Cannot set property"));
+        }
+    }
+
+    @Test
+    public void testAsPathWithoutNameAttributeUsesSuperAsPath() {
+        pointer.setPropertyName("bar");
+        String path = pointer.asPath();
+        assertFalse(path.contains("@name"));
+    }
+
+    @Test
+    public void testSetNameAttributeValueThenGetPropertyNameReflectsValue() {
+        pointer.setNameAttributeValue("baz");
+        assertEquals("baz", pointer.getPropertyName());
+        assertEquals(new QName("baz"), pointer.getName());
+    }
+}

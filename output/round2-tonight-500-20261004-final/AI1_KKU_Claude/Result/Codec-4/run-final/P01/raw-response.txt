@@ -1,0 +1,10 @@
+- Round-trip property: decodeBase64(encodeBase64(x)) equals x for empty array, single byte, two bytes, three bytes (no padding), and lengths requiring 1 or 2 '=' padding chars.
+- encodeBase64(null) and decodeBase64(null) should return null (documented contract), not throw.
+- encodeBase64(new byte[0]) returns empty byte array, not null.
+- isArrayByteBase64 / isBase64(byte) boundaries: valid chars (A-Z,a-z,0-9,+,/,=), whitespace handling, invalid byte values (e.g. negative, control chars) return false.
+- Chunking: encodeBase64Chunked and encodeBase64(bytes, true) insert CRLF every CHUNK_SIZE (76) encoded chars, with trailing CRLF; encodeBase64(bytes, false) has no line separator.
+- URL-safe encoding: encodeBase64URLSafe produces '-' and '_' instead of '+','/' and omits padding; decode should still succeed.
+- discardWhitespace removes space/tab/CR/LF only, leaves other bytes untouched.
+- decodeInteger/encodeInteger: round-trip BigInteger values including negative, zero, and large values; verify sign handling via toIntegerBytes.
+- Streaming API (encode(byte[],int,int)/decode) with multiple chunked calls feeding partial input across call boundaries, verifying avail()/hasData()/readResults() accumulate correctly for a freshly constructed Base64 instance.
+- Constructor validation: Base64(int lineLength, byte[] lineSeparator) must reject a lineSeparator that itself contains base64 characters (per documented contract) — check expected exception type.

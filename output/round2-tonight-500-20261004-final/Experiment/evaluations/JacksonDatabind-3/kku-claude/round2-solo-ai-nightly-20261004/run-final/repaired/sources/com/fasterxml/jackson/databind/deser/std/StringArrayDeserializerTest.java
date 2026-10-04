@@ -1,0 +1,89 @@
+package com.fasterxml.jackson.databind.deser.std;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class StringArrayDeserializerTest {
+
+    @Test
+    public void testNormalArray() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String[] result = mapper.readValue("[\"a\",\"b\",\"c\"]", String[].class);
+        assertArrayEquals(new String[]{"a", "b", "c"}, result);
+    }
+
+    @Test
+    public void testEmptyArray() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String[] result = mapper.readValue("[]", String[].class);
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    public void testArrayWithNullElement() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String[] result = mapper.readValue("[\"a\", null, \"b\"]", String[].class);
+        assertArrayEquals(new String[]{"a", null, "b"}, result);
+    }
+
+    @Test
+    public void testSingleScalarUnwrapEnabled() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
+        String[] result = mapper.readValue("\"solo\"", String[].class);
+        assertArrayEquals(new String[]{"solo"}, result);
+    }
+
+    @Test(expected = JsonMappingException.class)
+    public void testSingleScalarUnwrapDisabled() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
+        mapper.readValue("\"solo\"", String[].class);
+    }
+
+    @Test
+    public void testNonStringScalarsCoerced() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String[] result = mapper.readValue("[1, true, 2.5]", String[].class);
+        assertArrayEquals(new String[]{"1", "true", "2.5"}, result);
+    }
+
+    @Test(expected = JsonMappingException.class)
+    public void testObjectElementThrows() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.readValue("[{\"x\":1}]", String[].class);
+    }
+
+    @Test(expected = JsonMappingException.class)
+    public void testWholeObjectInputThrows() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.readValue("{\"x\":1}", String[].class);
+    }
+
+    @Test
+    public void testInstanceSingleton() {
+        assertNotNull(StringArrayDeserializer.instance);
+        assertTrue(StringArrayDeserializer.instance instanceof StringArrayDeserializer);
+    }
+
+    @Test
+    public void testLargeArrayPreservesOrderAndLength() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        StringBuilder sb = new StringBuilder("[");
+        int n = 50;
+        for (int i = 0; i < n; i++) {
+            if (i > 0) sb.append(",");
+            sb.append("\"v").append(i).append("\"");
+        }
+        sb.append("]");
+        String[] result = mapper.readValue(sb.toString(), String[].class);
+        assertEquals(n, result.length);
+        for (int i = 0; i < n; i++) {
+            assertEquals("v" + i, result[i]);
+        }
+    }
+}

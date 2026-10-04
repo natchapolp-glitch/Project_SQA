@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:48:01.639518+00:00",
+  "ended_at_utc": "2026-10-04T08:48:03.385354+00:00",
+  "raw_body_sha256": "931bccabd61176a08088b26ce8b9f9fd45abbd76e8867ccd4f167a29afecbef9",
+  "body": {
+    "id": "genai-01a10619-4feb-7e34-aaff-7709a4c896a1",
+    "object": "chat.completion",
+    "created": 1791103684,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport java.io.IOException;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVParserAdditionalTest {\n\n    @Test\n    public void testFirstLineHeaderWithSkipHeaderRecord() throws IOException {\n        String code = \"Col1,Col2\\nVal1,Val2\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader().withSkipHeaderRecord(true);\n        CSVParser parser = CSVParser.parse(code, format);\n        \n        Map<String, Integer> headerMap = parser.getHeaderMap();\n        assertNotNull(headerMap);\n        assertEquals(2, headerMap.size());\n        assertEquals(Integer.valueOf(0), headerMap.get(\"Col1\"));\n        assertEquals(Integer.valueOf(1), headerMap.get(\"Col2\"));\n        \n        parser.close();\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5019,
+      "completion_tokens": 230,
+      "total_tokens": 5249
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 107332,
+      "daily_remaining_tokens": 242668
+    }
+  },
+  "headers": {
+    "x-request-id": "jxezbt7noqibwejvl62qytu2",
+    "date": "Sun, 04 Oct 2026 08:48:04 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

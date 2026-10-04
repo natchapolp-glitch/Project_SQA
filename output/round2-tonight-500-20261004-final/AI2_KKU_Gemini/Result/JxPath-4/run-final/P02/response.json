@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:13:37.719164+00:00",
+  "ended_at_utc": "2026-10-04T09:13:41.643834+00:00",
+  "raw_body_sha256": "f43ed2a469bc334e0bd8bd268da699882e3ca9d804fccbb9945889e7192706d2",
+  "body": {
+    "id": "genai-01a10630-c8b9-7554-8475-01e23ededccd",
+    "object": "chat.completion",
+    "created": 1791105222,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.jxpath.ri.model.dom;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.Locale;\n\nimport javax.xml.parsers.DocumentBuilderFactory;\n\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.compiler.NodeNameTest;\nimport org.apache.commons.jxpath.ri.compiler.NodeTypeTest;\nimport org.apache.commons.jxpath.ri.Compiler;\nimport org.junit.Test;\nimport org.w3c.dom.Document;\nimport org.w3c.dom.Element;\n\npublic class DOMNodePointerTest {\n\n    @Test\n    public void testDOMNodePointerBasics() throws Exception {\n        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();\n        Element element = document.createElement(\"testElement\");\n        document.appendChild(element);\n\n        DOMNodePointer pointer = new DOMNodePointer(element, Locale.getDefault());\n        assertNotNull(pointer);\n        assertEquals(element, pointer.getImmediateNode());\n        assertEquals(element, pointer.getBaseValue());\n        assertTrue(!pointer.isCollection());\n        assertEquals(1, pointer.getLength());\n    }\n\n    @Test\n    public void testDOMNodePointerGetNameAndPath() throws Exception {\n        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();\n        Element element = document.createElement(\"ns:myElement\");\n        document.appendChild(element);\n\n        DOMNodePointer pointer = new DOMNodePointer(element, Locale.getDefault());\n        QName name = pointer.getName();\n        assertNotNull(name);\n        assertEquals(\"myElement\", name.getName());\n    }\n\n    @Test\n    public void testDOMNodePointerTestNode() throws Exception {\n        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();\n        Element element = document.createElement(\"element\");\n        document.appendChild(element);\n\n        NodeNameTest nameTest = new NodeNameTest(new QName(null, \"element\"));\n        assertTrue(DOMNodePointer.testNode(element, nameTest));\n\n        NodeTypeTest typeTest = new NodeTypeTest(Compiler.NODE_TYPE_NODE);\n        assertTrue(DOMNodePointer.testNode(element, typeTest));\n    }\n\n    @Test\n    public void testDOMNodePointerIterators() throws Exception {\n        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();\n        Element element = document.createElement(\"root\");\n        document.appendChild(element);\n\n        DOMNodePointer pointer = new DOMNodePointer(element, Locale.getDefault());\n        assertNotNull(pointer.childIterator(null, false, null));\n        assertNotNull(pointer.attributeIterator(new QName(\"attr\")));\n        assertNotNull(pointer.namespaceIterator());\n    }\n}\n```\n\n```java\npackage org.apache.commons.jxpath.ri.model.jdom;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.Locale;\n\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.compiler.NodeNameTest;\nimport org.apache.commons.jxpath.ri.compiler.NodeTypeTest;\nimport org.apache.commons.jxpath.ri.Compiler;\nimport org.jdom.Element;\nimport org.junit.Test;\n\npublic class JDOMNodePointerTest {\n\n    @Test\n    public void testJDOMNodePointerBasics() {\n        Element element = new Element(\"testElement\");\n        JDOMNodePointer pointer = new JDOMNodePointer(element, Locale.getDefault());\n        assertNotNull(pointer);\n        assertEquals(element, pointer.getImmediateNode());\n        assertEquals(element, pointer.getBaseValue());\n        assertTrue(!pointer.isCollection());\n        assertEquals(1, pointer.getLength());\n    }\n\n    @Test\n    public void testJDOMNodePointerGetName() {\n        Element element = new Element(\"myElement\");\n        JDOMNodePointer pointer = new JDOMNodePointer(element, Locale.getDefault());\n        QName name = pointer.getName();\n        assertNotNull(name);\n        assertEquals(\"myElement\", name.getName());\n    }\n\n    @Test\n    public void testJDOMNodePointerTestNode() {\n        Element element = new Element(\"element\");\n        NodeNameTest nameTest = new NodeNameTest(new QName(null, \"element\"));\n        assertTrue(JDOMNodePointer.testNode(null, element, nameTest));\n\n        NodeTypeTest typeTest = new NodeTypeTest(Compiler.NODE_TYPE_NODE);\n        assertTrue(JDOMNodePointer.testNode(null, element, typeTest));\n    }\n\n    @Test\n    public void testJDOMNodePointerIterators() {\n        Element element = new Element(\"root\");\n        JDOMNodePointer pointer = new JDOMNodePointer(element, Locale.getDefault());\n        assertNotNull(pointer.childIterator(null, false, null));\n        assertNotNull(pointer.attributeIterator(new QName(\"attr\")));\n        assertNotNull(pointer.namespaceIterator());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5491,
+      "completion_tokens": 1208,
+      "total_tokens": 6699
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 126058,
+      "daily_remaining_tokens": 223942
+    }
+  },
+  "headers": {
+    "x-request-id": "l7kmexbvnnurn4pvep63utub",
+    "date": "Sun, 04 Oct 2026 09:13:42 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

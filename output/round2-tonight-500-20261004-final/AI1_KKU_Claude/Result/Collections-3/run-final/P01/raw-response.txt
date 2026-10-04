@@ -1,0 +1,10 @@
+- Focus on `getCardinalityMap`: verify it returns correct count of each distinct element occurrence, including duplicates and nulls (if collection allows null).
+- Test `cardinality(Object, Collection)` against a null-containing collection, confirming correct count for null and non-null objects, including zero when absent.
+- Test `isSubCollection` and `isProperSubCollection` with multisets having repeated elements—must respect cardinality, not just set membership (e.g. [a,a] sub of [a,a,a] true, proper true; [a,a] sub of [a,a] true, proper false).
+- Test `isEqualCollection` with same elements different order/multiplicities—equal only when cardinalities match exactly.
+- Test `subtract`, `intersection`, `union`, `disjunction` with duplicate elements to confirm resulting cardinalities match bag semantics (min, max, sum, etc.) per contract.
+- Boundary: empty collections as either or both arguments for all set-like operations.
+- Boundary: collections containing nulls, verifying no NPE and correct cardinality/equality behavior.
+- Valid receiver setup: use `List`/`ArrayList` or similar mutable `Collection` instances as inputs since `CollectionUtils` methods are static utilities operating on arbitrary `Collection` arguments.
+- Confirm returned collections from `subtract`/`intersection`/`union` are new collections (not aliasing inputs) and inputs remain unmodified.
+- Check `retainAll`/`removeAll` static variants return new collection without mutating original arguments, matching element cardinality semantics.

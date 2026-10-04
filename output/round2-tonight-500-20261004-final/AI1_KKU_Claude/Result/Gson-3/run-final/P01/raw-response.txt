@@ -1,0 +1,10 @@
+- Interfaces without registered InstanceCreator: get() should still succeed, producing a constructor for built-in default implementations (e.g., List -> ArrayList, Map -> LinkedHashMap, Collection, Set, SortedMap, Queue, etc.), returning a non-null instance when `construct()` is invoked.
+- Concrete classes with public no-arg constructor: get(...).construct() returns a new instance via default constructor, not via unsafe allocator.
+- Classes with only a private no-arg constructor: get(...).construct() should still succeed (constructor made accessible), returning a new instance.
+- Classes with no no-arg constructor and no registered InstanceCreator and not a known default-implementation interface: construct() should fall back to unsafe allocation, succeeding without throwing for instantiable classes, or throwing a RuntimeException with a clear message for abstract classes/interfaces that cannot be allocated.
+- Registered InstanceCreator for a Type: get(TypeToken) should use the InstanceCreator.createInstance(Type) result exactly, bypassing default/unsafe logic, including passing the correct generic Type (e.g., parameterized type) to createInstance.
+- InstanceCreator priority: when both an InstanceCreator and a no-arg constructor exist, InstanceCreator must take precedence.
+- Abstract classes without InstanceCreator and without being a recognized interface default: construct() should throw a RuntimeException describing inability to instantiate.
+- Primitive types / interfaces with no default implementation and no InstanceCreator: construct() should throw a RuntimeException (not silently return null).
+- toString() should return a non-null, non-empty string containing "ConstructorConstructor" (sanity check only, not exact format).
+- Verify behavior distinctly for Map vs SortedMap vs LinkedHashMap requests to ensure correct default implementation selection per declared type, not a single hardcoded class.

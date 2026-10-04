@@ -1,0 +1,479 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: JacksonXml-3
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser
+
+BUGGY API signatures (may include private members):
+Compiled from "FromXmlParser.java"
+public class com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser extends com.fasterxml.jackson.core.base.ParserMinimalBase {
+  public static final java.lang.String DEFAULT_UNNAMED_TEXT_PROPERTY;
+  protected java.lang.String _cfgNameForTextElement;
+  protected int _formatFeatures;
+  protected com.fasterxml.jackson.core.ObjectCodec _objectCodec;
+  protected boolean _closed;
+  protected final com.fasterxml.jackson.core.io.IOContext _ioContext;
+  protected com.fasterxml.jackson.dataformat.xml.deser.XmlReadContext _parsingContext;
+  protected final com.fasterxml.jackson.dataformat.xml.deser.XmlTokenStream _xmlTokens;
+  protected boolean _mayBeLeaf;
+  protected com.fasterxml.jackson.core.JsonToken _nextToken;
+  protected java.lang.String _currText;
+  protected java.util.Set<java.lang.String> _namesToWrap;
+  protected com.fasterxml.jackson.core.util.ByteArrayBuilder _byteArrayBuilder;
+  protected byte[] _binaryValue;
+  public com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser(com.fasterxml.jackson.core.io.IOContext, int, int, com.fasterxml.jackson.core.ObjectCodec, javax.xml.stream.XMLStreamReader);
+  public com.fasterxml.jackson.core.Version version();
+  public com.fasterxml.jackson.core.ObjectCodec getCodec();
+  public void setCodec(com.fasterxml.jackson.core.ObjectCodec);
+  public void setXMLTextElementName(java.lang.String);
+  public boolean requiresCustomCodec();
+  public com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser enable(com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser$Feature);
+  public com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser disable(com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser$Feature);
+  public final boolean isEnabled(com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser$Feature);
+  public com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser configure(com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser$Feature, boolean);
+  public int getFormatFeatures();
+  public com.fasterxml.jackson.core.JsonParser overrideFormatFeatures(int, int);
+  public javax.xml.stream.XMLStreamReader getStaxReader();
+  public void addVirtualWrapping(java.util.Set<java.lang.String>);
+  public java.lang.String getCurrentName() throws java.io.IOException;
+  public void overrideCurrentName(java.lang.String);
+  public void close() throws java.io.IOException;
+  public boolean isClosed();
+  public com.fasterxml.jackson.dataformat.xml.deser.XmlReadContext getParsingContext();
+  public com.fasterxml.jackson.core.JsonLocation getTokenLocation();
+  public com.fasterxml.jackson.core.JsonLocation getCurrentLocation();
+  public boolean isExpectedStartArrayToken();
+  public com.fasterxml.jackson.core.JsonToken nextToken() throws java.io.IOException;
+  public java.lang.String nextTextValue() throws java.io.IOException;
+  private void _updateState(com.fasterxml.jackson.core.JsonToken);
+  public java.lang.String getText() throws java.io.IOException;
+  public final java.lang.String getValueAsString() throws java.io.IOException;
+  public java.lang.String getValueAsString(java.lang.String) throws java.io.IOException;
+  public char[] getTextCharacters() throws java.io.IOException;
+  public int getTextLength() throws java.io.IOException;
+  public int getTextOffset() throws java.io.IOException;
+  public boolean hasTextCharacters();
+  public java.lang.Object getEmbeddedObject() throws java.io.IOException;
+  public byte[] getBinaryValue(com.fasterxml.jackson.core.Base64Variant) throws java.io.IOException;
+  protected byte[] _decodeBase64(com.fasterxml.jackson.core.Base64Variant) throws java.io.IOException;
+  public java.math.BigInteger getBigIntegerValue() throws java.io.IOException;
+  public java.math.BigDecimal getDecimalValue() throws java.io.IOException;
+  public double getDoubleValue() throws java.io.IOException;
+  public float getFloatValue() throws java.io.IOException;
+  public int getIntValue() throws java.io.IOException;
+  public long getLongValue() throws java.io.IOException;
+  public com.fasterxml.jackson.core.JsonParser$NumberType getNumberType() throws java.io.IOException;
+  public java.lang.Number getNumberValue() throws java.io.IOException;
+  protected void _handleEOF() throws com.fasterxml.jackson.core.JsonParseException;
+  protected void _releaseBuffers() throws java.io.IOException;
+  protected com.fasterxml.jackson.core.util.ByteArrayBuilder _getByteArrayBuilder();
+  protected boolean _isEmpty(java.lang.String);
+  public com.fasterxml.jackson.core.JsonStreamContext getParsingContext();
+}
+
+
+BUGGY source excerpt: com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser (truncated=True)
+```java
+package com.fasterxml.jackson.dataformat.xml.deser;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Set;
+
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.base.ParserMinimalBase;
+import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.util.ByteArrayBuilder;
+import com.fasterxml.jackson.dataformat.xml.PackageVersion;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+/**
+ * {@link JsonParser} implementation that exposes XML structure as
+ * set of JSON events that can be used for data binding.
+ */
+public class FromXmlParser
+    extends ParserMinimalBase
+{
+    /**
+     * The default name placeholder for XML text segments is empty
+     * String ("").
+     */
+    public final static String DEFAULT_UNNAMED_TEXT_PROPERTY = "";
+
+    /**
+     * Enumeration that defines all togglable features for XML parsers.
+     * None defined so far (2.6), so just a placeholder.
+     */
+    public enum Feature implements FormatFeature
+    {
+        ;
+
+        final boolean _defaultState;
+        final int _mask;
+        
+        /**
+         * Method that calculates bit set (flags) of all features that
+         * are enabled by default.
+         */
+        public static int collectDefaults()
+        {
+            int flags = 0;
+            for (Feature f : values()) {
+                if (f.enabledByDefault()) {
+                    flags |= f.getMask();
+                }
+            }
+            return flags;
+        }
+        
+        private Feature(boolean defaultState) {
+            _defaultState = defaultState;
+            _mask = (1 << ordinal());
+        }
+
+        @Override public boolean enabledByDefault() { return _defaultState; }
+        @Override public int getMask() { return _mask; }
+        @Override public boolean enabledIn(int flags) { return (flags & getMask()) != 0; }
+    }
+
+    /**
+     * In cases where a start element has both attributes and non-empty textual
+     * value, we have to create a bogus property; we will use this as
+     * the property name.
+     *<p>
+     * Name used for pseudo-property used for returning XML Text value (which does
+     * not have actual element name to use). Defaults to empty String, but
+     * may be changed for interoperability reasons: JAXB, for example, uses
+     * "value" as name.
+     * 
+     * @since 2.1
+     */
+    protected String _cfgNameForTextElement = DEFAULT_UNNAMED_TEXT_PROPERTY;
+
+    /*
+    /**********************************************************
+    /* Configuration
+    /**********************************************************
+     */
+
+    /**
+     * Bit flag composed of bits that indicate which
+     * {@link FromXmlParser.Feature}s
+     * are enabled.
+     */
+    protected int _formatFeatures;
+
+    protected ObjectCodec _objectCodec;
+
+    /*
+    /**********************************************************
+    /* I/O state
+    /**********************************************************
+     */
+
+    /**
+     * Flag that indicates whether parser is closed or not. Gets
+     * set when parser is either closed by explicit call
+     * ({@link #close}) or when end-of-input is reached.
+     */
+    protected boolean _closed;
+
+    final protected IOContext _ioContext;
+
+    /*
+    /**********************************************************
+    /* Parsing state
+    /**********************************************************
+     */
+
+    /**
+     * Information about parser context, context in which
+     * the next token is to be parsed (root, array, object).
+     */
+    protected XmlReadContext _parsingContext;
+
+    protected final XmlTokenStream _xmlTokens;
+    /**
+     * 
+     * We need special handling to keep track of whether a value
+     * may be exposed as simple leaf value.
+     */
+    protected boolean _mayBeLeaf;
+
+    protected JsonToken _nextToken;
+
+    protected String _currText;
+
+    protected Set<String> _namesToWrap;
+
+    /*
+    /**********************************************************
+    /* Parsing state, parsed values
+    /**********************************************************
+     */
+
+    /**
+     * ByteArrayBuilder is needed if 'getBinaryValue' is called. If so,
+     * we better reuse it for remainder of content.
+     */
+    protected ByteArrayBuilder _byteArrayBuilder = null;
+
+    /**
+     * We will hold on to decoded binary data, for duration of
+     * current event, so that multiple calls to
+     * {@link #getBinaryValue} will not need to decode data more
+     * than once.
+     */
+    protected byte[] _binaryValue;
+
+    /*
+    /**********************************************************
+    /* Life-cycle
+    /**********************************************************
+     */
+
+    public FromXmlParser(IOContext ctxt, int genericParserFeatures, int xmlFeatures,
+            ObjectCodec codec, XMLStreamReader xmlReader)
+    {
+        super(genericParserFeatures);
+        _formatFeatures = xmlFeatures;
+        _ioContext = ctxt;
+        _objectCodec = codec;
+        _parsingContext = XmlReadContext.createRootContext(-1, -1);
+        // and thereby start a scope
+        _nextToken = JsonToken.START_OBJECT;
+        _xmlTokens = new XmlTokenStream(xmlReader, ctxt.getSourceReference());
+    }
+
+    @Override
+    public Version version() {
+        return PackageVersion.VERSION;
+    }
+    
+    @Override
+    public ObjectCodec getCodec() {
+        return _objectCodec;
+    }
+
+    @Override
+    public void setCodec(ObjectCodec c) {
+        _objectCodec = c;
+    }
+
+    /**
+     * @since 2.1
+     */
+    public void setXMLTextElementName(String name) {
+        _cfgNameForTextElement = name;
+    }
+    
+    /**
+     * XML format does require support from custom {@link ObjectCodec}
+     * (that is, {@link XmlMapper}), so need to return true here.
+     * 
+     * @return True since XML format does require support from codec
+     */
+    @Override
+    public boolean requiresCustomCodec() {
+        return true;
+    }
+    
+    /*
+    /**********************************************************
+    /* Extended API, configuration
+    /**********************************************************
+     */
+
+    public FromXmlParser enable(Feature f) {
+        _formatFeatures |= f.getMask();
+        return this;
+    }
+
+    public FromXmlParser disable(Feature f) {
+        _formatFeatures &= ~f.getMask();
+        return this;
+    }
+
+    public final boolean isEnabled(Feature f) {
+        return (_formatFeatures & f.getMask()) != 0;
+    }
+
+    public FromXmlParser configure(Feature f, boolean state) {
+        if (state) {
+            enable(f);
+        } else {
+            disable(f);
+        }
+        return this;
+    }
+
+    /*                                                                                       
+    /**********************************************************                              
+    /* FormatFeature support                                                                             
+    /**********************************************************                              
+     */
+
+    @Override
+    public int getFormatFeatures() {
+        return _formatFeatures;
+    }
+
+    @Override
+    public JsonParser overrideFormatFeatures(int values, int mask) {
+        _formatFeatures = (_formatFeatures & ~mask) | (values & mask);
+        return this;
+    }
+
+    /*
+    /**********************************************************
+    /* Extended API, access to some internal components
+    /**********************************************************
+     */
+
+    /**
+     * Method that allows application direct access to underlying
+     * Stax {@link XMLStreamWriter}. Note that use of writer is
+     * discouraged, and may interfere with processing of this writer;
+     * however, occasionally it may be necessary.
+     *<p>
+     * Note: writer instance will always be of type
+     * {@link org.codehaus.stax2.XMLStreamWriter2} (including
+     * Typed Access API) so upcasts are safe.
+     */
+    public XMLStreamReader getStaxReader() {
+        return _xmlTokens.getXmlReader();
+    }
+
+    /*
+    /**********************************************************
+    /* Internal API
+    /**********************************************************
+     */
+
+    /**
+     * Method that may be called to indicate that specified names
+     * (only local parts retained currently: this may be changed in
+     * future) should be considered "auto-wrapping", meaning that
+     * they will be doubled to contain two opening elements, two
+     * matching closing elements. This is needed for supporting
+     * handling of so-called "unwrapped" array types, something
+     * XML mappings like JAXB often use.
+     *<p>
+     * NOTE: this method is considered part of internal implementation
+     * interface, and it is <b>NOT</b> guaranteed to remain unchanged
+     * between minor versions (it is however expected not to change in
+     * patch versions). So if you have to use it, be prepared for
+     * possible additional work.
+     * 
+     * @since 2.1
+     */
+    public void addVirtualWrapping(Set<String> namesToWrap)
+    {
+        /* 17-Sep-2012, tatu: Not 100% sure why, but this is necessary to avoid
+         *   problems with Lists-in-Lists properties
+         */
+        String name = _xmlTokens.getLocalName();
+        if (name != null && namesToWrap.contains(name)) {
+            _xmlTokens.repeatStartElement();
+        }
+        _namesToWrap = namesToWrap;
+        _parsingContext.setNamesToWrap(namesToWrap);
+    }
+
+    /*
+    /**********************************************************
+    /* JsonParser impl
+    /**********************************************************
+     */
+    
+    /**
+     * Method that can be called to get the name associated with
+     * the current event.
+     */
+    @Override
+    public String getCurrentName() throws IOException
+    {
+        // start markers require information from parent
+        String name;
+        if (_currToken == JsonToken.START_OBJECT || _currToken == JsonToken.START_ARRAY) {
+            XmlReadContext parent = _parsingContext.getParent();
+            name = parent.getCurrentName();
+        } else {
+            name = _parsingContext.getCurrentName();
+        }
+        // sanity check
+        if (name == null) {
+            throw new IllegalStateException("Missing name, in state: "+_currToken);
+        }
+        return name;
+    }
+
+    @Override
+    public void overrideCurrentName(String name)
+    {
+        // Simple, but need to look for START_OBJECT/ARRAY's "off-by-one" thing:
+        XmlReadContext ctxt = _parsingContext;
+        if (_currToken == JsonToken.START_OBJECT || _currToken == JsonToken.START_ARRAY) {
+            ctxt = ctxt.getParent();
+        }
+        ctxt.setCurrentName(name);
+    }
+    
+    @Override
+    public void close() throws IOException
+    {
+        if (!_closed) {
+            _closed = true;
+            try {
+                if (_ioContext.isResourceManaged() || isEnabled(JsonParser.Feature.AUTO_CLOSE_SOURCE)) {
+                    _xmlTokens.closeCompletely();
+                } else {
+                    _xmlTokens.close();
+                }
+            } finally {
+                // as per [JACKSON-324], do in finally block
+                // Also, internal buffer(s) can now be released as well
+                _releaseBuffers();
+            }
+        }
+    }
+
+    @Override
+    public boolean isClosed() { return _closed; }
+
+    @Override
+    public XmlReadContext getParsingContext() {
+        return _parsingContext;
+    }
+
+    /**
+     * Method that return the <b>starting</b> location of the current
+     * token; that is, position of the first character from input
+     * that starts the current token.
+     */
+    @Override
+    public JsonLocation getTokenLocation() {
+        return _xmlTokens.getTokenLocation();
+    }
+
+    /**
+     * Method that returns location of the last processed character;
+     *
+```
+
+
+Planning response:
+- getValueAsString() / getValueAsString(default): should return current token's text for VALUE_STRING/FIELD_NAME-like tokens, null or default for null/absence, consistent with JsonParser contract.
+- nextTextValue(): should behave as nextToken()+getText() shortcut for VALUE_STRING, returning null otherwise; verify equivalence with explicit nextToken()/getText() sequence.
+- getText() on empty XML element (self-closing tag or empty text content) should return "" not null, per `_isEmpty` handling.
+- Mixed content / CDATA / whitespace-only text nodes: verify correct text extraction and trimming behavior.
+- Boundary: calling getText()/getValueAsString() before any nextToken() call, and after END_DOCUMENT/close().
+- Nested elements with attributes vs text-only elements, ensuring namespace/attribute values don't leak into text value.
+- Virtual wrapping (addVirtualWrapping) interaction with text/array token sequencing.
+- Numeric/boolean coercions via getValueAsString on VALUE_NUMBER_INT, VALUE_TRUE/FALSE tokens mapped from XML text.
+- Receiver setup: construct via XmlFactory.createParser(String/Reader) to get real XMLStreamReader-backed instance rather than mocking FromXmlParser directly.
+- Repeated/idempotent calls to getText()/getValueAsString() on same token should return identical results without advancing stream.

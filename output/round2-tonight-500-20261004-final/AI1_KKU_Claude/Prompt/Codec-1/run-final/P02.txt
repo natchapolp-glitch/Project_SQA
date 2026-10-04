@@ -1,0 +1,403 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Codec-1
+Java 11, JUnit 4
+Modified classes: org.apache.commons.codec.language.Caverphone, org.apache.commons.codec.language.Metaphone, org.apache.commons.codec.language.SoundexUtils
+
+BUGGY API signatures (may include private members):
+Compiled from "Caverphone.java"
+public class org.apache.commons.codec.language.Caverphone implements org.apache.commons.codec.StringEncoder {
+  public org.apache.commons.codec.language.Caverphone();
+  public java.lang.String caverphone(java.lang.String);
+  public java.lang.Object encode(java.lang.Object) throws org.apache.commons.codec.EncoderException;
+  public java.lang.String encode(java.lang.String);
+  public boolean isCaverphoneEqual(java.lang.String, java.lang.String);
+}
+Compiled from "Metaphone.java"
+public class org.apache.commons.codec.language.Metaphone implements org.apache.commons.codec.StringEncoder {
+  private static final java.lang.String VOWELS;
+  private static final java.lang.String FRONTV;
+  private static final java.lang.String VARSON;
+  private int maxCodeLen;
+  public org.apache.commons.codec.language.Metaphone();
+  public java.lang.String metaphone(java.lang.String);
+  private boolean isVowel(java.lang.StringBuffer, int);
+  private boolean isPreviousChar(java.lang.StringBuffer, int, char);
+  private boolean isNextChar(java.lang.StringBuffer, int, char);
+  private boolean regionMatch(java.lang.StringBuffer, int, java.lang.String);
+  private boolean isLastChar(int, int);
+  public java.lang.Object encode(java.lang.Object) throws org.apache.commons.codec.EncoderException;
+  public java.lang.String encode(java.lang.String);
+  public boolean isMetaphoneEqual(java.lang.String, java.lang.String);
+  public int getMaxCodeLen();
+  public void setMaxCodeLen(int);
+}
+Compiled from "SoundexUtils.java"
+final class org.apache.commons.codec.language.SoundexUtils {
+  org.apache.commons.codec.language.SoundexUtils();
+  static java.lang.String clean(java.lang.String);
+  static int difference(org.apache.commons.codec.StringEncoder, java.lang.String, java.lang.String) throws org.apache.commons.codec.EncoderException;
+  static int differenceEncoded(java.lang.String, java.lang.String);
+}
+
+
+BUGGY source excerpt: org.apache.commons.codec.language.Caverphone (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.codec.language;
+
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.StringEncoder;
+
+/**
+ * Encodes a string into a caverphone value. 
+ *
+ * This is an algorithm created the Caversham Project at the University of Otago. 
+ * It implements the Caverphone 2.0 algorithm:
+ *
+ *
+ * @author Apache Software Foundation
+ * @version $Id$
+ * @see <a href="http://en.wikipedia.org/wiki/Caverphone">Wikipedia - Caverphone</a>
+ * @see <a href="http://caversham.otago.ac.nz/files/working/ctp150804.pdf">Caverphone 2.0 specification</a>
+ */
+public class Caverphone implements StringEncoder {
+
+    /**
+     * Creates an instance of the Caverphone encoder
+     */
+    public Caverphone() {
+        super();
+    }
+
+    /**
+     * Find the caverphone value of a String. 
+     *
+     * @param txt String to find the caverphone code for
+     * @return A caverphone code corresponding to the String supplied
+     */
+    public String caverphone(String txt) {
+        // NOTE: Version 1.0 of Caverphone is easily derivable from this code 
+        // by commenting out the 2.0 lines and adding in the 1.0 lines
+
+        if( txt == null || txt.length() == 0 ) {
+            return "1111111111";
+        }
+
+        // 1. Convert to lowercase
+        txt = txt.toLowerCase();
+
+        // 2. Remove anything not A-Z
+        txt = txt.replaceAll("[^a-z]", "");
+
+        // 2.5. Remove final e
+        txt = txt.replaceAll("e$", "");             // 2.0 only
+
+        // 3. Handle various start options
+        txt = txt.replaceAll("^cough", "cou2f");
+        txt = txt.replaceAll("^rough", "rou2f");
+        txt = txt.replaceAll("^tough", "tou2f");
+        txt = txt.replaceAll("^enough", "enou2f");  // 2.0 only
+        txt = txt.replaceAll("^trough", "trou2f");  // 2.0 only - note the spec says ^enough here again, c+p error I assume
+        txt = txt.replaceAll("^gn", "2n");
+        txt = txt.replaceAll("^mb", "m2");
+
+        // 4. Handle replacements
+        txt = txt.replaceAll("cq", "2q");
+        txt = txt.replaceAll("ci", "si");
+        txt = txt.replaceAll("ce", "se");
+        txt = txt.replaceAll("cy", "sy");
+        txt = txt.replaceAll("tch", "2ch");
+        txt = txt.replaceAll("c", "k");
+        txt = txt.replaceAll("q", "k");
+        txt = txt.replaceAll("x", "k");
+        txt = txt.replaceAll("v", "f");
+        txt = txt.replaceAll("dg", "2g");
+        txt = txt.replaceAll("tio", "sio");
+        txt = txt.replaceAll("tia", "sia");
+        txt = txt.replaceAll("d", "t");
+        txt = txt.replaceAll("ph", "fh");
+        txt = txt.replaceAll("b", "p");
+        txt = txt.replaceAll("sh", "s2");
+        txt = txt.replaceAll("z", "s");
+        txt = txt.replaceAll("^[aeiou]", "A");
+        txt = txt.replaceAll("[aeiou]", "3");
+        txt = txt.replaceAll("j", "y");        // 2.0 only
+        txt = txt.replaceAll("^y3", "Y3");     // 2.0 only
+        txt = txt.replaceAll("^y", "A");       // 2.0 only
+        txt = txt.replaceAll("y", "3");        // 2.0 only
+        txt = txt.replaceAll("3gh3", "3kh3");
+        txt = txt.replaceAll("gh", "22");
+        txt = txt.replaceAll("g", "k");
+        txt = txt.replaceAll("s+", "S");
+     
+```
+
+BUGGY source excerpt: org.apache.commons.codec.language.Metaphone (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.codec.language;
+
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.StringEncoder;
+
+/**
+ * Encodes a string into a metaphone value. 
+ * <p>
+ * Initial Java implementation by <CITE>William B. Brogden. December, 1997</CITE>. 
+ * Permission given by <CITE>wbrogden</CITE> for code to be used anywhere.
+ * </p>
+ * <p>
+ * <CITE>Hanging on the Metaphone</CITE> by <CITE>Lawrence Philips</CITE> in <CITE>Computer Language of Dec. 1990, p
+ * 39.</CITE>
+ * </p>
+ * <p>
+ * Note, that this does not match the algorithm that ships with PHP, or the algorithm 
+ * found in the Perl <a href="http://search.cpan.org/~mschwern/Text-Metaphone-1.96/Metaphone.pm">Text:Metaphone-1.96</a>.
+ * They have had undocumented changes from the originally published algorithm. 
+ * </p>
+ * 
+ * @author Apache Software Foundation
+ * @version $Id$
+ */
+public class Metaphone implements StringEncoder {
+
+    /**
+     * Five values in the English language 
+     */
+    private static final String VOWELS = "AEIOU" ;
+
+    /**
+     * Variable used in Metaphone algorithm
+     */
+    private static final String FRONTV = "EIY"   ;
+
+    /**
+     * Variable used in Metaphone algorithm
+     */
+    private static final String VARSON = "CSPTG" ;
+
+    /**
+     * The max code length for metaphone is 4
+     */
+    private int maxCodeLen = 4 ;
+
+    /**
+     * Creates an instance of the Metaphone encoder
+     */
+    public Metaphone() {
+        super();
+    }
+
+    /**
+     * Find the metaphone value of a String. This is similar to the
+     * soundex algorithm, but better at finding similar sounding words.
+     * All input is converted to upper case.
+     * Limitations: Input format is expected to be a single ASCII word
+     * with only characters in the A - Z range, no punctuation or numbers.
+     *
+     * @param txt String to find the metaphone code for
+     * @return A metaphone code corresponding to the String supplied
+     */
+    public String metaphone(String txt) {
+        boolean hard = false ;
+        if ((txt == null) || (txt.length() == 0)) {
+            return "" ;
+        }
+        // single character is itself
+        if (txt.length() == 1) {
+            return txt.toUpperCase() ;
+        }
+      
+        char[] inwd = txt.toUpperCase(java.util.Locale.ENGLISH).toCharArray() ;
+      
+        StringBuffer local = new StringBuffer(40); // manipulate
+        StringBuffer code = new StringBuffer(10) ; //   output
+        // handle initial 2 characters exceptions
+        switch(inwd[0]) {
+        case 'K' : 
+        case 'G' : 
+        case 'P' : /* looking for KN, etc*/
+            if (inwd[1] == 'N') {
+                local.append(inwd, 1, inwd.length - 1);
+            } else {
+                local.append(inwd);
+            }
+            break;
+        case 'A': /* looking for AE */
+            if (inwd[1] == 'E') {
+                local.append(inwd, 1, inwd.length - 1);
+            } else {
+                local.append(inwd);
+            }
+            break;
+        case 'W' : /* looking for WR or WH */
+            if (inwd[1] == 'R') {   // WR -> R
+                local.append(inwd, 1, inwd.length - 1); 
+                break ;
+   
+```
+
+BUGGY source excerpt: org.apache.commons.codec.language.SoundexUtils (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.codec.language;
+
+import org.apache.commons.codec.EncoderException;
+import org.apache.commons.codec.StringEncoder;
+
+/**
+ * Utility methods for {@link Soundex} and {@link RefinedSoundex} classes.
+ * 
+ * @author Apache Software Foundation
+ * @version $Id$
+ * @since 1.3
+ */
+final class SoundexUtils {
+
+    /**
+	 * Cleans up the input string before Soundex processing by only returning
+	 * upper case letters.
+	 * 
+	 * @param str
+	 *                  The String to clean.
+	 * @return A clean String.
+	 */
+    static String clean(String str) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+        int len = str.length();
+        char[] chars = new char[len];
+        int count = 0;
+        for (int i = 0; i < len; i++) {
+            if (Character.isLetter(str.charAt(i))) {
+                chars[count++] = str.charAt(i);
+            }
+        }
+        if (count == len) {
+            return str.toUpperCase();
+        }
+        return new String(chars, 0, count).toUpperCase(java.util.Locale.ENGLISH);
+    }
+
+    /**
+	 * Encodes the Strings and returns the number of characters in the two
+	 * encoded Strings that are the same.
+	 * <ul>
+	 * <li>For Soundex, this return value ranges from 0 through 4: 0 indicates
+	 * little or no similarity, and 4 indicates strong similarity or identical
+	 * values.</li>
+	 * <li>For refined Soundex, the return value can be greater than 4.</li>
+	 * </ul>
+	 * 
+	 * @param encoder
+	 *                  The encoder to use to encode the Strings.
+	 * @param s1
+	 *                  A String that will be encoded and compared.
+	 * @param s2
+	 *                  A String that will be encoded and compared.
+	 * @return The number of characters in the two Soundex encoded Strings that
+	 *             are the same.
+	 * 
+	 * @see #differenceEncoded(String,String)
+	 * @see <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/tsqlref/ts_de-dz_8co5.asp">
+	 *          MS T-SQL DIFFERENCE</a>
+	 * 
+	 * @throws EncoderException
+	 *                  if an error occurs encoding one of the strings
+	 */
+    static int difference(StringEncoder encoder, String s1, String s2) throws EncoderException {
+        return differenceEncoded(encoder.encode(s1), encoder.encode(s2));
+    }
+
+    /**
+	 * Returns the number of characters in the two Soundex encoded Strings that
+	 * are the same.
+	 * <ul>
+	 * <li>For Soundex, this return value ranges from 0 through 4: 0 indicates
+	 * little or no similarity, and 4 indicates strong similarity or identical
+	 * values.</li>
+	 * <li>For refined Soundex, the return value can be greater than 4.</li>
+	 * </ul>
+	 * 
+	 * @param es1
+	 *                  An encoded String.
+	 * @param es2
+	 *                  An encoded String.
+	 * @return The number of characters in the two Soundex encoded Strings that
+	 *             are the same.
+	 * 
+	 * @see <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/tsqlref/ts_de-dz_8co5.asp">
+	 *          MS T-SQL DIFFERENCE</a>
+	 */
+    static int differenceEncoded(String es1, String es2) {
+
+        if (es1 == null || es2 == null) {
+            return 0;
+        }
+        int lengthToMatch = Ma
+```
+
+
+Planning response:
+Useful behaviors, boundaries, and setups to test:
+
+1. `SoundexUtils.clean(String)`: null input → null; empty string → empty; string with digits/whitespace/punctuation → stripped to uppercase letters only; already-clean string unchanged.
+2. `Caverphone.caverphone(String)` / `encode(String)`: null or empty input should not throw (likely returns empty-padded code or empty string); verify exact known caverphone codes for canonical names (e.g., "Thompson", "Smith") per documented algorithm.
+3. `Caverphone.isCaverphoneEqual`: two strings with same caverphone code → true; differing codes → false; case-insensitivity via clean().
+4. `Metaphone.metaphone(String)`: null/empty → empty string, not exception; verify known metaphone outputs for canonical test words (e.g., "Thompson"→"TMSN", "Knight"→"NT").
+5. `Metaphone.setMaxCodeLen`/`getMaxCodeLen`: default value (commonly 4); setting smaller/larger length truncates/extends output length accordingly.
+6. `Metaphone.isMetaphoneEqual`: same logic equality check, case-insensitive, whitespace-trimmed via clean.
+7. `SoundexUtils.difference` and `differenceEncoded`: identical encoded strings → max difference (length of shorter code); completely different → 0; null arguments handling (NPE or 0, per contract).
+8. Single-character and whitespace-only inputs across all encoders, to check no ArrayIndexOutOfBounds/StringIndexOutOfBounds.
+9. Encoder generic `encode(Object)` with non-String type should throw `EncoderException`; with String should delegate correctly to `encode(String)`.
+10. Idempotence: encoding already-encoded (uppercase, no spaces) string yields the same code (receiver setup: new instance each test, no shared state).

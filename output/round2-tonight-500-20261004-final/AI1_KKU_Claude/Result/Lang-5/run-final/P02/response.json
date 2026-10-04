@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:18:07.371422+00:00",
+  "ended_at_utc": "2026-10-04T09:18:24.165442+00:00",
+  "raw_body_sha256": "d54bacff900e6b94ee6bba7fa66ed12a851352cfda9fd7a9b37aa158ee6d5ecc",
+  "body": {
+    "id": "gen-1791105490-sxNZIj4hPkeFlyz9CMFM",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.lang3;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.util.List;\nimport java.util.Locale;\nimport java.util.Set;\n\nimport org.junit.Test;\n\npublic class LocaleUtilsTest {\n\n    @Test\n    public void testToLocaleValidFormats() {\n        assertEquals(new Locale(\"en\", \"\"), LocaleUtils.toLocale(\"en\"));\n        assertEquals(new Locale(\"en\", \"GB\"), LocaleUtils.toLocale(\"en_GB\"));\n        assertEquals(new Locale(\"en\", \"GB\", \"xxx\"), LocaleUtils.toLocale(\"en_GB_xxx\"));\n        assertEquals(new Locale(\"en\", \"\", \"POSIX\"), LocaleUtils.toLocale(\"en__POSIX\"));\n        assertNull(LocaleUtils.toLocale(null));\n    }\n\n    @Test\n    public void testToLocaleInvalidFormats() {\n        try {\n            LocaleUtils.toLocale(\"E\");\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n        try {\n            LocaleUtils.toLocale(\"EN\");\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n        try {\n            LocaleUtils.toLocale(\"en_gb\");\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n        try {\n            LocaleUtils.toLocale(\"en-GB\");\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n        try {\n            LocaleUtils.toLocale(\"enGB\");\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testLocaleLookupListSingleArg() {\n        Locale locale = new Locale(\"fr\", \"CA\", \"xxx\");\n        List<Locale> list = LocaleUtils.localeLookupList(locale);\n        assertEquals(3, list.size());\n        assertEquals(new Locale(\"fr\", \"CA\", \"xxx\"), list.get(0));\n        assertEquals(new Locale(\"fr\", \"CA\"), list.get(1));\n        assertEquals(new Locale(\"fr\"), list.get(2));\n        try {\n            list.add(Locale.US);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testLocaleLookupListWithDefault() {\n        Locale locale = new Locale(\"fr\", \"CA\", \"xxx\");\n        Locale defaultLocale = new Locale(\"en\");\n        List<Locale> list = LocaleUtils.localeLookupList(locale, defaultLocale);\n        assertEquals(4, list.size());\n        assertEquals(new Locale(\"fr\", \"CA\", \"xxx\"), list.get(0));\n        assertEquals(new Locale(\"fr\", \"CA\"), list.get(1));\n        assertEquals(new Locale(\"fr\"), list.get(2));\n        assertEquals(new Locale(\"en\"), list.get(3));\n\n        List<Locale> emptyList = LocaleUtils.localeLookupList(null, null);\n        assertTrue(emptyList.isEmpty());\n    }\n\n    @Test\n    public void testAvailableLocales() {\n        List<Locale> list = LocaleUtils.availableLocaleList();\n        Set<Locale> set = LocaleUtils.availableLocaleSet();\n        assertFalse(list.isEmpty());\n        assertFalse(set.isEmpty());\n        assertTrue(list.contains(Locale.US));\n        assertTrue(set.contains(Locale.US));\n        assertEquals(set.size(), list.size());\n        try {\n            list.add(Locale.US);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testIsAvailableLocale() {\n        assertTrue(LocaleUtils.isAvailableLocale(Locale.US));\n        assertFalse(LocaleUtils.isAvailableLocale(new Locale(\"xx\", \"XX\")));\n        assertFalse(LocaleUtils.isAvailableLocale(null));\n    }\n\n    @Test\n    public void testLanguagesByCountry() {\n        assertTrue(LocaleUtils.languagesByCountry(null).isEmpty());\n        assertTrue(LocaleUtils.languagesByCountry(\"XX\").isEmpty());\n\n        List<Locale> list = LocaleUtils.languagesByCountry(\"GB\");\n        assertFalse(list.isEmpty());\n        for (Locale l : list) {\n            assertEquals(\"GB\", l.getCountry());\n            assertTrue(l.getVariant().isEmpty());\n        }\n        List<Locale> list2 = LocaleUtils.languagesByCountry(\"GB\");\n        assertEquals(list, list2);\n        try {\n            list.add(Locale.US);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testCountriesByLanguage() {\n        assertTrue(LocaleUtils.countriesByLanguage(null).isEmpty());\n        assertTrue(LocaleUtils.countriesByLanguage(\"xx\").isEmpty());\n\n        List<Locale> list = LocaleUtils.countriesByLanguage(\"en\");\n        assertFalse(list.isEmpty());\n        for (Locale l : list) {\n            assertEquals(\"en\", l.getLanguage());\n            assertFalse(l.getCountry().isEmpty());\n            assertTrue(l.getVariant().isEmpty());\n        }\n        List<Locale> list2 = LocaleUtils.countriesByLanguage(\"en\");\n        assertEquals(list, list2);\n        try {\n            list.add(Locale.US);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException e) {\n            // expected\n        }\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5758,
+      "output_tokens": 2204,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.033556,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.033556,
+        "upstream_inference_prompt_cost": 0.011516,
+        "upstream_inference_completions_cost": 0.02204
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 171801,
+      "daily_remaining_tokens": 28199
+    }
+  },
+  "headers": {
+    "x-request-id": "rzyvem2kejjwk725ds67zzck",
+    "date": "Sun, 04 Oct 2026 09:18:24 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

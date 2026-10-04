@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:39:12.645401+00:00",
+  "ended_at_utc": "2026-10-04T04:39:18.074630+00:00",
+  "raw_body_sha256": "684fd6409d374ee613a13558f37987af3f013a3d8b0bf8a228c0143a1603d1e2",
+  "body": {
+    "id": "gen-1791088754-CfsJFlzOI5X6ZhjMtIY1",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.joda.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport org.junit.Test;\n\npublic class PartialExtraTest {\n\n    @Test\n    public void testWithFieldAddedNewField() {\n        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 6);\n        Partial result = p.withFieldAdded(DurationFieldType.years(), 1);\n        assertEquals(2, result.size());\n        assertEquals(DateTimeFieldType.year(), result.getFieldType(0));\n        assertEquals(1, result.getValue(0));\n    }\n\n    @Test\n    public void testWithFieldAddedZeroAmountReturnsEqual() {\n        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 6);\n        Partial result = p.withFieldAdded(DurationFieldType.years(), 0);\n        assertEquals(p, result);\n    }\n\n    @Test\n    public void testPlusAndMinusPeriod() {\n        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 6);\n        Partial plus = p.plus(Period.months(2));\n        assertEquals(8, plus.getValue(0));\n\n        Partial minus = p.minus(Period.months(2));\n        assertEquals(4, minus.getValue(0));\n    }\n\n    @Test\n    public void testIsMatchReadablePartial() {\n        Partial p1 = new Partial(DateTimeFieldType.monthOfYear(), 6);\n        Partial p2 = new Partial(DateTimeFieldType.monthOfYear(), 6);\n        Partial p3 = new Partial(DateTimeFieldType.monthOfYear(), 7);\n        assertTrue(p1.isMatch(p2));\n        assertTrue(!p1.isMatch(p3));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8693,
+      "output_tokens": 663,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.024016,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.024016,
+        "upstream_inference_prompt_cost": 0.017386,
+        "upstream_inference_completions_cost": 0.00663
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 115882,
+      "daily_remaining_tokens": 84118
+    }
+  },
+  "headers": {
+    "x-request-id": "qqbymh54fjdj8xi0uv04kknb",
+    "date": "Sun, 04 Oct 2026 04:39:19 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

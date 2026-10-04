@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:47:25.745068+00:00",
+  "ended_at_utc": "2026-10-04T08:47:28.954873+00:00",
+  "raw_body_sha256": "a6d4ec80f109a9957182642a37f2aa45a31a921590fed7d94837fb7e32a11b1e",
+  "body": {
+    "id": "genai-01a10618-ca94-7e28-88cf-0db6761cb23e",
+    "object": "chat.completion",
+    "created": 1791103650,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.IOException;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVParserTest {\n\n    @Test\n    public void testParseStringWithoutHeader() throws IOException {\n        String code = \"a,b,c\\n1,2,3\\n4,5,6\";\n        CSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT);\n        assertNull(parser.getHeaderMap());\n        \n        var records = parser.getRecords();\n        assertEquals(2, records.size());\n        assertEquals(\"1\", records.get(0).get(0));\n        assertEquals(\"6\", records.get(1).get(2));\n        parser.close();\n        assertTrue(parser.isClosed());\n    }\n\n    @Test\n    public void testParseStringWithExplicitHeader() throws IOException {\n        String code = \"1,2,3\\n4,5,6\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"Col1\", \"Col2\", \"Col3\");\n        CSVParser parser = CSVParser.parse(code, format);\n        \n        Map<String, Integer> headerMap = parser.getHeaderMap();\n        assertNotNull(headerMap);\n        assertEquals(3, headerMap.size());\n        assertEquals(Integer.valueOf(0), headerMap.get(\"Col1\"));\n        assertEquals(Integer.valueOf(1), headerMap.get(\"Col2\"));\n        assertEquals(Integer.valueOf(2), headerMap.get(\"Col3\"));\n        \n        var records = parser.getRecords();\n        assertEquals(2, records.size());\n        assertEquals(\"1\", records.get(0).get(\"Col1\"));\n        assertEquals(\"5\", records.get(1).get(\"Col2\"));\n        parser.close();\n    }\n\n    @Test\n    public void testParseStringWithFirstLineHeader() throws IOException {\n        String code = \"HeaderA,HeaderB\\nx,y\\nz,w\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader();\n        CSVParser parser = CSVParser.parse(code, format);\n        \n        Map<String, Integer> headerMap = parser.getHeaderMap();\n        assertNotNull(headerMap);\n        assertEquals(2, headerMap.size());\n        assertEquals(Integer.valueOf(0), headerMap.get(\"HeaderA\"));\n        assertEquals(Integer.valueOf(1), headerMap.get(\"HeaderB\"));\n        \n        var records = parser.getRecords();\n        assertEquals(2, records.size());\n        assertEquals(\"x\", records.get(0).get(\"HeaderA\"));\n        assertEquals(\"w\", records.get(1).get(\"HeaderB\"));\n        parser.close();\n    }\n\n    @Test\n    public void testParseStringWithSkipHeaderRecord() throws IOException {\n        String code = \"Name,Age\\nAlice,30\\nBob,25\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"Name\", \"Age\").withSkipHeaderRecord(true);\n        CSVParser parser = CSVParser.parse(code, format);\n        \n        var records = parser.getRecords();\n        assertEquals(3, records.size());\n        assertEquals(\"Name\", records.get(0).get(\"Name\"));\n        assertEquals(\"Alice\", records.get(1).get(\"Name\"));\n        assertEquals(\"30\", records.get(1).get(\"Age\"));\n        parser.close();\n    }\n\n    @Test\n    public void testEmptyParserWithHeader() throws IOException {\n        String code = \"\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"A\", \"B\");\n        CSVParser parser = CSVParser.parse(code, format);\n        \n        assertNotNull(parser.getHeaderMap());\n        assertTrue(parser.getRecords().isEmpty());\n        parser.close();\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4093,
+      "completion_tokens": 926,
+      "total_tokens": 5019
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 95488,
+      "daily_remaining_tokens": 254512
+    }
+  },
+  "headers": {
+    "x-request-id": "lzfu46pi3ftg87g3ztdxzx59",
+    "date": "Sun, 04 Oct 2026 08:47:30 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

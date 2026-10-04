@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:38:24.352197+00:00",
+  "ended_at_utc": "2026-10-04T08:38:31.453996+00:00",
+  "raw_body_sha256": "f6ed3436f8dc7d40e5a4c16057ab0db3c926e49271023341cd7a356c438d3ebb",
+  "body": {
+    "id": "gen-1791103105-XmhvPdli1SKM7lMYdshD",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `removeMapping(key, value)`: removing last value for a key should remove key's entry entirely from underlying map; removing non-existent key/value pair returns null; removing one of multiple values keeps the key with remaining collection.\n- `containsValue(value)`: should search across all keys' collections, not just top-level map values (decorated map's values are Collections, not raw values).\n- `containsValue(key, value)`: true only if key exists and its collection contains value; false for missing key or missing value.\n- `put(key, value)`: first put for a key creates a new collection via `collectionFactory`/`createCollection`; subsequent puts append to same collection; return value semantics (should return added value, not previous collection) per MultiMap contract.\n- `putAll(Map)`: each entry's value added via multimap semantics (wrapped into collection), not raw replacement; iterating source map multiple entries.\n- `putAll(key, Collection)`: adding empty/null collection should be no-op returning false; adding non-empty collection returns true and merges with existing values for key.\n- `values()`: aggregated view of all values across all keys' collections (flattened), total count matches `totalSize()`.\n- `size(key)`: 0 for absent key; correct count for present key after multiple puts/removes.\n- `getCollection(key)`: null for absent key; same collection instance reference semantics for present key.\n- `iterator(key)`: iterates values for that key; empty/absent key yields empty iterator (not NPE).\n- `totalSize()`: sums sizes across all keys, updates after put/remove/clear; zero after `clear()`.\n- Boundary: decorate with Class vs Factory constructors—collectionFactory determines collection type (e.g., ArrayList, HashSet) returned by `createCollection(int)`.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 781,
+      "output_tokens": 584,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007402,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007402,
+        "upstream_inference_prompt_cost": 0.001562,
+        "upstream_inference_completions_cost": 0.00584
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 141740,
+      "daily_remaining_tokens": 58260
+    }
+  },
+  "headers": {
+    "x-request-id": "tvpfqtl0giuax8m5s9geg0fc",
+    "date": "Sun, 04 Oct 2026 08:38:32 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

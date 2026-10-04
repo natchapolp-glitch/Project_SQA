@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:52:49.773419+00:00",
+  "ended_at_utc": "2026-10-04T05:53:01.023327+00:00",
+  "raw_body_sha256": "c9512dce24ab15517395c36f53ad8237cb39c0711c885a2ae1b5253e45787035",
+  "body": {
+    "id": "gen-1791093170-6xMVviggpLApcR3zwRSg",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.core.json;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.ByteArrayInputStream;\nimport java.nio.charset.StandardCharsets;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonParseException;\nimport com.fasterxml.jackson.core.JsonToken;\n\npublic class InvalidTokenHandlingTest {\n\n    private JsonParser createReaderParser(String content) throws IOException {\n        JsonFactory f = new JsonFactory();\n        return f.createParser(new StringReader(content));\n    }\n\n    private JsonParser createStreamParser(String content) throws IOException {\n        JsonFactory f = new JsonFactory();\n        return f.createParser(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));\n    }\n\n    @Test\n    public void testValidLiteralsStillParseReader() throws IOException {\n        JsonParser p = createReaderParser(\"[true, false, null]\");\n        assertEquals(JsonToken.START_ARRAY, p.nextToken());\n        assertEquals(JsonToken.VALUE_TRUE, p.nextToken());\n        assertEquals(JsonToken.VALUE_FALSE, p.nextToken());\n        assertEquals(JsonToken.VALUE_NULL, p.nextToken());\n        assertEquals(JsonToken.END_ARRAY, p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testValidLiteralsStillParseStream() throws IOException {\n        JsonParser p = createStreamParser(\"[true, false, null]\");\n        assertEquals(JsonToken.START_ARRAY, p.nextToken());\n        assertEquals(JsonToken.VALUE_TRUE, p.nextToken());\n        assertEquals(JsonToken.VALUE_FALSE, p.nextToken());\n        assertEquals(JsonToken.VALUE_NULL, p.nextToken());\n        assertEquals(JsonToken.END_ARRAY, p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testInvalidTokenMessageReaderBased() throws IOException {\n        JsonParser p = createReaderParser(\"nul]\");\n        try {\n            p.nextToken();\n            fail(\"Expected JsonParseException\");\n        } catch (JsonParseException e) {\n            String msg = e.getMessage();\n            assertNotNull(msg);\n            assertTrue(msg.contains(\"nul\"));\n        } finally {\n            p.close();\n        }\n    }\n\n    @Test\n    public void testInvalidTokenMessageStreamBased() throws IOException {\n        JsonParser p = createStreamParser(\"nul]\");\n        try {\n            p.nextToken();\n            fail(\"Expected JsonParseException\");\n        } catch (JsonParseException e) {\n            String msg = e.getMessage();\n            assertNotNull(msg);\n            assertTrue(msg.contains(\"nul\"));\n        } finally {\n            p.close();\n        }\n    }\n\n    @Test\n    public void testInvalidTrueLiteralMessageConsistency() throws IOException {\n        String badToken = \"tru7\";\n        String readerMsg = null;\n        String streamMsg = null;\n\n        JsonParser rp = createReaderParser(badToken);\n        try {\n            rp.nextToken();\n            fail(\"Expected JsonParseException from reader parser\");\n        } catch (JsonParseException e) {\n            readerMsg = e.getMessage();\n        } finally {\n            rp.close();\n        }\n\n        JsonParser sp = createStreamParser(badToken);\n        try {\n            sp.nextToken();\n            fail(\"Expected JsonParseException from stream parser\");\n        } catch (JsonParseException e) {\n            streamMsg = e.getMessage();\n        } finally {\n            sp.close();\n        }\n\n        assertNotNull(readerMsg);\n        assertNotNull(streamMsg);\n        assertTrue(readerMsg.contains(\"tru\"));\n        assertTrue(streamMsg.contains(\"tru\"));\n    }\n\n    @Test\n    public void testInvalidNullLiteralVariant() throws IOException {\n        JsonParser p = createReaderParser(\"nulx\");\n        try {\n            p.nextToken();\n            fail(\"Expected JsonParseException\");\n        } catch (JsonParseException e) {\n            assertTrue(e.getMessage().contains(\"nul\"));\n        } finally {\n            p.close();\n        }\n    }\n\n    @Test\n    public void testInvalidFalseLiteralStream() throws IOException {\n        JsonParser p = createStreamParser(\"fals3\");\n        try {\n            p.nextToken();\n            fail(\"Expected JsonParseException\");\n        } catch (JsonParseException e) {\n            assertTrue(e.getMessage().contains(\"fals\"));\n        } finally {\n            p.close();\n        }\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7865,
+      "output_tokens": 1713,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.03286,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.03286,
+        "upstream_inference_prompt_cost": 0.01573,
+        "upstream_inference_completions_cost": 0.01713
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 67311,
+      "daily_remaining_tokens": 132689
+    }
+  },
+  "headers": {
+    "x-request-id": "bwrklg4c6gz3e6ivdybw337g",
+    "date": "Sun, 04 Oct 2026 05:53:02 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

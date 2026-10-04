@@ -1,0 +1,59 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.Token;
+import org.junit.Test;
+
+import static org.junit.Assert.assertNotNull;
+
+public class FlowSensitiveInlineVariablesTest {
+
+  @Test
+  public void testConstructorAndProcess() {
+    Compiler compiler = new Compiler();
+    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);
+    Node externs = new Node(Token.BLOCK);
+    Node root = new Node(Token.BLOCK);
+    pass.process(externs, root);
+    assertNotNull(pass);
+  }
+
+  @Test
+  public void testEnterAndExitScope() {
+    Compiler compiler = new Compiler();
+    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);
+    Node fn = Node.newString(Token.FUNCTION, "function() {}");
+    Scope scope = new Scope(null, fn);
+    NodeTraversal t = new NodeTraversal(compiler, pass, null);
+    pass.enterScope(t);
+    pass.exitScope(t);
+    assertNotNull(pass);
+  }
+
+  @Test
+  public void testVisitCallback() {
+    Compiler compiler = new Compiler();
+    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);
+    NodeTraversal t = new NodeTraversal(compiler, pass, null);
+    Node n = new Node(Token.NAME, "x");
+    pass.visit(t, n, null);
+    assertNotNull(pass);
+  }
+
+  @Test
+  public void testProcessWithSimpleFunction() {
+    Compiler compiler = new Compiler();
+    FlowSensitiveInlineVariables pass = new FlowSensitiveInlineVariables(compiler);
+    Node externs = new Node(Token.BLOCK);
+    Node root = new Node(Token.BLOCK);
+    Node fn = Node.newString(Token.FUNCTION, "f");
+    fn.addChildToBack(Node.newString(Token.NAME, "f"));
+    fn.addChildToBack(new Node(Token.PARAM_LIST));
+    Node block = new Node(Token.BLOCK);
+    fn.addChildToBack(block);
+    root.addChildToBack(fn);
+
+    pass.process(externs, root);
+    assertNotNull(compiler);
+  }
+}

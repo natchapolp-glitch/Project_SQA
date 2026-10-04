@@ -1,0 +1,9 @@
+1. Initialize `TokenBuffer` using constructors with `ObjectCodec` or a source `JsonParser`.
+2. Test writing start/end for arrays and objects to ensure correct token sequencing.
+3. Test writing scalar values (strings, numbers, booleans, nulls) and field names.
+4. Verify `asParser()` methods correctly create a `JsonParser` from the buffered tokens.
+5. Verify `firstToken()` returns the expected initial `JsonToken` or null if empty.
+6. Test `append(TokenBuffer)` behavior when merging another buffer's contents.
+7. Test `serialize(JsonGenerator)` to output buffered tokens to another generator.
+8. Check boundary behavior around segment allocations and appends within `TokenBuffer`.
+9. Verify state query methods like `isClosed()`, `getCodec()`, and `getOutputContext()`.

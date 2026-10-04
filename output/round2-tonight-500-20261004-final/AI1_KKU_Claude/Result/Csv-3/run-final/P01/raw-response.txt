@@ -1,0 +1,10 @@
+- `readEscape()`: must consume one char after escape and map known escape chars (n→\n, r→\r, t→\t, b→\b, f→\f) or return literal char as-is; must return EOF constant if end-of-stream reached right after escape char; test with CSVFormat having escape char defined (e.g. '\\').
+- `trimTrailingSpaces(StringBuilder)`: should remove trailing whitespace chars only, leaving non-whitespace content and leading spaces intact; test on empty StringBuilder and on all-whitespace StringBuilder.
+- `readEndOfLine(int)`: should recognize '\n', '\r', and "\r\n" as one logical EOL (consuming both chars for CRLF), returning true only when current char is end-of-line char; also must increment line number appropriately; verify it doesn't falsely trigger on '\r' followed by non-'\n'.
+- `isWhitespace(int)`: must exclude the configured delimiter char from being treated as whitespace even if it's e.g. space character — important boundary when delimiter == ' '.
+- `isStartOfLine(int)`: true for '\n', '\r', and the special "undefined" start marker (typically -2), false otherwise.
+- `isEndOfFile(int)`: true only for the EOF sentinel (-1).
+- `isDelimiter`, `isEscape`, `isQuoteChar`, `isCommentStart`: each must return false when corresponding format field is disabled/null (mapped via `mapNullToDisabled`), and true only on exact char match.
+- `getLineNumber()`: initial value should be consistent (likely 1) before any reading, and increment per line read via `in`/`readEndOfLine`.
+- Receiver setup: construct via a concrete Lexer subclass (e.g., CSVLexer) wrapping a `StringReader`-based `ExtendedBufferedReader` with a specific `CSVFormat` configured with delimiter/quote/escape/comment settings per test.
+- Boundary: interactions between delimiter and other special chars when they coincide (e.g., quote == delimiter) — contract expects isDelimiter to still match exactly regardless of other roles.

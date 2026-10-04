@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:33:42.802064+00:00",
+  "ended_at_utc": "2026-10-04T03:33:46.642842+00:00",
+  "raw_body_sha256": "8f16723f5073a40ef21534c51730a347f282065ee5190bdc3fd93ec4ab771d70",
+  "body": {
+    "id": "genai-01a104f9-94ef-7ebb-8d80-a6287e466eb8",
+    "object": "chat.completion",
+    "created": 1791084827,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.cli;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.Iterator;\nimport java.util.List;\n\nimport org.junit.Test;\n\npublic class CommandLineTest {\n\n    @Test\n    public void testHasOptionStringAndChar() throws Exception {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"a\", \"all\", false, \"display all\");\n        cmd.addOption(option);\n\n        assertTrue(cmd.hasOption(\"a\"));\n        assertTrue(cmd.hasOption(\"all\"));\n        assertTrue(cmd.hasOption('a'));\n        assertFalse(cmd.hasOption(\"b\"));\n        assertFalse(cmd.hasOption('b'));\n        assertFalse(cmd.hasOption((String) null));\n    }\n\n    @Test\n    public void testGetOptionValueSingle() throws Exception {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"b\", \"build\", true, \"build target\");\n        option.addValue(\"release\");\n        cmd.addOption(option);\n\n        assertEquals(\"release\", cmd.getOptionValue(\"b\"));\n        assertEquals(\"release\", cmd.getOptionValue(\"build\"));\n        assertEquals(\"release\", cmd.getOptionValue('b'));\n        assertNull(cmd.getOptionValue(\"nonexistent\"));\n        assertNull(cmd.getOptionValue('z'));\n    }\n\n    @Test\n    public void testGetOptionValueWithDefault() throws Exception {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"t\", \"type\", true, \"type\");\n        option.addValue(\"fast\");\n        cmd.addOption(option);\n\n        assertEquals(\"fast\", cmd.getOptionValue(\"t\", \"default\"));\n        assertEquals(\"default\", cmd.getOptionValue(\"missing\", \"default\"));\n        assertEquals(\"fast\", cmd.getOptionValue('t', \"default\"));\n        assertEquals(\"default\", cmd.getOptionValue('z', \"default\"));\n    }\n\n    @Test\n    public void testGetOptionValuesMultiple() throws Exception {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"f\", \"file\", true, \"files\");\n        option.addValue(\"file1.txt\");\n        option.addValue(\"file2.txt\");\n        cmd.addOption(option);\n\n        String[] values1 = cmd.getOptionValues(\"f\");\n        String[] values2 = cmd.getOptionValues(\"file\");\n        String[] values3 = cmd.getOptionValues('f');\n\n        assertArrayEquals(new String[]{\"file1.txt\", \"file2.txt\"}, values1);\n        assertArrayEquals(new String[]{\"file1.txt\", \"file2.txt\"}, values2);\n        assertArrayEquals(new String[]{\"file1.txt\", \"file2.txt\"}, values3);\n        assertNull(cmd.getOptionValues(\"missing\"));\n        assertNull(cmd.getOptionValues('z'));\n    }\n\n    @Test\n    public void testGetArgsAndArgList() throws Exception {\n        CommandLine cmd = new CommandLine();\n        cmd.addArg(\"arg1\");\n        cmd.addArg(\"arg2\");\n\n        assertArrayEquals(new String[]{\"arg1\", \"arg2\"}, cmd.getArgs());\n        List list = cmd.getArgList();\n        assertNotNull(list);\n        assertEquals(2, list.size());\n        assertEquals(\"arg1\", list.get(0));\n        assertEquals(\"arg2\", list.get(1));\n    }\n\n    @Test\n    public void testIteratorAndGetOptions() throws Exception {\n        CommandLine cmd = new CommandLine();\n        Option opt1 = new Option(\"a\", false, \"opt a\");\n        Option opt2 = new Option(\"b\", false, \"opt b\");\n        cmd.addOption(opt1);\n        cmd.addOption(opt2);\n\n        Option[] options = cmd.getOptions();\n        assertNotNull(options);\n        assertEquals(2, options.length);\n\n        Iterator iterator = cmd.iterator();\n        assertNotNull(iterator);\n        int count = 0;\n        while (iterator.hasNext()) {\n            assertNotNull(iterator.next());\n            count++;\n        }\n        assertEquals(2, count);\n    }\n\n    @Test\n    public void testGetOptionObject() throws Exception {\n        CommandLine cmd = new CommandLine();\n        Option option = new Option(\"n\", \"number\", true, \"number option\");\n        option.setType(Number.class);\n        option.addValue(\"123\");\n        cmd.addOption(option);\n\n        Object objStr = cmd.getOptionObject(\"n\");\n        Object objChar = cmd.getOptionObject('n');\n        assertNotNull(objStr);\n        assertEquals(Integer.valueOf(123), objStr);\n        assertEquals(objStr, objChar);\n        assertNull(cmd.getOptionObject(\"missing\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3036,
+      "completion_tokens": 1176,
+      "total_tokens": 4212
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 47466,
+      "daily_remaining_tokens": 302534
+    }
+  },
+  "headers": {
+    "x-request-id": "y9llp0ldl6161yl9i8oyioda",
+    "date": "Sun, 04 Oct 2026 03:33:47 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

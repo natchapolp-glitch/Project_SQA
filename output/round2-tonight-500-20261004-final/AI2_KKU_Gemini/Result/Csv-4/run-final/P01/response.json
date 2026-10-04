@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:47:23.512379+00:00",
+  "ended_at_utc": "2026-10-04T08:47:25.576742+00:00",
+  "raw_body_sha256": "7ee210d7a471e4e53bf8211c5fd70d49a5f45a080a0db1b29268f670a79e8a5f",
+  "body": {
+    "id": "genai-01a10618-bbef-7060-9753-35347ae5dcbc",
+    "object": "chat.completion",
+    "created": 1791103646,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Verify receiver setup using `CSVParser.parse(String, CSVFormat)` or `new CSVParser(Reader, CSVFormat)` with valid formats.\n2. Test header map initialization via `getHeaderMap()` when `CSVFormat` has headers defined (e.g., `withHeader(...)`).\n3. Validate behavior when headers are configured but the input CSV string is completely empty or missing lines.\n4. Check behavior of `getHeaderMap()` when the CSV format does not specify headers (should return null or empty map per contract).\n5. Ensure `initializeHeader()` correctly maps header names to their respective 0-based integer column indices.\n6. Test parser creation and header parsing using `File`, `URL`, and `String` static factory `parse` methods.\n7. Verify duplicate header handling according to the `CSVFormat` configuration during parser initialization.\n8. Check that calling `getRecords()` or iterating over records correctly utilizes the initialized header map.\n9. Verify `close()` behavior and subsequent calls on closed parsers regarding header access and record parsing.\n10. Test boundary conditions with headers containing empty strings, whitespace, or special delimiter characters.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 606,
+      "completion_tokens": 243,
+      "total_tokens": 849
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 90469,
+      "daily_remaining_tokens": 259531
+    }
+  },
+  "headers": {
+    "x-request-id": "oiu5muc92290ncmft98zvpcj",
+    "date": "Sun, 04 Oct 2026 08:47:26 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

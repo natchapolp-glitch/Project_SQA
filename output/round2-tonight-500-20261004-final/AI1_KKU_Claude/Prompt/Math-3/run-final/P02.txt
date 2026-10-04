@@ -1,0 +1,440 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Math-3
+Java 11, JUnit 4
+Modified classes: org.apache.commons.math3.util.MathArrays
+
+BUGGY API signatures (may include private members):
+Compiled from "MathArrays.java"
+public class org.apache.commons.math3.util.MathArrays {
+  private static final int SPLIT_FACTOR;
+  private org.apache.commons.math3.util.MathArrays();
+  public static double[] scale(double, double[]);
+  public static void scaleInPlace(double, double[]);
+  public static double[] ebeAdd(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double[] ebeSubtract(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double[] ebeMultiply(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double[] ebeDivide(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double distance1(double[], double[]);
+  public static int distance1(int[], int[]);
+  public static double distance(double[], double[]);
+  public static double distance(int[], int[]);
+  public static double distanceInf(double[], double[]);
+  public static int distanceInf(int[], int[]);
+  public static <T extends java.lang.Comparable<? super T>> boolean isMonotonic(T[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean);
+  public static boolean isMonotonic(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean);
+  public static boolean checkOrder(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean, boolean) throws org.apache.commons.math3.exception.NonMonotonicSequenceException;
+  public static void checkOrder(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean) throws org.apache.commons.math3.exception.NonMonotonicSequenceException;
+  public static void checkOrder(double[]) throws org.apache.commons.math3.exception.NonMonotonicSequenceException;
+  public static void checkRectangular(long[][]) throws org.apache.commons.math3.exception.NullArgumentException, org.apache.commons.math3.exception.DimensionMismatchException;
+  public static void checkPositive(double[]) throws org.apache.commons.math3.exception.NotStrictlyPositiveException;
+  public static void checkNonNegative(long[]) throws org.apache.commons.math3.exception.NotPositiveException;
+  public static void checkNonNegative(long[][]) throws org.apache.commons.math3.exception.NotPositiveException;
+  public static double safeNorm(double[]);
+  public static void sortInPlace(double[], double[]...) throws org.apache.commons.math3.exception.DimensionMismatchException, org.apache.commons.math3.exception.NullArgumentException;
+  public static void sortInPlace(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, double[]...) throws org.apache.commons.math3.exception.NullArgumentException, org.apache.commons.math3.exception.DimensionMismatchException;
+  public static int[] copyOf(int[]);
+  public static double[] copyOf(double[]);
+  public static int[] copyOf(int[], int);
+  public static double[] copyOf(double[], int);
+  public static double linearCombination(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double linearCombination(double, double, double, double);
+  public static double linearCombination(double, double, double, double, double, double);
+  public static double linearCombination(double, double, double, double, double, double, double, double);
+  public static boolean equals(float[], float[]);
+  public static boolean equalsIncludingNaN(float[], float[]);
+  public static boolean equals(double[], double[]);
+  public static boolean equalsIncludingNaN(double[], double[]);
+  public static double[] normalizeArray(double[], double) throws org.apache.commons.math3.exception.MathIllegalArgumentException, org.apache.commons.math3.exception.MathArithmeticException;
+  public static <T> T[] buildArray(org.apache.commons.math3.Field<T>, int);
+  public static <T> T[][] buildArray(org.apache.commons.math3.Field<T>, int, int);
+  public static double[] convolve(double[], double[]) throws org.apache.commons.math3.exception.NullArgumentException, org.apache.commons.math3.exception.NoDataException;
+}
+
+
+BUGGY source excerpt: org.apache.commons.math3.util.MathArrays (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.math3.util;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.apache.commons.math3.Field;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MathArithmeticException;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.exception.MathInternalError;
+import org.apache.commons.math3.exception.NoDataException;
+import org.apache.commons.math3.exception.NonMonotonicSequenceException;
+import org.apache.commons.math3.exception.NotPositiveException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
+
+/**
+ * Arrays utilities.
+ *
+ * @since 3.0
+ * @version $Id$
+ */
+public class MathArrays {
+    /** Factor used for splitting double numbers: n = 2^27 + 1 (i.e. {@value}). */
+    private static final int SPLIT_FACTOR = 0x8000001;
+
+    /**
+     * Private constructor.
+     */
+    private MathArrays() {}
+
+    /**
+     * Real-valued function that operate on an array or a part of it.
+     * @since 3.1
+     */
+    public interface Function {
+        /**
+         * Operates on an entire array.
+         *
+         * @param array Array to operate on.
+         * @return the result of the operation.
+         */
+        double evaluate(double[] array);
+        /**
+         * @param array Array to operate on.
+         * @param startIndex Index of the first element to take into account.
+         * @param numElements Number of elements to take into account.
+         * @return the result of the operation.
+         */
+        double evaluate(double[] array,
+                        int startIndex,
+                        int numElements);
+    }
+
+    /**
+     * Create a copy of an array scaled by a value.
+     *
+     * @param arr Array to scale.
+     * @param val Scalar.
+     * @return scaled copy of array with each entry multiplied by val.
+     * @since 3.2
+     */
+    public static double[] scale(double val, final double[] arr) {
+        double[] newArr = new double[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            newArr[i] = arr[i] * val;
+        }
+        return newArr;
+    }
+
+    /**
+     * <p>Multiply each element of an array by a value.</p>
+     *
+     * <p>The array is modified in place (no copy is created).</p>
+     *
+     * @param arr Array to scale
+     * @param val Scalar
+     * @since 3.2
+     */
+    public static void scaleInPlace(double val, final double[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] *= val;
+        }
+    }
+
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * addition of the arguments.
+     *
+     * @param a First term of the addition.
+     * @param b Second term of the addition.
+     * @return a new array {@code r} where {@code r[i] = a[i] + b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeAdd(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] += b[i];
+        }
+        return result;
+    }
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * subtraction of the second argument from the first.
+     *
+     * @param a First term.
+     * @param b Element to be subtracted.
+     * @return a new array {@code r} where {@code r[i] = a[i] - b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeSubtract(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] -= b[i];
+        }
+        return result;
+    }
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * multiplication of the arguments.
+     *
+     * @param a First factor of the multiplication.
+     * @param b Second factor of the multiplication.
+     * @return a new array {@code r} where {@code r[i] = a[i] * b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeMultiply(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] *= b[i];
+        }
+        return result;
+    }
+    /**
+     * Creates an array whose contents will be the element-by-element
+     * division of the first argument by the second.
+     *
+     * @param a Numerator of the division.
+     * @param b Denominator of the division.
+     * @return a new array {@code r} where {@code r[i] = a[i] / b[i]}.
+     * @throws DimensionMismatchException if the array lengths differ.
+     * @since 3.1
+     */
+    public static double[] ebeDivide(double[] a, double[] b)
+        throws DimensionMismatchException {
+        if (a.length != b.length) {
+            throw new DimensionMismatchException(a.length, b.length);
+        }
+
+        final double[] result = a.clone();
+        for (int i = 0; i < a.length; i++) {
+            result[i] /= b[i];
+        }
+        return result;
+    }
+
+    /**
+     * Calculates the L<sub>1</sub> (sum of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>1</sub> distance between the two points
+     */
+    public static double distance1(double[] p1, double[] p2) {
+        double sum = 0;
+        for (int i = 0; i < p1.length; i++) {
+            sum += FastMath.abs(p1[i] - p2[i]);
+        }
+        return sum;
+    }
+
+    /**
+     * Calculates the L<sub>1</sub> (sum of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>1</sub> distance between the two points
+     */
+    public static int distance1(int[] p1, int[] p2) {
+      int sum = 0;
+      for (int i = 0; i < p1.length; i++) {
+          sum += FastMath.abs(p1[i] - p2[i]);
+      }
+      return sum;
+    }
+
+    /**
+     * Calculates the L<sub>2</sub> (Euclidean) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>2</sub> distance between the two points
+     */
+    public static double distance(double[] p1, double[] p2) {
+        double sum = 0;
+        for (int i = 0; i < p1.length; i++) {
+            final double dp = p1[i] - p2[i];
+            sum += dp * dp;
+        }
+        return FastMath.sqrt(sum);
+    }
+
+    /**
+     * Calculates the L<sub>2</sub> (Euclidean) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>2</sub> distance between the two points
+     */
+    public static double distance(int[] p1, int[] p2) {
+      double sum = 0;
+      for (int i = 0; i < p1.length; i++) {
+          final double dp = p1[i] - p2[i];
+          sum += dp * dp;
+      }
+      return FastMath.sqrt(sum);
+    }
+
+    /**
+     * Calculates the L<sub>&infin;</sub> (max of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>&infin;</sub> distance between the two points
+     */
+    public static double distanceInf(double[] p1, double[] p2) {
+        double max = 0;
+        for (int i = 0; i < p1.length; i++) {
+            max = FastMath.max(max, FastMath.abs(p1[i] - p2[i]));
+        }
+        return max;
+    }
+
+    /**
+     * Calculates the L<sub>&infin;</sub> (max of abs) distance between two points.
+     *
+     * @param p1 the first point
+     * @param p2 the second point
+     * @return the L<sub>&infin;</sub> distance between the two points
+     */
+    public static int distanceInf(int[] p1, int[] p2) {
+        int max = 0;
+        for (int i = 0; i < p1.length; i++) {
+            max = FastMath.max(max, FastMath.abs(p1[i] - p2[i]));
+        }
+        return max;
+    }
+
+    /**
+     * Specification of ordering direction.
+     */
+    public static enum OrderDirection {
+        /** Constant for increasing direction. */
+        INCREASING,
+        /** Constant for decreasing direction. */
+        DECREASING
+    }
+
+    /**
+     * Check that an array is monotonically increasing or decreasing.
+     *
+     * @param <T> the type of the elements in the specified array
+     * @param val Values.
+     * @param dir Ordering direction.
+     * @param strict Whether the order should be strict.
+     * @return {@code true} if sorted, {@code false} otherwise.
+     */
+    public static  <T extends Comparable<? super T>> boolean isMonotonic(T[] val,
+                                      OrderDirection dir,
+                                      boolean strict) {
+        T previous = val[0];
+        final int max = val.length;
+        for (int i = 1; i < max; i++) {
+            final int comp;
+            switch (dir) {
+            case INCREASING:
+                comp = previous.compareTo(val[i]);
+                if (strict) {
+                    if (comp >= 0) {
+                        return false;
+                    }
+                } else {
+                    if (comp > 0) {
+                        return false;
+                    }
+                }
+                break;
+            case DECREASING:
+                comp = val[i].compareTo(previous);
+                if (strict) {
+                    if (comp >= 0) {
+                        return false;
+                    }
+                } else {
+                    if (comp > 0) {
+                       return false;
+                    }
+                }
+                break;
+            default:
+                // Should never happen.
+                throw new MathInternalError();
+            }
+
+            previous = val[i];
+        }
+        return true;
+    }
+
+    /**
+     * Check that an array is monotonically increasing or decreasing.
+     *
+     * @param val Values.
+     * @param dir Ordering direction.
+     * @param strict Whether the order should be strict.
+     * @return {@code true} if sorted, {@code false} otherwise.
+     */
+    public static boolean isMonotonic(double[] val, OrderDirection dir, boolean strict) {
+        return checkOrder(val, dir, strict, false);
+    }
+
+    /**
+     * Check that the given array is sorted.
+     *
+     * @param val Values.
+     * @param dir Ordering direction.
+     * @param strict Whether the order should be strict.
+     * @param abort Whether to 
+```
+
+
+Planning response:
+Given Math-3's historical defect is in `linearCombination` (Dekker/Kahan-style compensated summation), focus there:
+
+- Correctness vs naive sum: `linearCombination(a,b)` must match exact dot product to high precision, including cases where naive multiplication/summation loses precision (catastrophic cancellation), e.g. large/small magnitude mixes.
+- Test 2-term, 3-term, 4-term `linearCombination(double...)` overloads separately for consistent results with equivalent array-based call.
+- Verify array overload throws `DimensionMismatchException` when `a.length != b.length`.
+- Boundary: empty arrays (length 0) should return 0.0 without exception.
+- Test with values causing known floating-point round-off traps (e.g. dot products of nearly orthogonal/cancelling vectors) to confirm compensated precision beyond `a[i]*b[i]` naive sum.
+- Test with NaN/Infinity inputs — verify result propagates NaN/Infinity per IEEE semantics.
+- Symmetry: `linearCombination(a,b)` equals `linearCombination(b,a)`.
+- Single-element arrays: result equals `a[0]*b[0]` exactly.
+- Negative and zero values: verify sign handling, -0.0 behavior.
+- Cross-check the double-only overloads (2,3,4-term) against array-based overload with same values for agreement.

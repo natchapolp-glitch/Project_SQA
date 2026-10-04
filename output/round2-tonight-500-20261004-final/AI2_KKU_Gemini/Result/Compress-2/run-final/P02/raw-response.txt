@@ -1,0 +1,82 @@
+```java
+package org.apache.commons.compress.archivers.ar;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+public class ArArchiveInputStreamTest {
+
+    @Test
+    public void testMatchesValidSignature() {
+        byte[] valid = "!<arch>\n".getBytes();
+        assertTrue(ArArchiveInputStream.matches(valid, valid.length));
+    }
+
+    @Test
+    public void testMatchesInvalidSignature() {
+        byte[] invalid = "INVALID\n".getBytes();
+        assertFalse(ArArchiveInputStream.matches(invalid, invalid.length));
+        assertFalse(ArArchiveInputStream.matches(validBytes(), 5));
+    }
+
+    @Test
+    public void testCloseStream() throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(validArchiveBytes());
+        ArArchiveInputStream in = new ArArchiveInputStream(bais);
+        in.close();
+        boolean threw = false;
+        try {
+            in.read();
+        } catch (IOException e) {
+            threw = true;
+        }
+        assertTrue(threw);
+    }
+
+    @Test
+    public void testGetNextEntryNullOnEmptyOrEof() throws IOException {
+        byte[] data = validArchiveBytes();
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        ArArchiveInputStream in = new ArArchiveInputStream(bais);
+        assertNotNull(in.getNextEntry());
+        assertNull(in.getNextEntry());
+        in.close();
+    }
+
+    @Test
+    public void testReadZeroBytes() throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(validArchiveBytes());
+        ArArchiveInputStream in = new ArArchiveInputStream(bais);
+        byte[] buf = new byte[10];
+        int read = in.read(buf, 0, 0);
+        assertEquals(0, read);
+        in.close();
+    }
+
+    private byte[] validBytes() {
+        return "!<arch>\n".getBytes();
+    }
+
+    private byte[] validArchiveBytes() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("!<arch>\n");
+        sb.append("File1.txt       ");
+        sb.append("1261741234  ");
+        sb.append("0     ");
+        sb.append("0     ");
+        sb.append("100644  ");
+        sb.append("          ");
+        sb.append("`\n");
+        sb.append("1234567890");
+        return sb.toString().getBytes();
+    }
+}
+```

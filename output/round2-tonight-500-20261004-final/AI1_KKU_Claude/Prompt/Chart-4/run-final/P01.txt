@@ -1,0 +1,107 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Chart-4
+Java 11, JUnit 4
+Modified classes: org.jfree.chart.plot.XYPlot
+BUGGY API signatures:
+Compiled from "XYPlot.java"
+public class org.jfree.chart.plot.XYPlot extends org.jfree.chart.plot.Plot implements org.jfree.chart.plot.ValueAxisPlot,org.jfree.chart.plot.Pannable,org.jfree.chart.plot.Selectable,org.jfree.chart.plot.Zoomable,org.jfree.chart.event.RendererChangeListener,java.lang.Cloneable,org.jfree.chart.util.PublicCloneable,java.io.Serializable {
+  private static final long serialVersionUID;
+  public static final java.awt.Stroke DEFAULT_GRIDLINE_STROKE;
+  public static final java.awt.Paint DEFAULT_GRIDLINE_PAINT;
+  public static final boolean DEFAULT_CROSSHAIR_VISIBLE;
+  public static final java.awt.Stroke DEFAULT_CROSSHAIR_STROKE;
+  public static final java.awt.Paint DEFAULT_CROSSHAIR_PAINT;
+  protected static java.util.ResourceBundle localizationResources;
+  private org.jfree.chart.plot.PlotOrientation orientation;
+  private org.jfree.chart.util.RectangleInsets axisOffset;
+  private org.jfree.chart.util.ObjectList domainAxes;
+  private org.jfree.chart.util.ObjectList domainAxisLocations;
+  private org.jfree.chart.util.ObjectList rangeAxes;
+  private org.jfree.chart.util.ObjectList rangeAxisLocations;
+  private org.jfree.chart.util.ObjectList datasets;
+  private org.jfree.chart.util.ObjectList renderers;
+  private java.util.Map datasetToDomainAxesMap;
+  private java.util.Map datasetToRangeAxesMap;
+  private transient java.awt.geom.Point2D quadrantOrigin;
+  private transient java.awt.Paint[] quadrantPaint;
+  private boolean domainGridlinesVisible;
+  private transient java.awt.Stroke domainGridlineStroke;
+  private transient java.awt.Paint domainGridlinePaint;
+  private boolean rangeGridlinesVisible;
+  private transient java.awt.Stroke rangeGridlineStroke;
+  private transient java.awt.Paint rangeGridlinePaint;
+  private boolean domainMinorGridlinesVisible;
+  private transient java.awt.Stroke domainMinorGridlineStroke;
+  private transient java.awt.Paint domainMinorGridlinePaint;
+  private boolean rangeMinorGridlinesVisible;
+  private transient java.awt.Stroke rangeMinorGridlineStroke;
+  private transient java.awt.Paint rangeMinorGridlinePaint;
+  private boolean domainZeroBaselineVisible;
+  private transient java.awt.Stroke domainZeroBaselineStroke;
+  private transient java.awt.Paint domainZeroBaselinePaint;
+  private boolean rangeZeroBaselineVisible;
+  private transient java.awt.Stroke rangeZeroBaselineStroke;
+  private transient java.awt.Paint rangeZeroBaselinePaint;
+  private boolean domainCrosshairVisible;
+  private double domainCrosshairValue;
+  private transient java.awt.Stroke domainCrosshairStroke;
+  private transient java.awt.Paint domainCrosshairPaint;
+  private boolean domainCrosshairLockedOnData;
+  private boolean rangeCrosshairVisible;
+  private double rangeCrosshairValue;
+  private transient java.awt.Stroke rangeCrosshairStroke;
+  private transient java.awt.Paint rangeCrosshairPaint;
+  private boolean rangeCrosshairLockedOnData;
+  private java.util.Map foregroundDomainMarkers;
+  private java.util.Map backgroundDomainMarkers;
+  private java.util.Map foregroundRangeMarkers;
+  private java.util.Map backgroundRangeMarkers;
+  private java.util.List annotations;
+  private transient java.awt.Paint domainTickBandPaint;
+  private transient java.awt.Paint rangeTickBandPaint;
+  private org.jfree.chart.axis.AxisSpace fixedDomainAxisSpace;
+  private org.jfree.chart.axis.AxisSpace fixedRangeAxisSpace;
+  private org.jfree.chart.plot.DatasetRenderingOrder datasetRenderingOrder;
+  private org.jfree.chart.plot.SeriesRenderingOrder seriesRenderingOrder;
+  private int weight;
+  private org.jfree.chart.LegendItemCollection fixedLegendItems;
+  private boolean domainPannable;
+  private boolean rangePannable;
+  public org.jfree.chart.plot.XYPlot();
+  public org.jfree.chart.plot.XYPlot(org.jfree.data.xy.XYDataset, org.jfree.chart.axis.ValueAxis, org.jfree.chart.axis.ValueAxis, org.jfree.chart.renderer.xy.XYItemRenderer);
+  public java.lang.String getPlotType();
+  public org.jfree.chart.plot.PlotOrientation getOrientation();
+  public void setOrientation(org.jfree.chart.plot.PlotOrientation);
+  public org.jfree.chart.util.RectangleInsets getAxisOffset();
+  public void setAxisOffset(org.jfree.chart.util.RectangleInsets);
+  public org.jfree.chart.axis.ValueAxis getDomainAxis();
+  public org.jfree.chart.axis.ValueAxis getDomainAxis(int);
+  public void setDomainAxis(org.jfree.chart.axis.ValueAxis);
+  public void setDomainAxis(int, org.jfree.chart.axis.ValueAxis);
+  public void setDomainAxis(int, org.jfree.chart.axis.ValueAxis, boolean);
+  public void setDomainAxes(org.jfree.chart.axis.ValueAxis[]);
+  public org.jfree.chart.axis.AxisLocation getDomainAxisLocation();
+  public void setDomainAxisLocation(org.jfree.chart.axis.AxisLocation);
+  public void setDomainAxisLocation(org.jfree.chart.axis.AxisLocation, boolean);
+  public org.jfree.chart.util.RectangleEdge getDomainAxisEdge();
+  public int getDomainAxisCount();
+  public void clearDomainAxes();
+  public void configureDomainAxes();
+  public org.jfree.chart.axis.AxisLocation getDomainAxisLocation(int);
+  public void setDomainAxisLocation(int, org.jfree.chart.axis.AxisLocation);
+  public void setDomainAxisLocation(int, org.jfree.chart.axis.AxisLocation, boolean);
+  public org.jfree.chart.util.RectangleEdge getDomainAxisEdge(int);
+  public org.jfree.chart.axis.ValueAxis getRangeAxis();
+  public void setRangeAxis(org.jfree.chart.axis.ValueAxis);
+  public org.jfree.chart.axis.AxisLocation getRangeAxisLocation();
+  public void setRangeAxisLocation(org.jfree.chart.axis.AxisLocation);
+  public void setRangeAxisLocation(org.jfree.chart.axis.AxisLocation, boolean);
+  public org.jfree.chart.util.RectangleEdge getRangeAxisEdge();
+  public org.jfree.chart.axis.ValueAxis getRangeAxis(int);
+  public void setRangeAxis(int, org.jfree.chart.axis.ValueAxis);
+  public void setRangeAxis(int, org.jfree.chart.axis.ValueAxis, boolean);
+  public void setRangeAxes(org.jfree.chart.axis.ValueAxis[]);
+  public int getRangeAxisCount();
+  public void clearRangeAxes();
+  

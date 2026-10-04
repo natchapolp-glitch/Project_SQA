@@ -1,0 +1,12 @@
+Based on the known Jackson "invalid token start" / `_reportInvalidToken` bug class (typically mis-reporting content for unrecognized tokens like `nul`, `tru`, bad numbers), here are relevant test behaviors:
+
+- Verify `_reportInvalidToken` includes the *actually consumed* invalid characters in the exception message, not truncated/wrong text (e.g., input `"nul"` or `"nulx"` should report what was read, not just "nul").
+- Test malformed literals close to valid ones: `"tru"`, `"fals"`, `"nulll"`, `"nually"` — exception message should match actual offending chars, for both Reader-based and UTF8Stream-based parsers (parity check).
+- Test invalid number starts (e.g., leading `+`, multiple leading zeros, bare `.`, trailing garbage after number) via `_handleInvalidNumberStart` triggering same message correctness.
+- Boundary: invalid token spanning buffer boundary (requires `loadMore`) — forces char-by-char accumulation path to confirm message captures all buffered + newly loaded chars.
+- Boundary: invalid token at end-of-input (EOF reached mid-token) — message should reflect partial token read before EOF, not throw unrelated NPE/IOOBE.
+- Receiver setup: use `JsonFactory` to create parser over `StringReader`/`String` (ReaderBasedJsonParser) and over `byte[]`/`InputStream` (UTF8StreamJsonParser) with default `ObjectMapper`/`JsonFactory` settings (no custom features) so both receivers are exercised identically.
+- Assert thrown exception type is `JsonParseException` (not generic IOException/RuntimeException) and `getMessage()` contains expected substring.
+- Confirm valid tokens (`true`, `false`, `null`) still parse correctly post-fix (no regression on happy path).
+- Test odd/unquoted value handling (`_handleOddValue`) with similarly malformed non-literal garbage tokens to ensure consistent message formatting.
+- Cross-parser consistency: same malformed input on both parser implementations should yield equivalent exception messages (same reported invalid substring).

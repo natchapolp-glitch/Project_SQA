@@ -1,0 +1,77 @@
+package com.fasterxml.jackson.databind.deser.std;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+public class StringArrayDeserializerTest {
+
+    @Test
+    public void testInstanceNotNull() {
+        assertNotNull(StringArrayDeserializer.instance);
+    }
+
+    @Test
+    public void testDeserializeEmptyArray() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonParser jp = mapper.getFactory().createParser("[]");
+        jp.nextToken();
+        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());
+        assertNotNull(result);
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    public void testDeserializeStringArray() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonParser jp = mapper.getFactory().createParser("[\"a\", \"b\", null, \"c\"]");
+        jp.nextToken();
+        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());
+        assertArrayEquals(new String[] { "a", "b", null, "c" }, result);
+    }
+
+    @Test
+    public void testDeserializeNonArrayAsSingleValue() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        JsonParser jp = mapper.getFactory().createParser("\"singleValue\"");
+        jp.nextToken();
+        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());
+        assertArrayEquals(new String[] { "singleValue" }, result);
+    }
+
+    @Test
+    public void testCreateContextualWithDefaultStringDeserializer() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonDeserializer<?> contextual = StringArrayDeserializer.instance.createContextual(
+                mapper.getDeserializationContext(), null);
+        assertSame(StringArrayDeserializer.instance, contextual);
+    }
+
+    @Test
+    public void testCustomDeserializerExecution() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        StringArrayDeserializer customDeser = new StringArrayDeserializer(
+            new JsonDeserializer<String>() {
+                @Override
+                public String deserialize(JsonParser p, com.fasterxml.jackson.databind.DeserializationContext ctxt) throws java.io.IOException {
+                    return p.getText() + "-custom";
+                }
+            }
+        );
+        JsonParser jp = mapper.getFactory().createParser("[\"x\", \"y\"]");
+        jp.nextToken();
+        String[] result = customDeser.deserialize(jp, mapper.getDeserializationContext());
+        assertArrayEquals(new String[] { "x-custom", "y-custom" }, result);
+    }
+}

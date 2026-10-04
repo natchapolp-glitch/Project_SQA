@@ -1,0 +1,37 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Closure-4
+Java 11, JUnit 4
+Modified classes: com.google.javascript.rhino.jstype.NamedType
+BUGGY API signatures:
+Compiled from "NamedType.java"
+class com.google.javascript.rhino.jstype.NamedType extends com.google.javascript.rhino.jstype.ProxyObjectType {
+  private static final long serialVersionUID;
+  private final java.lang.String reference;
+  private final java.lang.String sourceName;
+  private final int lineno;
+  private final int charno;
+  private com.google.common.base.Predicate<com.google.javascript.rhino.jstype.JSType> validator;
+  private java.util.List<com.google.javascript.rhino.jstype.NamedType$PropertyContinuation> propertyContinuations;
+  com.google.javascript.rhino.jstype.NamedType(com.google.javascript.rhino.jstype.JSTypeRegistry, java.lang.String, java.lang.String, int, int);
+  boolean defineProperty(java.lang.String, com.google.javascript.rhino.jstype.JSType, boolean, com.google.javascript.rhino.Node);
+  private void finishPropertyContinuations();
+  public com.google.javascript.rhino.jstype.JSType getReferencedType();
+  public java.lang.String getReferenceName();
+  java.lang.String toStringHelper(boolean);
+  public boolean hasReferenceName();
+  boolean isNamedType();
+  public boolean isNominalType();
+  public int hashCode();
+  com.google.javascript.rhino.jstype.JSType resolveInternal(com.google.javascript.rhino.ErrorReporter, com.google.javascript.rhino.jstype.StaticScope<com.google.javascript.rhino.jstype.JSType>);
+  private boolean resolveViaRegistry(com.google.javascript.rhino.ErrorReporter, com.google.javascript.rhino.jstype.StaticScope<com.google.javascript.rhino.jstype.JSType>);
+  private void resolveViaProperties(com.google.javascript.rhino.ErrorReporter, com.google.javascript.rhino.jstype.StaticScope<com.google.javascript.rhino.jstype.JSType>);
+  private com.google.javascript.rhino.jstype.JSType lookupViaProperties(com.google.javascript.rhino.ErrorReporter, com.google.javascript.rhino.jstype.StaticScope<com.google.javascript.rhino.jstype.JSType>);
+  private void setReferencedAndResolvedType(com.google.javascript.rhino.jstype.JSType, com.google.javascript.rhino.ErrorReporter, com.google.javascript.rhino.jstype.StaticScope<com.google.javascript.rhino.jstype.JSType>);
+  private void handleTypeCycle(com.google.javascript.rhino.ErrorReporter);
+  private void checkEnumElementCycle(com.google.javascript.rhino.ErrorReporter);
+  private void handleUnresolvedType(com.google.javascript.rhino.ErrorReporter, boolean);
+  com.google.javascript.rhino.jstype.JSType getTypedefType(com.google.javascript.rhino.ErrorReporter, com.google.javascript.rhino.jstype.StaticSlot<com.google.javascript.rhino.jstype.JSType>, java.lang.String);
+  public boolean setValidator(com.google.common.base.Predicate<com.google.javascript.rhino.jstype.JSType>);
+}
+

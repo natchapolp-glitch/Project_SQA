@@ -1,0 +1,83 @@
+```java
+package org.apache.commons.lang3.text.translate;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.StringWriter;
+
+import org.junit.Test;
+
+public class LookupTranslatorTest {
+
+    @Test
+    public void testTranslateValidMatch() throws IOException {
+        final LookupTranslator translator = new LookupTranslator(
+            new CharSequence[][] { { "cat", "dog" }, { "fish", "bird" } }
+        );
+        final StringWriter writer = new StringWriter();
+        final int consumed = translator.translate("cat", 0, writer);
+
+        assertEquals(3, consumed);
+        assertEquals("dog", writer.toString());
+    }
+
+    @Test
+    public void testTranslateNoMatch() throws IOException {
+        final LookupTranslator translator = new LookupTranslator(
+            new CharSequence[][] { { "cat", "dog" } }
+        );
+        final StringWriter writer = new StringWriter();
+        final int consumed = translator.translate("dog", 0, writer);
+
+        assertEquals(0, consumed);
+        assertEquals("", writer.toString());
+    }
+
+    @Test
+    public void testTranslateGreedyLongestMatch() throws IOException {
+        final LookupTranslator translator = new LookupTranslator(
+            new CharSequence[][] { { "a", "first" }, { "ab", "second" } }
+        );
+        final StringWriter writer = new StringWriter();
+        final int consumed = translator.translate("abc", 0, writer);
+
+        assertEquals(2, consumed);
+        assertEquals("second", writer.toString());
+    }
+
+    @Test
+    public void testTranslateInputShorterThanShortestKey() throws IOException {
+        final LookupTranslator translator = new LookupTranslator(
+            new CharSequence[][] { { "hello", "world" } }
+        );
+        final StringWriter writer = new StringWriter();
+        final int consumed = translator.translate("hi", 0, writer);
+
+        assertEquals(0, consumed);
+        assertEquals("", writer.toString());
+    }
+
+    @Test
+    public void testTranslateIndexOutOfBoundsHandling() throws IOException {
+        final LookupTranslator translator = new LookupTranslator(
+            new CharSequence[][] { { "a", "b" } }
+        );
+        final StringWriter writer = new StringWriter();
+        final int consumed = translator.translate("a", 5, writer);
+
+        assertEquals(0, consumed);
+        assertEquals("", writer.toString());
+    }
+
+    @Test
+    public void testNullLookupInitialization() throws IOException {
+        final LookupTranslator translator = new LookupTranslator((CharSequence[][]) null);
+        final StringWriter writer = new StringWriter();
+        final int consumed = translator.translate("test", 0, writer);
+
+        assertEquals(0, consumed);
+        assertEquals("", writer.toString());
+    }
+}
+```

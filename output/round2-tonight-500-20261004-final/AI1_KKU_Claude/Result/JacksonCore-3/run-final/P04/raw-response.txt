@@ -1,0 +1,74 @@
+```java
+package com.fasterxml.jackson.core.json;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+public class UTF8StreamJsonParserExtraTest {
+
+    private JsonParser createParser(String json) throws IOException {
+        JsonFactory f = new JsonFactory();
+        byte[] bytes = json.getBytes("UTF-8");
+        return f.createParser(new ByteArrayInputStream(bytes));
+    }
+
+    @Test
+    public void testReleaseBufferedWritesRemainingBytes() throws Exception {
+        JsonFactory f = new JsonFactory();
+        String json = "{\"a\":1}EXTRA";
+        JsonParser p = f.createParser(new ByteArrayInputStream(json.getBytes("UTF-8")));
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        int count = p.releaseBuffered(out);
+        assertTrue(count >= 0);
+        p.close();
+    }
+
+    @Test
+    public void testGetTextLengthAndOffsetForString() throws Exception {
+        JsonParser p = createParser("\"hello world\"");
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        String text = p.getText();
+        assertEquals("hello world", text);
+        int len = p.getTextLength();
+        int off = p.getTextOffset();
+        char[] chars = p.getTextCharacters();
+        assertEquals("hello world", new String(chars, off, len));
+        p.close();
+    }
+
+    @Test
+    public void testGetValueAsStringWithDefaultForNonString() throws Exception {
+        JsonParser p = createParser("12345");
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        String asString = p.getValueAsString("default");
+        assertEquals("12345", asString);
+        p.close();
+    }
+
+    @Test
+    public void testFieldNameTextCharactersMatchCurrentName() throws Exception {
+        JsonParser p = createParser("{\"someField\":true}");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("someField", p.getCurrentName());
+        char[] chars = p.getTextCharacters();
+        int len = p.getTextLength();
+        assertEquals("someField", new String(chars, 0, len));
+        p.close();
+    }
+}
+```

@@ -1,0 +1,8 @@
+- Receiver setup: Initialize a `TimeSeries` with a valid `Comparable` key (e.g., `"Series1"`).
+- Behavior: Track and update running minimum (`minY`) and maximum (`maxY`) values correctly upon adding items.
+- Behavior: Recalculate or adjust bounds (`minY`, `maxY`) correctly when items are removed, deleted, or cleared.
+- Boundary: Handle `Double.NaN` values properly when computing `minY` and `maxY` via `minIgnoreNaN` and `maxIgnoreNaN`.
+- Behavior: `getMinY()` and `getMaxY()` should return correct extremes or default indicator values (like `Double.NaN`) for empty series.
+- Behavior: `createCopy(int, int)` and `createCopy(RegularTimePeriod, RegularTimePeriod)` must preserve correct bounds and item subsets.
+- Behavior: `update(RegularTimePeriod, Number)` and `update(int, Number)` should trigger recalculation of series min/max bounds if values change.
+- Boundary: Deleting item ranges via `delete(int, int)` or clearing the series via `clear()` must reset or update min/max tracking accurately.

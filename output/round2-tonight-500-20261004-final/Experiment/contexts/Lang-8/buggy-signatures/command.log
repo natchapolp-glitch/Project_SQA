@@ -1,0 +1,37 @@
+Compiled from "FastDatePrinter.java"
+public class org.apache.commons.lang3.time.FastDatePrinter implements org.apache.commons.lang3.time.DatePrinter,java.io.Serializable {
+  private static final long serialVersionUID;
+  public static final int FULL;
+  public static final int LONG;
+  public static final int MEDIUM;
+  public static final int SHORT;
+  private final java.lang.String mPattern;
+  private final java.util.TimeZone mTimeZone;
+  private final java.util.Locale mLocale;
+  private transient org.apache.commons.lang3.time.FastDatePrinter$Rule[] mRules;
+  private transient int mMaxLengthEstimate;
+  private static java.util.concurrent.ConcurrentMap<org.apache.commons.lang3.time.FastDatePrinter$TimeZoneDisplayKey, java.lang.String> cTimeZoneDisplayCache;
+  protected org.apache.commons.lang3.time.FastDatePrinter(java.lang.String, java.util.TimeZone, java.util.Locale);
+  private void init();
+  protected java.util.List<org.apache.commons.lang3.time.FastDatePrinter$Rule> parsePattern();
+  protected java.lang.String parseToken(java.lang.String, int[]);
+  protected org.apache.commons.lang3.time.FastDatePrinter$NumberRule selectNumberRule(int, int);
+  public java.lang.StringBuffer format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition);
+  public java.lang.String format(long);
+  public java.lang.String format(java.util.Date);
+  public java.lang.String format(java.util.Calendar);
+  public java.lang.StringBuffer format(long, java.lang.StringBuffer);
+  public java.lang.StringBuffer format(java.util.Date, java.lang.StringBuffer);
+  public java.lang.StringBuffer format(java.util.Calendar, java.lang.StringBuffer);
+  protected java.lang.StringBuffer applyRules(java.util.Calendar, java.lang.StringBuffer);
+  public java.lang.String getPattern();
+  public java.util.TimeZone getTimeZone();
+  public java.util.Locale getLocale();
+  public int getMaxLengthEstimate();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+  private void readObject(java.io.ObjectInputStream) throws java.io.IOException, java.lang.ClassNotFoundException;
+  static java.lang.String getTimeZoneDisplay(java.util.TimeZone, boolean, int, java.util.Locale);
+  static {};
+}

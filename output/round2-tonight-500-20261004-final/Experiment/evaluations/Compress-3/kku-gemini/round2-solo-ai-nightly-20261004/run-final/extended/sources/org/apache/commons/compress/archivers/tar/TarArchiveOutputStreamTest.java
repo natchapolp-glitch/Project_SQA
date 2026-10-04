@@ -1,0 +1,111 @@
+package org.apache.commons.compress.archivers.tar;
+
+import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class TarArchiveOutputStreamTest {
+
+    @Test
+    public void testGetRecordSizeDefault() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+        assertEquals(TarBuffer.DEFAULT_RCDSIZE, tarOut.getRecordSize());
+    }
+
+    @Test
+    public void testGetRecordSizeCustom() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out, 1024, 512);
+        assertEquals(512, tarOut.getRecordSize());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testLongFileModeError() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+        tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_ERROR);
+
+        String longName = "thisisareallylongfilenamethatexceedsthestandardtarheaderlimitofonehundredcharactersandshoulddefinitelytriggertheerrorhandlingwhenmodeiserrorsettozero";
+        TarArchiveEntry entry = new TarArchiveEntry(longName);
+        tarOut.putArchiveEntry(entry);
+    }
+
+    @Test
+    public void testLongFileModeTruncate() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+        tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_TRUNCATE);
+
+        String longName = "thisisareallylongfilenamethatexceedsthestandardtarheaderlimitofonehundredcharactersandshoulddefinitelytriggerthetruncationwhenmodeistruncate";
+        TarArchiveEntry entry = new TarArchiveEntry(longName);
+        tarOut.putArchiveEntry(entry);
+        tarOut.closeArchiveEntry();
+        tarOut.finish();
+        tarOut.close();
+        assertNotNull(out.toByteArray());
+    }
+
+    @Test
+    public void testLongFileModeGnu() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+        tarOut.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+
+        String longName = "thisisareallylongfilenamethatexceedsthestandardtarheaderlimitofonehundredcharactersandshouldusegnuextensionswhenmodeisgnu";
+        TarArchiveEntry entry = new TarArchiveEntry(longName);
+        entry.setSize(0);
+        tarOut.putArchiveEntry(entry);
+        tarOut.closeArchiveEntry();
+        tarOut.finish();
+        tarOut.close();
+        assertNotNull(out.toByteArray());
+    }
+
+    @Test(expected = IOException.class)
+    public void testWriteExceedsEntrySize() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+
+        TarArchiveEntry entry = new TarArchiveEntry("test.txt");
+        entry.setSize(5);
+        tarOut.putArchiveEntry(entry);
+
+        byte[] data = "too long data".getBytes();
+        tarOut.write(data, 0, data.length);
+    }
+
+    @Test(expected = IOException.class)
+    public void testCloseArchiveEntryUnderwritten() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+
+        TarArchiveEntry entry = new TarArchiveEntry("test.txt");
+        entry.setSize(10);
+        tarOut.putArchiveEntry(entry);
+
+        byte[] data = "short".getBytes();
+        tarOut.write(data, 0, data.length);
+        tarOut.closeArchiveEntry();
+    }
+
+    @Test
+    public void testFinishAndClose() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+
+        TarArchiveEntry entry = new TarArchiveEntry("empty.txt");
+        entry.setSize(0);
+        tarOut.putArchiveEntry(entry);
+        tarOut.closeArchiveEntry();
+
+        tarOut.finish();
+        tarOut.close();
+        
+        assertEquals(true, out.size() > 0);
+    }
+}

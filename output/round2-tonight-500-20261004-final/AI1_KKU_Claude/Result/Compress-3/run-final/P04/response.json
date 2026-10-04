@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:09:23.327953+00:00",
+  "ended_at_utc": "2026-10-04T07:09:37.641374+00:00",
+  "raw_body_sha256": "6671f403f44ea6cd2ee4be8f06cc3d24a898143040c642fd3b3257ccfb989f4e",
+  "body": {
+    "id": "gen-1791097766-4Qroli0MG5l7zJoZKuFo",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.compress.archivers.tar;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.File;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\npublic class TarArchiveOutputStreamExtraTest {\n\n    @Test\n    public void finishWritesTwoEOFRecords() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        TarArchiveEntry entry = new TarArchiveEntry(\"file.txt\");\n        entry.setSize(0);\n        tos.putArchiveEntry(entry);\n        tos.closeArchiveEntry();\n        tos.finish();\n        tos.flush();\n\n        int recordSize = tos.getRecordSize();\n        byte[] result = bos.toByteArray();\n        assertTrue(result.length >= 2 * recordSize);\n        byte[] lastTwoRecords = new byte[2 * recordSize];\n        System.arraycopy(result, result.length - lastTwoRecords.length, lastTwoRecords, 0, lastTwoRecords.length);\n        for (byte b : lastTwoRecords) {\n            assertEquals(0, b);\n        }\n        bos.close();\n    }\n\n    @Test\n    public void closeIsIdempotent() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        TarArchiveEntry entry = new TarArchiveEntry(\"file.txt\");\n        entry.setSize(0);\n        tos.putArchiveEntry(entry);\n        tos.closeArchiveEntry();\n        tos.close();\n        // Calling close again must not throw\n        tos.close();\n    }\n\n    @Test\n    public void createArchiveEntryFromFileUsesGivenName() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        File tempFile = File.createTempFile(\"tarTest\", \".txt\");\n        tempFile.deleteOnExit();\n        try {\n            TarArchiveEntry entry = (TarArchiveEntry) tos.createArchiveEntry(tempFile, \"renamed.txt\");\n            assertEquals(\"renamed.txt\", entry.getName());\n        } finally {\n            tempFile.delete();\n            tos.close();\n        }\n    }\n\n    @Test\n    public void writeAcrossMultipleRecordsAssemblesProperly() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        int recordSize = tos.getRecordSize();\n        int contentSize = recordSize + 100;\n        byte[] content = new byte[contentSize];\n        for (int i = 0; i < contentSize; i++) {\n            content[i] = (byte) (i % 256);\n        }\n        TarArchiveEntry entry = new TarArchiveEntry(\"big.txt\");\n        entry.setSize(contentSize);\n        tos.putArchiveEntry(entry);\n        // write in small chunks to exercise assembly buffer logic\n        int chunkSize = 37;\n        int offset = 0;\n        while (offset < contentSize) {\n            int toWrite = Math.min(chunkSize, contentSize - offset);\n            tos.write(content, offset, toWrite);\n            offset += toWrite;\n        }\n        tos.closeArchiveEntry();\n        tos.close();\n\n        TarArchiveInputStream tis = new TarArchiveInputStream(new ByteArrayInputStream(bos.toByteArray()));\n        TarArchiveEntry readEntry = tis.getNextTarEntry();\n        assertEquals(\"big.txt\", readEntry.getName());\n        assertEquals(contentSize, readEntry.getSize());\n        byte[] readBuf = new byte[contentSize];\n        int totalRead = 0;\n        int r;\n        while (totalRead < contentSize && (r = tis.read(readBuf, totalRead, contentSize - totalRead)) != -1) {\n            totalRead += r;\n        }\n        assertEquals(contentSize, totalRead);\n        for (int i = 0; i < contentSize; i++) {\n            assertEquals(content[i], readBuf[i]);\n        }\n        tis.close();\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7733,
+      "output_tokens": 1623,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.031696,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.031696,
+        "upstream_inference_prompt_cost": 0.015466,
+        "upstream_inference_completions_cost": 0.01623
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 127145,
+      "daily_remaining_tokens": 72855
+    }
+  },
+  "headers": {
+    "x-request-id": "ucgeftqsa9g8od4fi6s1q1vu",
+    "date": "Sun, 04 Oct 2026 07:09:38 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,6 @@
+- Valid receiver setup: Instantiate `TextBuffer` with a `BufferRecycler` (or null if supported) and initialize via `resetWithShared`, `resetWithCopy`, or `resetWithEmpty`.
+- Boundary condition: Expanding segments (`expandCurrentSegment()` or `expandCurrentSegment(int need)`) when approaching or exceeding `MAX_SEGMENT_LEN`.
+- Behavior: `expandCurrentSegment()` should correctly allocate a new segment of increased size (typically doubling, bounded by `MAX_SEGMENT_LEN`) while preserving existing content.
+- Boundary condition: Appending characters or arrays when `_currentSegment` is shared or uninitialized, triggering `unshare()` or new segment allocation.
+- Behavior: `contentsAsArray()` and `contentsAsString()` must accurately reflect the aggregated content across input buffers, shared segments, and current segments.
+- Boundary condition: Zero-length inputs or empty resets (`resetWithEmpty()`) ensuring state variables (`_size`, `_currentSize`, etc.) reset properly without throwing exceptions.

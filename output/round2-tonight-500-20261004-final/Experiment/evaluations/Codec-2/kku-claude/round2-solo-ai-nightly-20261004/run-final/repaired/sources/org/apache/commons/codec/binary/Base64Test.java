@@ -1,0 +1,127 @@
+package org.apache.commons.codec.binary;
+
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+import java.math.BigInteger;
+import java.util.Arrays;
+
+public class Base64Test {
+
+    @Test
+    public void testEncodeDecodeRoundTripVariousLengths() {
+        for (int len = 0; len <= 10; len++) {
+            byte[] data = new byte[len];
+            for (int i = 0; i < len; i++) {
+                data[i] = (byte) (i + 1);
+            }
+            byte[] encoded = Base64.encodeBase64(data);
+            byte[] decoded = Base64.decodeBase64(encoded);
+            assertArrayEquals("roundtrip failed for length " + len, data, decoded);
+        }
+    }
+
+    @Test
+    public void testEncodeBase64EmptyAndNull() {
+        byte[] result = Base64.encodeBase64(new byte[0]);
+        assertNotNull(result);
+        assertEquals(0, result.length);
+
+        assertNull(Base64.encodeBase64(null));
+    }
+
+    @Test
+    public void testEncodeBase64Chunked() {
+        byte[] data = new byte[100];
+        Arrays.fill(data, (byte) 'A');
+        byte[] chunked = Base64.encodeBase64Chunked(data);
+        String s = new String(chunked);
+        String[] lines = s.split("\r\n");
+        for (int i = 0; i < lines.length - 1; i++) {
+            assertTrue("line too long: " + lines[i].length(), lines[i].length() <= Base64.CHUNK_SIZE);
+        }
+        assertTrue(s.endsWith("\r\n"));
+    }
+
+    @Test
+    public void testIsBase64AndIsArrayByteBase64() {
+        assertTrue(Base64.isBase64((byte) 'A'));
+        assertTrue(Base64.isBase64((byte) '+'));
+        assertTrue(Base64.isBase64((byte) '/'));
+        assertTrue(Base64.isBase64((byte) ' '));
+        assertFalse(Base64.isBase64((byte) '!'));
+
+        byte[] valid = "SGVsbG8=".getBytes();
+        assertTrue(Base64.isArrayByteBase64(valid));
+
+        byte[] invalid = "Hello!".getBytes();
+        assertFalse(Base64.isArrayByteBase64(invalid));
+    }
+
+    @Test
+    public void testDiscardWhitespace() {
+        byte[] input = "A B\tC\nD\rE".getBytes();
+        byte[] result = Base64.discardWhitespace(input);
+        assertEquals("ABCDE", new String(result));
+    }
+
+    @Test
+    public void testEncodeDecodeInteger() {
+        BigInteger zero = BigInteger.ZERO;
+        BigInteger positive = new BigInteger("123456789012345678901234567890");
+
+        byte[] zeroEnc = Base64.encodeInteger(zero);
+        assertEquals(zero, Base64.decodeInteger(zeroEnc));
+
+        byte[] posEnc = Base64.encodeInteger(positive);
+        assertEquals(positive, Base64.decodeInteger(posEnc));
+    }
+
+    @Test
+    public void testEncodeBase64URLSafeNoPaddingAndUrlChars() {
+        byte[] data = new byte[]{(byte) 0xFB, (byte) 0xFF, (byte) 0xFF};
+        byte[] urlSafe = Base64.encodeBase64URLSafe(data);
+        String s = new String(urlSafe);
+        assertFalse(s.contains("="));
+        assertFalse(s.contains("+"));
+        assertFalse(s.contains("/"));
+
+        byte[] decoded = Base64.decodeBase64(urlSafe);
+        assertArrayEquals(data, decoded);
+    }
+
+    @Test
+    public void testConstructorInvalidLineSeparatorThrows() {
+        try {
+            new Base64(76, new byte[]{'A', 'B'});
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testStreamingEncodeDecode() {
+        Base64 codec = new Base64(0);
+        byte[] data = "The quick brown fox jumps over the lazy dog".getBytes();
+
+        byte[] encoded = codec.encode(data);
+        byte[] expected = Base64.encodeBase64(data);
+        assertArrayEquals(expected, encoded);
+
+        Base64 decCodec = new Base64(0);
+        byte[] decoded = decCodec.decode(encoded);
+        assertArrayEquals(data, decoded);
+    }
+
+    @Test
+    public void testEncodeBase64WithChunkingFlagFalse() {
+        byte[] data = new byte[50];
+        Arrays.fill(data, (byte) 'Z');
+        byte[] nonChunked = Base64.encodeBase64(data, false);
+        assertFalse(new String(nonChunked).contains("\r\n"));
+
+        byte[] chunked = Base64.encodeBase64(data, true);
+        assertTrue(new String(chunked).contains("\r\n"));
+    }
+}

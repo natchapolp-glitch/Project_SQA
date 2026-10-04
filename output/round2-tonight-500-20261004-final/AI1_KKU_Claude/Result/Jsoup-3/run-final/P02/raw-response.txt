@@ -1,0 +1,216 @@
+```java
+package org.jsoup.nodes;
+
+import org.jsoup.parser.Parser;
+import org.jsoup.parser.Tag;
+import org.jsoup.select.Elements;
+import org.junit.Test;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static org.junit.Assert.*;
+
+public class ElementTest {
+
+    @Test
+    public void testClassNamesEmptyWhenNoAttribute() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        assertEquals("", el.className());
+        assertTrue(el.classNames().isEmpty());
+        assertFalse(el.hasClass("foo"));
+    }
+
+    @Test
+    public void testAddRemoveToggleClass() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        el.addClass("one");
+        el.addClass("two");
+        el.addClass("one");
+        assertTrue(el.hasClass("one"));
+        assertTrue(el.hasClass("two"));
+        assertEquals(2, el.classNames().size());
+
+        el.removeClass("one");
+        assertFalse(el.hasClass("one"));
+        assertTrue(el.hasClass("two"));
+
+        el.toggleClass("three");
+        assertTrue(el.hasClass("three"));
+        el.toggleClass("three");
+        assertFalse(el.hasClass("three"));
+    }
+
+    @Test
+    public void testClassNamesSetterReplacesClasses() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        el.addClass("old");
+        Set<String> newClasses = new LinkedHashSet<String>();
+        newClasses.add("alpha");
+        newClasses.add("beta");
+        el.classNames(newClasses);
+
+        assertFalse(el.hasClass("old"));
+        assertTrue(el.hasClass("alpha"));
+        assertTrue(el.hasClass("beta"));
+        assertEquals(2, el.classNames().size());
+    }
+
+    @Test
+    public void testSiblingNavigationOnRoot() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        assertNull(el.parent());
+        assertNull(el.nextElementSibling());
+        assertNull(el.previousElementSibling());
+        assertEquals(el, el.firstElementSibling());
+        assertEquals(el, el.lastElementSibling());
+        assertEquals(Integer.valueOf(0), el.elementSiblingIndex());
+        assertTrue(el.parents().isEmpty());
+    }
+
+    @Test
+    public void testAppendPrependChildOrder() {
+        Element el = new Element(Tag.valueOf("div"), "");
+        el.appendElement("p");
+        el.prependElement("span");
+        Elements children = el.children();
+        assertEquals(2, children.size());
+        assertEquals("span", children.get(0).tagName());
+        assertEquals("p", children.get(1).tagName());
+        assertEquals(el, children.get(0).parent());
+    }
+
+    @Test
+    public void testGetElementsByAttributeValueNoMatchReturnsEmpty() {
+        Document doc = Parser.parse("<div id=\"1\"><p class=\"a\">Text</p></div>", "");
+        Elements none = doc.getElementsByAttributeValue("class", "nonexistent");
+        assertNotNull(none);
+        assertTrue(none.isEmpty());
+
+        Element byId = doc.getElementById("1");
+        assertNotNull(byId);
+        assertEquals("div", byId.tagName());
+    }
+
+    @Test
+    public void testTextAndHtmlParsing() {
+        Document doc = Parser.parse("<div><p>Hello <b>World</b></p></div>", "");
+        Element div = doc.getElementsByTag("div").first();
+        assertEquals("Hello World", div.text());
+        assertTrue(div.html().contains("<b>World</b>"));
+    }
+}
+```
+
+```java
+package org.jsoup.parser;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class ParserTest {
+
+    @Test
+    public void testParseBasicDocumentStructure() {
+        Document doc = Parser.parse("<html><head><title>Test</title></head><body><p>Hello</p></body></html>", "");
+        assertEquals("Test", doc.title());
+        Element body = doc.body();
+        assertNotNull(body);
+        assertEquals("Hello", body.text());
+    }
+
+    @Test
+    public void testParseBodyFragmentWrapsIntoBody() {
+        Document doc = Parser.parseBodyFragment("<p>One</p><p>Two</p>", "");
+        Element body = doc.body();
+        assertNotNull(body);
+        Elements paragraphs = body.getElementsByTag("p");
+        assertEquals(2, paragraphs.size());
+        assertEquals("One", paragraphs.get(0).text());
+        assertEquals("Two", paragraphs.get(1).text());
+    }
+
+    @Test
+    public void testBlockTagRelocatedOutOfInlineAncestor() {
+        Document doc = Parser.parse("<p>One <div>Two</div></p>", "");
+        Element body = doc.body();
+        Elements divs = body.getElementsByTag("div");
+        assertEquals(1, divs.size());
+        Element div = divs.first();
+        assertFalse(div.parent().tagName().equals("p"));
+    }
+
+    @Test
+    public void testTextareaPreservesWhitespace() {
+        Document doc = Parser.parse("<textarea>  Line1\n  Line2  </textarea>", "");
+        Element textarea = doc.getElementsByTag("textarea").first();
+        assertTrue(textarea.text().contains("Line1"));
+        assertTrue(textarea.text().contains("Line2"));
+    }
+
+    @Test
+    public void testCommentAndTextNodesParsed() {
+        Document doc = Parser.parse("<div><!-- a comment -->Text</div>", "");
+        Element div = doc.getElementsByTag("div").first();
+        assertEquals("Text", div.text());
+    }
+
+    @Test
+    public void testEmptyHtmlParsesToEmptyDocument() {
+        Document doc = Parser.parse("", "");
+        assertNotNull(doc.body());
+        assertEquals("", doc.body().text());
+    }
+}
+```
+
+```java
+package org.jsoup.parser;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class TagTest {
+
+    @Test
+    public void testValueOfReturnsSameInstanceForKnownTags() {
+        Tag div1 = Tag.valueOf("div");
+        Tag div2 = Tag.valueOf("DIV");
+        assertSame(div1, div2);
+        assertEquals("div", div1.getName());
+    }
+
+    @Test
+    public void testValueOfUnknownTagCreatesInlineGenericTag() {
+        Tag custom = Tag.valueOf("customtag");
+        assertEquals("customtag", custom.getName());
+        assertFalse(custom.isBlock());
+    }
+
+    @Test
+    public void testKnownBlockTagIsBlock() {
+        Tag div = Tag.valueOf("div");
+        assertTrue(div.isBlock());
+    }
+
+    @Test
+    public void testCanContainRespectsBlockRules() {
+        Tag head = Tag.valueOf("head");
+        Tag title = Tag.valueOf("title");
+        Tag div = Tag.valueOf("div");
+        assertTrue(head.canContain(title));
+        assertFalse(head.canContain(div));
+    }
+
+    @Test
+    public void testValueOfTrimsAndLowercases() {
+        Tag tag = Tag.valueOf("  SPAN  ");
+        assertEquals("span", tag.getName());
+    }
+}
+```

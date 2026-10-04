@@ -1,0 +1,126 @@
+package org.jfree.data.general;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
+import org.jfree.data.Range;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.pie.DefaultPieDataset;
+import org.jfree.data.pie.PieDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.junit.Test;
+
+public class DatasetUtilitiesTest {
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculatePieDatasetTotalNull() {
+        DatasetUtilities.calculatePieDatasetTotal(null);
+    }
+
+    @Test
+    public void testCalculatePieDatasetTotalValid() {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue("A", 10.0);
+        dataset.setValue("B", 20.0);
+        dataset.setValue("C", -5.0);
+        dataset.setValue("D", null);
+        
+        double total = DatasetUtilities.calculatePieDatasetTotal(dataset);
+        assertEquals(30.0, total, 0.0001);
+    }
+
+    @Test
+    public void testIsEmptyOrNullPieDataset() {
+        assertTrue(DatasetUtilities.isEmptyOrNull((PieDataset) null));
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));
+        dataset.setValue("A", 1.0);
+        assertFalse(DatasetUtilities.isEmptyOrNull(dataset));
+    }
+
+    @Test
+    public void testIsEmptyOrNullCategoryDataset() {
+        assertTrue(DatasetUtilities.isEmptyOrNull((CategoryDataset) null));
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));
+        dataset.addValue(1.0, "R1", "C1");
+        assertFalse(DatasetUtilities.isEmptyOrNull(dataset));
+    }
+
+    @Test
+    public void testIsEmptyOrNullXYDataset() {
+        assertTrue(DatasetUtilities.isEmptyOrNull((XYDataset) null));
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));
+        XYSeries series = new XYSeries("S1");
+        dataset.addSeries(series);
+        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));
+        series.add(1.0, 2.0);
+        assertFalse(DatasetUtilities.isEmptyOrNull(dataset));
+    }
+
+    @Test
+    public void testFindRangeBoundsCategoryDataset() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        assertNull(DatasetUtilities.findRangeBounds(dataset));
+
+        dataset.addValue(10.0, "Row1", "Col1");
+        dataset.addValue(25.5, "Row1", "Col2");
+        dataset.addValue(-5.0, "Row2", "Col1");
+
+        Range range = DatasetUtilities.findRangeBounds(dataset);
+        assertNotNull(range);
+        assertEquals(-5.0, range.getLowerBound(), 0.0001);
+        assertEquals(25.5, range.getUpperBound(), 0.0001);
+    }
+
+    @Test
+    public void testFindRangeBoundsXYDataset() {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        assertNull(DatasetUtilities.findRangeBounds(dataset));
+
+        XYSeries series = new XYSeries("Series1");
+        series.add(1.0, 2.0);
+        series.add(2.0, 15.0);
+        series.add(3.0, -3.0);
+        dataset.addSeries(series);
+
+        Range range = DatasetUtilities.findRangeBounds(dataset);
+        assertNotNull(range);
+        assertEquals(-3.0, range.getLowerBound(), 0.0001);
+        assertEquals(15.0, range.getUpperBound(), 0.0001);
+    }
+
+    @Test
+    public void testCreatePieDatasetForRow() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(10.0, "Row1", "Col1");
+        dataset.addValue(20.0, "Row1", "Col2");
+        dataset.addValue(30.0, "Row2", "Col1");
+
+        PieDataset pieDataset = DatasetUtilities.createPieDatasetForRow(dataset, "Row1");
+        assertNotNull(pieDataset);
+        assertEquals(2, pieDataset.getItemCount());
+        assertEquals(10.0, pieDataset.getValue("Col1").doubleValue(), 0.0001);
+        assertEquals(20.0, pieDataset.getValue("Col2").doubleValue(), 0.0001);
+    }
+
+    @Test
+    public void testCreatePieDatasetForColumn() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        dataset.addValue(10.0, "Row1", "Col1");
+        dataset.addValue(20.0, "Row2", "Col1");
+
+        PieDataset pieDataset = DatasetUtilities.createPieDatasetForColumn(dataset, "Col1");
+        assertNotNull(pieDataset);
+        assertEquals(2, pieDataset.getItemCount());
+        assertEquals(10.0, pieDataset.getValue("Row1").doubleValue(), 0.0001);
+        assertEquals(20.0, pieDataset.getValue("Row2").doubleValue(), 0.0001);
+    }
+}

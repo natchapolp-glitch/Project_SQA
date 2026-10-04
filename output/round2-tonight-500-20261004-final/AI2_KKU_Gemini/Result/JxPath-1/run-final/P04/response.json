@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:18:01.154417+00:00",
+  "ended_at_utc": "2026-10-04T04:18:05.050101+00:00",
+  "raw_body_sha256": "46493c2917c52124c669c142bc1fcb917c217b251138e91a894957b66238abbd",
+  "body": {
+    "id": "genai-01a10522-279a-7ff1-bd63-c6c26c9c4c51",
+    "object": "chat.completion",
+    "created": 1791087486,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.jxpath.ri.model.dom;\n\nimport java.util.Locale;\nimport javax.xml.parsers.DocumentBuilderFactory;\nimport org.apache.commons.jxpath.ri.Compiler;\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.compiler.NodeNameTest;\nimport org.apache.commons.jxpath.ri.compiler.NodeTypeTest;\nimport org.apache.commons.jxpath.ri.model.NodePointer;\nimport org.junit.Test;\nimport org.w3c.dom.Document;\nimport org.w3c.dom.Element;\n\nimport static org.junit.Assert.*;\n\npublic class DOMNodePointerExtraTest {\n\n    @Test\n    public void testTestNodeWithNameTestAndWildcard() throws Exception {\n        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();\n        Element elem = doc.createElement(\"element\");\n\n        NodeNameTest wildcardTest = new NodeNameTest(new QName(null, \"*\"));\n        assertTrue(DOMNodePointer.testNode(elem, wildcardTest));\n\n        NodeNameTest specificTest = new NodeNameTest(new QName(null, \"element\"));\n        assertTrue(DOMNodePointer.testNode(elem, specificTest));\n\n        NodeNameTest mismatchTest = new NodeNameTest(new QName(null, \"other\"));\n        assertFalse(DOMNodePointer.testNode(elem, mismatchTest));\n    }\n\n    @Test\n    public void testCompareChildNodePointersAttributesAndErrors() throws Exception {\n        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();\n        Element elem = doc.createElement(\"parent\");\n        elem.setAttribute(\"att1\", \"val1\");\n        elem.setAttribute(\"att2\", \"val2\");\n        doc.appendChild(elem);\n\n        DOMNodePointer parentPtr = new DOMNodePointer(elem, Locale.getDefault());\n        NodePointer attrPtr1 = parentPtr.createAttribute(null, new QName(\"att1\"));\n        NodePointer attrPtr2 = parentPtr.createAttribute(null, new QName(\"att2\"));\n\n        assertTrue(parentPtr.compareChildNodePointers(attrPtr1, attrPtr2) < 0);\n        assertTrue(parentPtr.compareChildNodePointers(attrPtr2, attrPtr1) > 0);\n        assertEquals(0, parentPtr.compareChildNodePointers(attrPtr1, attrPtr1));\n\n        // Mixed child and attribute or invalid base\n        Element child = doc.createElement(\"child\");\n        elem.appendChild(child);\n        NodePointer childPtr = new DOMNodePointer(parentPtr, child);\n\n        assertTrue(parentPtr.compareChildNodePointers(attrPtr1, childPtr) < 0);\n        assertTrue(parentPtr.compareChildNodePointers(childPtr, attrPtr1) > 0);\n    }\n}\n```\n\n```java\npackage org.apache.commons.jxpath.ri.model.jdom;\n\nimport java.util.Locale;\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.model.NodePointer;\nimport org.jdom.Attribute;\nimport org.jdom.Element;\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class JDOMNodePointerExtraTest {\n\n    @Test\n    public void testCompareChildNodePointersJDOMAttributes() {\n        Element parent = new Element(\"parent\");\n        Attribute attr1 = new Attribute(\"att1\", \"val1\");\n        Attribute attr2 = new Attribute(\"att2\", \"val2\");\n        parent.setAttribute(attr1);\n        parent.setAttribute(attr2);\n\n        JDOMNodePointer parentPtr = new JDOMNodePointer(parent, Locale.getDefault());\n        NodePointer p1 = new JDOMNodePointer(parentPtr, attr1);\n        NodePointer p2 = new JDOMNodePointer(parentPtr, attr2);\n\n        assertTrue(parentPtr.compareChildNodePointers(p1, p2) < 0);\n        assertTrue(parentPtr.compareChildNodePointers(p2, p1) > 0);\n        assertEquals(0, parentPtr.compareChildNodePointers(p1, p1));\n    }\n\n    @Test(expected = RuntimeException.class)\n    public void testCompareChildNodePointersNonElementThrowsException() {\n        Element parent = new Element(\"parent\");\n        Element child1 = new Element(\"child1\");\n        Element child2 = new Element(\"child2\");\n        parent.addContent(child1);\n        parent.addContent(child2);\n\n        // Point to a child element instead of parent for the pointer itself\n        JDOMNodePointer childPtrParent = new JDOMNodePointer(child1, Locale.getDefault());\n        NodePointer p1 = new JDOMNodePointer(childPtrParent, child1);\n        NodePointer p2 = new JDOMNodePointer(childPtrParent, child2);\n\n        childPtrParent.compareChildNodePointers(p1, p2);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7516,
+      "completion_tokens": 1165,
+      "total_tokens": 8681
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 75951,
+      "daily_remaining_tokens": 274049
+    }
+  },
+  "headers": {
+    "x-request-id": "j7qb4szfh9wveq20en2fpxjt",
+    "date": "Sun, 04 Oct 2026 04:18:06 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

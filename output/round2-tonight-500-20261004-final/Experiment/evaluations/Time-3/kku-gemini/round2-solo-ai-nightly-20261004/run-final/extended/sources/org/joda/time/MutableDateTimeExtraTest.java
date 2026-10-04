@@ -1,0 +1,35 @@
+package org.joda.time;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class MutableDateTimeExtraTest {
+
+    @Test(expected = NullPointerException.class)
+    public void testNowZoneNull() {
+        MutableDateTime.now((DateTimeZone) null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNowChronologyNull() {
+        MutableDateTime.now((Chronology) null);
+    }
+
+    @Test
+    public void testStaticParseWithFormatter() {
+        DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern("yyyy-MM-dd");
+        MutableDateTime mdt = MutableDateTime.parse("2021-07-20", formatter);
+        assertEquals(2021, mdt.getYear());
+        assertEquals(7, mdt.getMonthOfYear());
+        assertEquals(20, mdt.getDayOfMonth());
+    }
+
+    @Test
+    public void testObjectAndZoneConstructors() {
+        java.util.Date date = new java.util.Date(1600000000000L);
+        DateTimeZone zone = DateTimeZone.forID("UTC");
+        MutableDateTime mdt = new MutableDateTime(date, zone);
+        assertEquals(zone, mdt.getZone());
+        assertEquals(1600000000000L, mdt.getMillis());
+    }
+}

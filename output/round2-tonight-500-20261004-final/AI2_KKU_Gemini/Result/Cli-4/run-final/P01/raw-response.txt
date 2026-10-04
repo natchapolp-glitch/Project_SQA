@@ -1,0 +1,6 @@
+- Valid receiver setup requires instantiating a concrete subclass of `Parser` (e.g., `PosixParser` or `GnuParser`) or using an anonymous inner class implementing `flatten`.
+- `parse(Options, String[])` must correctly validate required options and throw `MissingOptionException` if any required option is absent.
+- `parse(Options, String[], boolean)` boundary tests must verify whether missing required options throw exceptions when `stopAtNonOption` is enabled or disabled.
+- `parse(Options, String[], Properties)` must correctly process and apply default properties to the command line before checking required options.
+- `parse(Options, String[], Properties, boolean)` must combine property processing, stopping at non-options, and required option checks deterministically.
+- `checkRequiredOptions()` boundary must ensure that if required options are satisfied, parsing succeeds without throwing `MissingOptionException`.

@@ -1,0 +1,12 @@
+Focus area: `createNumber(String)` — likely buggy around hex/scientific/suffix parsing.
+
+- Plain decimal strings → Integer/Long/BigInteger depending on magnitude (e.g. "123" → Integer, overflow Integer range → Long, overflow Long range → BigInteger).
+- Suffix handling: "1L", "1l" → Long; "1F"/"1f" → Float; "1D"/"1d" → Double; invalid combos (e.g. "1LL") → NumberFormatException.
+- Hex strings "0x1A", "-0x1A", "#1A" with optional sign → Integer/Long/BigInteger based on magnitude, must throw if malformed.
+- Decimal with exponent "1.2e3", "1.2e3D" → Double; verify large exponent values exceeding Float/Double range handled correctly (e.g. fallback to BigDecimal when "F"/"D" suffix absent but value overflows).
+- Numbers with trailing/leading whitespace, empty string, null → null or NumberFormatException per contract (createNumber(null) returns null; "" throws).
+- Strings that are not valid numbers (e.g. "1.2.3", "abc", "--1") → NumberFormatException.
+- Edge cases: "0" , "-0", leading zeros, single "." or "d"/"f" alone → NumberFormatException.
+- Boundary magnitude checks: Integer.MAX_VALUE/MIN_VALUE, Long.MAX_VALUE/MIN_VALUE strings to confirm correct type selection without exceeding.
+- Scientific notation without decimal point "1e10" should still parse as Double, not throw.
+- isAllZeros-dependent cases: "0.0", "-0.0", "0000" must not erroneously throw or mis-type.

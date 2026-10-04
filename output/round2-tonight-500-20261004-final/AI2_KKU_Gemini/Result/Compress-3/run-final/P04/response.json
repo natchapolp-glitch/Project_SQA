@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:10:23.112148+00:00",
+  "ended_at_utc": "2026-10-04T07:10:26.095775+00:00",
+  "raw_body_sha256": "9476151eabe14dc579e025fdbae534badb792acee8824ce5c7a28d07826e0226",
+  "body": {
+    "id": "genai-01a105bf-f196-745d-bbe5-b9c86dd17415",
+    "object": "chat.completion",
+    "created": 1791097827,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.compress.archivers.tar;\n\nimport org.junit.Test;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.File;\nimport java.io.IOException;\n\nimport static org.junit.Assert.assertNotNull;\n\npublic class TarArchiveOutputStreamAdditionalTest {\n\n    @Test\n    public void testFlush() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n        tarOut.flush();\n        tarOut.close();\n        assertNotNull(out.toByteArray());\n    }\n\n    @Test\n    public void testCreateArchiveEntry() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);\n        File tempFile = File.createTempFile(\"commons-compress\", \".tmp\");\n        try {\n            TarArchiveEntry entry = (TarArchiveEntry) tarOut.createArchiveEntry(tempFile, \"test.tmp\");\n            assertNotNull(entry);\n        } finally {\n            tempFile.delete();\n            tarOut.close();\n        }\n    }\n\n    @Test\n    public void testWriteWithAssemblySmallChunks() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out, 512, 512);\n\n        TarArchiveEntry entry = new TarArchiveEntry(\"assembly.txt\");\n        entry.setSize(20);\n        tarOut.putArchiveEntry(entry);\n\n        // Write in small chunks to exercise assemBuf and assemLen logic in write() and closeArchiveEntry()\n        byte[] data = \"01234567890123456789\".getBytes();\n        for (int i = 0; i < data.length; i++) {\n            tarOut.write(data, i, 1);\n        }\n        tarOut.closeArchiveEntry();\n        tarOut.finish();\n        tarOut.close();\n        assertNotNull(out.toByteArray());\n    }\n\n    @Test\n    public void testWriteWithLargeAndSmallBuffering() throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out, 1024, 512);\n\n        TarArchiveEntry entry = new TarArchiveEntry(\"buffering.txt\");\n        entry.setSize(600);\n        tarOut.putArchiveEntry(entry);\n\n        // Write a chunk larger than recordBuf to trigger buffer.writeRecord(wBuf, wOffset) loop\n        byte[] data = new byte[600];\n        for (int i = 0; i < data.length; i++) {\n            data[i] = (byte) ('a' + (i % 26));\n        }\n        tarOut.write(data, 0, 600);\n        tarOut.closeArchiveEntry();\n        tarOut.finish();\n        tarOut.close();\n        assertNotNull(out.toByteArray());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4636,
+      "completion_tokens": 704,
+      "total_tokens": 5340
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 79131,
+      "daily_remaining_tokens": 270869
+    }
+  },
+  "headers": {
+    "x-request-id": "gh7upo0t4se09zn8fu1r7fxz",
+    "date": "Sun, 04 Oct 2026 07:10:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

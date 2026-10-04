@@ -1,0 +1,33 @@
+Compiled from "JsonWriteContext.java"
+public class com.fasterxml.jackson.core.json.JsonWriteContext extends com.fasterxml.jackson.core.JsonStreamContext {
+  public static final int STATUS_OK_AS_IS;
+  public static final int STATUS_OK_AFTER_COMMA;
+  public static final int STATUS_OK_AFTER_COLON;
+  public static final int STATUS_OK_AFTER_SPACE;
+  public static final int STATUS_EXPECT_VALUE;
+  public static final int STATUS_EXPECT_NAME;
+  protected final com.fasterxml.jackson.core.json.JsonWriteContext _parent;
+  protected com.fasterxml.jackson.core.json.DupDetector _dups;
+  protected com.fasterxml.jackson.core.json.JsonWriteContext _child;
+  protected java.lang.String _currentName;
+  protected java.lang.Object _currentValue;
+  protected boolean _gotName;
+  protected com.fasterxml.jackson.core.json.JsonWriteContext(int, com.fasterxml.jackson.core.json.JsonWriteContext, com.fasterxml.jackson.core.json.DupDetector);
+  protected com.fasterxml.jackson.core.json.JsonWriteContext reset(int);
+  public com.fasterxml.jackson.core.json.JsonWriteContext withDupDetector(com.fasterxml.jackson.core.json.DupDetector);
+  public java.lang.Object getCurrentValue();
+  public void setCurrentValue(java.lang.Object);
+  public static com.fasterxml.jackson.core.json.JsonWriteContext createRootContext();
+  public static com.fasterxml.jackson.core.json.JsonWriteContext createRootContext(com.fasterxml.jackson.core.json.DupDetector);
+  public com.fasterxml.jackson.core.json.JsonWriteContext createChildArrayContext();
+  public com.fasterxml.jackson.core.json.JsonWriteContext createChildObjectContext();
+  public final com.fasterxml.jackson.core.json.JsonWriteContext getParent();
+  public final java.lang.String getCurrentName();
+  public com.fasterxml.jackson.core.json.DupDetector getDupDetector();
+  public int writeFieldName(java.lang.String) throws com.fasterxml.jackson.core.JsonProcessingException;
+  private final void _checkDup(com.fasterxml.jackson.core.json.DupDetector, java.lang.String) throws com.fasterxml.jackson.core.JsonProcessingException;
+  public int writeValue();
+  protected void appendDesc(java.lang.StringBuilder);
+  public java.lang.String toString();
+  public com.fasterxml.jackson.core.JsonStreamContext getParent();
+}

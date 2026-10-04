@@ -1,0 +1,9 @@
+- `writeNumber(BigInteger)` and `writeNumber(BigDecimal)` must accept `null` without throwing NPE, consistent with Jackson's contract of serializing null numeric arguments as JSON null (writeNull()).
+- Setup: construct `TokenBuffer(ObjectCodec)` (e.g., `new TokenBuffer(null, false)`), then call `writeStartArray()`/`writeStartObject()` or write at root before invoking writeNumber with null BigInteger/BigDecimal.
+- Verify resulting token stream (via `asParser()`) yields `JsonToken.VALUE_NULL` at that position, not a numeric token or an exception.
+- Boundary: test both standalone root-level null number write and null number write as object field value / array element.
+- Also verify non-null BigInteger/BigDecimal still produce `VALUE_NUMBER_INT`/`VALUE_NUMBER_FLOAT` correctly (regression contrast).
+- Confirm no corruption of `_hasNativeTypeIds`/`_appendAt` state after writing null numeric value.
+- Check `getBigIntegerValue()`/`getDecimalValue()` via resulting JsonParser throw appropriately or return null consistent with underlying JsonToken.VALUE_NULL semantics (per JsonParser contract, likely returns null or throws if value accessed on null token—confirm against JsonParser doc, not buggy code).
+- Test `toString()` doesn't throw on buffer containing a null-value entry.
+- Use JUnit `assertEquals` for token type and `assertNull`/`assertNotNull` for value content, avoiding reliance on internal Segment layout.

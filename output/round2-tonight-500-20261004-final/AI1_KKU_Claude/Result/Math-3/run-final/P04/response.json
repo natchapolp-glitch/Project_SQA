@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:53:55.139485+00:00",
+  "ended_at_utc": "2026-10-04T07:54:00.529349+00:00",
+  "raw_body_sha256": "bcc86ec7c2ea851dadfb540b6c6f342ec777ec9656f64e9c017d4c869a315518",
+  "body": {
+    "id": "gen-1791100437-8vZWFdXThZn4N8Igkoqb",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.math3.util;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\n\nimport org.apache.commons.math3.exception.DimensionMismatchException;\nimport org.junit.Test;\n\npublic class MathArraysExtraTest {\n\n    @Test\n    public void testScaleDoesNotModifyOriginal() {\n        double[] original = {1.0, 2.0, 3.0};\n        double[] scaled = MathArrays.scale(2.0, original);\n        assertArrayEquals(new double[] {2.0, 4.0, 6.0}, scaled, 1e-12);\n        assertArrayEquals(new double[] {1.0, 2.0, 3.0}, original, 1e-12);\n    }\n\n    @Test\n    public void testScaleInPlaceModifiesArray() {\n        double[] arr = {1.0, -2.0, 3.0};\n        MathArrays.scaleInPlace(-1.0, arr);\n        assertArrayEquals(new double[] {-1.0, 2.0, -3.0}, arr, 1e-12);\n    }\n\n    @Test\n    public void testEbeAddDimensionMismatch() {\n        double[] a = {1.0, 2.0};\n        double[] b = {1.0, 2.0, 3.0};\n        try {\n            MathArrays.ebeAdd(a, b);\n            org.junit.Assert.fail(\"Expected DimensionMismatchException\");\n        } catch (DimensionMismatchException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testDistanceFunctionsAgree() {\n        double[] p1 = {0.0, 0.0};\n        double[] p2 = {3.0, 4.0};\n        assertEquals(5.0, MathArrays.distance(p1, p2), 1e-12);\n        assertEquals(7.0, MathArrays.distance1(p1, p2), 1e-12);\n        assertEquals(4.0, MathArrays.distanceInf(p1, p2), 1e-12);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7935,
+      "output_tokens": 696,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02283,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02283,
+        "upstream_inference_prompt_cost": 0.01587,
+        "upstream_inference_completions_cost": 0.00696
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 156934,
+      "daily_remaining_tokens": 43066
+    }
+  },
+  "headers": {
+    "x-request-id": "yit0ze11q8up1lsr7q243lgo",
+    "date": "Sun, 04 Oct 2026 07:54:03 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:45:36.467182+00:00",
+  "ended_at_utc": "2026-10-04T03:45:38.580166+00:00",
+  "raw_body_sha256": "64336c7e2f423caea8a63e724d25dd50fc1fe2fb92ce97fc7f21f676f0f1f9c8",
+  "body": {
+    "id": "genai-01a10504-711e-7719-83be-a99f244d3175",
+    "object": "chat.completion",
+    "created": 1791085539,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Valid receiver setup: Instantiate `Flat3Map` using the default constructor or by copying an existing `Map`.\n2. Boundary behavior: Test adding up to 3 key-value entries which fit in the flat internal representation (key1/value1, key2/value2, key3/value3).\n3. Boundary behavior: Test adding a 4th entry to trigger transition (`convertToMap`) from flat structure to `AbstractHashedMap` delegate.\n4. Key lookup: Verify `get(Object)`, `containsKey(Object)`, and `remove(Object)` behave correctly across both flat and delegated states.\n5. Null handling: Verify support for `null` keys and values in both flat and delegated modes, following standard `Map` contracts.\n6. Bulk operations: Test `putAll(Map)` with varying sizes to ensure smooth crossing of the 3-to-4 element capacity threshold.\n7. Iteration and views: Check that `entrySet()`, `keySet()`, `values()`, and `mapIterator()` accurately reflect elements in both states.\n8. Lifecycle: Verify `clear()` resets the map back to an empty flat structure, and `isEmpty()` and `size()` report correctly.\n9. Object contract: Test `clone()`, `equals(Object)`, and `hashCode()` for consistency between flat and delegate-backed maps.\n10. Serialization: Verify `writeObject` and `readObject` preserve state correctly across serialization boundaries.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 951,
+      "completion_tokens": 307,
+      "total_tokens": 1258
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 53977,
+      "daily_remaining_tokens": 296023
+    }
+  },
+  "headers": {
+    "x-request-id": "l6j49fmjh68xnn9ipditv3hy",
+    "date": "Sun, 04 Oct 2026 03:45:39 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

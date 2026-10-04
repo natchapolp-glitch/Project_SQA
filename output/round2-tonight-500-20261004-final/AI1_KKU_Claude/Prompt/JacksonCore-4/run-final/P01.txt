@@ -1,0 +1,57 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JacksonCore-4
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.core.util.TextBuffer
+BUGGY API signatures:
+Compiled from "TextBuffer.java"
+public final class com.fasterxml.jackson.core.util.TextBuffer {
+  static final char[] NO_CHARS;
+  static final int MIN_SEGMENT_LEN;
+  static final int MAX_SEGMENT_LEN;
+  private final com.fasterxml.jackson.core.util.BufferRecycler _allocator;
+  private char[] _inputBuffer;
+  private int _inputStart;
+  private int _inputLen;
+  private java.util.ArrayList<char[]> _segments;
+  private boolean _hasSegments;
+  private int _segmentSize;
+  private char[] _currentSegment;
+  private int _currentSize;
+  private java.lang.String _resultString;
+  private char[] _resultArray;
+  public com.fasterxml.jackson.core.util.TextBuffer(com.fasterxml.jackson.core.util.BufferRecycler);
+  public void releaseBuffers();
+  public void resetWithEmpty();
+  public void resetWithShared(char[], int, int);
+  public void resetWithCopy(char[], int, int);
+  public void resetWithString(java.lang.String);
+  private char[] buf(int);
+  private void clearSegments();
+  public int size();
+  public int getTextOffset();
+  public boolean hasTextAsCharacters();
+  public char[] getTextBuffer();
+  public java.lang.String contentsAsString();
+  public char[] contentsAsArray();
+  public java.math.BigDecimal contentsAsDecimal() throws java.lang.NumberFormatException;
+  public double contentsAsDouble() throws java.lang.NumberFormatException;
+  public void ensureNotShared();
+  public void append(char);
+  public void append(char[], int, int);
+  public void append(java.lang.String, int, int);
+  public char[] getCurrentSegment();
+  public char[] emptyAndGetCurrentSegment();
+  public int getCurrentSegmentSize();
+  public void setCurrentLength(int);
+  public char[] finishCurrentSegment();
+  public char[] expandCurrentSegment();
+  public char[] expandCurrentSegment(int);
+  public java.lang.String toString();
+  private void unshare(int);
+  private void expand(int);
+  private char[] resultArray();
+  private char[] carr(int);
+  static {};
+}
+

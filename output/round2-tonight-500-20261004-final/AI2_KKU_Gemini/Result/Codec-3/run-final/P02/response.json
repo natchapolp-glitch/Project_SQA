@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:01:29.755353+00:00",
+  "ended_at_utc": "2026-10-04T07:01:32.660772+00:00",
+  "raw_body_sha256": "026b0cceaa5e32427aa0af324de818f2756f8258e1fb654126c718711d3a4d6e",
+  "body": {
+    "id": "genai-01a105b7-ce3d-74ad-a7a0-dd297c3a973b",
+    "object": "chat.completion",
+    "created": 1791097294,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.codec.language;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.apache.commons.codec.EncoderException;\nimport org.junit.Test;\n\npublic class DoubleMetaphoneTest {\n\n    @Test\n    public void testDoubleMetaphoneBasicAndNull() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertNull(dm.doubleMetaphone(null));\n        assertNull(dm.doubleMetaphone(\"\"));\n        assertNull(dm.doubleMetaphone(\"   \"));\n        \n        assertEquals(\"SMTH\", dm.doubleMetaphone(\"Smith\"));\n        assertEquals(\"SM\", dm.doubleMetaphone(\"Smith\", true));\n    }\n\n    @Test\n    public void testMaxCodeLen() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertEquals(4, dm.getMaxCodeLen());\n        \n        dm.setMaxCodeLen(2);\n        assertEquals(2, dm.getMaxCodeLen());\n        assertEquals(\"SM\", dm.doubleMetaphone(\"Smith\"));\n        \n        dm.setMaxCodeLen(6);\n        assertEquals(6, dm.getMaxCodeLen());\n        assertEquals(\"SM00\", dm.doubleMetaphone(\"Smith\"));\n    }\n\n    @Test\n    public void testIsDoubleMetaphoneEqual() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertTrue(dm.isDoubleMetaphoneEqual(\"Smith\", \"Smythe\"));\n        assertTrue(dm.isDoubleMetaphoneEqual(\"CIA\", \"CIA\", true));\n        assertFalse(dm.isDoubleMetaphoneEqual(\"Smith\", \"Jones\"));\n    }\n\n    @Test\n    public void testEncodeMethods() throws EncoderException {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertEquals(\"SMTH\", dm.encode(\"Smith\"));\n        \n        Object encodedObj = dm.encode((Object) \"Washington\");\n        assertNotNull(encodedObj);\n        assertTrue(encodedObj instanceof String);\n    }\n\n    @Test(expected = EncoderException.class)\n    public void testEncodeInvalidObject() throws EncoderException {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        dm.encode(Integer.valueOf(123));\n    }\n\n    @Test\n    public void testSpecialCasesAndConsonants() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        \n        assertEquals(\"KK\", dm.doubleMetaphone(\"caesar\"));\n        assertEquals(\"X\", dm.doubleMetaphone(\"focaccia\"));\n        assertEquals(\"SK\", dm.doubleMetaphone(\"Czerny\"));\n        assertEquals(\"N\", dm.doubleMetaphone(\"\\u00D1et\"));\n        assertEquals(\"S\", dm.doubleMetaphone(\"\\u00C7ade\"));\n    }\n\n    @Test\n    public void testSilentStartsAndSlavoGermanic() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        \n        assertEquals(\"N\", dm.doubleMetaphone(\"gnat\"));\n        assertEquals(\"N\", dm.doubleMetaphone(\"knight\"));\n        assertEquals(\"N\", dm.doubleMetaphone(\"pneumatic\"));\n        assertEquals(\"R\", dm.doubleMetaphone(\"wrench\"));\n        assertEquals(\"S\", dm.doubleMetaphone(\"psalm\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5209,
+      "completion_tokens": 771,
+      "total_tokens": 5980
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 72712,
+      "daily_remaining_tokens": 277288
+    }
+  },
+  "headers": {
+    "x-request-id": "d57evrqkisdd6oz4bg9vwsh7",
+    "date": "Sun, 04 Oct 2026 07:01:34 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

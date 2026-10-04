@@ -1,0 +1,468 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Compress-4
+Java 11, JUnit 4
+Modified classes: org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream, org.apache.commons.compress.archivers.tar.TarArchiveOutputStream, org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream, org.apache.commons.compress.changes.ChangeSetPerformer
+
+BUGGY API signatures (may include private members):
+Compiled from "CpioArchiveOutputStream.java"
+public class org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream extends org.apache.commons.compress.archivers.ArchiveOutputStream implements org.apache.commons.compress.archivers.cpio.CpioConstants {
+  private org.apache.commons.compress.archivers.cpio.CpioArchiveEntry entry;
+  private boolean closed;
+  private boolean finished;
+  private final short entryFormat;
+  private final java.util.HashMap names;
+  private long crc;
+  private long written;
+  private final java.io.OutputStream out;
+  public org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream(java.io.OutputStream, short);
+  public org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream(java.io.OutputStream);
+  private void ensureOpen() throws java.io.IOException;
+  public void putArchiveEntry(org.apache.commons.compress.archivers.ArchiveEntry) throws java.io.IOException;
+  private void writeHeader(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry) throws java.io.IOException;
+  private void writeNewEntry(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry) throws java.io.IOException;
+  private void writeOldAsciiEntry(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry) throws java.io.IOException;
+  private void writeOldBinaryEntry(org.apache.commons.compress.archivers.cpio.CpioArchiveEntry, boolean) throws java.io.IOException;
+  public void closeArchiveEntry() throws java.io.IOException;
+  public void write(byte[], int, int) throws java.io.IOException;
+  public void finish() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  private void pad(int) throws java.io.IOException;
+  private void writeBinaryLong(long, int, boolean) throws java.io.IOException;
+  private void writeAsciiLong(long, int, int) throws java.io.IOException;
+  private void writeCString(java.lang.String) throws java.io.IOException;
+  public org.apache.commons.compress.archivers.ArchiveEntry createArchiveEntry(java.io.File, java.lang.String) throws java.io.IOException;
+}
+Compiled from "TarArchiveOutputStream.java"
+public class org.apache.commons.compress.archivers.tar.TarArchiveOutputStream extends org.apache.commons.compress.archivers.ArchiveOutputStream {
+  public static final int LONGFILE_ERROR;
+  public static final int LONGFILE_TRUNCATE;
+  public static final int LONGFILE_GNU;
+  private long currSize;
+  private java.lang.String currName;
+  private long currBytes;
+  private final byte[] recordBuf;
+  private int assemLen;
+  private final byte[] assemBuf;
+  protected final org.apache.commons.compress.archivers.tar.TarBuffer buffer;
+  private int longFileMode;
+  private boolean closed;
+  private boolean haveUnclosedEntry;
+  private final java.io.OutputStream out;
+  public org.apache.commons.compress.archivers.tar.TarArchiveOutputStream(java.io.OutputStream);
+  public org.apache.commons.compress.archivers.tar.TarArchiveOutputStream(java.io.OutputStream, int);
+  public org.apache.commons.compress.archivers.tar.TarArchiveOutputStream(java.io.OutputStream, int, int);
+  public void setLongFileMode(int);
+  public void finish() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public int getRecordSize();
+  public void putArchiveEntry(org.apache.commons.compress.archivers.ArchiveEntry) throws java.io.IOException;
+  public void closeArchiveEntry() throws java.io.IOException;
+  public void write(byte[], int, int) throws java.io.IOException;
+  private void writeEOFRecord() throws java.io.IOException;
+  public void flush() throws java.io.IOException;
+  public org.apache.commons.compress.archivers.ArchiveEntry createArchiveEntry(java.io.File, java.lang.String) throws java.io.IOException;
+}
+Compiled from "ZipArchiveOutputStream.java"
+public class org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream extends org.apache.commons.compress.archivers.ArchiveOutputStream {
+  static final int BYTE_MASK;
+  private static final int SHORT;
+  private static final int WORD;
+  static final int BUFFER_SIZE;
+  private static final int DEFLATER_BLOCK_SIZE;
+  public static final int DEFLATED;
+  public static final int DEFAULT_COMPRESSION;
+  public static final int STORED;
+  static final java.lang.String DEFAULT_ENCODING;
+  public static final int EFS_FLAG;
+  private org.apache.commons.compress.archivers.zip.ZipArchiveEntry entry;
+  private java.lang.String comment;
+  private int level;
+  private boolean hasCompressionLevelChanged;
+  private int method;
+  private final java.util.List entries;
+  private final java.util.zip.CRC32 crc;
+  private long written;
+  private long dataStart;
+  private long localDataStart;
+  private long cdOffset;
+  private long cdLength;
+  private static final byte[] ZERO;
+  private static final byte[] LZERO;
+  private final java.util.Map offsets;
+  private java.lang.String encoding;
+  private org.apache.commons.compress.archivers.zip.ZipEncoding zipEncoding;
+  protected final java.util.zip.Deflater def;
+  private final byte[] buf;
+  private final java.io.RandomAccessFile raf;
+  private final java.io.OutputStream out;
+  private boolean useEFS;
+  private boolean fallbackToUTF8;
+  private org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream$UnicodeExtraFieldPolicy createUnicodeExtraFields;
+  static final byte[] LFH_SIG;
+  static final byte[] DD_SIG;
+  static final byte[] CFH_SIG;
+  static final byte[] EOCD_SIG;
+  public org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream(java.io.OutputStream);
+  public org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream(java.io.File) throws java.io.IOException;
+  public boolean isSeekable();
+  public void setEncoding(java.lang.String);
+  public java.lang.String getEncoding();
+  public void setUseLanguageEncodingFlag(boolean);
+  public void setCreateUnicodeExtraFields(org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream$UnicodeExtraFieldPolicy);
+  public void setFallbackToUTF8(boolean);
+  public void finish() throws ja
+
+BUGGY source excerpt: org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.commons.compress.archivers.cpio;
+
+import java.io.File;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.utils.ArchiveUtils;
+
+/**
+ * CPIOArchiveOutputStream is a stream for writing CPIO streams. All formats of
+ * CPIO are supported (old ASCII, old binary, new portable format and the new
+ * portable format with CRC).
+ * <p/>
+ * <p/>
+ * An entry can be written by creating an instance of CpioArchiveEntry and fill
+ * it with the necessary values and put it into the CPIO stream. Afterwards
+ * write the contents of the file into the CPIO stream. Either close the stream
+ * by calling finish() or put a next entry into the cpio stream.
+ * <p/>
+ * <code><pre>
+ * CpioArchiveOutputStream out = new CpioArchiveOutputStream(
+ *         new FileOutputStream(new File("test.cpio")));
+ * CpioArchiveEntry entry = new CpioArchiveEntry();
+ * entry.setName("testfile");
+ * String contents = &quot;12345&quot;;
+ * entry.setFileSize(contents.length());
+ * entry.setMode(CpioConstants.C_ISREG); // regular file
+ * ... set other attributes, e.g. time, number of links
+ * out.putNextEntry(entry);
+ * out.write(testContents.getBytes());
+ * out.close();
+ * </pre></code>
+ * <p/>
+ * Note: This implementation should be compatible to cpio 2.5
+ * 
+ * This class uses mutable fields and is not considered threadsafe.
+ * 
+ * based on code from the jRPM project (jrpm.sourceforge.net)
+ */
+public class CpioArchiveOutputStream extends ArchiveOutputStream implements
+        CpioConstants {
+
+    private CpioArchiveEntry entry;
+
+    private boolean closed = false;
+
+    private boolean finished;
+
+    /**
+     * See {@link CpioArchiveEntry#setFormat(short)} for possible values.
+     */
+    private final short entryFormat;
+
+    private final HashMap names = new HashMap();
+
+    private long crc = 0;
+
+    private long written;
+
+    private final OutputStream out;
+
+    /**
+     * Construct the cpio output stream with a specified format
+     * 
+     * @param out
+     *  
+```
+
+BUGGY source excerpt: org.apache.commons.compress.archivers.tar.TarArchiveOutputStream (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.commons.compress.archivers.tar;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+
+/**
+ * The TarOutputStream writes a UNIX tar archive as an OutputStream.
+ * Methods are provided to put entries, and then write their contents
+ * by writing to this stream using write().
+ * @NotThreadSafe
+ */
+public class TarArchiveOutputStream extends ArchiveOutputStream {
+    /** Fail if a long file name is required in the archive. */
+    public static final int LONGFILE_ERROR = 0;
+
+    /** Long paths will be truncated in the archive. */
+    public static final int LONGFILE_TRUNCATE = 1;
+
+    /** GNU tar extensions are used to store long file names in the archive. */
+    public static final int LONGFILE_GNU = 2;
+
+    private long      currSize;
+    private String    currName;
+    private long      currBytes;
+    private final byte[]    recordBuf;
+    private int       assemLen;
+    private final byte[]    assemBuf;
+    protected final TarBuffer buffer;
+    private int       longFileMode = LONGFILE_ERROR;
+
+    private boolean closed = false;
+
+    /* Indicates if putArchiveEntry has been called without closeArchiveEntry */
+    private boolean haveUnclosedEntry = false;
+    
+    private final OutputStream out;
+
+    /**
+     * Constructor for TarInputStream.
+     * @param os the output stream to use
+     */
+    public TarArchiveOutputStream(OutputStream os) {
+        this(os, TarBuffer.DEFAULT_BLKSIZE, TarBuffer.DEFAULT_RCDSIZE);
+    }
+
+    /**
+     * Constructor for TarInputStream.
+     * @param os the output stream to use
+     * @param blockSize the block size to use
+     */
+    public TarArchiveOutputStream(OutputStream os, int blockSize) {
+        this(os, blockSize, TarBuffer.DEFAULT_RCDSIZE);
+    }
+
+    /**
+     * Constructor for TarInputStream.
+     * @param os the output stream to use
+     * @param blockSize the block size to use
+     * @param recordSize the record size to use
+     */
+    public TarArchiveOutputStream(OutputStream os, int blockSize, int recordSize) {
+        out = os;
+
+        this.
+```
+
+BUGGY source excerpt: org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream (truncated=True)
+```java
+/*
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
+package org.apache.commons.compress.archivers.zip;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.CRC32;
+import java.util.zip.Deflater;
+import java.util.zip.ZipException;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+
+/**
+ * Reimplementation of {@link java.util.zip.ZipOutputStream
+ * java.util.zip.ZipOutputStream} that does handle the extended
+ * functionality of this package, especially internal/external file
+ * attributes and extra fields with different layouts for local file
+ * data and central directory entries.
+ *
+ * <p>This class will try to use {@link java.io.RandomAccessFile
+ * RandomAccessFile} when you know that the output is going to go to a
+ * file.</p>
+ *
+ * <p>If RandomAccessFile cannot be used, this implementation will use
+ * a Data Descriptor to store size and CRC information for {@link
+ * #DEFLATED DEFLATED} entries, this means, you don't need to
+ * calculate them yourself.  Unfortunately this is not possible for
+ * the {@link #STORED STORED} method, here setting the CRC and
+ * uncompressed size information is required before {@link
+ * #putArchiveEntry(ArchiveEntry)} can be called.</p>
+ * @NotThreadSafe
+ */
+public class ZipArchiveOutputStream extends ArchiveOutputStream {
+
+    static final int BYTE_MASK = 0xFF;
+    private static final int SHORT = 2;
+    private static final int WORD = 4;
+    static final int BUFFER_SIZE = 512;
+    /* 
+     * Apparently Deflater.setInput gets slowed down a lot on Sun JVMs
+     * when it gets handed a really big buffer.  See
+     * https://issues.apache.org/bugzilla/show_bug.cgi?id=45396
+     *
+     * Using a buffer size of 8 kB proved to be a good compromise
+     */
+    private static final int DEFLATER_BLOCK_SIZE = 8192;
+
+    /**
+     * Compression method for deflated entries.
+     */
+    public static final int DEFLATED = java.util.zip.ZipEntry.D
+```
+
+BUGGY source excerpt: org.apache.commons.compress.changes.ChangeSetPerformer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.commons.compress.changes;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.utils.IOUtils;
+
+/**
+ * Performs ChangeSet operations on a stream.
+ * This class is thread safe and can be used multiple times.
+ * It operates on a copy of the ChangeSet. If the ChangeSet changes,
+ * a new Performer must be created.
+ * 
+ * @ThreadSafe
+ * @Immutable
+ */
+public class ChangeSetPerformer {
+    private final Set changes;
+    
+    /**
+     * Constructs a ChangeSetPerformer with the changes from this ChangeSet
+     * @param changeSet the ChangeSet which operations are used for performing
+     */
+    public ChangeSetPerformer(final ChangeSet changeSet) {
+        changes = changeSet.getChanges();
+    }
+    
+    /**
+     * Performs all changes collected in this ChangeSet on the input stream and
+     * streams the result to the output stream. Perform may be called more than once.
+     * 
+     * This method finishes the stream, no other entries should be added
+     * after that.
+     * 
+     * @param in
+     *            the InputStream to perform the changes on
+     * @param out
+     *            the resulting OutputStream with all modifications
+     * @throws IOException
+     *             if an read/write error occurs
+     * @return the results of this operation
+     */
+    public ChangeSetResults perform(ArchiveInputStream in, ArchiveOutputStream out)
+            throws IOException {
+        ChangeSetResults results = new ChangeSetResults();
+        
+        Set workingSet = new LinkedHashSet(changes);
+        
+        for (Iterator it = workingSet.iterator(); it.hasNext();) {
+            Change change = (Change) it.next();
+
+            if (change.type() == Change.TYPE_ADD && change.isReplaceMode()) {
+                copyStream(change.getInput(), out, change.getEntry());
+                it.remove();
+                results.addedFromChangeSet(chang
+```
+
+
+Planning response:
+Valid receiver setup: Instantiate archive output streams (`CpioArchiveOutputStream`, `TarArchiveOutputStream`, `ZipArchiveOutputStream`) wrapping a `ByteArrayOutputStream` or temporary `File`.
+Behavior: `putArchiveEntry` must correctly handle entries with valid metadata (names, sizes, formats) and reject invalid or duplicate states.
+Behavior: `closeArchiveEntry` and `finish` must properly write trailers, paddings, and end-of-archive markers without throwing unexpected IOExceptions.
+Boundary: Writing zero bytes or empty entries vs. writing large data streams exceeding entry size bounds.
+Boundary: Long file names and special flags (e.g., Tar long file modes, Zip UTF-8/EFS flags, Cpio formats) at their boundaries.
+Behavior: `ChangeSetPerformer` correctly applies additions, deletions, and modifications to existing archives without corrupting entry streams.
+Behavior: Calling `write`, `closeArchiveEntry`, or `finish` on closed or uninitialized stream states must throw appropriate `IOException` or `IllegalStateException`.

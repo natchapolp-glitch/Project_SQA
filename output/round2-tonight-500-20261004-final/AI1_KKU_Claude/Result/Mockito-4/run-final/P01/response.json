@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:35:18.338202+00:00",
+  "ended_at_utc": "2026-10-04T09:35:26.252471+00:00",
+  "raw_body_sha256": "6b7f14095743e7e3b3aa8d24bf59c0138b7e7990ccb77075dd9da1e56b7f67d2",
+  "body": {
+    "id": "gen-1791106520-FdO7XftlVJUI5DYhTeMQ",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Focus on `invalidArgumentPositionRangeAtInvocationTime(InvocationOnMock, boolean, int)` since it returns an `int` (likely the buggy one—others are void and just throw).\n\nKey behaviors/boundaries to verify:\n- Throws MockitoException (or subclass) when index negative — invalid regardless of flag.\n- Boundary when index == number of arguments (off-by-one: valid vs invalid depends on whether \"returnsAllParameters\" wraps varargs).\n- Valid index at last argument position (index == argsCount-1) should NOT throw, and return value should equal index (or expected normalized position).\n- Behavior difference when `returnsAllParameters` true vs false, especially with varargs invocation (argument count differs from raw args length).\n- Invocation with zero arguments: any index should be invalid, confirm exception thrown rather than returning erroneous int.\n- Verify returned int equals the input index when valid (identity/passthrough contract), not some transformed value.\n- Confirm exception message contains method name/args info (useful for message-content assertions) sourced from mock setup — needs real `InvocationOnMock` from an actual mock invocation (via Mockito mocking + ArgumentCaptor or custom Invocation).\n- Setup requirement: receiver `Reporter` has no state—just instantiate directly; `InvocationOnMock` must be a genuine invocation object, e.g. captured from a real mock method call using Mockito's own mocking (not a hand-built stub), to ensure `getArguments()`, `getMethod()` work correctly.\n- Test both overloaded/varargs method invocations and fixed-arity invocations to cover array-length vs parameter-count mismatch boundary.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2773,
+      "output_tokens": 571,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.011256,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.011256,
+        "upstream_inference_prompt_cost": 0.005546,
+        "upstream_inference_completions_cost": 0.00571
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 170722,
+      "daily_remaining_tokens": 29278
+    }
+  },
+  "headers": {
+    "x-request-id": "vs9xe7d50b5mstoy2nic5ibm",
+    "date": "Sun, 04 Oct 2026 09:35:29 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

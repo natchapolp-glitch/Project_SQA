@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:16:12.815030+00:00",
+  "ended_at_utc": "2026-10-04T04:16:20.754107+00:00",
+  "raw_body_sha256": "060623cc86a9fabad94c434ada49b3d0b5face21746f5fa5428251178c562a34",
+  "body": {
+    "id": "gen-1791087374-lFCpG3hZVktyedDn9PWL",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- getLocalName(Node)/getLocalName(Object) must strip namespace prefix and return just local part for elements/attributes with prefixed and unprefixed names; verify against QName.getLocalName semantics (bug likely mishandles prefix stripping, e.g. for names without ':' or with multiple ':').\n- getPrefix must return null (or empty) when no namespace prefix present, and correct prefix string when present.\n- compareChildNodePointers must correctly order sibling nodes by document order including same-named elements, text nodes, and mixed node types; test with nodes in various positions (first, middle, last).\n- testNode(NodeTest) must correctly match node type tests (element, text, comment, PI) and name tests (wildcard, namespace-qualified, local-name-only).\n- getNamespaceURI should return correct namespace URI for default namespace, explicit prefix, and no-namespace cases; boundary: root element vs nested elements inheriting namespace.\n- getValue/stringValue must correctly concatenate text content of mixed child nodes (text + element) for whitespace and empty-element cases.\n- isLeaf/isCollection/getLength: boundary tests for nodes with zero children, attribute-only nodes, and text nodes.\n- Receiver setup: build minimal DOM Document via javax.xml.parsers and JDOM Document via org.jdom.input, using Locale.getDefault() for pointer construction; ensure both DOM and JDOM variants are tested in parallel for equivalent expected behavior.\n- equals/hashCode consistency across pointers wrapping the same underlying node instance.\n- getRelativePositionByName/OfElement/OfTextNode private logic indirectly tested via asPath() output correctness for indexed paths (e.g. `/root/child[2]`).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2884,
+      "output_tokens": 593,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.011698,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.011698,
+        "upstream_inference_prompt_cost": 0.005768,
+        "upstream_inference_completions_cost": 0.00593
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 77237,
+      "daily_remaining_tokens": 122763
+    }
+  },
+  "headers": {
+    "x-request-id": "jgv3tlw4nkxu0hpbqlen64zr",
+    "date": "Sun, 04 Oct 2026 04:16:22 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

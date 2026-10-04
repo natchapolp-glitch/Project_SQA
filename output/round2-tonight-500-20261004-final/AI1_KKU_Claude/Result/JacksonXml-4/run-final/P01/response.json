@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:04:05.059295+00:00",
+  "ended_at_utc": "2026-10-04T09:04:11.243726+00:00",
+  "raw_body_sha256": "fc3a6501908e03a9413e3818674c4eb2bd7e9cabc4898ce011d69c99ce337854",
+  "body": {
+    "id": "gen-1791104646-FIDnKtLz8QiJ4UpkMEZ2",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Writing `null` value via `XmlMapper` should still produce a root element (using ROOT_NAME_FOR_NULL or configured root name), not an empty/invalid document.\n- Serializing null with an explicit root name set (via `@JacksonXmlRootElement` or config) should use that name for the wrapper element.\n- Serializing a plain non-null POJO should proceed normally through serializeValue overloads, unaffected by null-handling path.\n- Serializing an array/collection root value should trigger `_startRootArray` correctly, emitting repeated wrapped elements with proper root/child names.\n- Verify behavior when JsonGenerator passed is not a `ToXmlGenerator` (e.g., wrapped) — `_asXmlGenerator` must still unwrap/support XML generation or throw appropriate `JsonMappingException` if impossible.\n- Check `_rootNameFromConfig()` boundary: no config root name set (returns null) vs. explicit root name configured.\n- Confirm `createInstance` returns a new provider preserving `_rootNameLookup` and config/factory supplied.\n- Test nested null field (not root) to ensure only root-null special-cases hit `_serializeXmlNull`, not nested nulls.\n- Validate QName namespace handling when root name has namespace prefix/URI set vs. default (no namespace).\n- Ensure serialization round-trips to valid XML string via `XmlMapper.writeValueAsString`, confirming no corrupt/malformed XML for null case.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1212,
+      "output_tokens": 502,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007444,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007444,
+        "upstream_inference_prompt_cost": 0.002424,
+        "upstream_inference_completions_cost": 0.00502
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 158648,
+      "daily_remaining_tokens": 41352
+    }
+  },
+  "headers": {
+    "x-request-id": "qeblot3tu56vyb5acxkjpbru",
+    "date": "Sun, 04 Oct 2026 09:04:12 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

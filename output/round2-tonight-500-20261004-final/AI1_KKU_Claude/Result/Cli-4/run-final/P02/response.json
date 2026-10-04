@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:23:51.900353+00:00",
+  "ended_at_utc": "2026-10-04T08:24:03.537422+00:00",
+  "raw_body_sha256": "230490fb165f88438f8d2cc237d6fddaf8a57971ba6dc8e222d794679036d08d",
+  "body": {
+    "id": "gen-1791102235-DyTwjQfsbN2x68xxwlWr",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.cli;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport java.util.Properties;\n\npublic class ParserTest {\n\n    private Parser newParser() {\n        return new GnuParser();\n    }\n\n    @Test(expected = MissingOptionException.class)\n    public void testMissingRequiredOptionThrows() throws Exception {\n        Options options = new Options();\n        options.addOption(OptionBuilder.isRequired().create(\"a\"));\n\n        Parser parser = newParser();\n        parser.parse(options, new String[] {});\n    }\n\n    @Test\n    public void testRequiredOptionPresentSucceeds() throws Exception {\n        Options options = new Options();\n        options.addOption(OptionBuilder.isRequired().create(\"a\"));\n\n        Parser parser = newParser();\n        CommandLine cmd = parser.parse(options, new String[] { \"-a\" });\n\n        assertTrue(cmd.hasOption(\"a\"));\n    }\n\n    @Test\n    public void testParserStateResetAcrossInvocations() throws Exception {\n        Options firstOptions = new Options();\n        firstOptions.addOption(OptionBuilder.isRequired().create(\"a\"));\n\n        Parser parser = newParser();\n\n        try {\n            parser.parse(firstOptions, new String[] {});\n            fail(\"Expected MissingOptionException\");\n        }\n        catch (MissingOptionException expected) {\n            // expected\n        }\n\n        Options secondOptions = new Options();\n        secondOptions.addOption(OptionBuilder.create(\"b\"));\n\n        CommandLine cmd = parser.parse(secondOptions, new String[] { \"-b\" });\n        assertTrue(cmd.hasOption(\"b\"));\n    }\n\n    @Test\n    public void testMultipleMissingRequiredOptionsReportedTogether() throws Exception {\n        Options options = new Options();\n        options.addOption(OptionBuilder.isRequired().create(\"a\"));\n        options.addOption(OptionBuilder.isRequired().create(\"b\"));\n\n        Parser parser = newParser();\n\n        try {\n            parser.parse(options, new String[] {});\n            fail(\"Expected MissingOptionException\");\n        }\n        catch (MissingOptionException e) {\n            String message = e.getMessage();\n            assertTrue(message.contains(\"a\"));\n            assertTrue(message.contains(\"b\"));\n        }\n    }\n\n    @Test\n    public void testRequiredOptionSatisfiedByProperties() throws Exception {\n        Options options = new Options();\n        options.addOption(OptionBuilder.hasArg().isRequired().create(\"a\"));\n\n        Properties properties = new Properties();\n        properties.setProperty(\"a\", \"value\");\n\n        Parser parser = newParser();\n        CommandLine cmd = parser.parse(options, new String[] {}, properties);\n\n        assertTrue(cmd.hasOption(\"a\"));\n        assertEquals(\"value\", cmd.getOptionValue(\"a\"));\n    }\n\n    @Test\n    public void testNoRequiredOptionsSucceedsWithArbitraryArgs() throws Exception {\n        Options options = new Options();\n        options.addOption(OptionBuilder.create(\"x\"));\n\n        Parser parser = newParser();\n        CommandLine cmd = parser.parse(options, new String[] { \"arg1\", \"arg2\" });\n\n        assertEquals(2, cmd.getArgs().length);\n        assertFalse(cmd.hasOption(\"x\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5130,
+      "output_tokens": 1151,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02177,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02177,
+        "upstream_inference_prompt_cost": 0.01026,
+        "upstream_inference_completions_cost": 0.01151
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 140375,
+      "daily_remaining_tokens": 59625
+    }
+  },
+  "headers": {
+    "x-request-id": "xuq5tr634f3gtn4kujaycpbw",
+    "date": "Sun, 04 Oct 2026 08:24:04 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

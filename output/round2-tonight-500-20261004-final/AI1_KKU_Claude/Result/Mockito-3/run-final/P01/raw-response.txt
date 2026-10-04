@@ -1,0 +1,21 @@
+## Key behaviors to verify (oracle = documented contract/Java semantics)
+
+1. **Constructor without matchers**: `InvocationMatcher(Invocation)` must default matchers to argument-equality matchers derived from the invocation's actual arguments (so `matches()` on same invocation returns true).
+
+2. **`matches(Invocation)`**: returns true iff method names are equal, raw arguments count matches, and each matcher matches corresponding argument — must handle varargs invocations correctly (varargs expansion/collapsing).
+
+3. **`hasSameMethod`**: true only when invocation's `Method` objects are equal (same declaring class, name, parameter types) — distinguish from `hasSimilarMethod`.
+
+4. **`hasSimilarMethod`**: true when method name and parameter count/types are "similar" per Mockito's relaxed definition (e.g., same name, same arg count, used for suspicious-mock warnings) — must differ from `hasSameMethod` for edge cases (overloaded methods, mock type differences).
+
+5. **Varargs boundary**: invocation with varargs called with different argument counts (0, 1, many) must still match correctly via `safelyArgumentsMatch`.
+
+6. **`captureArgumentsFrom`**: for argument captors, must pull latest invocation's raw arguments into matchers that implement `CapturesArguments`, including varargs arrays element-by-element.
+
+7. **`createFrom(List<Invocation>)`**: must produce one `InvocationMatcher` per invocation, preserving order and count (empty list → empty list).
+
+8. **`getMethod()` / `getInvocation()` / `getMatchers()`**: simple delegation — must return exact underlying objects, not copies.
+
+9. **`toString()`**: must not throw, and should include method name/args in some printable format (non-null, non-empty).
+
+10. **Null/empty-args boundary**: invocation with zero-arg method must not throw NPE in `matches`/`safelyArgumentsMatch`/`captureArgumentsFrom`.

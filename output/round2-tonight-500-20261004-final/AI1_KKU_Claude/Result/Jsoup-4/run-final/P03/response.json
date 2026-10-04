@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:08:46.482776+00:00",
+  "ended_at_utc": "2026-10-04T09:08:51.838340+00:00",
+  "raw_body_sha256": "02956d23a1accc705da609375bfd6990aa1245feff6807fbeaea8601fc42b3c8",
+  "body": {
+    "id": "gen-1791104926-8S1haiXqi0B9AQuQltMq",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jsoup.nodes;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class EntitiesTest {\n\n    @Test\n    public void testUnescapeNamedEntities() {\n        assertEquals(\"&\", Entities.unescape(\"&amp;\"));\n        assertEquals(\"<\", Entities.unescape(\"&lt;\"));\n        assertEquals(\">\", Entities.unescape(\"&gt;\"));\n        assertEquals(\"\\\"\", Entities.unescape(\"&quot;\"));\n        assertEquals(\"<p>\", Entities.unescape(\"&lt;p&gt;\"));\n    }\n\n    @Test\n    public void testUnescapeNumericEntities() {\n        assertEquals(\"A\", Entities.unescape(\"&#65;\"));\n        assertEquals(\"A\", Entities.unescape(\"&#x41;\"));\n        assertEquals(\"A\", Entities.unescape(\"&#X41;\"));\n    }\n\n    @Test\n    public void testUnescapeNoEntitiesReturnsSameText() {\n        assertEquals(\"\", Entities.unescape(\"\"));\n        assertEquals(\"plain text\", Entities.unescape(\"plain text\"));\n    }\n\n    @Test\n    public void testUnescapeUnknownEntityLeftLiteral() {\n        assertEquals(\"&foo;\", Entities.unescape(\"&foo;\"));\n    }\n\n    @Test\n    public void testUnescapeEmbeddedInText() {\n        assertEquals(\"a&b\", Entities.unescape(\"a&amp;b\"));\n    }\n\n    @Test\n    public void testEscapeBasicCharacters() {\n        Document.OutputSettings settings = new Document().outputSettings();\n        String escaped = Entities.escape(\"<div>\\\"quote\\\" & more</div>\", settings);\n        assertEquals(\"&lt;div&gt;&quot;quote&quot; &amp; more&lt;/div&gt;\", escaped);\n    }\n\n    @Test\n    public void testEscapeEmptyString() {\n        Document.OutputSettings settings = new Document().outputSettings();\n        assertEquals(\"\", Entities.escape(\"\", settings));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7790,
+      "output_tokens": 702,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.0226,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.0226,
+        "upstream_inference_prompt_cost": 0.01558,
+        "upstream_inference_completions_cost": 0.00702
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 175500,
+      "daily_remaining_tokens": 24500
+    }
+  },
+  "headers": {
+    "x-request-id": "pdzndk7ckz7c0b1urtulq319",
+    "date": "Sun, 04 Oct 2026 09:08:52 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,8 @@
+- Verify `flatten` correctly handles combined short options (e.g., `-abc`) when arguments or bursting are involved.
+- Test behavior when `eatTheRest` is triggered by `--` stopping further option processing, treating subsequent tokens as arguments.
+- Test long options with equals signs (e.g., `--option=value`) and without, ensuring proper tokenization.
+- Check handling of non-option arguments interspersed with options when `stopAtNonOption` is enabled vs. disabled.
+- Ensure `burstToken` correctly separates clustered single-letter flags based on whether they take arguments.
+- Verify `processSingleHyphen` treats solitary `-` characters as regular arguments (non-options).
+- Validate receiver setup by instantiating `PosixParser` and supplying a valid `Options` instance with defined short/long options.
+- Test boundary where an option requires an argument, but the next token is another option or missing.

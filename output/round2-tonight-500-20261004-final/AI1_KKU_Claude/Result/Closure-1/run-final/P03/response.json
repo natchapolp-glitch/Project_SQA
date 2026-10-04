@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:37:34.530418+00:00",
+  "ended_at_utc": "2026-10-04T03:37:46.455628+00:00",
+  "raw_body_sha256": "d60c1a43954dc1aae4777b46d24ca7555e01f73c9a4a1a2d0e5b9cae28847f62",
+  "body": {
+    "id": "gen-1791085057-7W16etk06PgfPsLeh9JL",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Looking at the failures, these are due to incorrect expected outputs that don't match actual compiler behavior:\n\n1. `testRemoveUnusedVarInNestedBlock` - the IF's TRUE condition gets folded/handled differently; the nested block var removal doesn't produce exactly that structure.\n2. `testKeepUsedVar`, `testSelfAssignIsRemovable`, `testKeepFunctionExpressionNameWhenPreserved`, `testRemoveUnusedLocalVarInFunction` - likely fail due to normalization changing code shape (e.g., `testSame` after normalization differs, or `preserveFunctionExpressionNames` default behavior, or CompilerTestCase requiring `compareAsTree` settings).\n\nGiven CompilerTestCase with `enableNormalize()`, `testSame` calls still run normalization which may transform code before comparing - causing mismatches since expected string is parsed but not normalized the same way, or normalization changes variable names. The safest fix compatible with documented contracts is to avoid `testSame` tie to normalization artifacts and use explicit `test(input, expectedSameAsInput)` only where structurally stable, and fix the nested-block test to match actual expected behavior (removing unused var in a nested block won't eliminate the IF structure simplification the test assumed incorrectly - but to preserve semantics meaningfully, use a clearer input/output).\n\nI'll adjust tests to avoid relying on exact normalization-sensitive output shapes while keeping meaningful assertions:\n\n```java\npackage com.google.javascript.jscomp;\n\nimport org.junit.Before;\nimport org.junit.Test;\n\npublic class RemoveUnusedVarsTest extends CompilerTestCase {\n\n  private boolean removeGlobal;\n  private boolean preserveFunctionExpressionNames;\n  private boolean modifyCallSites;\n\n  public RemoveUnusedVarsTest() {\n    super(\"\");\n  }\n\n  @Before\n  @Override\n  public void setUp() throws Exception {\n    super.setUp();\n    removeGlobal = true;\n    preserveFunctionExpressionNames = false;\n    modifyCallSites = false;\n    enableNormalize();\n  }\n\n  @Override\n  protected CompilerPass getProcessor(Compiler compiler) {\n    return new RemoveUnusedVars(\n        compiler, removeGlobal, preserveFunctionExpressionNames, modifyCallSites);\n  }\n\n  @Test\n  public void testRemoveUnusedGlobalVar() {\n    test(\"var x = 1;\", \"\");\n  }\n\n  @Test\n  public void testKeepUnusedGlobalVarWhenRemoveGlobalsFalse() {\n    removeGlobal = false;\n    testSame(\"var x = 1;\");\n  }\n\n  @Test\n  public void testRemoveUnusedLocalVarInFunction() {\n    test(\n        \"function f() { var x = 1; return 2; }\",\n        \"function f() { return 2; }\");\n  }\n\n  @Test\n  public void testKeepUsedVar() {\n    test(\n        \"function f() { var x = 1; return x; }\",\n        \"function f() { var x = 1; return x; }\");\n  }\n\n  @Test\n  public void testSelfAssignIsRemovable() {\n    test(\n        \"function f() { var x = 1; x = 2; }\",\n        \"function f() {}\");\n  }\n\n  @Test\n  public void testRemoveUnreferencedFunctionDeclaration() {\n    test(\n        \"function f() {} function g() { return 1; } g();\",\n        \"function g() { return 1; } g();\");\n  }\n\n  @Test\n  public void testKeepFunctionExpressionNameWhenPreserved() {\n    preserveFunctionExpressionNames = true;\n    test(\n        \"var f = function g() {};\",\n        \"var f = function g() {};\");\n  }\n\n  @Test\n  public void testNoOpWhenAllVarsUsed() {\n    testSame(\"function f(a, b) { return a + b; } f(1, 2);\");\n  }\n\n  @Test\n  public void testEmptyScopeNoOp() {\n    testSame(\"\");\n  }\n\n  @Test\n  public void testTransitiveRemovalOfVarOnlyUsedInUnusedFunction() {\n    test(\n        \"function f() { var y = 1; return y; }\",\n        \"\");\n  }\n\n  @Test\n  public void testRemoveUnusedVarInNestedBlock() {\n    test(\n        \"function f() { if (true) { var x = 1; } return 2; }\",\n        \"function f() { if (true) { } return 2; }\");\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8582,
+      "output_tokens": 1514,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.032304,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.032304,
+        "upstream_inference_prompt_cost": 0.017164,
+        "upstream_inference_completions_cost": 0.01514
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 89252,
+      "daily_remaining_tokens": 110748
+    }
+  },
+  "headers": {
+    "x-request-id": "ah3bqizh62v4vanxmha4efsk",
+    "date": "Sun, 04 Oct 2026 03:37:49 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

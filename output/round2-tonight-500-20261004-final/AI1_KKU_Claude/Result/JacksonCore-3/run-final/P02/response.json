@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:24:53.201109+00:00",
+  "ended_at_utc": "2026-10-04T07:25:08.639471+00:00",
+  "raw_body_sha256": "6d0f65fa4799325e21dd94d5e7fece905c9af6da6632d6f570878c3c6174df6b",
+  "body": {
+    "id": "gen-1791098696-t5ADA26oc6Y9k6cGZ3Eu",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.core.json;\n\nimport static org.junit.Assert.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.JsonParseException;\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonToken;\n\npublic class UTF8StreamJsonParserTest {\n\n    private JsonParser createParser(String json) throws IOException {\n        JsonFactory f = new JsonFactory();\n        byte[] bytes = json.getBytes(\"UTF-8\");\n        return f.createParser(new ByteArrayInputStream(bytes));\n    }\n\n    @Test\n    public void testZeroIntegerParsesCorrectly() throws Exception {\n        JsonParser p = createParser(\"0\");\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(0, p.getIntValue());\n        p.close();\n    }\n\n    @Test\n    public void testNegativeZeroParsesCorrectly() throws Exception {\n        JsonParser p = createParser(\"-0\");\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(0, p.getIntValue());\n        p.close();\n    }\n\n    @Test(expected = JsonParseException.class)\n    public void testLeadingZeroRejected() throws Exception {\n        JsonParser p = createParser(\"01\");\n        p.nextToken();\n        p.getIntValue();\n    }\n\n    @Test\n    public void testFloatingPointExponentParsesCorrectly() throws Exception {\n        JsonParser p = createParser(\"1.0e10\");\n        assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());\n        assertEquals(1.0e10, p.getDoubleValue(), 0.0001);\n        p.close();\n    }\n\n    @Test\n    public void testNegativeDecimalParsesCorrectly() throws Exception {\n        JsonParser p = createParser(\"-123.456\");\n        assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());\n        assertEquals(-123.456, p.getDoubleValue(), 0.0001);\n        assertEquals(\"-123.456\", p.getText());\n        p.close();\n    }\n\n    @Test\n    public void testLargeIntegerAcrossSmallBuffer() throws Exception {\n        JsonFactory f = new JsonFactory();\n        String number = \"123456789012345\";\n        JsonParser p = f.createParser(new ByteArrayInputStream(number.getBytes(\"UTF-8\")));\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(123456789012345L, p.getLongValue());\n        p.close();\n    }\n\n    @Test\n    public void testFieldNameAndStringValueRoundTrip() throws Exception {\n        JsonParser p = createParser(\"{\\\"fieldName\\\":\\\"value\\\"}\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, p.nextToken());\n        assertEquals(\"fieldName\", p.getCurrentName());\n        assertEquals(JsonToken.VALUE_STRING, p.nextToken());\n        assertEquals(\"value\", p.getText());\n        assertEquals(JsonToken.END_OBJECT, p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testMultiByteUtf8TextCharacters() throws Exception {\n        String value = \"caf\\u00e9\";\n        JsonParser p = createParser(\"\\\"\" + value + \"\\\"\");\n        assertEquals(JsonToken.VALUE_STRING, p.nextToken());\n        assertEquals(value, p.getText());\n        char[] chars = p.getTextCharacters();\n        int len = p.getTextLength();\n        int off = p.getTextOffset();\n        assertEquals(value, new String(chars, off, len));\n        p.close();\n    }\n\n    @Test(expected = JsonParseException.class)\n    public void testTruncatedNumberAtEofThrows() throws Exception {\n        JsonParser p = createParser(\"123.\");\n        p.nextToken();\n        p.getDoubleValue();\n    }\n\n    @Test\n    public void testNextFieldNameThenNextTokenStateConsistency() throws Exception {\n        JsonParser p = createParser(\"{\\\"a\\\":1,\\\"b\\\":2}\");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertTrue(p.nextFieldName(new com.fasterxml.jackson.core.io.SerializedString(\"a\")));\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(1, p.getIntValue());\n        assertEquals(JsonToken.FIELD_NAME, p.nextToken());\n        assertEquals(\"b\", p.getCurrentName());\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(2, p.getIntValue());\n        assertEquals(JsonToken.END_OBJECT, p.nextToken());\n        p.close();\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7837,
+      "output_tokens": 1852,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.034194,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.034194,
+        "upstream_inference_prompt_cost": 0.015674,
+        "upstream_inference_completions_cost": 0.01852
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 127542,
+      "daily_remaining_tokens": 72458
+    }
+  },
+  "headers": {
+    "x-request-id": "updumff0cuz7yftqkt1zo6yx",
+    "date": "Sun, 04 Oct 2026 07:25:09 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

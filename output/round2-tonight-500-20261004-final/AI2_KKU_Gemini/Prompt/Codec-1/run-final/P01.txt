@@ -1,0 +1,41 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Codec-1
+Java 11, JUnit 4
+Modified classes: org.apache.commons.codec.language.Caverphone, org.apache.commons.codec.language.Metaphone, org.apache.commons.codec.language.SoundexUtils
+BUGGY API signatures:
+Compiled from "Caverphone.java"
+public class org.apache.commons.codec.language.Caverphone implements org.apache.commons.codec.StringEncoder {
+  public org.apache.commons.codec.language.Caverphone();
+  public java.lang.String caverphone(java.lang.String);
+  public java.lang.Object encode(java.lang.Object) throws org.apache.commons.codec.EncoderException;
+  public java.lang.String encode(java.lang.String);
+  public boolean isCaverphoneEqual(java.lang.String, java.lang.String);
+}
+Compiled from "Metaphone.java"
+public class org.apache.commons.codec.language.Metaphone implements org.apache.commons.codec.StringEncoder {
+  private static final java.lang.String VOWELS;
+  private static final java.lang.String FRONTV;
+  private static final java.lang.String VARSON;
+  private int maxCodeLen;
+  public org.apache.commons.codec.language.Metaphone();
+  public java.lang.String metaphone(java.lang.String);
+  private boolean isVowel(java.lang.StringBuffer, int);
+  private boolean isPreviousChar(java.lang.StringBuffer, int, char);
+  private boolean isNextChar(java.lang.StringBuffer, int, char);
+  private boolean regionMatch(java.lang.StringBuffer, int, java.lang.String);
+  private boolean isLastChar(int, int);
+  public java.lang.Object encode(java.lang.Object) throws org.apache.commons.codec.EncoderException;
+  public java.lang.String encode(java.lang.String);
+  public boolean isMetaphoneEqual(java.lang.String, java.lang.String);
+  public int getMaxCodeLen();
+  public void setMaxCodeLen(int);
+}
+Compiled from "SoundexUtils.java"
+final class org.apache.commons.codec.language.SoundexUtils {
+  org.apache.commons.codec.language.SoundexUtils();
+  static java.lang.String clean(java.lang.String);
+  static int difference(org.apache.commons.codec.StringEncoder, java.lang.String, java.lang.String) throws org.apache.commons.codec.EncoderException;
+  static int differenceEncoded(java.lang.String, java.lang.String);
+}
+

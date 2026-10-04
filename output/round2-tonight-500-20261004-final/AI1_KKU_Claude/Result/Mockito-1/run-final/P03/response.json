@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:31:50.323207+00:00",
+  "ended_at_utc": "2026-10-04T04:32:01.368542+00:00",
+  "raw_body_sha256": "7c79e9d6ac7230dded31927f20b4604efa0ea671ffe903ddf4919b9da88418e9",
+  "body": {
+    "id": "gen-1791088313-9VpQnmiZfWoO18O0GNrs",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.mockito.internal.invocation;\n\nimport static org.junit.Assert.*;\nimport static org.mockito.Mockito.*;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.List;\n\nimport org.hamcrest.Matcher;\nimport org.junit.Test;\nimport org.mockito.ArgumentCaptor;\nimport org.mockito.invocation.Invocation;\n\ninterface IMSample {\n    void simpleMethod(String arg);\n    void simpleMethod(String arg, int other);\n    void varargsMethod(String... args);\n}\n\npublic class InvocationMatcherTest {\n\n    private Invocation createInvocation(String methodName, Object... args) throws Exception {\n        IMSample mock = mock(IMSample.class);\n        if (\"simpleMethod\".equals(methodName)) {\n            if (args.length == 1) {\n                mock.simpleMethod((String) args[0]);\n            } else {\n                mock.simpleMethod((String) args[0], (Integer) args[1]);\n            }\n        } else if (\"varargsMethod\".equals(methodName)) {\n            mock.varargsMethod((String[]) args);\n        }\n        return mockingDetails(mock).getInvocations().iterator().next();\n    }\n\n    @Test\n    public void constructorWithoutMatchersCreatesEqualsMatchersFromArguments() throws Exception {\n        Invocation invocation = createInvocation(\"simpleMethod\", \"foo\");\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n\n        assertEquals(1, matcher.getMatchers().size());\n        assertTrue(matcher.matches(invocation));\n    }\n\n    @Test\n    public void matchesReturnsFalseForDifferentMock() throws Exception {\n        Invocation invocation1 = createInvocation(\"simpleMethod\", \"foo\");\n        Invocation invocation2 = createInvocation(\"simpleMethod\", \"foo\");\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n\n        assertFalse(matcher.matches(invocation2));\n    }\n\n    @Test\n    public void hasSameMethodTrueForSameSignature() throws Exception {\n        IMSample mock = mock(IMSample.class);\n        mock.simpleMethod(\"a\");\n        Invocation invocation1 = mockingDetails(mock).getInvocations().iterator().next();\n        mock.simpleMethod(\"b\");\n        List<Invocation> all = new ArrayList<Invocation>(mockingDetails(mock).getInvocations());\n        Invocation invocation2 = all.get(0);\n\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n        assertTrue(matcher.hasSameMethod(invocation2));\n    }\n\n    @Test\n    public void hasSameMethodFalseForOverloadedMethod() throws Exception {\n        Invocation invocation1 = createInvocation(\"simpleMethod\", \"a\");\n        Invocation invocation2 = createInvocation(\"simpleMethod\", \"a\", 1);\n\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n        assertFalse(matcher.hasSameMethod(invocation2));\n    }\n\n    @Test\n    public void createFromReturnsMatchersInSameOrderAndSize() throws Exception {\n        Invocation invocation1 = createInvocation(\"simpleMethod\", \"a\");\n        Invocation invocation2 = createInvocation(\"simpleMethod\", \"b\");\n        List<Invocation> invocations = Arrays.asList(invocation1, invocation2);\n\n        List<InvocationMatcher> matchers = InvocationMatcher.createFrom(invocations);\n\n        assertEquals(2, matchers.size());\n        assertSame(invocation1, matchers.get(0).getInvocation());\n        assertSame(invocation2, matchers.get(1).getInvocation());\n    }\n\n    @Test\n    public void delegatesToInvocationForBasicAccessors() throws Exception {\n        Invocation invocation = createInvocation(\"simpleMethod\", \"a\");\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n\n        assertSame(invocation, matcher.getInvocation());\n        assertSame(invocation.getMethod(), matcher.getMethod());\n        assertNotNull(matcher.getLocation());\n        assertNotNull(matcher.toString());\n    }\n\n    @Test\n    public void captureArgumentsFromCapturesNonVarargArgument() throws Exception {\n        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);\n        IMSample mock = mock(IMSample.class);\n        mock.simpleMethod(\"hello\");\n        Invocation invocation = mockingDetails(mock).getInvocations().iterator().next();\n\n        List<Matcher> matchers = new ArrayList<Matcher>();\n        matchers.add((Matcher) captor.capture());\n        InvocationMatcher invocationMatcher = new InvocationMatcher(invocation, matchers);\n\n        invocationMatcher.captureArgumentsFrom(invocation);\n\n        assertEquals(\"hello\", captor.getValue());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6141,
+      "output_tokens": 1752,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.029802,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.029802,
+        "upstream_inference_prompt_cost": 0.012282,
+        "upstream_inference_completions_cost": 0.01752
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 104592,
+      "daily_remaining_tokens": 95408
+    }
+  },
+  "headers": {
+    "x-request-id": "pnfsmudb8f6827v7gq43mens",
+    "date": "Sun, 04 Oct 2026 04:32:05 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

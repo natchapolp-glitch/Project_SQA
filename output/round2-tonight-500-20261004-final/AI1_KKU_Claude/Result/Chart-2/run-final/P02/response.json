@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:17:47.025298+00:00",
+  "ended_at_utc": "2026-10-04T05:17:59.442981+00:00",
+  "raw_body_sha256": "bc0a2e6e489fabd77ff1f02f11c2cefd075915e3ddfe551def0089854f69be43",
+  "body": {
+    "id": "gen-1791091068-EggmCrk1OFT4OgCD02HW",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jfree.data.general;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.jfree.data.Range;\nimport org.jfree.data.pie.DefaultPieDataset;\nimport org.jfree.data.pie.PieDataset;\nimport org.jfree.data.xy.XYSeries;\nimport org.jfree.data.xy.XYSeriesCollection;\nimport org.junit.Test;\n\npublic class DatasetUtilitiesTest {\n\n    @Test\n    public void testCalculatePieDatasetTotalIgnoresNegativeAndNull() {\n        DefaultPieDataset dataset = new DefaultPieDataset();\n        dataset.setValue(\"A\", 10.0);\n        dataset.setValue(\"B\", -5.0);\n        dataset.setValue(\"C\", null);\n        dataset.setValue(\"D\", 15.0);\n        double total = DatasetUtilities.calculatePieDatasetTotal(dataset);\n        assertEquals(25.0, total, 0.0000001);\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testCalculatePieDatasetTotalNullDataset() {\n        DatasetUtilities.calculatePieDatasetTotal((PieDataset) null);\n    }\n\n    @Test\n    public void testFindDomainBoundsSingleItem() {\n        XYSeries series = new XYSeries(\"S1\");\n        series.add(5.0, 10.0);\n        XYSeriesCollection dataset = new XYSeriesCollection();\n        dataset.addSeries(series);\n        Range range = DatasetUtilities.findDomainBounds(dataset);\n        assertEquals(5.0, range.getLowerBound(), 0.0000001);\n        assertEquals(5.0, range.getUpperBound(), 0.0000001);\n    }\n\n    @Test\n    public void testFindDomainBoundsUnsortedValues() {\n        XYSeries series = new XYSeries(\"S1\", false, true);\n        series.add(3.0, 1.0);\n        series.add(-2.0, 2.0);\n        series.add(8.0, 3.0);\n        series.add(1.0, 4.0);\n        XYSeriesCollection dataset = new XYSeriesCollection();\n        dataset.addSeries(series);\n        Range range = DatasetUtilities.findDomainBounds(dataset);\n        assertEquals(-2.0, range.getLowerBound(), 0.0000001);\n        assertEquals(8.0, range.getUpperBound(), 0.0000001);\n    }\n\n    @Test\n    public void testFindDomainBoundsSkipsNaN() {\n        XYSeries series = new XYSeries(\"S1\", false, true);\n        series.add(1.0, 1.0);\n        series.add(Double.NaN, 2.0);\n        series.add(4.0, 3.0);\n        XYSeriesCollection dataset = new XYSeriesCollection();\n        dataset.addSeries(series);\n        Range range = DatasetUtilities.findDomainBounds(dataset);\n        assertEquals(1.0, range.getLowerBound(), 0.0000001);\n        assertEquals(4.0, range.getUpperBound(), 0.0000001);\n        assertTrue(!Double.isNaN(range.getLowerBound()));\n        assertTrue(!Double.isNaN(range.getUpperBound()));\n    }\n\n    @Test\n    public void testFindDomainBoundsEmptyDatasetReturnsNull() {\n        XYSeriesCollection dataset = new XYSeriesCollection();\n        Range range = DatasetUtilities.findDomainBounds(dataset);\n        assertNull(range);\n    }\n\n    @Test\n    public void testFindDomainBoundsAggregatesAcrossSeries() {\n        XYSeries series1 = new XYSeries(\"S1\");\n        series1.add(0.0, 1.0);\n        series1.add(5.0, 2.0);\n        XYSeries series2 = new XYSeries(\"S2\");\n        series2.add(-10.0, 1.0);\n        series2.add(3.0, 2.0);\n        XYSeriesCollection dataset = new XYSeriesCollection();\n        dataset.addSeries(series1);\n        dataset.addSeries(series2);\n        Range range = DatasetUtilities.findDomainBounds(dataset);\n        assertEquals(-10.0, range.getLowerBound(), 0.0000001);\n        assertEquals(5.0, range.getUpperBound(), 0.0000001);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8311,
+      "output_tokens": 1551,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.032132,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.032132,
+        "upstream_inference_prompt_cost": 0.016622,
+        "upstream_inference_completions_cost": 0.01551
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 31117,
+      "daily_remaining_tokens": 168883
+    }
+  },
+  "headers": {
+    "x-request-id": "tbmrr7ozndjvkxpfnwb7w39h",
+    "date": "Sun, 04 Oct 2026 05:17:59 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

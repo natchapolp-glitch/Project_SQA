@@ -1,0 +1,88 @@
+package com.fasterxml.jackson.databind.deser.std;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import org.junit.Test;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
+
+public class StringArrayDeserializerTest {
+
+    @Test
+    public void testBasicArrayDeserialization() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String[] result = mapper.readValue("[\"a\",\"b\",\"c\"]", String[].class);
+        assertArrayEquals(new String[] {"a", "b", "c"}, result);
+
+        String[] empty = mapper.readValue("[]", String[].class);
+        assertEquals(0, empty.length);
+    }
+
+    @Test
+    public void testNullAndNullElements() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String[] nullResult = mapper.readValue("null", String[].class);
+        assertNull(nullResult);
+
+        String[] withNulls = mapper.readValue("[\"a\", null, \"b\"]", String[].class);
+        assertArrayEquals(new String[] {"a", null, "b"}, withNulls);
+    }
+
+    @Test
+    public void testSingleValueUnwrapping() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
+        String[] result = mapper.readValue("\"hello\"", String[].class);
+        assertArrayEquals(new String[] {"hello"}, result);
+    }
+
+    @Test(expected = MismatchedInputException.class)
+    public void testScalarWithoutUnwrapThrows() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
+        mapper.readValue("\"hello\"", String[].class);
+    }
+
+    @Test
+    public void testNumberAndBooleanCoercion() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String[] result = mapper.readValue("[1, true, 2.5]", String[].class);
+        assertArrayEquals(new String[] {"1", "true", "2.5"}, result);
+    }
+
+    @Test
+    public void testLargeArrayBeyondBufferThreshold() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        int size = 50;
+        StringBuilder sb = new StringBuilder("[");
+        String[] expected = new String[size];
+        for (int i = 0; i < size; i++) {
+            if (i > 0) sb.append(",");
+            String val = "item" + i;
+            sb.append("\"").append(val).append("\"");
+            expected[i] = val;
+        }
+        sb.append("]");
+        String[] result = mapper.readValue(sb.toString(), String[].class);
+        assertEquals(size, result.length);
+        assertArrayEquals(expected, result);
+    }
+
+    @Test(expected = com.fasterxml.jackson.databind.exc.MismatchedInputException.class)
+    public void testObjectAsArrayElementThrows() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.readValue("[{}]", String[].class);
+    }
+
+    @Test
+    public void testEmptyStringAsNullWhenScalarAndFeatureEnabled() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);
+        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
+        String[] result = mapper.readValue("\"\"", String[].class);
+        assertNull(result);
+    }
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:41:00.922039+00:00",
+  "ended_at_utc": "2026-10-04T05:41:03.886946+00:00",
+  "raw_body_sha256": "a5a773105c491297a7cfe2baa9921f5678ff707a15e96e2673b9e495fe8192e8",
+  "body": {
+    "id": "genai-01a1056e-22cf-7a90-b2dd-f0d98fd7aa68",
+    "object": "chat.completion",
+    "created": 1791092466,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.compress.archivers.ar;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\npublic class ArArchiveInputStreamTest {\n\n    @Test\n    public void testMatchesValidSignature() {\n        byte[] valid = \"!<arch>\\n\".getBytes();\n        assertTrue(ArArchiveInputStream.matches(valid, valid.length));\n    }\n\n    @Test\n    public void testMatchesInvalidSignature() {\n        byte[] invalid = \"INVALID\\n\".getBytes();\n        assertFalse(ArArchiveInputStream.matches(invalid, invalid.length));\n        assertFalse(ArArchiveInputStream.matches(validBytes(), 5));\n    }\n\n    @Test\n    public void testCloseStream() throws IOException {\n        ByteArrayInputStream bais = new ByteArrayInputStream(validArchiveBytes());\n        ArArchiveInputStream in = new ArArchiveInputStream(bais);\n        in.close();\n        boolean threw = false;\n        try {\n            in.read();\n        } catch (IOException e) {\n            threw = true;\n        }\n        assertTrue(threw);\n    }\n\n    @Test\n    public void testGetNextEntryNullOnEmptyOrEof() throws IOException {\n        byte[] data = validArchiveBytes();\n        ByteArrayInputStream bais = new ByteArrayInputStream(data);\n        ArArchiveInputStream in = new ArArchiveInputStream(bais);\n        assertNotNull(in.getNextEntry());\n        assertNull(in.getNextEntry());\n        in.close();\n    }\n\n    @Test\n    public void testReadZeroBytes() throws IOException {\n        ByteArrayInputStream bais = new ByteArrayInputStream(validArchiveBytes());\n        ArArchiveInputStream in = new ArArchiveInputStream(bais);\n        byte[] buf = new byte[10];\n        int read = in.read(buf, 0, 0);\n        assertEquals(0, read);\n        in.close();\n    }\n\n    private byte[] validBytes() {\n        return \"!<arch>\\n\".getBytes();\n    }\n\n    private byte[] validArchiveBytes() {\n        StringBuilder sb = new StringBuilder();\n        sb.append(\"!<arch>\\n\");\n        sb.append(\"File1.txt       \");\n        sb.append(\"1261741234  \");\n        sb.append(\"0     \");\n        sb.append(\"0     \");\n        sb.append(\"100644  \");\n        sb.append(\"          \");\n        sb.append(\"`\\n\");\n        sb.append(\"1234567890\");\n        return sb.toString().getBytes();\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2125,
+      "completion_tokens": 662,
+      "total_tokens": 2787
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 35478,
+      "daily_remaining_tokens": 314522
+    }
+  },
+  "headers": {
+    "x-request-id": "mmjmp6buy5k0k3h8v62tvfb0",
+    "date": "Sun, 04 Oct 2026 05:41:06 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

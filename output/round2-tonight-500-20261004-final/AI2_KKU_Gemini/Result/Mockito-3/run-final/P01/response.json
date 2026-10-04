@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:06:57.199810+00:00",
+  "ended_at_utc": "2026-10-04T08:06:59.000173+00:00",
+  "raw_body_sha256": "62aa9aa2cbafefa0685bdc59bbddba5e5071a857ec39681d2b1cfa1d58a07e61",
+  "body": {
+    "id": "genai-01a105f3-b766-7505-908f-bbc8f1a9041d",
+    "object": "chat.completion",
+    "created": 1791101220,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "Valid receiver setup: instantiate `InvocationMatcher` with a valid `Invocation` and an appropriate list of Hamcrest `Matcher` instances.\n`matches(Invocation)` should return true when the candidate invocation matches both the method and arguments of the stored invocation/matchers.\n`matches(Invocation)` must safely handle candidate invocations with differing argument lengths or types without throwing unhandled exceptions.\n`hasSameMethod(Invocation)` returns true if and only if the candidate invocation targets the exact same reflective `Method`.\n`hasSimilarMethod(Invocation)` returns true if the candidate invocation has a similar method signature (e.g., erasure/overloading compatibility).\n`captureArgumentsFrom(Invocation)` correctly extracts argument values using the configured matchers that implement `CapturesArguments`.\n`getMatchers()` returns the exact list of Hamcrest matchers supplied at construction or synthesized default matchers (e.g., `Any`).\n`createFrom(List<Invocation>)` correctly transforms a list of invocations into a corresponding list of `InvocationMatcher` objects.\nBoundary condition: handling empty matcher lists or when the provided matcher list size does not match the method argument count.\nBoundary condition: invoking methods with varargs or null arguments against strict Hamcrest matchers.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 451,
+      "completion_tokens": 257,
+      "total_tokens": 708
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 80829,
+      "daily_remaining_tokens": 269171
+    }
+  },
+  "headers": {
+    "x-request-id": "m7hf3rr97vrets5fthyui6tv",
+    "date": "Sun, 04 Oct 2026 08:07:00 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

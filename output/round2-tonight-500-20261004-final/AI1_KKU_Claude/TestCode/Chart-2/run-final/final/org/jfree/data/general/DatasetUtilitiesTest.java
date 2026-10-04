@@ -1,0 +1,94 @@
+package org.jfree.data.general;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.jfree.data.Range;
+import org.jfree.data.pie.DefaultPieDataset;
+import org.jfree.data.pie.PieDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.junit.Test;
+
+public class DatasetUtilitiesTest {
+
+    @Test
+    public void testCalculatePieDatasetTotalIgnoresNegativeAndNull() {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue("A", 10.0);
+        dataset.setValue("B", -5.0);
+        dataset.setValue("C", null);
+        dataset.setValue("D", 15.0);
+        double total = DatasetUtilities.calculatePieDatasetTotal(dataset);
+        assertEquals(25.0, total, 0.0000001);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCalculatePieDatasetTotalNullDataset() {
+        DatasetUtilities.calculatePieDatasetTotal((PieDataset) null);
+    }
+
+    @Test
+    public void testFindDomainBoundsSingleItem() {
+        XYSeries series = new XYSeries("S1");
+        series.add(5.0, 10.0);
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(series);
+        Range range = DatasetUtilities.findDomainBounds(dataset, false);
+        assertEquals(5.0, range.getLowerBound(), 0.0000001);
+        assertEquals(5.0, range.getUpperBound(), 0.0000001);
+    }
+
+    @Test
+    public void testFindDomainBoundsUnsortedValues() {
+        XYSeries series = new XYSeries("S1", false, true);
+        series.add(3.0, 1.0);
+        series.add(-2.0, 2.0);
+        series.add(8.0, 3.0);
+        series.add(1.0, 4.0);
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(series);
+        Range range = DatasetUtilities.findDomainBounds(dataset, false);
+        assertEquals(-2.0, range.getLowerBound(), 0.0000001);
+        assertEquals(8.0, range.getUpperBound(), 0.0000001);
+    }
+
+    @Test
+    public void testFindDomainBoundsSkipsNaN() {
+        XYSeries series = new XYSeries("S1", false, true);
+        series.add(1.0, 1.0);
+        series.add(Double.NaN, 2.0);
+        series.add(4.0, 3.0);
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(series);
+        Range range = DatasetUtilities.findDomainBounds(dataset, false);
+        assertEquals(1.0, range.getLowerBound(), 0.0000001);
+        assertEquals(4.0, range.getUpperBound(), 0.0000001);
+        assertTrue(!Double.isNaN(range.getLowerBound()));
+        assertTrue(!Double.isNaN(range.getUpperBound()));
+    }
+
+    @Test
+    public void testFindDomainBoundsEmptyDatasetReturnsNull() {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        Range range = DatasetUtilities.findDomainBounds(dataset);
+        assertNull(range);
+    }
+
+    @Test
+    public void testFindDomainBoundsAggregatesAcrossSeries() {
+        XYSeries series1 = new XYSeries("S1");
+        series1.add(0.0, 1.0);
+        series1.add(5.0, 2.0);
+        XYSeries series2 = new XYSeries("S2");
+        series2.add(-10.0, 1.0);
+        series2.add(3.0, 2.0);
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(series1);
+        dataset.addSeries(series2);
+        Range range = DatasetUtilities.findDomainBounds(dataset, false);
+        assertEquals(-10.0, range.getLowerBound(), 0.0000001);
+        assertEquals(5.0, range.getUpperBound(), 0.0000001);
+    }
+}

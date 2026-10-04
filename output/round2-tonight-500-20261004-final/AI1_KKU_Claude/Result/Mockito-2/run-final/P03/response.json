@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:35:24.064284+00:00",
+  "ended_at_utc": "2026-10-04T06:35:28.984561+00:00",
+  "raw_body_sha256": "69be99dd0aced19d72e748c764ba658072cf2285c9991faf8537f05f9f9bfb11",
+  "body": {
+    "id": "gen-1791095725-kGoZtr7bm4O72ppnOB6Q",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.mockito.internal.util;\n\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class TimerTest {\n\n    @Test\n    public void shouldBeCountingImmediatelyAfterStartWithPositiveDuration() {\n        Timer timer = new Timer(10000);\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void shouldNotBeCountingWhenDurationIsZero() throws InterruptedException {\n        Timer timer = new Timer(0);\n        timer.start();\n        Thread.sleep(5);\n        assertFalse(timer.isCounting());\n    }\n\n    @Test(expected = org.mockito.exceptions.misusing.FriendlyReminderException.class)\n    public void shouldThrowWhenDurationIsNegative() {\n        new Timer(-1);\n    }\n\n    @Test\n    public void shouldRestartCountingWhenStartCalledAgain() {\n        Timer timer = new Timer(10000);\n        timer.start();\n        assertTrue(timer.isCounting());\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void shouldHandleLargeDurationWithoutOverflow() {\n        Timer timer = new Timer(Long.MAX_VALUE);\n        timer.start();\n        assertTrue(timer.isCounting());\n    }\n\n    @Test\n    public void shouldEventuallyStopCountingAfterDurationElapses() throws InterruptedException {\n        Timer timer = new Timer(20);\n        timer.start();\n        assertTrue(timer.isCounting());\n        Thread.sleep(50);\n        assertFalse(timer.isCounting());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2550,
+      "output_tokens": 609,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.01119,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.01119,
+        "upstream_inference_prompt_cost": 0.0051,
+        "upstream_inference_completions_cost": 0.00609
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 96689,
+      "daily_remaining_tokens": 103311
+    }
+  },
+  "headers": {
+    "x-request-id": "cmrrlat650znlph14t7px42n",
+    "date": "Sun, 04 Oct 2026 06:35:30 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

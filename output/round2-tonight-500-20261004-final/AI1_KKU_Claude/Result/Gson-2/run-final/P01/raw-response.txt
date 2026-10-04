@@ -1,0 +1,10 @@
+- ATOMIC_BOOLEAN adapter missing from this list is unrelated; focus on known Gson-2 bug area: BIT_SET TypeAdapter read/write behavior — bits set via "1"/"0", true/false, numeric values; verify order preserved and unsupported tokens throw JsonSyntaxException.
+- BIT_SET.write: for a BitSet with specific bits set (e.g., {0,2}), ensure JSON array output has 1s and 0s at correct indices matching cardinality/length semantics.
+- BIT_SET.read: parsing JSON array of booleans, numbers (0/1), or strings ("true"/"false","0"/"1") should set bits accordingly; invalid tokens (e.g., non-boolean-like string, null) should throw.
+- BOOLEAN vs BOOLEAN_AS_STRING: BOOLEAN.read on JSON string "true"/"false" (lenient) vs strict null-safety; writing null produces JSON null; BOOLEAN_AS_STRING writes boolean as quoted string.
+- Numeric adapters (BYTE, SHORT, INTEGER, LONG, FLOAT, DOUBLE): read should throw NumberFormatException-derived JsonSyntaxException on overflow/non-numeric; write should emit raw number without quotes.
+- STRING adapter: write(null) -> JSON null; read of JSON null -> returns null; read of boolean/number token -> coerced to string.
+- CLASS adapter: write should throw UnsupportedOperationException always (documented behavior), read likewise unsupported/throws.
+- Each TypeAdapterFactory (XXX_FACTORY) create(Gson, TypeToken) returns null for non-matching type, and the matching adapter instance for matching type/rawType.
+- newFactory/newFactoryForMultipleTypes/newTypeHierarchyFactory: verify correct TypeAdapterFactory creation semantics—base type match, subtype match for multiple-types factory, hierarchy match for hierarchy factory, non-match returns null.
+- All adapters must correctly handle writer.nullValue() and reader JsonToken.NULL for nullable wrapper types per TypeAdapter.nullSafe() contract (none should NPE on null input where documented nullable).

@@ -1,0 +1,134 @@
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.StringReader;
+
+import org.junit.Test;
+
+public class LexerTest {
+
+    private Lexer createLexer(final String input, final CSVFormat format) {
+        return new CSVLexer(format, new ExtendedBufferedReader(new StringReader(input)));
+    }
+
+    @Test
+    public void testReadEscapeKnownChars() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\');
+        Lexer lexer = createLexer("rntbf", format);
+        assertEquals(Constants.CR, lexer.readEscape());
+        assertEquals(Constants.LF, lexer.readEscape());
+        assertEquals(Constants.TAB, lexer.readEscape());
+        assertEquals(Constants.BACKSPACE, lexer.readEscape());
+        assertEquals(Constants.FF, lexer.readEscape());
+    }
+
+    @Test
+    public void testReadEscapeLiteralCharAndEofThrows() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\');
+        Lexer lexer = createLexer("x", format);
+        assertEquals('x', lexer.readEscape());
+
+        Lexer eofLexer = createLexer("", format);
+        try {
+            eofLexer.readEscape();
+            org.junit.Assert.fail("Expected IOException at EOF after escape");
+        } catch (IOException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testTrimTrailingSpaces() {
+        CSVFormat format = CSVFormat.DEFAULT;
+        Lexer lexer = createLexer("", format);
+
+        StringBuilder empty = new StringBuilder();
+        lexer.trimTrailingSpaces(empty);
+        assertEquals("", empty.toString());
+
+        StringBuilder allWhitespace = new StringBuilder("   \t  ");
+        lexer.trimTrailingSpaces(allWhitespace);
+        assertEquals("", allWhitespace.toString());
+
+        StringBuilder mixed = new StringBuilder("  hello   ");
+        lexer.trimTrailingSpaces(mixed);
+        assertEquals("  hello", mixed.toString());
+    }
+
+    @Test
+    public void testReadEndOfLineVariants() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT;
+        Lexer crlfLexer = createLexer("\n", format);
+        assertTrue(crlfLexer.readEndOfLine(Constants.CR));
+
+        Lexer lfLexer = createLexer("", format);
+        assertTrue(lfLexer.readEndOfLine(Constants.LF));
+
+        Lexer crOnlyLexer = createLexer("x", format);
+        assertTrue(crOnlyLexer.readEndOfLine(Constants.CR));
+        assertEquals('x', crOnlyLexer.in.read());
+
+        Lexer notEolLexer = createLexer("", format);
+        assertFalse(notEolLexer.readEndOfLine('a'));
+    }
+
+    @Test
+    public void testIsWhitespaceExcludesDelimiter() {
+        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(' ');
+        Lexer lexer = createLexer("", format);
+        assertFalse(lexer.isWhitespace(' '));
+        assertTrue(lexer.isWhitespace('\t'));
+    }
+
+    @Test
+    public void testIsStartOfLineAndEndOfFile() {
+        CSVFormat format = CSVFormat.DEFAULT;
+        Lexer lexer = createLexer("", format);
+        assertTrue(lexer.isStartOfLine(Constants.LF));
+        assertTrue(lexer.isStartOfLine(Constants.CR));
+        assertTrue(lexer.isStartOfLine(Constants.UNDEFINED));
+        assertFalse(lexer.isStartOfLine('a'));
+
+        assertTrue(lexer.isEndOfFile(Constants.END_OF_STREAM));
+        assertFalse(lexer.isEndOfFile('a'));
+    }
+
+    @Test
+    public void testIsDelimiterEscapeQuoteCommentWithDisabled() {
+        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',');
+        Lexer lexer = createLexer("", format);
+        assertTrue(lexer.isDelimiter(','));
+        assertFalse(lexer.isDelimiter(';'));
+        assertFalse(lexer.isEscape('\\'));
+        assertFalse(lexer.isQuoteChar('"'));
+        assertFalse(lexer.isCommentStart('#'));
+    }
+
+    @Test
+    public void testIsDelimiterEscapeQuoteCommentWhenEnabled() {
+        CSVFormat format = CSVFormat.DEFAULT
+                .withDelimiter(',')
+                .withEscape('\\')
+                .withQuote('"')
+                .withCommentMarker('#');
+        Lexer lexer = createLexer("", format);
+        assertTrue(lexer.isDelimiter(','));
+        assertTrue(lexer.isEscape('\\'));
+        assertTrue(lexer.isQuoteChar('"'));
+        assertTrue(lexer.isCommentStart('#'));
+        assertFalse(lexer.isCommentStart(';'));
+    }
+
+    @Test
+    public void testGetLineNumberInitialValue() {
+        CSVFormat format = CSVFormat.DEFAULT;
+        Lexer lexer = createLexer("a,b\nc,d", format);
+        assertEquals(0, lexer.getLineNumber());
+    }
+}
+```

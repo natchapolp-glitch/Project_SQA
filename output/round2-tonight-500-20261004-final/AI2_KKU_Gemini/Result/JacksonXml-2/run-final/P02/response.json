@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:03:07.274877+00:00",
+  "ended_at_utc": "2026-10-04T06:03:10.693533+00:00",
+  "raw_body_sha256": "f083725767b4ca34dcab272552fcc7b6925976228ae7bb685554ff1f94a98d7c",
+  "body": {
+    "id": "genai-01a10582-589b-77b0-bbbd-3faab459dc41",
+    "object": "chat.completion",
+    "created": 1791093790,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.dataformat.xml.deser;\n\nimport static org.junit.Assert.*;\n\nimport java.io.StringReader;\nimport javax.xml.stream.XMLInputFactory;\nimport javax.xml.stream.XMLStreamReader;\n\nimport org.junit.Test;\n\npublic class XmlTokenStreamTest {\n\n    private XmlTokenStream createTokenStream(String xml) throws Exception {\n        XMLInputFactory f = XMLInputFactory.newFactory();\n        XMLStreamReader sr = f.createXMLStreamReader(new StringReader(xml));\n        while (sr.hasNext() && sr.getEventType() != XMLStreamReader.START_ELEMENT) {\n            sr.next();\n        }\n        return new XmlTokenStream(sr, \"sourceRef\");\n    }\n\n    @Test\n    public void testInitialStateAndGetters() throws Exception {\n        String xml = \"<root attr='val'>hello</root>\";\n        XmlTokenStream stream = createTokenStream(xml);\n\n        assertEquals(XmlTokenStream.XML_START_ELEMENT, stream.getCurrentToken());\n        assertEquals(\"root\", stream.getLocalName());\n        assertNotNull(stream.getXmlReader());\n        assertTrue(stream.hasAttributes());\n        assertNotNull(stream.getCurrentLocation());\n        assertNotNull(stream.getTokenLocation());\n    }\n\n    @Test\n    public void testNextIterationSimple() throws Exception {\n        String xml = \"<root>text</root>\";\n        XmlTokenStream stream = createTokenStream(xml);\n\n        assertEquals(XmlTokenStream.XML_START_ELEMENT, stream.getCurrentToken());\n        \n        int token1 = stream.next();\n        assertEquals(XmlTokenStream.XML_TEXT, token1);\n        assertEquals(\"text\", stream.getText());\n\n        int token2 = stream.next();\n        assertEquals(XmlTokenStream.XML_END_ELEMENT, token2);\n\n        int token3 = stream.next();\n        assertEquals(XmlTokenStream.XML_END, token3);\n    }\n\n    @Test\n    public void testAttributesIteration() throws Exception {\n        String xml = \"<root id='123'></root>\";\n        XmlTokenStream stream = createTokenStream(xml);\n\n        assertTrue(stream.hasAttributes());\n        \n        int token1 = stream.next();\n        assertEquals(XmlTokenStream.XML_ATTRIBUTE_NAME, token1);\n        assertEquals(\"id\", stream.getLocalName());\n\n        int token2 = stream.next();\n        assertEquals(XmlTokenStream.XML_ATTRIBUTE_VALUE, token2);\n        assertEquals(\"123\", stream.getText());\n    }\n\n    @Test\n    public void testSkipEndElement() throws Exception {\n        String xml = \"<root></root>\";\n        XmlTokenStream stream = createTokenStream(xml);\n\n        stream.skipEndElement();\n        assertEquals(XmlTokenStream.XML_END, stream.getCurrentToken());\n    }\n\n    @Test\n    public void testCloseOperations() throws Exception {\n        String xml = \"<root/>\";\n        XmlTokenStream stream = createTokenStream(xml);\n\n        stream.close();\n        stream.closeCompletely();\n        assertTrue(stream.toString() != null);\n    }\n\n    @Test(expected = IllegalStateException.class)\n    public void testSkipAttributesInvalidState() throws Exception {\n        String xml = \"<root><child/></root>\";\n        XmlTokenStream stream = createTokenStream(xml);\n        stream.next(); // moves to child or text\n        stream.skipAttributes();\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3934,
+      "completion_tokens": 790,
+      "total_tokens": 4724
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 45259,
+      "daily_remaining_tokens": 304741
+    }
+  },
+  "headers": {
+    "x-request-id": "dqqojdh62pe71ghs6sfuay2z",
+    "date": "Sun, 04 Oct 2026 06:03:10 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

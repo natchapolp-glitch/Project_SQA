@@ -1,0 +1,55 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JacksonXml-2
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.dataformat.xml.deser.XmlTokenStream
+BUGGY API signatures:
+Compiled from "XmlTokenStream.java"
+public class com.fasterxml.jackson.dataformat.xml.deser.XmlTokenStream {
+  public static final int XML_START_ELEMENT;
+  public static final int XML_END_ELEMENT;
+  public static final int XML_ATTRIBUTE_NAME;
+  public static final int XML_ATTRIBUTE_VALUE;
+  public static final int XML_TEXT;
+  public static final int XML_END;
+  private static final int REPLAY_START_DUP;
+  private static final int REPLAY_END;
+  private static final int REPLAY_START_DELAYED;
+  protected final org.codehaus.stax2.XMLStreamReader2 _xmlReader;
+  protected final java.lang.Object _sourceReference;
+  protected int _currentState;
+  protected int _attributeCount;
+  protected int _nextAttributeIndex;
+  protected java.lang.String _localName;
+  protected java.lang.String _namespaceURI;
+  protected java.lang.String _textValue;
+  protected int _repeatElement;
+  protected com.fasterxml.jackson.dataformat.xml.deser.ElementWrapper _currentWrapper;
+  protected java.lang.String _nextLocalName;
+  protected java.lang.String _nextNamespaceURI;
+  public com.fasterxml.jackson.dataformat.xml.deser.XmlTokenStream(javax.xml.stream.XMLStreamReader, java.lang.Object);
+  public org.codehaus.stax2.XMLStreamReader2 getXmlReader();
+  public int next() throws java.io.IOException;
+  public void skipEndElement() throws java.io.IOException;
+  public int getCurrentToken();
+  public java.lang.String getText();
+  public java.lang.String getLocalName();
+  public java.lang.String getNamespaceURI();
+  public boolean hasAttributes();
+  public void closeCompletely() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public com.fasterxml.jackson.core.JsonLocation getCurrentLocation();
+  public com.fasterxml.jackson.core.JsonLocation getTokenLocation();
+  protected void repeatStartElement();
+  protected void skipAttributes();
+  protected java.lang.String convertToString() throws java.io.IOException;
+  private final int _next() throws javax.xml.stream.XMLStreamException;
+  private final java.lang.String _collectUntilTag() throws javax.xml.stream.XMLStreamException;
+  private final int _skipUntilTag() throws javax.xml.stream.XMLStreamException;
+  private final int _initStartElement() throws javax.xml.stream.XMLStreamException;
+  protected int _handleRepeatElement() throws java.io.IOException;
+  private final int _handleEndElement();
+  private com.fasterxml.jackson.core.JsonLocation _extractLocation(org.codehaus.stax2.XMLStreamLocation2);
+  public java.lang.String toString();
+}
+

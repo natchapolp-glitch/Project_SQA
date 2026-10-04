@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:31:41.436455+00:00",
+  "ended_at_utc": "2026-10-04T05:31:43.279210+00:00",
+  "raw_body_sha256": "be7d85d7b603caf24439d4d0b965be3b0258e8d6f5dbc913e5689561c113aa05",
+  "body": {
+    "id": "genai-01a10565-9556-728f-a93f-2d937a423cea",
+    "object": "chat.completion",
+    "created": 1791091905,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Valid receiver setup: instantiate `Base64` using default constructor, or constructors with `boolean` (URL-safe), `int` (line length), or `int` and `byte[]` (line length and custom separator).\n2. Boundary behavior: encoding empty byte arrays `new byte[0]` or null inputs should return empty arrays or handle gracefully per contract.\n3. Decoding boundary: decoding malformed Base64 data, inputs with invalid characters, whitespace, or incorrect padding length.\n4. Chunking boundary: encoding with line length constraints (e.g., `chunkSize > 0`) should insert correct line separators (`CHUNK_SEPARATOR`).\n5. URL-safe encoding: verify `encodeBase64URLSafe` and `Base64(true)` use `-` and `_` instead of `+` and `/`, omitting padding `=` if required by spec.\n6. Integer codec behavior: `encodeInteger` and `decodeInteger` should correctly handle positive/negative `BigInteger` values with minimal byte representation.\n7. State integrity: incremental streaming encode/decode via internal buffer (`buf`, `pos`, `readPos`, `eof`, `modulus`) across multiple `encode`/`decode` calls.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 812,
+      "completion_tokens": 260,
+      "total_tokens": 1072
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 18105,
+      "daily_remaining_tokens": 331895
+    }
+  },
+  "headers": {
+    "x-request-id": "kgd8y4ci88pgppmn96f3cnr8",
+    "date": "Sun, 04 Oct 2026 05:31:45 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

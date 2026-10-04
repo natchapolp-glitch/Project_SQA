@@ -1,0 +1,337 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Compress-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.compress.archivers.ar.ArArchiveInputStream
+
+BUGGY API signatures (may include private members):
+Compiled from "ArArchiveInputStream.java"
+public class org.apache.commons.compress.archivers.ar.ArArchiveInputStream extends org.apache.commons.compress.archivers.ArchiveInputStream {
+  private final java.io.InputStream input;
+  private long offset;
+  private boolean closed;
+  public org.apache.commons.compress.archivers.ar.ArArchiveInputStream(java.io.InputStream);
+  public org.apache.commons.compress.archivers.ar.ArArchiveEntry getNextArEntry() throws java.io.IOException;
+  public org.apache.commons.compress.archivers.ArchiveEntry getNextEntry() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public int read() throws java.io.IOException;
+  public int read(byte[]) throws java.io.IOException;
+  public int read(byte[], int, int) throws java.io.IOException;
+  public static boolean matches(byte[], int);
+}
+
+
+BUGGY source excerpt: org.apache.commons.compress.archivers.ar.ArArchiveInputStream (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.commons.compress.archivers.ar;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+
+/**
+ * Implements the "ar" archive format as an input stream.
+ * 
+ * @NotThreadSafe
+ * 
+ */
+public class ArArchiveInputStream extends ArchiveInputStream {
+
+    private final InputStream input;
+    private long offset = 0;
+    private boolean closed;
+    /*
+     * If getNextEnxtry has been called, the entry metadata is stored in
+     * currentEntry.
+     */
+    /*
+     * The offset where the current entry started. -1 if no entry has been
+     * called
+     */
+
+    public ArArchiveInputStream( final InputStream pInput ) {
+        input = pInput;
+        closed = false;
+    }
+
+    /**
+     * Returns the next AR entry in this stream.
+     * 
+     * @return the next AR entry.
+     * @throws IOException
+     *             if the entry could not be read
+     */
+    public ArArchiveEntry getNextArEntry() throws IOException {
+                    // hit EOF before previous entry was complete
+                    // TODO: throw an exception instead?
+
+        if (offset == 0) {
+            final byte[] expected = ArArchiveEntry.HEADER.getBytes();
+            final byte[] realized = new byte[expected.length]; 
+            final int read = read(realized);
+            if (read != expected.length) {
+                throw new IOException("failed to read header");
+            }
+            for (int i = 0; i < expected.length; i++) {
+                if (expected[i] != realized[i]) {
+                    throw new IOException("invalid header " + new String(realized));
+                }
+            }
+        }
+
+                // hit eof
+
+        if (input.available() == 0) {
+            return null;
+        }
+
+        if (offset % 2 != 0) {
+            read();
+        }
+        final byte[] name = new byte[16];
+        final byte[] lastmodified = new byte[12];
+        final byte[] userid = new byte[6];
+        final byte[] groupid = new byte[6];
+        final byte[] filemode = new byte[8];
+        final byte[] length = new byte[10];
+
+        read(name);
+        read(lastmodified);
+        read(userid);
+        read(groupid);
+        read(filemode);
+        read(length);
+
+        {
+            final byte[] expected = ArArchiveEntry.TRAILER.getBytes();
+            final byte[] realized = new byte[expected.length]; 
+            final int read = read(realized);
+            if (read != expected.length) {
+                throw new IOException("failed to read entry header");
+            }
+            for (int i = 0; i < expected.length; i++) {
+                if (expected[i] != realized[i]) {
+                    throw new IOException("invalid entry header. not read the content?");
+                }
+            }
+        }
+
+        return new ArArchiveEntry(new String(name).trim(),
+                                          Long.parseLong(new String(length)
+                                                         .trim()));
+    }
+
+
+    public ArchiveEntry getNextEntry() throws IOException {
+        return getNextArEntry();
+    }
+
+    public void close() throws IOException {
+        if (!closed) {
+            closed = true;
+            input.close();
+        }
+    }
+
+    public int read() throws IOException {
+        final int ret = input.read();
+        offset += (ret > 0 ? 1 : 0);
+        return ret;
+    }
+
+    public int read(byte[] b) throws IOException {
+        return read(b, 0, b.length);
+    }
+
+    public int read(byte[] b, final int off, final int len) throws IOException {
+        int toRead = len;
+        final int ret = this.input.read(b, off, toRead);
+        offset += (ret > 0 ? ret : 0);
+        return ret;
+    }
+
+    public static boolean matches(byte[] signature, int length) {
+        // 3c21 7261 6863 0a3e
+
+        if (length < 8) {
+            return false;
+        }
+        if (signature[0] != 0x21) {
+            return false;
+        }
+        if (signature[1] != 0x3c) {
+            return false;
+        }
+        if (signature[2] != 0x61) {
+            return false;
+        }
+        if (signature[3] != 0x72) {
+            return false;
+        }
+        if (signature[4] != 0x63) {
+            return false;
+        }
+        if (signature[5] != 0x68) {
+            return false;
+        }
+        if (signature[6] != 0x3e) {
+            return false;
+        }
+        if (signature[7] != 0x0a) {
+            return false;
+        }
+
+        return true;
+    }
+
+}
+
+```
+
+
+Original generated source:
+```java
+package org.apache.commons.compress.archivers.ar;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+public class ArArchiveInputStreamTest {
+
+    @Test
+    public void testMatchesValidSignature() {
+        byte[] valid = "!<arch>\n".getBytes();
+        assertTrue(ArArchiveInputStream.matches(valid, valid.length));
+    }
+
+    @Test
+    public void testMatchesInvalidSignature() {
+        byte[] invalid = "INVALID\n".getBytes();
+        assertFalse(ArArchiveInputStream.matches(invalid, invalid.length));
+        assertFalse(ArArchiveInputStream.matches(validBytes(), 5));
+    }
+
+    @Test
+    public void testCloseStream() throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(validArchiveBytes());
+        ArArchiveInputStream in = new ArArchiveInputStream(bais);
+        in.close();
+        boolean threw = false;
+        try {
+            in.read();
+        } catch (IOException e) {
+            threw = true;
+        }
+        assertTrue(threw);
+    }
+
+    @Test
+    public void testGetNextEntryNullOnEmptyOrEof() throws IOException {
+        byte[] data = validArchiveBytes();
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+        ArArchiveInputStream in = new ArArchiveInputStream(bais);
+        assertNotNull(in.getNextEntry());
+        assertNull(in.getNextEntry());
+        in.close();
+    }
+
+    @Test
+    public void testReadZeroBytes() throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(validArchiveBytes());
+        ArArchiveInputStream in = new ArArchiveInputStream(bais);
+        byte[] buf = new byte[10];
+        int read = in.read(buf, 0, 0);
+        assertEquals(0, read);
+        in.close();
+    }
+
+    private byte[] validBytes() {
+        return "!<arch>\n".getBytes();
+    }
+
+    private byte[] validArchiveBytes() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("!<arch>\n");
+        sb.append("File1.txt       ");
+        sb.append("1261741234  ");
+        sb.append("0     ");
+        sb.append("0     ");
+        sb.append("100644  ");
+        sb.append("          ");
+        sb.append("`\n");
+        sb.append("1234567890");
+        return sb.toString().getBytes();
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+Extract test suite......................................................... OK
+Running ant (compile.gen.tests)............................................ OK
+Running ant (run.gen.tests)................................................ OK
+Failing tests: 2
+  - org.apache.commons.compress.archivers.ar.ArArchiveInputStreamTest::testGetNextEntryNullOnEmptyOrEof
+  - org.apache.commons.compress.archivers.ar.ArArchiveInputStreamTest::testCloseStream
+
+fixed-1/failing_tests:
+it4TestAdapter.java:38)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:520)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1060)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:911)
+--- org.apache.commons.compress.archivers.ar.ArArchiveInputStreamTest::testCloseStream
+junit.framework.AssertionFailedError
+	at org.junit.Assert.fail(Assert.java:86)
+	at org.junit.Assert.assertTrue(Assert.java:41)
+	at org.junit.Assert.assertTrue(Assert.java:52)
+	at org.apache.commons.compress.archivers.ar.ArArchiveInputStreamTest.testCloseStream(ArArchiveInputStreamTest.java:40)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:520)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1060)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:911)
+

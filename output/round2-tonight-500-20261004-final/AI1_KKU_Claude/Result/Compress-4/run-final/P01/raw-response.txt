@@ -1,0 +1,12 @@
+Key behaviors/boundaries to probe (likely regression: finish()/close() idempotency and double-close handling):
+
+- Calling finish() then close() should not throw or double-write end records/trailers.
+- Calling close() without finish() should implicitly call finish() first (valid archive produced).
+- Calling finish() twice should throw IOException ("stream already finished" or similar), not silently succeed or NPE.
+- Calling close() twice should be a no-op the second time (no exception), per Closeable contract looseness used by compress.
+- putArchiveEntry()/write() after finish() or close() should throw IOException ("stream closed"/"finished").
+- For TarArchiveOutputStream: closeArchiveEntry() without matching putArchiveEntry should throw IOException.
+- For CpioArchiveOutputStream: finish() must flush pending entry/trailer records exactly once; verify writeHeader only invoked appropriately.
+- For ZipArchiveOutputStream: finish() should write central directory once; verify no IOException on normal single finish+close sequence with zero entries (empty archive).
+- ChangeSetPerformer: verify perform() behavior with empty changes set on a valid ArchiveInputStream/OutputStream pair is a no-op (copies entries unchanged).
+- Receiver setup: must construct output stream around a valid underlying OutputStream (e.g., ByteArrayOutputStream) before invoking putArchiveEntry/write/finish/close.

@@ -1,0 +1,101 @@
+```java
+package org.apache.commons.jxpath.ri.compiler;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Locale;
+
+import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.ri.EvalContext;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.junit.Test;
+
+public class ExpressionAdditionalTest {
+
+    private static class DummyExpression extends Expression {
+        private final Object value;
+
+        public DummyExpression(Object value) {
+            this.value = value;
+        }
+
+        @Override
+        public boolean computeContextDependent() {
+            return false;
+        }
+
+        @Override
+        public Object computeValue(EvalContext context) {
+            return value;
+        }
+
+        @Override
+        public Object compute(EvalContext context) {
+            return value;
+        }
+    }
+
+    @Test
+    public void testIterateWithEvalContextResult() {
+        DummyExpression expr = new DummyExpression(null) {
+            @Override
+            public Object compute(EvalContext context) {
+                return new Expression.ValueIterator(Collections.emptyList().iterator());
+            }
+        };
+        Iterator it = expr.iterate(null);
+        assertNotNull(it);
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testIteratePointersNullResult() {
+        DummyExpression expr = new DummyExpression(null);
+        Iterator it = expr.iteratePointers(null);
+        assertNotNull(it);
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testPointerIteratorRemoveUnsupported() {
+        Expression.PointerIterator pointerIterator = new Expression.PointerIterator(
+                Collections.emptyIterator(), new QName("test"), Locale.getDefault());
+        boolean thrown = false;
+        try {
+            pointerIterator.remove();
+        } catch (UnsupportedOperationException e) {
+            thrown = true;
+        }
+        assertTrue(thrown);
+    }
+
+    @Test
+    public void testValueIteratorWithPointer() {
+        Pointer pointer = new Pointer() {
+            public Object getNode() { return "nodeValue"; }
+            public Object getValue() { return "val"; }
+            public void setValue(Object value) {}
+            public Pointer getImmediateParentPointer() { return null; }
+            public NodePointer getNodePointer() { return null; }
+            public boolean isActual() { return true; }
+            public boolean isCollection() { return false; }
+            public int getLength() { return 1; }
+            public Object getImmediateNode() { return "nodeValue"; }
+            public Locale getLocale() { return Locale.getDefault(); }
+        };
+
+        java.util.List<Object> list = new java.util.ArrayList<Object>();
+        list.add(pointer);
+        Expression.ValueIterator valueIterator = new Expression.ValueIterator(list.iterator());
+        assertTrue(valueIterator.hasNext());
+        assertEquals("val", valueIterator.next());
+        assertFalse(valueIterator.hasNext());
+    }
+}
+```

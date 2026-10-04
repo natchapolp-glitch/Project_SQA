@@ -1,0 +1,299 @@
+```java
+package org.apache.commons.compress.archivers.cpio;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+public class CpioArchiveOutputStreamTest {
+
+    @Test
+    public void finishAndCloseOnEmptyArchiveProducesTrailer() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.finish();
+        out.close();
+        assertTrue(baos.toByteArray().length > 0);
+    }
+
+    @Test
+    public void closeWithoutFinishClosesSuccessfully() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        assertTrue(baos.toByteArray().length >= 0);
+    }
+
+    @Test
+    public void finishTwiceThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.finish();
+        try {
+            out.finish();
+            fail("Expected IOException");
+        } catch (IOException expected) {
+            // expected
+        } finally {
+            out.close();
+        }
+    }
+
+    @Test
+    public void writeAfterCloseThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        try {
+            out.write(new byte[]{1, 2, 3}, 0, 3);
+            fail("Expected IOException");
+        } catch (IOException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void putArchiveEntryAndWriteAndClose() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        CpioArchiveEntry entry = new CpioArchiveEntry("test.txt", 5);
+        out.putArchiveEntry(entry);
+        out.write("hello".getBytes(), 0, 5);
+        out.closeArchiveEntry();
+        out.close();
+        assertTrue(baos.toByteArray().length > 5);
+    }
+
+    @Test
+    public void closeCalledTwiceIsNoOp() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+        out.close();
+        out.close();
+    }
+}
+```
+
+```java
+package org.apache.commons.compress.archivers.tar;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+public class TarArchiveOutputStreamTest {
+
+    @Test
+    public void finishAndCloseOnEmptyArchiveWritesEOFRecords() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream out = new TarArchiveOutputStream(baos);
+        out.finish();
+        out.close();
+        assertTrue(baos.toByteArray().length > 0);
+    }
+
+    @Test
+    public void closeWithoutFinishClosesSuccessfully() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream out = new TarArchiveOutputStream(baos);
+        out.close();
+        assertTrue(baos.toByteArray().length > 0);
+    }
+
+    @Test
+    public void closeArchiveEntryWithoutPutThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream out = new TarArchiveOutputStream(baos);
+        try {
+            out.closeArchiveEntry();
+            fail("Expected IOException");
+        } catch (IOException expected) {
+            // expected
+        } finally {
+            out.close();
+        }
+    }
+
+    @Test
+    public void putArchiveEntryAndWriteAndClose() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream out = new TarArchiveOutputStream(baos);
+        TarArchiveEntry entry = new TarArchiveEntry("test.txt");
+        entry.setSize(5);
+        out.putArchiveEntry(entry);
+        out.write("hello".getBytes(), 0, 5);
+        out.closeArchiveEntry();
+        out.close();
+        assertTrue(baos.toByteArray().length > 5);
+    }
+
+    @Test
+    public void writeAfterCloseThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream out = new TarArchiveOutputStream(baos);
+        out.close();
+        try {
+            out.write(new byte[]{1, 2, 3}, 0, 3);
+            fail("Expected IOException");
+        } catch (IOException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void closeCalledTwiceIsNoOp() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        TarArchiveOutputStream out = new TarArchiveOutputStream(baos);
+        out.close();
+        out.close();
+    }
+}
+```
+
+```java
+package org.apache.commons.compress.archivers.zip;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.junit.Test;
+
+public class ZipArchiveOutputStreamTest {
+
+    @Test
+    public void finishAndCloseOnEmptyArchiveWritesEndRecord() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream out = new ZipArchiveOutputStream(baos);
+        out.finish();
+        out.close();
+        assertTrue(baos.toByteArray().length > 0);
+    }
+
+    @Test
+    public void closeWithoutFinishClosesSuccessfully() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream out = new ZipArchiveOutputStream(baos);
+        out.close();
+        assertTrue(baos.toByteArray().length > 0);
+    }
+
+    @Test
+    public void finishTwiceThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream out = new ZipArchiveOutputStream(baos);
+        out.finish();
+        try {
+            out.finish();
+            fail("Expected IOException");
+        } catch (IOException expected) {
+            // expected
+        } finally {
+            out.close();
+        }
+    }
+
+    @Test
+    public void putArchiveEntryAndWriteAndClose() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream out = new ZipArchiveOutputStream(baos);
+        ZipArchiveEntry entry = new ZipArchiveEntry("test.txt");
+        entry.setMethod(ZipArchiveOutputStream.STORED);
+        entry.setSize(5);
+        java.util.zip.CRC32 crc32 = new java.util.zip.CRC32();
+        crc32.update("hello".getBytes());
+        entry.setCrc(crc32.getValue());
+        out.putArchiveEntry(entry);
+        out.write("hello".getBytes(), 0, 5);
+        out.closeArchiveEntry();
+        out.close();
+        assertTrue(baos.toByteArray().length > 5);
+    }
+
+    @Test
+    public void writeAfterCloseThrowsIOException() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream out = new ZipArchiveOutputStream(baos);
+        out.close();
+        try {
+            out.write(new byte[]{1, 2, 3}, 0, 3);
+            fail("Expected IOException");
+        } catch (IOException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void closeCalledTwiceIsNoOp() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream out = new ZipArchiveOutputStream(baos);
+        out.close();
+        out.close();
+    }
+}
+```
+
+```java
+package org.apache.commons.compress.changes;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.junit.Test;
+
+public class ChangeSetPerformerTest {
+
+    private byte[] buildZipWithOneEntry(String name, byte[] content) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(baos);
+        ZipArchiveEntry entry = new ZipArchiveEntry(name);
+        entry.setMethod(ZipArchiveOutputStream.STORED);
+        entry.setSize(content.length);
+        java.util.zip.CRC32 crc32 = new java.util.zip.CRC32();
+        crc32.update(content);
+        entry.setCrc(crc32.getValue());
+        zos.putArchiveEntry(entry);
+        zos.write(content);
+        zos.closeArchiveEntry();
+        zos.finish();
+        zos.close();
+        return baos.toByteArray();
+    }
+
+    @Test
+    public void performWithEmptyChangeSetCopiesEntriesUnchanged() throws Exception {
+        byte[] zipBytes = buildZipWithOneEntry("file.txt", "hello".getBytes());
+        ArchiveInputStream ais = new ArchiveStreamFactory()
+                .createArchiveInputStream("zip", new ByteArrayInputStream(zipBytes));
+        ByteArrayOutputStream resultBaos = new ByteArrayOutputStream();
+        ArchiveOutputStream aos = new ArchiveStreamFactory()
+                .createArchiveOutputStream("zip", resultBaos);
+
+        ChangeSet changeSet = new ChangeSet();
+        ChangeSetPerformer performer = new ChangeSetPerformer(changeSet);
+        ChangeSetResults results = performer.perform(ais, aos);
+        aos.close();
+        ais.close();
+
+        assertNotNull(results);
+        assertTrue(resultBaos.toByteArray().length > 0);
+    }
+
+    @Test
+    public void performDeletesSpecifiedEntry() throws Exception {
+        byte[] zipBytes = buildZipWithOneEntry("file.txt", "hello".

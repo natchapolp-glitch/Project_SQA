@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:31:53.708457+00:00",
+  "ended_at_utc": "2026-10-04T05:31:57.268097+00:00",
+  "raw_body_sha256": "27247b34c45eb4135f054babe56a5aa83c6fd824a269d14bf07b3269f52ebf68",
+  "body": {
+    "id": "genai-01a10565-c3d9-7b1b-8bb7-14ab0b5f09e1",
+    "object": "chat.completion",
+    "created": 1791091917,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.codec.binary;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.math.BigInteger;\n\nimport org.junit.Test;\n\npublic class Base64Test {\n\n    @Test\n    public void testDefaultConstructorAndIsUrlSafe() {\n        Base64 base64 = new Base64();\n        assertFalse(base64.isUrlSafe());\n    }\n\n    @Test\n    public void testUrlSafeConstructor() {\n        Base64 base64 = new Base64(true);\n        assertTrue(base64.isUrlSafe());\n    }\n\n    @Test\n    public void testEncodeDecodeStandardStatic() {\n        byte[] original = \"Hello, World!\".getBytes();\n        byte[] encoded = Base64.encodeBase64(original);\n        assertNotNull(encoded);\n        \n        byte[] decoded = Base64.decodeBase64(encoded);\n        assertArrayEquals(original, decoded);\n    }\n\n    @Test\n    public void testEncodeDecodeChunked() {\n        byte[] original = new byte[200];\n        for (int i = 0; i < original.length; i++) {\n            original[i] = (byte) i;\n        }\n        byte[] encoded = Base64.encodeBase64Chunked(original);\n        assertNotNull(encoded);\n        \n        byte[] decoded = Base64.decodeBase64(encoded);\n        assertArrayEquals(original, decoded);\n    }\n\n    @Test\n    public void testEncodeBase64URLSafe() {\n        byte[] data = new byte[] { (byte) 0xff, (byte) 0xef, (byte) 0xbf };\n        byte[] urlSafeEncoded = Base64.encodeBase64URLSafe(data);\n        assertNotNull(urlSafeEncoded);\n        \n        for (byte b : urlSafeEncoded) {\n            assertFalse(b == '+');\n            assertFalse(b == '/');\n            assertFalse(b == '=');\n        }\n\n        byte[] decoded = Base64.decodeBase64(urlSafeEncoded);\n        assertArrayEquals(data, decoded);\n    }\n\n    @Test\n    public void testIntegerCodec() {\n        BigInteger original = new BigInteger(\"12345678901234567890\");\n        byte[] encoded = Base64.encodeInteger(original);\n        assertNotNull(encoded);\n\n        BigInteger decoded = Base64.decodeInteger(encoded);\n        assertEquals(original, decoded);\n    }\n\n    @Test\n    public void testIsBase64Char() {\n        assertTrue(Base64.isBase64((byte) 'A'));\n        assertTrue(Base64.isBase64((byte) 'z'));\n        assertTrue(Base64.isBase64((byte) '0'));\n        assertTrue(Base64.isBase64((byte) '+'));\n        assertTrue(Base64.isBase64((byte) '/'));\n        assertTrue(Base64.isBase64((byte) '='));\n        assertFalse(Base64.isBase64((byte) ' '));\n        assertFalse(Base64.isBase64((byte) '!'));\n    }\n\n    @Test\n    public void testDiscardWhitespace() {\n        byte[] input = \"SGVsbG8=\\r\\n V29ybGQ=\".getBytes();\n        byte[] cleaned = Base64.discardWhitespace(input);\n        assertNotNull(cleaned);\n        byte[] decoded = Base64.decodeBase64(cleaned);\n        assertArrayEquals(\"Hello, World\".getBytes(), decoded);\n    }\n\n    @Test\n    public void testEmptyAndNullArrays() {\n        assertNull(Base64.encodeBase64(null));\n        assertNull(Base64.decodeBase64((byte[]) null));\n        \n        assertArrayEquals(new byte[0], Base64.encodeBase64(new byte[0]));\n        assertArrayEquals(new byte[0], Base64.decodeBase64(new byte[0]));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6523,
+      "completion_tokens": 1016,
+      "total_tokens": 7539
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 31560,
+      "daily_remaining_tokens": 318440
+    }
+  },
+  "headers": {
+    "x-request-id": "udi8l3s7eo46c1p1jz05f9ze",
+    "date": "Sun, 04 Oct 2026 05:31:57 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

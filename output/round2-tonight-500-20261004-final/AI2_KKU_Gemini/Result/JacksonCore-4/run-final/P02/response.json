@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:56:30.746244+00:00",
+  "ended_at_utc": "2026-10-04T08:56:33.484090+00:00",
+  "raw_body_sha256": "bc7dd415909bd08498879908c1898a6ce427c2ca0c39088068136431a525e146",
+  "body": {
+    "id": "genai-01a10621-1cec-7e1a-b940-704471250d74",
+    "object": "chat.completion",
+    "created": 1791104195,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.core.util;\n\nimport static org.junit.Assert.*;\n\nimport org.junit.Test;\n\npublic class TextBufferTest {\n\n    @Test\n    public void testResetWithEmptyAndSize() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer buffer = new TextBuffer(recycler);\n        buffer.resetWithEmpty();\n        assertEquals(0, buffer.size());\n        assertEquals(\"\", buffer.contentsAsString());\n        assertFalse(buffer.hasTextAsCharacters());\n    }\n\n    @Test\n    public void testResetWithSharedAndAccessors() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer buffer = new TextBuffer(recycler);\n        char[] shared = new char[] { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' };\n        buffer.resetWithShared(shared, 6, 5);\n        assertEquals(5, buffer.size());\n        assertEquals(6, buffer.getTextOffset());\n        assertTrue(buffer.hasTextAsCharacters());\n        assertEquals(\"World\", buffer.contentsAsString());\n        assertArrayEquals(new char[] { 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd' }, buffer.getTextBuffer());\n    }\n\n    @Test\n    public void testResetWithCopyAndAppend() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer buffer = new TextBuffer(recycler);\n        char[] src = new char[] { 'A', 'B', 'C' };\n        buffer.resetWithCopy(src, 0, 3);\n        assertEquals(3, buffer.size());\n        assertEquals(\"ABC\", buffer.contentsAsString());\n\n        buffer.append('D');\n        assertEquals(4, buffer.size());\n        assertEquals(\"ABCD\", buffer.contentsAsString());\n    }\n\n    @Test\n    public void testResetWithString() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer buffer = new TextBuffer(recycler);\n        buffer.resetWithString(\"Jackson\");\n        assertEquals(7, buffer.size());\n        assertEquals(\"Jackson\", buffer.contentsAsString());\n        assertFalse(buffer.hasTextAsCharacters());\n        assertNotNull(buffer.contentsAsArray());\n        assertTrue(buffer.hasTextAsCharacters());\n    }\n\n    @Test\n    public void testSegmentExpansion() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer buffer = new TextBuffer(recycler);\n        buffer.resetWithEmpty();\n        char[] seg = buffer.emptyAndGetCurrentSegment();\n        assertNotNull(seg);\n        assertTrue(seg.length >= TextBuffer.MIN_SEGMENT_LEN);\n\n        char[] expanded = buffer.expandCurrentSegment();\n        assertNotNull(expanded);\n        assertTrue(expanded.length >= seg.length);\n    }\n\n    @Test\n    public void testReleaseBuffers() {\n        BufferRecycler recycler = new BufferRecycler();\n        TextBuffer buffer = new TextBuffer(recycler);\n        buffer.resetWithEmpty();\n        buffer.emptyAndGetCurrentSegment();\n        buffer.releaseBuffers();\n        assertEquals(0, buffer.size());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3880,
+      "completion_tokens": 760,
+      "total_tokens": 4640
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 108863,
+      "daily_remaining_tokens": 241137
+    }
+  },
+  "headers": {
+    "x-request-id": "xzrin0l5bbtxb7d1cwcw39jo",
+    "date": "Sun, 04 Oct 2026 08:56:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

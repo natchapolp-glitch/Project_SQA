@@ -1,0 +1,34 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Math-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.math3.distribution.HypergeometricDistribution
+BUGGY API signatures:
+Compiled from "HypergeometricDistribution.java"
+public class org.apache.commons.math3.distribution.HypergeometricDistribution extends org.apache.commons.math3.distribution.AbstractIntegerDistribution {
+  private static final long serialVersionUID;
+  private final int numberOfSuccesses;
+  private final int populationSize;
+  private final int sampleSize;
+  private double numericalVariance;
+  private boolean numericalVarianceIsCalculated;
+  public org.apache.commons.math3.distribution.HypergeometricDistribution(int, int, int) throws org.apache.commons.math3.exception.NotPositiveException, org.apache.commons.math3.exception.NotStrictlyPositiveException, org.apache.commons.math3.exception.NumberIsTooLargeException;
+  public org.apache.commons.math3.distribution.HypergeometricDistribution(org.apache.commons.math3.random.RandomGenerator, int, int, int) throws org.apache.commons.math3.exception.NotPositiveException, org.apache.commons.math3.exception.NotStrictlyPositiveException, org.apache.commons.math3.exception.NumberIsTooLargeException;
+  public double cumulativeProbability(int);
+  private int[] getDomain(int, int, int);
+  private int getLowerDomain(int, int, int);
+  public int getNumberOfSuccesses();
+  public int getPopulationSize();
+  public int getSampleSize();
+  private int getUpperDomain(int, int);
+  public double probability(int);
+  public double upperCumulativeProbability(int);
+  private double innerCumulativeProbability(int, int, int);
+  public double getNumericalMean();
+  public double getNumericalVariance();
+  protected double calculateNumericalVariance();
+  public int getSupportLowerBound();
+  public int getSupportUpperBound();
+  public boolean isSupportConnected();
+}
+

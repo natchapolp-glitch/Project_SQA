@@ -1,0 +1,26 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Mockito-3
+Java 11, JUnit 4
+Modified classes: org.mockito.internal.invocation.InvocationMatcher
+BUGGY API signatures:
+Compiled from "InvocationMatcher.java"
+public class org.mockito.internal.invocation.InvocationMatcher implements org.mockito.invocation.DescribedInvocation,org.mockito.internal.invocation.CapturesArgumensFromInvocation,java.io.Serializable {
+  private static final long serialVersionUID;
+  private final org.mockito.invocation.Invocation invocation;
+  private final java.util.List<org.hamcrest.Matcher> matchers;
+  public org.mockito.internal.invocation.InvocationMatcher(org.mockito.invocation.Invocation, java.util.List<org.hamcrest.Matcher>);
+  public org.mockito.internal.invocation.InvocationMatcher(org.mockito.invocation.Invocation);
+  public java.lang.reflect.Method getMethod();
+  public org.mockito.invocation.Invocation getInvocation();
+  public java.util.List<org.hamcrest.Matcher> getMatchers();
+  public java.lang.String toString();
+  public boolean matches(org.mockito.invocation.Invocation);
+  private boolean safelyArgumentsMatch(java.lang.Object[]);
+  public boolean hasSimilarMethod(org.mockito.invocation.Invocation);
+  public boolean hasSameMethod(org.mockito.invocation.Invocation);
+  public org.mockito.invocation.Location getLocation();
+  public void captureArgumentsFrom(org.mockito.invocation.Invocation);
+  public static java.util.List<org.mockito.internal.invocation.InvocationMatcher> createFrom(java.util.List<org.mockito.invocation.Invocation>);
+}
+

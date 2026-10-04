@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:00:11.046633+00:00",
+  "ended_at_utc": "2026-10-04T09:00:18.583192+00:00",
+  "raw_body_sha256": "0999206527a9fe26903f9d87f6665474ec4a96c91c71b39de7dfd6f9f7f12231",
+  "body": {
+    "id": "gen-1791104414-qkQe52q03M7GZarxpejM",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Standard case: deserialize a JSON array of strings (`[\"a\",\"b\",\"c\"]`) into `String[]`, verifying order/content preserved, including empty array `[]`.\n- Null handling: JSON `null` token should deserialize to Java `null`, not an empty/throwing result.\n- Null elements inside array (`[\"a\", null, \"b\"]`) must map to `null` entries in the resulting array, not to the literal string \"null\" or an exception.\n- Single-value coercion: when `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` (or equivalent) is enabled, a scalar JSON string value (not wrapped in array) should become a one-element `String[]`.\n- Without single-value unwrapping enabled, a scalar string input should trigger `handleNonArray` behavior—likely throwing a `MismatchedInputException`/`JsonMappingException`, verify via oracle contract rather than buggy output.\n- Non-string scalar array elements (numbers, booleans) should go through `_elementDeserializer`/coercion rules (e.g., number-to-string coercion) producing expected string representations, per `DeserializationFeature`/coercion config.\n- Custom element deserializer (via `createContextual`) must be exercised: verify contextual configuration changes behavior, e.g., custom deserializer substituting values or using `_deserializeCustom` path when `_elementDeserializer` is non-default.\n- Polymorphic path: `deserializeWithType` called with a `TypeDeserializer` should delegate correctly and produce same array result as standard `deserialize`.\n- Nested/deeply nested arrays or wrong token types (e.g., object `{}` as array element) should propagate expected exceptions rather than silently corrupting data.\n- Boundary sizes: verify large arrays (e.g. >12 elements, to cross internal buffer-growth threshold) are deserialized completely and correctly, checking array growth logic.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1052,
+      "output_tokens": 647,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008574,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008574,
+        "upstream_inference_prompt_cost": 0.002104,
+        "upstream_inference_completions_cost": 0.00647
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 158424,
+      "daily_remaining_tokens": 41576
+    }
+  },
+  "headers": {
+    "x-request-id": "vex4z1a4ckzonvyqds1n10gs",
+    "date": "Sun, 04 Oct 2026 09:00:22 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

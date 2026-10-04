@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:46:09.980885+00:00",
+  "ended_at_utc": "2026-10-04T05:46:11.952132+00:00",
+  "raw_body_sha256": "82b0b51e04c43da41370f9b5d3c7e18eb513cd101abe2293b2dc96bd39d6272e",
+  "body": {
+    "id": "genai-01a10572-d44c-7b48-a351-67d7e45f4f70",
+    "object": "chat.completion",
+    "created": 1791092773,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVRecordAdditionalTest {\n\n    @Test\n    public void testValuesMethod() {\n        String[] values = new String[] { \"A\", \"B\" };\n        CSVRecord record = new CSVRecord(values, null, null, 1L);\n        assertEquals(values, record.values());\n    }\n\n    @Test\n    public void testNullValuesHandling() {\n        CSVRecord record = new CSVRecord(null, null, null, 1L);\n        assertEquals(0, record.size());\n        assertNotNull(record.values());\n    }\n\n    @Test\n    public void testGetByNameInconsistentRecord() {\n        String[] values = new String[] { \"Val1\" };\n        Map<String, Integer> mapping = new HashMap<String, Integer>();\n        mapping.put(\"First\", 0);\n        mapping.put(\"Second\", 1); // mapping index 1 is out of bounds for values length 1\n\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        assertEquals(\"Val1\", record.get(\"First\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2775,
+      "completion_tokens": 310,
+      "total_tokens": 3085
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 42773,
+      "daily_remaining_tokens": 307227
+    }
+  },
+  "headers": {
+    "x-request-id": "g9fvffy9vg4tdx8lhil2rtk9",
+    "date": "Sun, 04 Oct 2026 05:46:13 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:13:12.803186+00:00",
+  "ended_at_utc": "2026-10-04T07:13:25.623553+00:00",
+  "raw_body_sha256": "d392983e5f84fe41cce34b4582d08dc2a2c257b18c5315028b739edd13cc371f",
+  "body": {
+    "id": "gen-1791097993-q0Uhy2effQZyCyRcJ0J5",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.IOException;\nimport java.io.StringReader;\n\nimport org.junit.Test;\n\npublic class LexerTest {\n\n    private Lexer createLexer(final String input, final CSVFormat format) {\n        return new CSVLexer(format, new ExtendedBufferedReader(new StringReader(input)));\n    }\n\n    @Test\n    public void testReadEscapeKnownChars() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\\\');\n        Lexer lexer = createLexer(\"rntbf\", format);\n        assertEquals(Constants.CR, lexer.readEscape());\n        assertEquals(Constants.LF, lexer.readEscape());\n        assertEquals(Constants.TAB, lexer.readEscape());\n        assertEquals(Constants.BACKSPACE, lexer.readEscape());\n        assertEquals(Constants.FF, lexer.readEscape());\n    }\n\n    @Test\n    public void testReadEscapeLiteralCharAndEofThrows() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT.withEscape('\\\\');\n        Lexer lexer = createLexer(\"x\", format);\n        assertEquals('x', lexer.readEscape());\n\n        Lexer eofLexer = createLexer(\"\", format);\n        try {\n            eofLexer.readEscape();\n            org.junit.Assert.fail(\"Expected IOException at EOF after escape\");\n        } catch (IOException expected) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testTrimTrailingSpaces() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(\"\", format);\n\n        StringBuilder empty = new StringBuilder();\n        lexer.trimTrailingSpaces(empty);\n        assertEquals(\"\", empty.toString());\n\n        StringBuilder allWhitespace = new StringBuilder(\"   \\t  \");\n        lexer.trimTrailingSpaces(allWhitespace);\n        assertEquals(\"\", allWhitespace.toString());\n\n        StringBuilder mixed = new StringBuilder(\"  hello   \");\n        lexer.trimTrailingSpaces(mixed);\n        assertEquals(\"  hello\", mixed.toString());\n    }\n\n    @Test\n    public void testReadEndOfLineVariants() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer crlfLexer = createLexer(\"\\n\", format);\n        assertTrue(crlfLexer.readEndOfLine(Constants.CR));\n\n        Lexer lfLexer = createLexer(\"\", format);\n        assertTrue(lfLexer.readEndOfLine(Constants.LF));\n\n        Lexer crOnlyLexer = createLexer(\"x\", format);\n        assertTrue(crOnlyLexer.readEndOfLine(Constants.CR));\n        assertEquals('x', crOnlyLexer.in.read());\n\n        Lexer notEolLexer = createLexer(\"\", format);\n        assertFalse(notEolLexer.readEndOfLine('a'));\n    }\n\n    @Test\n    public void testIsWhitespaceExcludesDelimiter() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(' ');\n        Lexer lexer = createLexer(\"\", format);\n        assertFalse(lexer.isWhitespace(' '));\n        assertTrue(lexer.isWhitespace('\\t'));\n    }\n\n    @Test\n    public void testIsStartOfLineAndEndOfFile() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(\"\", format);\n        assertTrue(lexer.isStartOfLine(Constants.LF));\n        assertTrue(lexer.isStartOfLine(Constants.CR));\n        assertTrue(lexer.isStartOfLine(Constants.UNDEFINED));\n        assertFalse(lexer.isStartOfLine('a'));\n\n        assertTrue(lexer.isEndOfFile(Constants.END_OF_STREAM));\n        assertFalse(lexer.isEndOfFile('a'));\n    }\n\n    @Test\n    public void testIsDelimiterEscapeQuoteCommentWithDisabled() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',');\n        Lexer lexer = createLexer(\"\", format);\n        assertTrue(lexer.isDelimiter(','));\n        assertFalse(lexer.isDelimiter(';'));\n        assertFalse(lexer.isEscape('\\\\'));\n        assertFalse(lexer.isQuoteChar('\"'));\n        assertFalse(lexer.isCommentStart('#'));\n    }\n\n    @Test\n    public void testIsDelimiterEscapeQuoteCommentWhenEnabled() {\n        CSVFormat format = CSVFormat.DEFAULT\n                .withDelimiter(',')\n                .withEscape('\\\\')\n                .withQuote('\"')\n                .withCommentMarker('#');\n        Lexer lexer = createLexer(\"\", format);\n        assertTrue(lexer.isDelimiter(','));\n        assertTrue(lexer.isEscape('\\\\'));\n        assertTrue(lexer.isQuoteChar('\"'));\n        assertTrue(lexer.isCommentStart('#'));\n        assertFalse(lexer.isCommentStart(';'));\n    }\n\n    @Test\n    public void testGetLineNumberInitialValue() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(\"a,b\\nc,d\", format);\n        assertEquals(0, lexer.getLineNumber());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 3782,
+      "output_tokens": 2029,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.027854,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.027854,
+        "upstream_inference_prompt_cost": 0.007564,
+        "upstream_inference_completions_cost": 0.02029
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 115670,
+      "daily_remaining_tokens": 84330
+    }
+  },
+  "headers": {
+    "x-request-id": "n4dx4z13cbw3x5yy3bc5ovl3",
+    "date": "Sun, 04 Oct 2026 07:13:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

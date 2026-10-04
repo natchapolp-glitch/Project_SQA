@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:49:49.325412+00:00",
+  "ended_at_utc": "2026-10-04T05:49:52.419349+00:00",
+  "raw_body_sha256": "f1305d261e5da683b6a5a4089cde753c92159233f8621353fc9df46150dbd454",
+  "body": {
+    "id": "genai-01a10576-2b46-743f-ae03-f28eaebb0a3e",
+    "object": "chat.completion",
+    "created": 1791092992,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport com.google.gson.Gson;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.reflect.TypeToken;\nimport java.io.IOException;\nimport java.util.BitSet;\nimport java.util.UUID;\nimport org.junit.Test;\n\npublic class TypeAdaptersTest {\n\n  @Test\n  public void testBooleanAdapter() throws IOException {\n    TypeAdapter<Boolean> adapter = TypeAdapters.BOOLEAN;\n    String jsonTrue = adapter.toJson(true);\n    assertEquals(\"true\", jsonTrue);\n\n    Boolean parsedTrue = adapter.fromJson(\"true\");\n    assertTrue(parsedTrue);\n\n    Boolean parsedNull = adapter.fromJson(\"null\");\n    assertNull(parsedNull);\n  }\n\n  @Test\n  public void testIntegerAdapter() throws IOException {\n    TypeAdapter<Number> adapter = TypeAdapters.INTEGER;\n    String json = adapter.toJson(123);\n    assertEquals(\"123\", json);\n\n    Number parsed = adapter.fromJson(\"456\");\n    assertEquals(456, parsed.intValue());\n\n    assertNull(adapter.fromJson(\"null\"));\n  }\n\n  @Test(expected = JsonSyntaxException.class)\n  public void testIntegerAdapterInvalid() throws IOException {\n    TypeAdapters.INTEGER.fromJson(\"\\\"abc\\\"\");\n  }\n\n  @Test\n  public void testStringAdapter() throws IOException {\n    TypeAdapter<String> adapter = TypeAdapters.STRING;\n    String json = adapter.toJson(\"hello\");\n    assertEquals(\"\\\"hello\\\"\", json);\n\n    String parsed = adapter.fromJson(\"\\\"world\\\"\");\n    assertEquals(\"world\", parsed);\n\n    assertNull(adapter.fromJson(\"null\"));\n  }\n\n  @Test\n  public void testBitSetAdapter() throws IOException {\n    TypeAdapter<BitSet> adapter = TypeAdapters.BIT_SET;\n    BitSet bitSet = new BitSet();\n    bitSet.set(0);\n    bitSet.set(2);\n\n    String json = adapter.toJson(bitSet);\n    assertNotNull(json);\n\n    BitSet parsed = adapter.fromJson(json);\n    assertNotNull(parsed);\n    assertTrue(parsed.get(0));\n    assertTrue(!parsed.get(1));\n    assertTrue(parsed.get(2));\n\n    assertNull(adapter.fromJson(\"null\"));\n  }\n\n  @Test\n  public void testUuidAdapter() throws IOException {\n    TypeAdapter<UUID> adapter = TypeAdapters.UUID;\n    UUID uuid = UUID.randomUUID();\n    String json = adapter.toJson(uuid);\n    assertNotNull(json);\n\n    UUID parsed = adapter.fromJson(json);\n    assertEquals(uuid, parsed);\n\n    assertNull(adapter.fromJson(\"null\"));\n  }\n\n  @Test\n  public void testFactoryCreation() {\n    TypeAdapterFactory factory = TypeAdapters.newFactory(Integer.class, TypeAdapters.INTEGER);\n    assertNotNull(factory);\n    \n    Gson gson = new Gson();\n    assertNotNull(factory.create(gson, TypeToken.get(Integer.class)));\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6319,
+      "completion_tokens": 783,
+      "total_tokens": 7102
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 44090,
+      "daily_remaining_tokens": 305910
+    }
+  },
+  "headers": {
+    "x-request-id": "llck6p9j7ecw7ht0csc33x6n",
+    "date": "Sun, 04 Oct 2026 05:49:52 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

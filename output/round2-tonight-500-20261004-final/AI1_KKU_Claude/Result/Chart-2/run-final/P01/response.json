@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:17:40.700483+00:00",
+  "ended_at_utc": "2026-10-04T05:17:46.826401+00:00",
+  "raw_body_sha256": "cb729cfede6791bab528684c7e194adcc53a81d51a29895d14d543ea8fec7fb5",
+  "body": {
+    "id": "gen-1791091062-GwqasswM1mR1An0zGM0u",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Known Chart-2 bug area: `iterateToFindDomainBounds` / `findDomainBounds` for `XYDataset`, specifically handling of NaN values and item ordering (x may not be sorted) when computing min/max domain bounds.\n\nUseful behaviors/boundaries to test:\n- `findDomainBounds(XYDataset)` on a dataset with a single series/item returns Range(x,x), not null.\n- NaN x-values in some items must be skipped, not propagate as NaN into the returned Range.\n- Domain bounds must be correct even when x-values are unsorted within a series (min/max, not first/last).\n- Empty dataset (zero series or zero items) should return null, not throw.\n- Null dataset argument should throw IllegalArgumentException (per documented contract).\n- Multiple series: bounds must aggregate across all series, not just the first.\n- `includeInterval` variant (`findDomainBounds(dataset, true)`) should widen bounds using start/end x-values when dataset implements `IntervalXYDataset`; `false` should use only x value.\n- Negative, zero, and positive x-values mixed together verify correct min/max selection (not absolute-value or arithmetic mistake).\n- Receiver setup: use `DefaultXYDataset` or `XYSeriesCollection` populated via `XYSeries.add(x, y)`, including an explicit `Double.NaN` entry.\n- Verify returned `Range` object's `getLowerBound()`/`getUpperBound()` exactly, using `assertEquals(expected, actual, 0.0000001)`.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2668,
+      "output_tokens": 525,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.010586,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.010586,
+        "upstream_inference_prompt_cost": 0.005336,
+        "upstream_inference_completions_cost": 0.00525
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 21255,
+      "daily_remaining_tokens": 178745
+    }
+  },
+  "headers": {
+    "x-request-id": "mr9iuxliv6vzjpw5c9lxwml5",
+    "date": "Sun, 04 Oct 2026 05:17:48 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:05:45.039846+00:00",
+  "ended_at_utc": "2026-10-04T08:06:02.063901+00:00",
+  "raw_body_sha256": "c2b7bcb9bbe635b8885e345a2ce06310f74b94a4177d05d5e1ac6c0eb1b59030",
+  "body": {
+    "id": "gen-1791101146-ejjf2VNE9pANgjXkwApn",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.mockito.internal.invocation;\n\nimport org.hamcrest.Matcher;\nimport org.junit.Before;\nimport org.junit.Test;\nimport org.mockito.internal.invocation.mockref.MockWeakReference;\nimport org.mockito.invocation.Invocation;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Collections;\nimport java.util.List;\n\nimport static org.junit.Assert.*;\n\npublic class InvocationMatcherTest {\n\n    public interface TestedObject {\n        void simpleMethod(String arg);\n        void noArgMethod();\n        void varargsMethod(String... args);\n        void overloaded(String arg);\n        void overloaded(Integer arg);\n    }\n\n    private TestedObject mock;\n\n    @Before\n    public void setup() {\n        mock = (TestedObject) java.lang.reflect.Proxy.newProxyInstance(\n                TestedObject.class.getClassLoader(),\n                new Class[]{TestedObject.class},\n                (proxy, method, args) -> null);\n    }\n\n    private Invocation invocationOf(String methodName, Class<?>[] paramTypes, Object[] args) throws Exception {\n        java.lang.reflect.Method method = TestedObject.class.getMethod(methodName, paramTypes);\n        return new InvocationImpl(\n                mock,\n                new org.mockito.internal.invocation.MockitoMethod() {\n                    @Override\n                    public String getName() { return method.getName(); }\n                    @Override\n                    public Class<?>[] getParameterTypes() { return method.getParameterTypes(); }\n                    @Override\n                    public Class<?> getReturnType() { return method.getReturnType(); }\n                    @Override\n                    public Class<?>[] getExceptionTypes() { return method.getExceptionTypes(); }\n                    @Override\n                    public boolean isVarArgs() { return method.isVarArgs(); }\n                    @Override\n                    public java.lang.reflect.Method getJavaMethod() { return method; }\n                },\n                args,\n                org.mockito.internal.creation.util.MockUtil.class != null ? 1 : 1,\n                null,\n                new org.mockito.internal.invocation.RealMethod.FromMethod(method)\n        );\n    }\n\n    @Test\n    public void constructorWithoutMatchersDerivesEqualityMatchersFromArguments() throws Exception {\n        Invocation invocation = invocationOf(\"simpleMethod\", new Class[]{String.class}, new Object[]{\"hello\"});\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n\n        assertEquals(1, matcher.getMatchers().size());\n        assertTrue(matcher.matches(invocation));\n    }\n\n    @Test\n    public void matchesReturnsFalseForDifferentArguments() throws Exception {\n        Invocation invocation1 = invocationOf(\"simpleMethod\", new Class[]{String.class}, new Object[]{\"hello\"});\n        Invocation invocation2 = invocationOf(\"simpleMethod\", new Class[]{String.class}, new Object[]{\"different\"});\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n\n        assertFalse(matcher.matches(invocation2));\n    }\n\n    @Test\n    public void matchesNoArgMethodWithoutException() throws Exception {\n        Invocation invocation = invocationOf(\"noArgMethod\", new Class[]{}, new Object[]{});\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n\n        assertTrue(matcher.matches(invocation));\n        assertTrue(matcher.getMatchers().isEmpty());\n    }\n\n    @Test\n    public void hasSameMethodTrueForSameMethodFalseForOverloaded() throws Exception {\n        Invocation invocation1 = invocationOf(\"overloaded\", new Class[]{String.class}, new Object[]{\"a\"});\n        Invocation invocation2 = invocationOf(\"overloaded\", new Class[]{Integer.class}, new Object[]{1});\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n\n        assertTrue(matcher.hasSameMethod(invocation1));\n        assertFalse(matcher.hasSameMethod(invocation2));\n    }\n\n    @Test\n    public void createFromProducesSameSizeListInOrder() throws Exception {\n        Invocation invocation1 = invocationOf(\"simpleMethod\", new Class[]{String.class}, new Object[]{\"a\"});\n        Invocation invocation2 = invocationOf(\"noArgMethod\", new Class[]{}, new Object[]{});\n        List<Invocation> invocations = Arrays.asList(invocation1, invocation2);\n\n        List<InvocationMatcher> matchers = InvocationMatcher.createFrom(invocations);\n\n        assertEquals(2, matchers.size());\n        assertSame(invocation1, matchers.get(0).getInvocation());\n        assertSame(invocation2, matchers.get(1).getInvocation());\n    }\n\n    @Test\n    public void createFromEmptyListReturnsEmptyList() {\n        List<InvocationMatcher> matchers = InvocationMatcher.createFrom(Collections.<Invocation>emptyList());\n        assertTrue(matchers.isEmpty());\n    }\n\n    @Test\n    public void toStringDoesNotThrowAndIsNonEmpty() throws Exception {\n        Invocation invocation = invocationOf(\"simpleMethod\", new Class[]{String.class}, new Object[]{\"hello\"});\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n\n        String result = matcher.toString();\n        assertNotNull(result);\n        assertFalse(result.isEmpty());\n    }\n\n    @Test\n    public void getMethodAndInvocationAndMatchersDelegateExactly() throws Exception {\n        Invocation invocation = invocationOf(\"simpleMethod\", new Class[]{String.class}, new Object[]{\"hello\"});\n        List<Matcher> matchersList = new ArrayList<Matcher>();\n        InvocationMatcher matcher = new InvocationMatcher(invocation, matchersList);\n\n        assertSame(invocation, matcher.getInvocation());\n        assertEquals(invocation.getMethod(), matcher.getMethod());\n        assertEquals(1, matcher.getMatchers().size());\n    }\n\n    @Test\n    public void varargsInvocationMatchesVarargsInvocation() throws Exception {\n        Invocation invocation1 = invocationOf(\"varargsMethod\", new Class[]{String[].class}, new Object[]{new String[]{\"a\", \"b\"}});\n        Invocation invocation2 = invocationOf(\"varargsMethod\", new Class[]{String[].class}, new Object[]{new String[]{\"a\", \"b\"}});\n        InvocationMatcher matcher = new InvocationMatcher(invocation1);\n\n        assertTrue(matcher.matches(invocation2));\n    }\n\n    @Test\n    public void captureArgumentsFromDoesNotThrowForNoArgMethod() throws Exception {\n        Invocation invocation = invocationOf(\"noArgMethod\", new Class[]{}, new Object[]{});\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n\n        matcher.captureArgumentsFrom(invocation);\n    }\n\n    @Test\n    public void getLocationReturnsInvocationLocation() throws Exception {\n        Invocation invocation = invocationOf(\"simpleMethod\", new Class[]{String.class}, new Object[]{\"a\"});\n        InvocationMatcher matcher = new InvocationMatcher(invocation);\n\n        assertEquals(invocation.getLocation(), matcher.getLocation());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 3615,
+      "output_tokens": 2642,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.03365,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.03365,
+        "upstream_inference_prompt_cost": 0.00723,
+        "upstream_inference_completions_cost": 0.02642
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 137263,
+      "daily_remaining_tokens": 62737
+    }
+  },
+  "headers": {
+    "x-request-id": "pp5b63rzvmxpj168g9325sau",
+    "date": "Sun, 04 Oct 2026 08:06:05 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

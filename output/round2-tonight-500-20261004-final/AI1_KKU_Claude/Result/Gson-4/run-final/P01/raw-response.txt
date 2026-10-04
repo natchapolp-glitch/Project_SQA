@@ -1,0 +1,10 @@
+Key behaviors/boundaries to test:
+
+- `JsonReader.nextLong()` on a value that parses as a valid double but is NOT exactly representable/expressible as a long (e.g. very large exponent numeric strings, or fractional-looking but integral-value numbers like "1.0") — contract: should throw `NumberFormatException` unless value is exactly a long; verify it does not silently return a truncated/incorrect long.
+- `JsonReader.nextLong()` on a quoted string value containing a valid long (e.g. `"123"`), with lenient mode on/off — must parse successfully.
+- `JsonReader.nextDouble()` boundary: strictly-non-finite values ("NaN", "Infinity") should throw `MalformedJsonException` when `lenient=false`, succeed when `lenient=true`.
+- `JsonReader.peek()`/`doPeek()` correctly distinguishing PEEKED_LONG vs PEEKED_NUMBER for inputs like "9223372036854775807" (Long.MAX_VALUE) vs "9223372036854775808" (overflow) — boundary at Long.MAX/MIN_VALUE.
+- `nextInt()` on a long-valued number exceeding int range should throw `NumberFormatException`, not silently truncate.
+- `JsonWriter.value(String)` / `jsonValue` with null argument respecting `serializeNulls` flag.
+- Receiver setup: construct `JsonReader` with `StringReader`, call `setLenient` appropriately before invoking peek/next* methods; ensure `beginArray`/`endArray` wrapping for top-level non-lenient docs.
+- Round-trip test: write a number via `JsonWriter.value(long)`, read back via `nextLong()`/`nextDouble()` to confirm numeric fidelity for edge values (Long.MIN_VALUE, Long.MAX_VALUE, 0).

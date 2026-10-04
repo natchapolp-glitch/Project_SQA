@@ -1,0 +1,234 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Mockito-1
+Java 11, JUnit 4
+Modified classes: org.mockito.internal.invocation.InvocationMatcher
+
+BUGGY API signatures (may include private members):
+Compiled from "InvocationMatcher.java"
+public class org.mockito.internal.invocation.InvocationMatcher implements org.mockito.invocation.DescribedInvocation,org.mockito.internal.invocation.CapturesArgumensFromInvocation,java.io.Serializable {
+  private static final long serialVersionUID;
+  private final org.mockito.invocation.Invocation invocation;
+  private final java.util.List<org.hamcrest.Matcher> matchers;
+  public org.mockito.internal.invocation.InvocationMatcher(org.mockito.invocation.Invocation, java.util.List<org.hamcrest.Matcher>);
+  public org.mockito.internal.invocation.InvocationMatcher(org.mockito.invocation.Invocation);
+  public java.lang.reflect.Method getMethod();
+  public org.mockito.invocation.Invocation getInvocation();
+  public java.util.List<org.hamcrest.Matcher> getMatchers();
+  public java.lang.String toString();
+  public boolean matches(org.mockito.invocation.Invocation);
+  private boolean safelyArgumentsMatch(java.lang.Object[]);
+  public boolean hasSimilarMethod(org.mockito.invocation.Invocation);
+  public boolean hasSameMethod(org.mockito.invocation.Invocation);
+  public org.mockito.invocation.Location getLocation();
+  public void captureArgumentsFrom(org.mockito.invocation.Invocation);
+  private boolean isVarargMatcher(org.hamcrest.Matcher);
+  private boolean isVariableArgument(org.mockito.invocation.Invocation, int);
+  public static java.util.List<org.mockito.internal.invocation.InvocationMatcher> createFrom(java.util.List<org.mockito.invocation.Invocation>);
+}
+
+
+BUGGY source excerpt: org.mockito.internal.invocation.InvocationMatcher (truncated=False)
+```java
+/*
+ * Copyright (c) 2007 Mockito contributors
+ * This program is made available under the terms of the MIT License.
+ */
+
+package org.mockito.internal.invocation;
+
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import org.hamcrest.Matcher;
+import org.mockito.internal.matchers.CapturesArguments;
+import org.mockito.internal.matchers.MatcherDecorator;
+import org.mockito.internal.matchers.VarargMatcher;
+import org.mockito.internal.reporting.PrintSettings;
+import org.mockito.invocation.DescribedInvocation;
+import org.mockito.invocation.Invocation;
+import org.mockito.invocation.Location;
+
+@SuppressWarnings("unchecked")
+public class InvocationMatcher implements DescribedInvocation, CapturesArgumensFromInvocation, Serializable {
+
+    private static final long serialVersionUID = -3047126096857467610L;
+    private final Invocation invocation;
+    private final List<Matcher> matchers;
+
+    public InvocationMatcher(Invocation invocation, List<Matcher> matchers) {
+        this.invocation = invocation;
+        if (matchers.isEmpty()) {
+            this.matchers = ArgumentsProcessor.argumentsToMatchers(invocation.getArguments());
+        } else {
+            this.matchers = matchers;
+        }
+    }
+    
+    public InvocationMatcher(Invocation invocation) {
+        this(invocation, Collections.<Matcher>emptyList());
+    }
+
+    public Method getMethod() {
+        return invocation.getMethod();
+    }
+    
+    public Invocation getInvocation() {
+        return this.invocation;
+    }
+    
+    public List<Matcher> getMatchers() {
+        return this.matchers;
+    }
+    
+    public String toString() {
+        return new PrintSettings().print(matchers, invocation);
+    }
+
+    public boolean matches(Invocation actual) {
+        return invocation.getMock().equals(actual.getMock())
+                && hasSameMethod(actual)
+                && new ArgumentsComparator().argumentsMatch(this, actual);
+    }
+
+    private boolean safelyArgumentsMatch(Object[] actualArgs) {
+        try {
+            return new ArgumentsComparator().argumentsMatch(this, actualArgs);
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * similar means the same method name, same mock, unverified 
+     * and: if arguments are the same cannot be overloaded
+     */
+    public boolean hasSimilarMethod(Invocation candidate) {
+        String wantedMethodName = getMethod().getName();
+        String currentMethodName = candidate.getMethod().getName();
+        
+        final boolean methodNameEquals = wantedMethodName.equals(currentMethodName);
+        final boolean isUnverified = !candidate.isVerified();
+        final boolean mockIsTheSame = getInvocation().getMock() == candidate.getMock();
+        final boolean methodEquals = hasSameMethod(candidate);
+
+        if (!methodNameEquals || !isUnverified || !mockIsTheSame) {
+            return false;
+        }
+
+        final boolean overloadedButSameArgs = !methodEquals && safelyArgumentsMatch(candidate.getArguments());
+
+        return !overloadedButSameArgs;
+    }
+
+    public boolean hasSameMethod(Invocation candidate) {
+        //not using method.equals() for 1 good reason:
+        //sometimes java generates forwarding methods when generics are in play see JavaGenericsForwardingMethodsTest
+        Method m1 = invocation.getMethod();
+        Method m2 = candidate.getMethod();
+        
+        if (m1.getName() != null && m1.getName().equals(m2.getName())) {
+            /* Avoid unnecessary cloning */
+            Class[] params1 = m1.getParameterTypes();
+            Class[] params2 = m2.getParameterTypes();
+            if (params1.length == params2.length) {
+                for (int i = 0; i < params1.length; i++) {
+                if (params1[i] != params2[i])
+                    return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public Location getLocation() {
+        return invocation.getLocation();
+    }
+
+    public void captureArgumentsFrom(Invocation invocation) {
+        if (invocation.getMethod().isVarArgs()) {
+            int indexOfVararg = invocation.getRawArguments().length - 1;
+            throw new UnsupportedOperationException();
+
+        } else {
+            for (int position = 0; position < matchers.size(); position++) {
+                Matcher m = matchers.get(position);
+                if (m instanceof CapturesArguments) {
+                    ((CapturesArguments) m).captureFrom(invocation.getArgumentAt(position, Object.class));
+                }
+            }
+        }
+
+//        for (int position = 0; position < matchers.size(); position++) {
+//            Matcher m = matchers.get(position);
+//            if (m instanceof CapturesArguments && invocation.getRawArguments().length > position) {
+//                //TODO SF - this whole lot can be moved captureFrom implementation
+//                if(isVariableArgument(invocation, position) && isVarargMatcher(m)) {
+//                    Object array = invocation.getRawArguments()[position];
+//                    for (int i = 0; i < Array.getLength(array); i++) {
+//                        ((CapturesArguments) m).captureFrom(Array.get(array, i));
+//                    }
+//                    //since we've captured all varargs already, it does not make sense to process other matchers.
+//                    return;
+//                } else {
+//                    ((CapturesArguments) m).captureFrom(invocation.getRawArguments()[position]);
+//                }
+//            }
+//        }
+    }
+
+    private boolean isVarargMatcher(Matcher matcher) {
+        Matcher actualMatcher = matcher;
+        if (actualMatcher instanceof MatcherDecorator) {
+            actualMatcher = ((MatcherDecorator) actualMatcher).getActualMatcher();
+        }
+        return actualMatcher instanceof VarargMatcher;
+    }
+
+    private boolean isVariableArgument(Invocation invocation, int position) {
+        return invocation.getRawArguments().length - 1 == position
+                && invocation.getRawArguments()[position] != null
+                && invocation.getRawArguments()[position].getClass().isArray()
+                && invocation.getMethod().isVarArgs();
+    }
+
+    public static List<InvocationMatcher> createFrom(List<Invocation> invocations) {
+        LinkedList<InvocationMatcher> out = new LinkedList<InvocationMatcher>();
+
+        for (Invocation i : invocations) {
+            out.add(new InvocationMatcher(i));
+        }
+
+        return out;
+    }
+}
+
+```
+
+
+Planning response:
+## Key behaviors, contracts, and boundaries to test
+
+1. **Constructor without matchers**: `new InvocationMatcher(invocation)` should default matchers to equals-based matchers derived from invocation's actual arguments (so `matches(sameInvocation)` returns true).
+
+2. **`matches(Invocation)` — method name/type mismatch**: must return false if invocation's method differs (different name, different declaring class/mock, or different arg count) regardless of matchers.
+
+3. **`matches(Invocation)` — varargs handling**: when the underlying method is varargs, matching should correctly compare individual vararg elements vs. an array matcher (core bug area — e.g., `anyVararg()` matching any number of varargs, and exact array vs. expanded elements).
+
+4. **`hasSameMethod(Invocation)`**: true only when same method (name + parameter types + declaring class) on potentially different invocations; false for overloaded/different-signature methods.
+
+5. **`hasSimilarMethod(Invocation)`**: true for same method name/mock even if invoked via different overload resolution paths (e.g., bridge methods) — boundary case with overridden/generic methods.
+
+6. **`captureArgumentsFrom(Invocation)`**: for `CapturesArgumentsFrom` matchers (e.g., `ArgumentCaptor`), ensure correct argument (including vararg element) is captured — check correct index mapping for vararg vs. fixed args.
+
+7. **`isVarargMatcher` / `isVariableArgument` boundary**: last-parameter vararg position with zero, one, multiple actual varargs supplied; non-vararg method must never be treated as vararg.
+
+8. **`getMatchers()` size consistency**: must equal raw arguments count expected by equals-matcher fallback when no explicit matchers given, even for vararg invocations (flattened vs. array).
+
+9. **`createFrom(List<Invocation>)`**: returns list of `InvocationMatcher`s in same order/size, each wrapping its respective invocation with default equals matchers.
+
+10. **`toString()` / `getLocation()` / `getInvocation()` / `getMethod()`**: simple delegation — verify non-null, correct method object, and invocation identity preserved.

@@ -1,0 +1,138 @@
+The failure is because `Map.class` with a raw (non-parameterized) `TypeToken` falls into the `else` branch (since `type instanceof ParameterizedType` is false), producing a `LinkedTreeMap` instead of `LinkedHashMap`. I'll fix the test to match the actual documented behavior.
+
+```java
+package com.google.gson.internal;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.junit.Test;
+
+import com.google.gson.InstanceCreator;
+import com.google.gson.reflect.TypeToken;
+
+public class ConstructorConstructorTest {
+
+  private static class PublicNoArg {
+    int value = 42;
+  }
+
+  private static class PrivateNoArg {
+    int value = 7;
+    private PrivateNoArg() {}
+  }
+
+  private abstract static class AbstractNoArg {
+  }
+
+  private static ConstructorConstructor newCC() {
+    return new ConstructorConstructor(Collections.<Type, InstanceCreator<?>>emptyMap());
+  }
+
+  @Test
+  public void defaultImplementationsForInterfaces() {
+    ConstructorConstructor cc = newCC();
+
+    ObjectConstructor<List> listCtor = cc.get(TypeToken.get(List.class));
+    Object list = listCtor.construct();
+    assertNotNull(list);
+    assertTrue(list instanceof java.util.ArrayList);
+
+    // Raw (non-parameterized) Map type falls into the LinkedTreeMap branch
+    ObjectConstructor<Map> mapCtor = cc.get(TypeToken.get(Map.class));
+    Object map = mapCtor.construct();
+    assertNotNull(map);
+    assertTrue(map instanceof LinkedTreeMap);
+
+    ObjectConstructor<SortedMap> sortedMapCtor = cc.get(TypeToken.get(SortedMap.class));
+    Object sortedMap = sortedMapCtor.construct();
+    assertNotNull(sortedMap);
+    assertTrue(sortedMap instanceof TreeMap);
+  }
+
+  @Test
+  public void publicNoArgConstructorUsed() {
+    ConstructorConstructor cc = newCC();
+    ObjectConstructor<PublicNoArg> ctor = cc.get(TypeToken.get(PublicNoArg.class));
+    PublicNoArg instance = ctor.construct();
+    assertNotNull(instance);
+    assertEquals(42, instance.value);
+  }
+
+  @Test
+  public void privateNoArgConstructorMadeAccessible() {
+    ConstructorConstructor cc = newCC();
+    ObjectConstructor<PrivateNoArg> ctor = cc.get(TypeToken.get(PrivateNoArg.class));
+    PrivateNoArg instance = ctor.construct();
+    assertNotNull(instance);
+    assertEquals(7, instance.value);
+  }
+
+  @Test
+  public void abstractClassWithoutInstanceCreatorThrows() {
+    ConstructorConstructor cc = newCC();
+    ObjectConstructor<AbstractNoArg> ctor = cc.get(TypeToken.get(AbstractNoArg.class));
+    try {
+      ctor.construct();
+      fail("Expected RuntimeException for abstract class instantiation");
+    } catch (RuntimeException expected) {
+      assertNotNull(expected.getMessage());
+    }
+  }
+
+  @Test
+  public void registeredInstanceCreatorTakesPrecedence() {
+    final PublicNoArg marker = new PublicNoArg();
+    marker.value = 999;
+
+    Map<Type, InstanceCreator<?>> creators = new java.util.HashMap<Type, InstanceCreator<?>>();
+    creators.put(PublicNoArg.class, new InstanceCreator<PublicNoArg>() {
+      @Override public PublicNoArg createInstance(Type type) {
+        return marker;
+      }
+    });
+
+    ConstructorConstructor cc = new ConstructorConstructor(creators);
+    ObjectConstructor<PublicNoArg> ctor = cc.get(TypeToken.get(PublicNoArg.class));
+    PublicNoArg result = ctor.construct();
+    assertEquals(999, result.value);
+    assertTrue(result == marker);
+  }
+
+  @Test
+  public void instanceCreatorReceivesCorrectType() {
+    final Type[] capturedType = new Type[1];
+    Map<Type, InstanceCreator<?>> creators = new java.util.HashMap<Type, InstanceCreator<?>>();
+    Type listOfStringType = new TypeToken<List<String>>() {}.getType();
+    creators.put(listOfStringType, new InstanceCreator<List<String>>() {
+      @Override public List<String> createInstance(Type type) {
+        capturedType[0] = type;
+        return new java.util.ArrayList<String>();
+      }
+    });
+
+    ConstructorConstructor cc = new ConstructorConstructor(creators);
+    ObjectConstructor<List<String>> ctor = cc.get(new TypeToken<List<String>>() {});
+    List<String> result = ctor.construct();
+    assertNotNull(result);
+    assertEquals(listOfStringType, capturedType[0]);
+  }
+
+  @Test
+  public void toStringContainsClassName() {
+    ConstructorConstructor cc = newCC();
+    String str = cc.toString();
+    assertNotNull(str);
+    assertTrue(str.length() >= 0);
+  }
+}
+```

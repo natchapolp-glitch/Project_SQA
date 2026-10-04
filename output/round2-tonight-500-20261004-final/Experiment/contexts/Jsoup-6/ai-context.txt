@@ -1,0 +1,367 @@
+Case: Jsoup-6
+Java 11, JUnit 4
+Modified classes: org.jsoup.nodes.Entities
+
+BUGGY API signatures (may include private members):
+Compiled from "Entities.java"
+public class org.jsoup.nodes.Entities {
+  private static final java.util.Map<java.lang.String, java.lang.Character> full;
+  private static final java.util.Map<java.lang.Character, java.lang.String> baseByVal;
+  private static final java.util.Map<java.lang.Character, java.lang.String> fullByVal;
+  private static final java.util.regex.Pattern unescapePattern;
+  private static final java.lang.Object[][] baseArray;
+  private static final java.lang.Object[][] fullArray;
+  public org.jsoup.nodes.Entities();
+  static java.lang.String escape(java.lang.String, org.jsoup.nodes.Document$OutputSettings);
+  static java.lang.String escape(java.lang.String, java.nio.charset.CharsetEncoder, org.jsoup.nodes.Entities$EscapeMode);
+  static java.lang.String unescape(java.lang.String);
+  static {};
+}
+
+
+BUGGY source excerpt: org.jsoup.nodes.Entities (truncated=True)
+```java
+package org.jsoup.nodes;
+
+import java.nio.charset.CharsetEncoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * HMTL entities, and escape routines.
+ * Source: <a href="http://www.w3.org/TR/html5/named-character-references.html#named-character-references">W3C HTML
+ * named character references</a>.
+ */
+public class Entities {
+    public enum EscapeMode {
+        base, extended
+    }
+
+    private static final Map<String, Character> full;
+    private static final Map<Character, String> baseByVal;
+    private static final Map<Character, String> fullByVal;
+    private static final Pattern unescapePattern = Pattern.compile("&(#(x|X)?([0-9a-fA-F]+)|[a-zA-Z]+);?");
+
+    static String escape(String string, Document.OutputSettings out) {
+        return escape(string, out.encoder(), out.escapeMode());
+    }
+
+    static String escape(String string, CharsetEncoder encoder, EscapeMode escapeMode) {
+        StringBuilder accum = new StringBuilder(string.length() * 2);
+        Map<Character, String> map = escapeMode == EscapeMode.extended ? fullByVal : baseByVal;
+
+        for (int pos = 0; pos < string.length(); pos++) {
+            Character c = string.charAt(pos);
+            if (map.containsKey(c))
+                accum.append('&').append(map.get(c)).append(';');
+            else if (encoder.canEncode(c))
+                accum.append(c.charValue());
+            else
+                accum.append("&#").append((int) c).append(';');
+        }
+
+        return accum.toString();
+    }
+
+    static String unescape(String string) {
+        if (!string.contains("&"))
+            return string;
+
+        Matcher m = unescapePattern.matcher(string); // &(#(x|X)?([0-9a-fA-F]+)|[a-zA-Z]+);?
+        StringBuffer accum = new StringBuffer(string.length()); // pity matcher can't use stringbuilder, avoid syncs
+        // todo: replace m.appendReplacement with own impl, so StringBuilder and quoteReplacement not required
+
+        while (m.find()) {
+            int charval = -1;
+            String num = m.group(3);
+            if (num != null) {
+                try {
+                    int base = m.group(2) != null ? 16 : 10; // 2 is hex indicator
+                    charval = Integer.valueOf(num, base);
+                } catch (NumberFormatException e) {
+                } // skip
+            } else {
+                String name = m.group(1);
+                if (full.containsKey(name))
+                    charval = full.get(name);
+            }
+
+            if (charval != -1 || charval > 0xFFFF) { // out of range
+                String c = Character.toString((char) charval);
+                m.appendReplacement(accum, c);
+            } else {
+                m.appendReplacement(accum, m.group(0));
+            }
+        }
+        m.appendTail(accum);
+        return accum.toString();
+    }
+
+    // most common, base entities can be unescaped without trailing ;
+    // e.g. &amp
+    private static final Object[][] baseArray = {
+            {"AElig", 0x000C6},
+            {"AMP", 0x00026},
+            {"Aacute", 0x000C1},
+            {"Acirc", 0x000C2},
+            {"Agrave", 0x000C0},
+            {"Aring", 0x000C5},
+            {"Atilde", 0x000C3},
+            {"Auml", 0x000C4},
+            {"COPY", 0x000A9},
+            {"Ccedil", 0x000C7},
+            {"ETH", 0x000D0},
+            {"Eacute", 0x000C9},
+            {"Ecirc", 0x000CA},
+            {"Egrave", 0x000C8},
+            {"Euml", 0x000CB},
+            {"GT", 0x0003E},
+            {"Iacute", 0x000CD},
+            {"Icirc", 0x000CE},
+            {"Igrave", 0x000CC},
+            {"Iuml", 0x000CF},
+            {"LT", 0x0003C},
+            {"Ntilde", 0x000D1},
+            {"Oacute", 0x000D3},
+            {"Ocirc", 0x000D4},
+            {"Ograve", 0x000D2},
+            {"Oslash", 0x000D8},
+            {"Otilde", 0x000D5},
+            {"Ouml", 0x000D6},
+            {"QUOT", 0x00022},
+            {"REG", 0x000AE},
+            {"THORN", 0x000DE},
+            {"Uacute", 0x000DA},
+            {"Ucirc", 0x000DB},
+            {"Ugrave", 0x000D9},
+            {"Uuml", 0x000DC},
+            {"Yacute", 0x000DD},
+            {"aacute", 0x000E1},
+            {"acirc", 0x000E2},
+            {"acute", 0x000B4},
+            {"aelig", 0x000E6},
+            {"agrave", 0x000E0},
+            {"amp", 0x00026},
+            {"aring", 0x000E5},
+            {"atilde", 0x000E3},
+            {"auml", 0x000E4},
+            {"brvbar", 0x000A6},
+            {"ccedil", 0x000E7},
+            {"cedil", 0x000B8},
+            {"cent", 0x000A2},
+            {"copy", 0x000A9},
+            {"curren", 0x000A4},
+            {"deg", 0x000B0},
+            {"divide", 0x000F7},
+            {"eacute", 0x000E9},
+            {"ecirc", 0x000EA},
+            {"egrave", 0x000E8},
+            {"eth", 0x000F0},
+            {"euml", 0x000EB},
+            {"frac12", 0x000BD},
+            {"frac14", 0x000BC},
+            {"frac34", 0x000BE},
+            {"gt", 0x0003E},
+            {"iacute", 0x000ED},
+            {"icirc", 0x000EE},
+            {"iexcl", 0x000A1},
+            {"igrave", 0x000EC},
+            {"iquest", 0x000BF},
+            {"iuml", 0x000EF},
+            {"laquo", 0x000AB},
+            {"lt", 0x0003C},
+            {"macr", 0x000AF},
+            {"micro", 0x000B5},
+            {"middot", 0x000B7},
+            {"nbsp", 0x000A0},
+            {"not", 0x000AC},
+            {"ntilde", 0x000F1},
+            {"oacute", 0x000F3},
+            {"ocirc", 0x000F4},
+            {"ograve", 0x000F2},
+            {"ordf", 0x000AA},
+            {"ordm", 0x000BA},
+            {"oslash", 0x000F8},
+            {"otilde", 0x000F5},
+            {"ouml", 0x000F6},
+            {"para", 0x000B6},
+            {"plusmn", 0x000B1},
+            {"pound", 0x000A3},
+            {"quot", 0x00022},
+            {"raquo", 0x000BB},
+            {"reg", 0x000AE},
+            {"sect", 0x000A7},
+            {"shy", 0x000AD},
+            {"sup1", 0x000B9},
+            {"sup2", 0x000B2},
+            {"sup3", 0x000B3},
+            {"szlig", 0x000DF},
+            {"thorn", 0x000FE},
+            {"times", 0x000D7},
+            {"uacute", 0x000FA},
+            {"ucirc", 0x000FB},
+            {"ugrave", 0x000F9},
+            {"uml", 0x000A8},
+            {"uuml", 0x000FC},
+            {"yacute", 0x000FD},
+            {"yen", 0x000A5},
+            {"yuml", 0x000FF}
+    };
+
+    // in most situations, will be better to use UTF8 and use the character directly, or use the numerical escape.
+    // are people really likely to remember "&CounterClockwiseContourIntegral;"? good grief.
+    private static final Object[][] fullArray = {
+            {"AElig", 0x000C6},
+            {"AMP", 0x00026},
+            {"Aacute", 0x000C1},
+            {"Abreve", 0x00102},
+            {"Acirc", 0x000C2},
+            {"Acy", 0x00410},
+            {"Afr", 0x1D504},
+            {"Agrave", 0x000C0},
+            {"Alpha", 0x00391},
+            {"Amacr", 0x00100},
+            {"And", 0x02A53},
+            {"Aogon", 0x00104},
+            {"Aopf", 0x1D538},
+            {"ApplyFunction", 0x02061},
+            {"Aring", 0x000C5},
+            {"Ascr", 0x1D49C},
+            {"Assign", 0x02254},
+            {"Atilde", 0x000C3},
+            {"Auml", 0x000C4},
+            {"Backslash", 0x02216},
+            {"Barv", 0x02AE7},
+            {"Barwed", 0x02306},
+            {"Bcy", 0x00411},
+            {"Because", 0x02235},
+            {"Bernoullis", 0x0212C},
+            {"Beta", 0x00392},
+            {"Bfr", 0x1D505},
+            {"Bopf", 0x1D539},
+            {"Breve", 0x002D8},
+            {"Bscr", 0x0212C},
+            {"Bumpeq", 0x0224E},
+            {"CHcy", 0x00427},
+            {"COPY", 0x000A9},
+            {"Cacute", 0x00106},
+            {"Cap", 0x022D2},
+            {"CapitalDifferentialD", 0x02145},
+            {"Cayleys", 0x0212D},
+            {"Ccaron", 0x0010C},
+            {"Ccedil", 0x000C7},
+            {"Ccirc", 0x00108},
+            {"Cconint", 0x02230},
+            {"Cdot", 0x0010A},
+            {"Cedilla", 0x000B8},
+            {"CenterDot", 0x000B7},
+            {"Cfr", 0x0212D},
+            {"Chi", 0x003A7},
+            {"CircleDot", 0x02299},
+            {"CircleMinus", 0x02296},
+            {"CirclePlus", 0x02295},
+            {"CircleTimes", 0x02297},
+            {"ClockwiseContourIntegral", 0x02232},
+            {"CloseCurlyDoubleQuote", 0x0201D},
+            {"CloseCurlyQuote", 0x02019},
+            {"Colon", 0x02237},
+            {"Colone", 0x02A74},
+            {"Congruent", 0x02261},
+            {"Conint", 0x0222F},
+            {"ContourIntegral", 0x0222E},
+            {"Copf", 0x02102},
+            {"Coproduct", 0x02210},
+            {"CounterClockwiseContourIntegral", 0x02233},
+            {"Cross", 0x02A2F},
+            {"Cscr", 0x1D49E},
+            {"Cup", 0x022D3},
+            {"CupCap", 0x0224D},
+            {"DD", 0x02145},
+            {"DDotrahd", 0x02911},
+            {"DJcy", 0x00402},
+            {"DScy", 0x00405},
+            {"DZcy", 0x0040F},
+            {"Dagger", 0x02021},
+            {"Darr", 0x021A1},
+            {"Dashv", 0x02AE4},
+            {"Dcaron", 0x0010E},
+            {"Dcy", 0x00414},
+            {"Del", 0x02207},
+            {"Delta", 0x00394},
+            {"Dfr", 0x1D507},
+            {"DiacriticalAcute", 0x000B4},
+            {"DiacriticalDot", 0x002D9},
+            {"DiacriticalDoubleAcute", 0x002DD},
+            {"DiacriticalGrave", 0x00060},
+            {"DiacriticalTilde", 0x002DC},
+            {"Diamond", 0x022C4},
+            {"DifferentialD", 0x02146},
+            {"Dopf", 0x1D53B},
+            {"Dot", 0x000A8},
+            {"DotDot", 0x020DC},
+            {"DotEqual", 0x02250},
+            {"DoubleContourIntegral", 0x0222F},
+            {"DoubleDot", 0x000A8},
+            {"DoubleDownArrow", 0x021D3},
+            {"DoubleLeftArrow", 0x021D0},
+            {"DoubleLeftRightArrow", 0x021D4},
+            {"DoubleLeftTee", 0x02AE4},
+            {"DoubleLongLeftArrow", 0x027F8},
+            {"DoubleLongLeftRightArrow", 0x027FA},
+            {"DoubleLongRightArrow", 0x027F9},
+            {"DoubleRightArrow", 0x021D2},
+            {"DoubleRightTee", 0x022A8},
+            {"DoubleUpArrow", 0x021D1},
+            {"DoubleUpDownArrow", 0x021D5},
+            {"DoubleVerticalBar", 0x02225},
+            {"DownArrow", 0x02193},
+            {"DownArrowBar", 0x02913},
+            {"DownArrowUpArrow", 0x021F5},
+            {"DownBreve", 0x00311},
+            {"DownLeftRightVector", 0x02950},
+            {"DownLeftTeeVector", 0x0295E},
+            {"DownLeftVector", 0x021BD},
+            {"DownLeftVectorBar", 0x02956},
+            {"DownRightTeeVector", 0x0295F},
+            {"DownRightVector", 0x021C1},
+            {"DownRightVectorBar", 0x02957},
+            {"DownTee", 0x022A4},
+            {"DownTeeArrow", 0x021A7},
+            {"Downarrow", 0x021D3},
+            {"Dscr", 0x1D49F},
+            {"Dstrok", 0x00110},
+            {"ENG", 0x0014A},
+            {"ETH", 0x000D0},
+            {"Eacute", 0x000C9},
+            {"Ecaron", 0x0011A},
+            {"Ecirc", 0x000CA},
+            {"Ecy", 0x0042D},
+            {"Edot", 0x00116},
+            {"Efr", 0x1D508},
+            {"Egrave", 0x000C8},
+            {"Element", 0x02208},
+            {"Emacr", 0x00112},
+            {"EmptySmallSquare", 0x025FB},
+            {"EmptyVerySmallSquare", 0x025AB},
+            {"Eogon", 0x00118},
+            {"Eopf", 0x1D53C},
+            {"Epsilon", 0x00395},
+            {"Equal", 0x02A75},
+            {"EqualTilde", 0x02242},
+            {"Equilibrium", 0x021CC},
+            {"Escr", 0x02130},
+            {"Esim", 0x02A73},
+            {"Eta", 0x00397},
+            {"Euml", 0x000CB},
+            {"Exists", 0x02203},
+            {"ExponentialE", 0x02147},
+            {"Fcy", 0x00424},
+            {"Ffr", 0x1D509},
+            {"FilledSmallSquare", 0x025FC},
+            {"FilledVerySmallSquare", 0x025AA},
+            {"Fopf", 0x1D53D},
+            {"ForAll", 0x02200},
+    
+```

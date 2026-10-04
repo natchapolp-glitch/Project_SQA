@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:06:22.629634+00:00",
+  "ended_at_utc": "2026-10-04T06:06:28.268799+00:00",
+  "raw_body_sha256": "7ef022a47fb02ade3ba01742d2958ac80bc5da9d13e5884b9a8e71ff03251fbc",
+  "body": {
+    "id": "gen-1791093984-aYPP8ozE2dEV2ZHvY40H",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Behaviors/boundaries to test via `Parser.parse(String html, String baseUri)` and `parseBodyFragment`:\n\n1. Basic well-formed HTML parses into correct DOM tree (html>head/body structure).\n2. Self-closing/void tags (e.g., `<br>`, `<img>`) don't swallow subsequent siblings.\n3. Unclosed tags are auto-closed at EOF or at parent boundary (e.g., `<p>1<p>2` yields two sibling `<p>` elements).\n4. Mismatched/stray end tags (e.g., `</div>` with no matching open) are ignored without throwing.\n5. Nested tags with improper close order correctly pop stack to nearest matching ancestor, not deeper/shallower.\n6. Comments (`<!-- -->`), CDATA, and XML declarations are parsed as distinct node types, not as text/elements.\n7. Attributes with single quotes, double quotes, and unquoted values parse correctly; boolean attributes preserved.\n8. Text nodes preserve whitespace/entities correctly and are not merged incorrectly with sibling elements.\n9. `<title>` and `<textarea>` content treated as raw text (no nested tag parsing inside them).\n10. `parseBodyFragment` wraps fragment content inside `<body>` without requiring full `<html>`/`<head>` structure; empty/null input handled gracefully (empty Document, no exception).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 856,
+      "output_tokens": 480,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.006512,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.006512,
+        "upstream_inference_prompt_cost": 0.001712,
+        "upstream_inference_completions_cost": 0.0048
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 77288,
+      "daily_remaining_tokens": 122712
+    }
+  },
+  "headers": {
+    "x-request-id": "ul86y6umzxtawgytajl7x9kw",
+    "date": "Sun, 04 Oct 2026 06:06:30 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,10 @@
+1. `linearCombination` methods must compute high-accuracy dot products, preventing catastrophic cancellation for large arrays or scalars.
+2. `linearCombination` with array inputs must throw `DimensionMismatchException` when array lengths differ.
+3. Element-by-element operations (`ebeAdd`, `ebeSubtract`, `ebeMultiply`, `ebeDivide`) must throw `DimensionMismatchException` for mismatched array lengths.
+4. `checkOrder` must correctly identify and throw `NonMonotonicSequenceException` when arrays violate the specified strict or non-strict order direction.
+5. `normalizeArray` must scale elements to sum to the target value and throw arithmetic/argument exceptions for invalid inputs (e.g., infinite, NaN, or zero-sum).
+6. `distance` and `distanceInf` methods must correctly compute L1, L2, and L-infinity norms for both integer and double arrays.
+7. `scale` and `scaleInPlace` must correctly multiply each element of the input array by the scalar factor.
+8. `convolve` must validate inputs against null arguments or empty data, throwing appropriate exceptions (`NullArgumentException`, `NoDataException`).
+9. `sortInPlace` must sort the primary array while applying the identical permutation to any accompanying companion arrays.
+10. Valid receiver setup involves non-null, valid-length numeric arrays (including empty or single-element boundary arrays where permitted).

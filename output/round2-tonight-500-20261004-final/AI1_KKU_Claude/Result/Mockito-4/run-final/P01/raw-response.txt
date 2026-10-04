@@ -1,0 +1,12 @@
+Focus on `invalidArgumentPositionRangeAtInvocationTime(InvocationOnMock, boolean, int)` since it returns an `int` (likely the buggy one—others are void and just throw).
+
+Key behaviors/boundaries to verify:
+- Throws MockitoException (or subclass) when index negative — invalid regardless of flag.
+- Boundary when index == number of arguments (off-by-one: valid vs invalid depends on whether "returnsAllParameters" wraps varargs).
+- Valid index at last argument position (index == argsCount-1) should NOT throw, and return value should equal index (or expected normalized position).
+- Behavior difference when `returnsAllParameters` true vs false, especially with varargs invocation (argument count differs from raw args length).
+- Invocation with zero arguments: any index should be invalid, confirm exception thrown rather than returning erroneous int.
+- Verify returned int equals the input index when valid (identity/passthrough contract), not some transformed value.
+- Confirm exception message contains method name/args info (useful for message-content assertions) sourced from mock setup — needs real `InvocationOnMock` from an actual mock invocation (via Mockito mocking + ArgumentCaptor or custom Invocation).
+- Setup requirement: receiver `Reporter` has no state—just instantiate directly; `InvocationOnMock` must be a genuine invocation object, e.g. captured from a real mock method call using Mockito's own mocking (not a hand-built stub), to ensure `getArguments()`, `getMethod()` work correctly.
+- Test both overloaded/varargs method invocations and fixed-arity invocations to cover array-length vs parameter-count mismatch boundary.

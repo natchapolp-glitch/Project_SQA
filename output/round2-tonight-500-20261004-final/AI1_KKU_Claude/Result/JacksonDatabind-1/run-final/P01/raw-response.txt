@@ -1,0 +1,10 @@
+- `getRawSerializationType()` should return the raw class of `_cfgSerializationType` only if non-null, else `null`; verify behavior for both set and unset `_cfgSerializationType`, including when `_cfgSerializationType` is a generic/parameterized type.
+- `getRawSerializationType()` vs `getPropertyType()` vs `getSerializationType()` should be consistent: serialization type takes precedence over declared type when configured.
+- `serializeAsField` must skip output (not write anything) when value is null and `_suppressNulls` is true; must write null via `_nullSerializer` when present and not suppressed.
+- `serializeAsField` should suppress output when value equals `_suppressableValue` (e.g., MARKER_FOR_EMPTY semantics or default-value suppression).
+- `serializeAsColumn` must still emit a placeholder/null for suppressed values (to preserve column alignment) rather than skipping entirely — contrast with `serializeAsField`.
+- `get(Object)` should correctly invoke the underlying `_accessorMethod` or `_field` depending on which is set, given a valid bean instance.
+- `rename()` and `unwrappingWriter()` should produce a new `BeanPropertyWriter` with transformed `_name`/`_wrapperName`, leaving original writer unmodified.
+- `assignSerializer` / `assignNullSerializer` should update `_serializer`/`_nullSerializer` and be reflected in `hasSerializer()`/`hasNullSerializer()`.
+- `getInternalSetting`, `setInternalSetting`, `removeInternalSetting` should behave as a map: set then get returns value, remove then get returns null, lazy-init `_internalSettings` only when first set.
+- Boundary: receiver constructed via copy-constructor(s) must preserve all fields from source writer, including `_includeInViews`, `_isRequired`, `_typeSerializer`.

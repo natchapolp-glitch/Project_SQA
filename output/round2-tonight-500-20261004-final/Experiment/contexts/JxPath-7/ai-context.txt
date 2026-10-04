@@ -1,0 +1,272 @@
+Case: JxPath-7
+Java 11, JUnit 4
+Modified classes: org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThan, org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThanOrEqual, org.apache.commons.jxpath.ri.compiler.CoreOperationLessThan, org.apache.commons.jxpath.ri.compiler.CoreOperationLessThanOrEqual, org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression
+
+BUGGY API signatures (may include private members):
+Compiled from "CoreOperationGreaterThan.java"
+public class org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThan extends org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression {
+  public org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThan(org.apache.commons.jxpath.ri.compiler.Expression, org.apache.commons.jxpath.ri.compiler.Expression);
+  public java.lang.Object computeValue(org.apache.commons.jxpath.ri.EvalContext);
+  public java.lang.String getSymbol();
+}
+Compiled from "CoreOperationGreaterThanOrEqual.java"
+public class org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThanOrEqual extends org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression {
+  public org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThanOrEqual(org.apache.commons.jxpath.ri.compiler.Expression, org.apache.commons.jxpath.ri.compiler.Expression);
+  public java.lang.Object computeValue(org.apache.commons.jxpath.ri.EvalContext);
+  public java.lang.String getSymbol();
+}
+Compiled from "CoreOperationLessThan.java"
+public class org.apache.commons.jxpath.ri.compiler.CoreOperationLessThan extends org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression {
+  public org.apache.commons.jxpath.ri.compiler.CoreOperationLessThan(org.apache.commons.jxpath.ri.compiler.Expression, org.apache.commons.jxpath.ri.compiler.Expression);
+  public java.lang.Object computeValue(org.apache.commons.jxpath.ri.EvalContext);
+  public java.lang.String getSymbol();
+}
+Compiled from "CoreOperationLessThanOrEqual.java"
+public class org.apache.commons.jxpath.ri.compiler.CoreOperationLessThanOrEqual extends org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression {
+  public org.apache.commons.jxpath.ri.compiler.CoreOperationLessThanOrEqual(org.apache.commons.jxpath.ri.compiler.Expression, org.apache.commons.jxpath.ri.compiler.Expression);
+  public java.lang.Object computeValue(org.apache.commons.jxpath.ri.EvalContext);
+  public java.lang.String getSymbol();
+}
+Compiled from "CoreOperationRelationalExpression.java"
+public abstract class org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression extends org.apache.commons.jxpath.ri.compiler.CoreOperation {
+  protected org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression(org.apache.commons.jxpath.ri.compiler.Expression[]);
+  protected final int getPrecedence();
+  protected final boolean isSymmetric();
+}
+
+
+BUGGY source excerpt: org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThan (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.compiler;
+
+/**
+ * Implementation of Expression for the operation "&gt;".
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class CoreOperationGreaterThan extends CoreOperationRelationalExpression {
+
+    public CoreOperationGreaterThan(Expression arg1, Expression arg2) {
+        super(new Expression[] { arg1, arg2 });
+    }
+
+    public Object computeValue(org.apache.commons.jxpath.ri.EvalContext context) {
+        double l = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[0].computeValue(context));
+        double r = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[1].computeValue(context));
+        return l > r ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public String getSymbol() {
+        return ">";
+    }
+}
+
+```
+
+BUGGY source excerpt: org.apache.commons.jxpath.ri.compiler.CoreOperationGreaterThanOrEqual (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.compiler;
+
+/**
+ * Implementation of Expression for the operation "&gt;=".
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class CoreOperationGreaterThanOrEqual extends
+        CoreOperationRelationalExpression {
+
+    public CoreOperationGreaterThanOrEqual(Expression arg1, Expression arg2) {
+        super(new Expression[] { arg1, arg2 });
+    }
+
+    public Object computeValue(org.apache.commons.jxpath.ri.EvalContext context) {
+        double l = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[0].computeValue(context));
+        double r = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[1].computeValue(context));
+        return l >= r ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public String getSymbol() {
+        return ">=";
+    }
+}
+
+```
+
+BUGGY source excerpt: org.apache.commons.jxpath.ri.compiler.CoreOperationLessThan (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.compiler;
+
+/**
+ * Implementation of Expression for the operation "&lt;".
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class CoreOperationLessThan extends CoreOperationRelationalExpression {
+
+    public CoreOperationLessThan(Expression arg1, Expression arg2) {
+        super(new Expression[] { arg1, arg2 });
+    }
+
+    public Object computeValue(org.apache.commons.jxpath.ri.EvalContext context) {
+        double l = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[0].computeValue(context));
+        double r = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[1].computeValue(context));
+        return l < r ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public String getSymbol() {
+        return "<";
+    }
+}
+
+```
+
+BUGGY source excerpt: org.apache.commons.jxpath.ri.compiler.CoreOperationLessThanOrEqual (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.compiler;
+
+/**
+ * Implementation of Expression for the operation "&lt;=".
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class CoreOperationLessThanOrEqual extends
+        CoreOperationRelationalExpression {
+
+    public CoreOperationLessThanOrEqual(Expression arg1, Expression arg2) {
+        super(new Expression[] { arg1, arg2 });
+    }
+
+    public Object computeValue(org.apache.commons.jxpath.ri.EvalContext context) {
+        double l = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[0].computeValue(context));
+        double r = org.apache.commons.jxpath.ri.InfoSetUtil.doubleValue(args[1].computeValue(context));
+        return l <= r ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    public String getSymbol() {
+        return "<=";
+    }
+}
+
+```
+
+BUGGY source excerpt: org.apache.commons.jxpath.ri.compiler.CoreOperationRelationalExpression (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.compiler;
+
+
+
+/**
+ * Base implementation of Expression for the operations "&gt;", "&gt;=", "&lt;", "&lt;=".
+ *
+ * @author Matt Benson
+ * @version $Revision:$ $Date:$
+ */
+public abstract class CoreOperationRelationalExpression extends CoreOperation {
+
+    protected CoreOperationRelationalExpression(Expression[] args) {
+        super(args);
+    }
+
+
+    protected final int getPrecedence() {
+        return 3;
+    }
+
+    protected final boolean isSymmetric() {
+        return false;
+    }
+
+
+
+
+
+
+
+
+}
+
+```

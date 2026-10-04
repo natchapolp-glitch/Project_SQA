@@ -1,0 +1,71 @@
+```java
+package org.jsoup.nodes;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class DocumentTest {
+
+    @Test
+    public void testDocumentConstructorAndNodeName() {
+        Document doc = new Document("http://example.com");
+        assertEquals("#document", doc.nodeName());
+        assertEquals("http://example.com", doc.baseUri());
+    }
+
+    @Test
+    public void testCreateShellStructure() {
+        Document doc = Document.createShell("http://example.com");
+        assertNotNull(doc.head());
+        assertNotNull(doc.body());
+        assertEquals("head", doc.head().nodeName());
+        assertEquals("body", doc.body().nodeName());
+    }
+
+    @Test
+    public void testTitleGetAndSet() {
+        Document doc = Document.createShell("http://example.com");
+        assertEquals("", doc.title());
+
+        doc.title("Hello World");
+        assertEquals("Hello World", doc.title());
+        assertNotNull(doc.getElementsByTag("title").first());
+
+        doc.title("New Title");
+        assertEquals("New Title", doc.title());
+    }
+
+    @Test
+    public void testCreateElement() {
+        Document doc = new Document("http://example.com");
+        Element el = doc.createElement("div");
+        assertEquals("div", el.nodeName());
+        assertEquals("http://example.com", el.baseUri());
+    }
+
+    @Test
+    public void testDocumentText() {
+        Document doc = Document.createShell("http://example.com");
+        doc.text("Document Body Text");
+        assertEquals("Document Body Text", doc.body().text());
+    }
+
+    @Test
+    public void testNormalise() {
+        Document doc = new Document("http://example.com");
+        Document normalised = doc.normalise();
+        assertNotNull(normalised.head());
+        assertNotNull(normalised.body());
+    }
+
+    @Test
+    public void testOuterHtml() {
+        Document doc = Document.createShell("http://example.com");
+        doc.body().text("Test Content");
+        String html = doc.outerHtml();
+        assertTrue(html.contains("<html>"));
+        assertTrue(html.contains("Test Content"));
+    }
+}
+```

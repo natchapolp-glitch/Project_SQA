@@ -1,0 +1,10 @@
+1. Initialize `NamedType` with a valid `JSTypeRegistry`, reference name, source name, line number, and character number.
+2. Setup receiver with cyclic type references or forward references to test `resolveInternal` cycle handling.
+3. Verify resolution behavior via `resolveViaRegistry` when the type exists in the registry.
+4. Verify property-based lookup (`lookupViaProperties`, `resolveViaProperties`) when resolving types through property chains.
+5. Test behavior of `finishPropertyContinuations` when property continuations are pending during resolution.
+6. Check handling of typedefs via `getTypedefType` during type resolution.
+7. Verify `setReferencedAndResolvedType` correctly sets the underlying proxy type and triggers validators.
+8. Test error reporting boundaries via `ErrorReporter` when encountering unresolved types or type cycles (`handleUnresolvedType`, `handleTypeCycle`).
+9. Verify `defineProperty` behavior on `NamedType` proxy object before and after resolution.
+10. Check consistency of `getReferencedType`, `getReferenceName`, `hasReferenceName`, and `isNominalType` across resolution states.

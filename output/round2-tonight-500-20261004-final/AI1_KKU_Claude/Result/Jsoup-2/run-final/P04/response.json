@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:07:08.335091+00:00",
+  "ended_at_utc": "2026-10-04T06:07:15.683005+00:00",
+  "raw_body_sha256": "22cfd00161583f8812641b52cba54610931211be2f55affd83bd4244a6b2d844",
+  "body": {
+    "id": "gen-1791094028-XPZSfhaHp03l3Y4QpmOF",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jsoup.parser;\n\nimport org.jsoup.nodes.Document;\nimport org.jsoup.nodes.Element;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\npublic class ParserExtraTest {\n\n    @Test\n    public void cdataSectionParsedAsRawText() {\n        String html = \"<html><body><![CDATA[Some <raw> & unescaped text]]></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element body = doc.body();\n        boolean found = false;\n        for (org.jsoup.nodes.Node n : body.childNodes()) {\n            if (n instanceof org.jsoup.nodes.TextNode) {\n                String text = ((org.jsoup.nodes.TextNode) n).getWholeText();\n                if (text.contains(\"Some <raw> & unescaped text\")) {\n                    found = true;\n                }\n            }\n        }\n        assertTrue(found);\n    }\n\n    @Test\n    public void baseTagUpdatesBaseUriForSubsequentRelativeLinks() {\n        String html = \"<html><head><base href=\\\"http://other.com/sub/\\\"></head><body><a href=\\\"page.html\\\">link</a></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element a = doc.select(\"a\").first();\n        assertNotNull(a);\n        assertEquals(\"http://other.com/sub/page.html\", a.absUrl(\"href\"));\n    }\n\n    @Test\n    public void selfClosingTagDoesNotRemainOnStack() {\n        String html = \"<html><body><img src=\\\"test.png\\\"/><p>After</p></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element body = doc.body();\n        // img should not have swallowed the p as a child since it's self-closed\n        assertEquals(2, body.children().size());\n        assertEquals(\"img\", body.children().get(0).tagName());\n        assertEquals(\"p\", body.children().get(1).tagName());\n    }\n\n    @Test\n    public void unknownAttributeCharacterIsSkippedGracefully() {\n        String html = \"<div =foo id=\\\"test\\\"></div>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element div = doc.select(\"div\").first();\n        assertNotNull(div);\n        assertEquals(\"test\", div.attr(\"id\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6434,
+      "output_tokens": 856,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.021428,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.021428,
+        "upstream_inference_prompt_cost": 0.012868,
+        "upstream_inference_completions_cost": 0.00856
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 91413,
+      "daily_remaining_tokens": 108587
+    }
+  },
+  "headers": {
+    "x-request-id": "uhyg9uxn10pz1rul8w2oa24i",
+    "date": "Sun, 04 Oct 2026 06:07:16 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

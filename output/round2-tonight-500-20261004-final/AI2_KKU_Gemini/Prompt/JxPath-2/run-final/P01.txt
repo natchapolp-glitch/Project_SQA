@@ -1,0 +1,23 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JxPath-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.jxpath.ri.compiler.Expression
+BUGGY API signatures:
+Compiled from "Expression.java"
+public abstract class org.apache.commons.jxpath.ri.compiler.Expression {
+  protected static final java.lang.Double ZERO;
+  protected static final java.lang.Double ONE;
+  protected static final java.lang.Double NOT_A_NUMBER;
+  private boolean contextDependencyKnown;
+  private boolean contextDependent;
+  public org.apache.commons.jxpath.ri.compiler.Expression();
+  public boolean isContextDependent();
+  public abstract boolean computeContextDependent();
+  public abstract java.lang.Object computeValue(org.apache.commons.jxpath.ri.EvalContext);
+  public abstract java.lang.Object compute(org.apache.commons.jxpath.ri.EvalContext);
+  public java.util.Iterator iterate(org.apache.commons.jxpath.ri.EvalContext);
+  public java.util.Iterator iteratePointers(org.apache.commons.jxpath.ri.EvalContext);
+  static {};
+}
+

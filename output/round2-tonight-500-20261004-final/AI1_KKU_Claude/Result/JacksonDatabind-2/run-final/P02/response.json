@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:57:20.752790+00:00",
+  "ended_at_utc": "2026-10-04T05:57:30.678193+00:00",
+  "raw_body_sha256": "5e401454478c14821e219e3905a83d03e6d1331f7b8408832212b3bd4b3c33d4",
+  "body": {
+    "id": "gen-1791093441-1FoSAfIkaAHmjyYHroLp",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.databind.util;\n\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonToken;\n\npublic class TokenBufferNullNumberTest {\n\n    @Test\n    public void testWriteNullBigIntegerAtRoot() throws Exception {\n        TokenBuffer buf = new TokenBuffer(null, false);\n        buf.writeNumber((BigInteger) null);\n        buf.close();\n\n        JsonParser p = buf.asParser();\n        assertEquals(JsonToken.VALUE_NULL, p.nextToken());\n        assertNull(p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testWriteNullBigDecimalAtRoot() throws Exception {\n        TokenBuffer buf = new TokenBuffer(null, false);\n        buf.writeNumber((BigDecimal) null);\n        buf.close();\n\n        JsonParser p = buf.asParser();\n        assertEquals(JsonToken.VALUE_NULL, p.nextToken());\n        assertNull(p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testWriteNullBigIntegerInArray() throws Exception {\n        TokenBuffer buf = new TokenBuffer(null, false);\n        buf.writeStartArray();\n        buf.writeNumber((BigInteger) null);\n        buf.writeEndArray();\n        buf.close();\n\n        JsonParser p = buf.asParser();\n        assertEquals(JsonToken.START_ARRAY, p.nextToken());\n        assertEquals(JsonToken.VALUE_NULL, p.nextToken());\n        assertEquals(JsonToken.END_ARRAY, p.nextToken());\n        assertNull(p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testWriteNullBigDecimalAsObjectFieldValue() throws Exception {\n        TokenBuffer buf = new TokenBuffer(null, false);\n        buf.writeStartObject();\n        buf.writeFieldName(\"value\");\n        buf.writeNumber((BigDecimal) null);\n        buf.writeEndObject();\n        buf.close();\n\n        JsonParser p = buf.asParser();\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, p.nextToken());\n        assertEquals(\"value\", p.getCurrentName());\n        assertEquals(JsonToken.VALUE_NULL, p.nextToken());\n        assertEquals(JsonToken.END_OBJECT, p.nextToken());\n        assertNull(p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testNonNullBigIntegerAndBigDecimalStillNumeric() throws Exception {\n        TokenBuffer buf = new TokenBuffer(null, false);\n        buf.writeStartArray();\n        buf.writeNumber(BigInteger.valueOf(42L));\n        buf.writeNumber(BigDecimal.valueOf(3.5));\n        buf.writeEndArray();\n        buf.close();\n\n        JsonParser p = buf.asParser();\n        assertEquals(JsonToken.START_ARRAY, p.nextToken());\n        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(BigInteger.valueOf(42L), p.getBigIntegerValue());\n        assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());\n        assertEquals(BigDecimal.valueOf(3.5), p.getDecimalValue());\n        assertEquals(JsonToken.END_ARRAY, p.nextToken());\n        assertNull(p.nextToken());\n        p.close();\n    }\n\n    @Test\n    public void testToStringDoesNotThrowWithNullNumberEntry() throws Exception {\n        TokenBuffer buf = new TokenBuffer(null, false);\n        buf.writeStartArray();\n        buf.writeNumber((BigInteger) null);\n        buf.writeEndArray();\n        buf.close();\n\n        String s = buf.toString();\n        assertNotNull(s);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7732,
+      "output_tokens": 1506,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.030524,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.030524,
+        "upstream_inference_prompt_cost": 0.015464,
+        "upstream_inference_completions_cost": 0.01506
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 71446,
+      "daily_remaining_tokens": 128554
+    }
+  },
+  "headers": {
+    "x-request-id": "rsikxf307ti2stav94wknien",
+    "date": "Sun, 04 Oct 2026 05:57:31 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

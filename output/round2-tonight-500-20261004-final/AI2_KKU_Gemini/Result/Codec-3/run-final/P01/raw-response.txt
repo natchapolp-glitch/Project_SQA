@@ -1,0 +1,10 @@
+- Initialize receiver using `new DoubleMetaphone()` with default maxCodeLen or custom length via `setMaxCodeLen(int)`.
+- Verify null input handling for `doubleMetaphone(String)` and `encode(String)` returning null or empty safely.
+- Verify empty string and whitespace-only string inputs return empty strings or proper phonetic codes.
+- Test `doubleMetaphone(String, boolean)` with alternate encoding flags (`true`/`false`).
+- Test `isDoubleMetaphoneEqual(String, String)` and `isDoubleMetaphoneEqual(String, String, boolean)` for matching phonetic keys.
+- Check boundary handling of `maxCodeLen` (e.g., very short limits like 1 or 2, and default length 4).
+- Test words starting with silent start prefixes or special consonant combinations handled by `handle...` methods.
+- Test `encode(Object)` throwing `EncoderException` on non-String objects, and returning encoded `String` on valid Strings.
+- Verify `isSlavoGermanic` and vowel checks behavior on edge-case strings (e.g., containing 'W', 'K', 'CZ', 'WITZ').
+- Check string cleanup behavior (`cleanInput`) for non-alpha characters and case insensitivity.

@@ -1,0 +1,120 @@
+package com.fasterxml.jackson.dataformat.xml.deser;
+
+import static org.junit.Assert.*;
+
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.io.IOContext;
+import com.fasterxml.jackson.core.util.BufferRecycler;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+public class FromXmlParserTest {
+
+    private FromXmlParser createParser(String xml) throws Exception {
+        XMLInputFactory f = XMLInputFactory.newFactory();
+        XMLStreamReader sr = f.createXMLStreamReader(new StringReader(xml));
+        IOContext ctxt = new IOContext(new BufferRecycler(), sr, false);
+        return new FromXmlParser(ctxt, 0, 0, new XmlMapper(), sr);
+    }
+
+    @Test
+    public void testBasicParsingLifecycle() throws Exception {
+        FromXmlParser parser = createParser("<root><item>text</item></root>");
+        assertFalse(parser.isClosed());
+        assertTrue(parser.requiresCustomCodec());
+        assertNotNull(parser.version());
+        assertNotNull(parser.getStaxReader());
+
+        JsonToken t = parser.nextToken();
+        assertNotNull(t);
+
+        parser.close();
+        assertTrue(parser.isClosed());
+    }
+
+    @Test
+    public void testFeaturesAndConfiguration() throws Exception {
+        FromXmlParser parser = createParser("<root/>");
+        FromXmlParser.Feature f = FromXmlParser.Feature.values().length > 0 
+                ? FromXmlParser.Feature.values()[0] : null;
+        if (f != null) {
+            parser.enable(f);
+            assertTrue(parser.isEnabled(f));
+            parser.disable(f);
+            assertFalse(parser.isEnabled(f));
+            parser.configure(f, true);
+            assertTrue(parser.isEnabled(f));
+        }
+
+        assertEquals(0, parser.getFormatFeatures());
+        parser.overrideFormatFeatures(5, 5);
+        assertEquals(5, parser.getFormatFeatures());
+
+        parser.setXMLTextElementName("value");
+    }
+
+    @Test
+    public void testTextAndValueExtraction() throws Exception {
+        FromXmlParser parser = createParser("<root><number>123</number></root>");
+        
+        assertEquals(JsonToken.START_OBJECT, parser.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, parser.nextToken());
+        assertEquals("root", parser.getCurrentName());
+
+        assertEquals(JsonToken.START_OBJECT, parser.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, parser.nextToken());
+        assertEquals("number", parser.getCurrentName());
+
+        assertEquals(JsonToken.VALUE_STRING, parser.nextToken());
+        assertEquals("123", parser.getText());
+        assertEquals(123, parser.getIntValue());
+        assertEquals("123", parser.getValueAsString());
+        assertEquals("123", parser.getValueAsString("default"));
+
+        char[] chars = parser.getTextCharacters();
+        assertNotNull(chars);
+        assertTrue(parser.getTextLength() > 0);
+        assertTrue(parser.hasTextCharacters());
+    }
+
+    @Test
+    public void testVirtualWrappingAndContext() throws Exception {
+        FromXmlParser parser = createParser("<root><item>a</item></root>");
+        Set<String> namesToWrap = new HashSet<String>();
+        namesToWrap.add("item");
+        parser.addVirtualWrapping(namesToWrap);
+
+        assertNotNull(parser.getParsingContext());
+        assertNotNull(parser.getTokenLocation());
+        assertNotNull(parser.getCurrentLocation());
+    }
+
+    @Test
+    public void testOverrideCurrentName() throws Exception {
+        FromXmlParser parser = createParser("<root><item>val</item></root>");
+        parser.nextToken();
+        parser.nextToken();
+        parser.overrideCurrentName("newName");
+        assertEquals("newName", parser.getCurrentName());
+    }
+
+    @Test
+    public void testNumericAndBinaryValues() throws Exception {
+        FromXmlParser parser = createParser("<root><val>AQID</val></root>");
+        parser.nextToken(); // START_OBJECT
+        parser.nextToken(); // FIELD_NAME
+        parser.nextToken(); // START_OBJECT / VALUE
+        
+        assertNotNull(parser.getBinaryValue(com.fasterxml.jackson.core.Base64Variants.getDefaultVariant()));
+    }
+}

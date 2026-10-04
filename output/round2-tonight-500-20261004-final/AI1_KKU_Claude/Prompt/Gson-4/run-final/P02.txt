@@ -1,0 +1,473 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Gson-4
+Java 11, JUnit 4
+Modified classes: com.google.gson.stream.JsonReader, com.google.gson.stream.JsonWriter
+
+BUGGY API signatures (may include private members):
+Compiled from "JsonReader.java"
+public class com.google.gson.stream.JsonReader implements java.io.Closeable {
+  private static final char[] NON_EXECUTE_PREFIX;
+  private static final long MIN_INCOMPLETE_INTEGER;
+  private static final int PEEKED_NONE;
+  private static final int PEEKED_BEGIN_OBJECT;
+  private static final int PEEKED_END_OBJECT;
+  private static final int PEEKED_BEGIN_ARRAY;
+  private static final int PEEKED_END_ARRAY;
+  private static final int PEEKED_TRUE;
+  private static final int PEEKED_FALSE;
+  private static final int PEEKED_NULL;
+  private static final int PEEKED_SINGLE_QUOTED;
+  private static final int PEEKED_DOUBLE_QUOTED;
+  private static final int PEEKED_UNQUOTED;
+  private static final int PEEKED_BUFFERED;
+  private static final int PEEKED_SINGLE_QUOTED_NAME;
+  private static final int PEEKED_DOUBLE_QUOTED_NAME;
+  private static final int PEEKED_UNQUOTED_NAME;
+  private static final int PEEKED_LONG;
+  private static final int PEEKED_NUMBER;
+  private static final int PEEKED_EOF;
+  private static final int NUMBER_CHAR_NONE;
+  private static final int NUMBER_CHAR_SIGN;
+  private static final int NUMBER_CHAR_DIGIT;
+  private static final int NUMBER_CHAR_DECIMAL;
+  private static final int NUMBER_CHAR_FRACTION_DIGIT;
+  private static final int NUMBER_CHAR_EXP_E;
+  private static final int NUMBER_CHAR_EXP_SIGN;
+  private static final int NUMBER_CHAR_EXP_DIGIT;
+  private final java.io.Reader in;
+  private boolean lenient;
+  private final char[] buffer;
+  private int pos;
+  private int limit;
+  private int lineNumber;
+  private int lineStart;
+  int peeked;
+  private long peekedLong;
+  private int peekedNumberLength;
+  private java.lang.String peekedString;
+  private int[] stack;
+  private int stackSize;
+  private java.lang.String[] pathNames;
+  private int[] pathIndices;
+  public com.google.gson.stream.JsonReader(java.io.Reader);
+  public final void setLenient(boolean);
+  public final boolean isLenient();
+  public void beginArray() throws java.io.IOException;
+  public void endArray() throws java.io.IOException;
+  public void beginObject() throws java.io.IOException;
+  public void endObject() throws java.io.IOException;
+  public boolean hasNext() throws java.io.IOException;
+  public com.google.gson.stream.JsonToken peek() throws java.io.IOException;
+  int doPeek() throws java.io.IOException;
+  private int peekKeyword() throws java.io.IOException;
+  private int peekNumber() throws java.io.IOException;
+  private boolean isLiteral(char) throws java.io.IOException;
+  public java.lang.String nextName() throws java.io.IOException;
+  public java.lang.String nextString() throws java.io.IOException;
+  public boolean nextBoolean() throws java.io.IOException;
+  public void nextNull() throws java.io.IOException;
+  public double nextDouble() throws java.io.IOException;
+  public long nextLong() throws java.io.IOException;
+  private java.lang.String nextQuotedValue(char) throws java.io.IOException;
+  private java.lang.String nextUnquotedValue() throws java.io.IOException;
+  private void skipQuotedValue(char) throws java.io.IOException;
+  private void skipUnquotedValue() throws java.io.IOException;
+  public int nextInt() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public void skipValue() throws java.io.IOException;
+  private void push(int);
+  private boolean fillBuffer(int) throws java.io.IOException;
+  int getLineNumber();
+  int getColumnNumber();
+  private int nextNonWhitespace(boolean) throws java.io.IOException;
+  private void checkLenient() throws java.io.IOException;
+  private void skipToEndOfLine() throws java.io.IOException;
+  private boolean skipTo(java.lang.String) throws java.io.IOException;
+  public java.lang.String toString();
+  public java.lang.String getPath();
+  private char readEscapeCharacter() throws java.io.IOException;
+  private java.io.IOException syntaxError(java.lang.String) throws java.io.IOException;
+  private void consumeNonExecutePrefix() throws java.io.IOException;
+  static {};
+}
+Compiled from "JsonWriter.java"
+public class com.google.gson.stream.JsonWriter implements java.io.Closeable,java.io.Flushable {
+  private static final java.lang.String[] REPLACEMENT_CHARS;
+  private static final java.lang.String[] HTML_SAFE_REPLACEMENT_CHARS;
+  private final java.io.Writer out;
+  private int[] stack;
+  private int stackSize;
+  private java.lang.String indent;
+  private java.lang.String separator;
+  private boolean lenient;
+  private boolean htmlSafe;
+  private java.lang.String deferredName;
+  private boolean serializeNulls;
+  public com.google.gson.stream.JsonWriter(java.io.Writer);
+  public final void setIndent(java.lang.String);
+  public final void setLenient(boolean);
+  public boolean isLenient();
+  public final void setHtmlSafe(boolean);
+  public final boolean isHtmlSafe();
+  public final void setSerializeNulls(boolean);
+  public final boolean getSerializeNulls();
+  public com.google.gson.stream.JsonWriter beginArray() throws java.io.IOException;
+  public com.google.gson.stream.JsonWriter endArray() throws java.io.IOException;
+  public com.google.gson.stream.JsonWriter beginObject() throws java.io.IOException;
+  public com.google.gson.stream.JsonWriter endObject() throws java.io.IOException;
+  private com.google.gson.stream.JsonWriter open(int, java.lang.String) throws java.io.IOException;
+  private com.google.gson.stream.JsonWriter close(int, int, java.lang.String) throws java.io.IOException;
+  private void push(int);
+  private int peek();
+  private void replaceTop(int);
+  public com.google.gson.stream.JsonWriter name(java.lang.String) throws java.io.IOException;
+  private void writeDeferredName() throws java.io.IOException;
+  public com.google.gson.stream.JsonWriter value(java.lang.String) throws java.io.IOException;
+  public com.google.gson.stream.JsonWriter jsonValue(java.lang.String) throws java.io.IOException;
+  public com.google.gson.stream.JsonWriter nullValue() throws java.io.IOException;
+  public com.google.gson.
+
+BUGGY source excerpt: com.google.gson.stream.JsonReader (truncated=True)
+```java
+/*
+ * Copyright (C) 2010 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.gson.stream;
+
+import com.google.gson.internal.JsonReaderInternalAccess;
+import com.google.gson.internal.bind.JsonTreeReader;
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.Reader;
+
+/**
+ * Reads a JSON (<a href="http://www.ietf.org/rfc/rfc7159.txt">RFC 7159</a>)
+ * encoded value as a stream of tokens. This stream includes both literal
+ * values (strings, numbers, booleans, and nulls) as well as the begin and
+ * end delimiters of objects and arrays. The tokens are traversed in
+ * depth-first order, the same order that they appear in the JSON document.
+ * Within JSON objects, name/value pairs are represented by a single token.
+ *
+ * <h3>Parsing JSON</h3>
+ * To create a recursive descent parser for your own JSON streams, first create
+ * an entry point method that creates a {@code JsonReader}.
+ *
+ * <p>Next, create handler methods for each structure in your JSON text. You'll
+ * need a method for each object type and for each array type.
+ * <ul>
+ *   <li>Within <strong>array handling</strong> methods, first call {@link
+ *       #beginArray} to consume the array's opening bracket. Then create a
+ *       while loop that accumulates values, terminating when {@link #hasNext}
+ *       is false. Finally, read the array's closing bracket by calling {@link
+ *       #endArray}.
+ *   <li>Within <strong>object handling</strong> methods, first call {@link
+ *       #beginObject} to consume the object's opening brace. Then create a
+ *       while loop that assigns values to local variables based on their name.
+ *       This loop should terminate when {@link #hasNext} is false. Finally,
+ *       read the object's closing brace by calling {@link #endObject}.
+ * </ul>
+ * <p>When a nested object or array is encountered, delegate to the
+ * corresponding handler method.
+ *
+ * <p>When an unknown name is encountered, strict parsers should fail with an
+ * exception. Lenient parsers should call {@link #skipValue()} to recursively
+ * skip the value's nested tokens, which may otherwise conflict.
+ *
+ * <p>If a value may be null, you should first check using {@link #peek()}.
+ * Null literals can be consumed using either {@link #nextNull()} or {@link
+ * #skipValue()}.
+ *
+ * <h3>Example</h3>
+ * Suppose we'd like to parse a stream of messages such as the following: <pre> {@code
+ * [
+ *   {
+ *     "id": 912345678901,
+ *     "text": "How do I read a JSON stream in Java?",
+ *     "geo": null,
+ *     "user": {
+ *       "name": "json_newb",
+ *       "followers_count": 41
+ *      }
+ *   },
+ *   {
+ *     "id": 912345678902,
+ *     "text": "@json_newb just use JsonReader!",
+ *     "geo": [50.454722, -104.606667],
+ *     "user": {
+ *       "name": "jesse",
+ *       "followers_count": 2
+ *     }
+ *   }
+ * ]}</pre>
+ * This code implements the parser for the above structure: <pre>   {@code
+ *
+ *   public List<Message> readJsonStream(InputStream in) throws IOException {
+ *     JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+ *     try {
+ *       return readMessagesArray(reader);
+ *     } finally {
+ *       reader.close();
+ *     }
+ *   }
+ *
+ *   public List<Message> readMessagesArray(JsonReader reader) throws IOException {
+ *     List<Message> messages = new ArrayList<Message>();
+ *
+ *     reader.beginArray();
+ *     while (reader.hasNext()) {
+ *       messages.add(readMessage(reader));
+ *     }
+ *     reader.endArray();
+ *     return messages;
+ *   }
+ *
+ *   public Message readMessage(JsonReader reader) throws IOException {
+ *     long id = -1;
+ *     String text = null;
+ *     User user = null;
+ *     List<Double> geo = null;
+ *
+ *     reader.beginObject();
+ *     while (reader.hasNext()) {
+ *       String name = reader.nextName();
+ *       if (name.equals("id")) {
+ *         id = reader.nextLong();
+ *       } else if (name.equals("text")) {
+ *         text = reader.nextString();
+ *       } else if (name.equals("geo") && reader.peek() != JsonToken.NULL) {
+ *         geo = readDoublesArray(reader);
+ *       } else if (name.equals("user")) {
+ *         user = readUser(reader);
+ *       } else {
+ *         reader.skipValue();
+ *       }
+ *     }
+ *     reader.endObject();
+ *     return new Message(id, text, user, geo);
+ *   }
+ *
+ *   public List<Double> readDoublesArray(JsonReader reader) throws IOException {
+ *     List<Double> doubles = new ArrayList<Double>();
+ *
+ *     reader.beginArray();
+ *     while (reader.hasNext()) {
+ *       doubles.add(reader.nextDouble());
+ *     }
+ *     reader.endArray();
+ *     return doubles;
+ *   }
+ *
+ *   public User readUser(JsonReader reader) throws IOException {
+ *     String username = null;
+ *     int followersCount = -1;
+ *
+ *     reader.beginObject();
+ *     while (reader.hasNext()) {
+ *       String name = reader.nextName();
+ *       if (name.equals("name")) {
+ *         username = reader.nextString();
+ *       } else if (name.equals("followers_count")) {
+ *         followersCount = reader.nextInt();
+ *       } else {
+ *         reader.skipValue();
+ *       }
+ *     }
+ *     reader.endObject();
+ *     return new User(username, followersCount);
+ *   }}</pre>
+ *
+ * <h3>Number Handling</h3>
+ * This reader permits numeric values to be read as strings and string values to
+ * be read as numbers. For example, both elements of the JSON array {@code
+ * [1, "1"]} may be read using either {@link #nextInt} or {@link #nextStr
+```
+
+BUGGY source excerpt: com.google.gson.stream.JsonWriter (truncated=True)
+```java
+/*
+ * Copyright (C) 2010 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.gson.stream;
+
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.Writer;
+
+import static com.google.gson.stream.JsonScope.DANGLING_NAME;
+import static com.google.gson.stream.JsonScope.EMPTY_ARRAY;
+import static com.google.gson.stream.JsonScope.EMPTY_DOCUMENT;
+import static com.google.gson.stream.JsonScope.EMPTY_OBJECT;
+import static com.google.gson.stream.JsonScope.NONEMPTY_ARRAY;
+import static com.google.gson.stream.JsonScope.NONEMPTY_DOCUMENT;
+import static com.google.gson.stream.JsonScope.NONEMPTY_OBJECT;
+
+/**
+ * Writes a JSON (<a href="http://www.ietf.org/rfc/rfc7159.txt">RFC 7159</a>)
+ * encoded value to a stream, one token at a time. The stream includes both
+ * literal values (strings, numbers, booleans and nulls) as well as the begin
+ * and end delimiters of objects and arrays.
+ *
+ * <h3>Encoding JSON</h3>
+ * To encode your data as JSON, create a new {@code JsonWriter}. Each JSON
+ * document must contain one top-level array or object. Call methods on the
+ * writer as you walk the structure's contents, nesting arrays and objects as
+ * necessary:
+ * <ul>
+ *   <li>To write <strong>arrays</strong>, first call {@link #beginArray()}.
+ *       Write each of the array's elements with the appropriate {@link #value}
+ *       methods or by nesting other arrays and objects. Finally close the array
+ *       using {@link #endArray()}.
+ *   <li>To write <strong>objects</strong>, first call {@link #beginObject()}.
+ *       Write each of the object's properties by alternating calls to
+ *       {@link #name} with the property's value. Write property values with the
+ *       appropriate {@link #value} method or by nesting other objects or arrays.
+ *       Finally close the object using {@link #endObject()}.
+ * </ul>
+ *
+ * <h3>Example</h3>
+ * Suppose we'd like to encode a stream of messages such as the following: <pre> {@code
+ * [
+ *   {
+ *     "id": 912345678901,
+ *     "text": "How do I stream JSON in Java?",
+ *     "geo": null,
+ *     "user": {
+ *       "name": "json_newb",
+ *       "followers_count": 41
+ *      }
+ *   },
+ *   {
+ *     "id": 912345678902,
+ *     "text": "@json_newb just use JsonWriter!",
+ *     "geo": [50.454722, -104.606667],
+ *     "user": {
+ *       "name": "jesse",
+ *       "followers_count": 2
+ *     }
+ *   }
+ * ]}</pre>
+ * This code encodes the above structure: <pre>   {@code
+ *   public void writeJsonStream(OutputStream out, List<Message> messages) throws IOException {
+ *     JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+ *     writer.setIndent("    ");
+ *     writeMessagesArray(writer, messages);
+ *     writer.close();
+ *   }
+ *
+ *   public void writeMessagesArray(JsonWriter writer, List<Message> messages) throws IOException {
+ *     writer.beginArray();
+ *     for (Message message : messages) {
+ *       writeMessage(writer, message);
+ *     }
+ *     writer.endArray();
+ *   }
+ *
+ *   public void writeMessage(JsonWriter writer, Message message) throws IOException {
+ *     writer.beginObject();
+ *     writer.name("id").value(message.getId());
+ *     writer.name("text").value(message.getText());
+ *     if (message.getGeo() != null) {
+ *       writer.name("geo");
+ *       writeDoublesArray(writer, message.getGeo());
+ *     } else {
+ *       writer.name("geo").nullValue();
+ *     }
+ *     writer.name("user");
+ *     writeUser(writer, message.getUser());
+ *     writer.endObject();
+ *   }
+ *
+ *   public void writeUser(JsonWriter writer, User user) throws IOException {
+ *     writer.beginObject();
+ *     writer.name("name").value(user.getName());
+ *     writer.name("followers_count").value(user.getFollowersCount());
+ *     writer.endObject();
+ *   }
+ *
+ *   public void writeDoublesArray(JsonWriter writer, List<Double> doubles) throws IOException {
+ *     writer.beginArray();
+ *     for (Double value : doubles) {
+ *       writer.value(value);
+ *     }
+ *     writer.endArray();
+ *   }}</pre>
+ *
+ * <p>Each {@code JsonWriter} may be used to write a single JSON stream.
+ * Instances of this class are not thread safe. Calls that would result in a
+ * malformed JSON string will fail with an {@link IllegalStateException}.
+ *
+ * @author Jesse Wilson
+ * @since 1.6
+ */
+public class JsonWriter implements Closeable, Flushable {
+
+  /*
+   * From RFC 7159, "All Unicode characters may be placed within the
+   * quotation marks except for the characters that must be escaped:
+   * quotation mark, reverse solidus, and the control characters
+   * (U+0000 through U+001F)."
+   *
+   * We also escape '\u2028' and '\u2029', which JavaScript interprets as
+   * newline characters. This prevents eval() from failing with a syntax
+   * error. http://code.google.com/p/google-gson/issues/detail?id=341
+   */
+  private static final String[] REPLACEMENT_CHARS;
+  private static final String[] HTML_SAFE_REPLACEMENT_CHARS;
+  static {
+    REPLACEMENT_CHARS = new String[128];
+    for (int i = 0; i <= 0x1f; i++) {
+      REPLACEMENT_CHARS[i] = String.format("\\u%04x", (int) i);
+    }
+    REPLACEMENT_CHARS['"'] = "\\\"";
+    REPLACEMENT_CHARS['\\'] = "\\\\";
+    REPLACEMENT_CHARS['\t'] = "\\t";
+    REPLACEMENT_CHARS['\b'] = "\\b";
+    REPLACEMENT_CHARS['\n'] = "\\n";
+    REPLACEMENT_CHARS['\r'] = "\\r";
+    REPLACEMENT_CHARS['\f'] = "\\f";
+    HTML_SAFE_REPLACEMENT_CHARS = REPLACEMENT_CHARS.clone();
+    HTML_SAFE_REPLACEMENT_CHARS['<'] = "\\u003c";
+
+```
+
+
+Planning response:
+Key behaviors/boundaries to test:
+
+- `JsonReader.nextLong()` on a value that parses as a valid double but is NOT exactly representable/expressible as a long (e.g. very large exponent numeric strings, or fractional-looking but integral-value numbers like "1.0") — contract: should throw `NumberFormatException` unless value is exactly a long; verify it does not silently return a truncated/incorrect long.
+- `JsonReader.nextLong()` on a quoted string value containing a valid long (e.g. `"123"`), with lenient mode on/off — must parse successfully.
+- `JsonReader.nextDouble()` boundary: strictly-non-finite values ("NaN", "Infinity") should throw `MalformedJsonException` when `lenient=false`, succeed when `lenient=true`.
+- `JsonReader.peek()`/`doPeek()` correctly distinguishing PEEKED_LONG vs PEEKED_NUMBER for inputs like "9223372036854775807" (Long.MAX_VALUE) vs "9223372036854775808" (overflow) — boundary at Long.MAX/MIN_VALUE.
+- `nextInt()` on a long-valued number exceeding int range should throw `NumberFormatException`, not silently truncate.
+- `JsonWriter.value(String)` / `jsonValue` with null argument respecting `serializeNulls` flag.
+- Receiver setup: construct `JsonReader` with `StringReader`, call `setLenient` appropriately before invoking peek/next* methods; ensure `beginArray`/`endArray` wrapping for top-level non-lenient docs.
+- Round-trip test: write a number via `JsonWriter.value(long)`, read back via `nextLong()`/`nextDouble()` to confirm numeric fidelity for edge values (Long.MIN_VALUE, Long.MAX_VALUE, 0).

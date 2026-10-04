@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:18:31.437080+00:00",
+  "ended_at_utc": "2026-10-04T07:18:38.457661+00:00",
+  "raw_body_sha256": "02434b0a4b48db3aedd69b55ede8193e2ee0367f30bb25c5a693c12324c69dbe",
+  "body": {
+    "id": "gen-1791098312-H9Hb8BuRnnPtiLmjbi0F",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Interfaces without registered InstanceCreator: get() should still succeed, producing a constructor for built-in default implementations (e.g., List -> ArrayList, Map -> LinkedHashMap, Collection, Set, SortedMap, Queue, etc.), returning a non-null instance when `construct()` is invoked.\n- Concrete classes with public no-arg constructor: get(...).construct() returns a new instance via default constructor, not via unsafe allocator.\n- Classes with only a private no-arg constructor: get(...).construct() should still succeed (constructor made accessible), returning a new instance.\n- Classes with no no-arg constructor and no registered InstanceCreator and not a known default-implementation interface: construct() should fall back to unsafe allocation, succeeding without throwing for instantiable classes, or throwing a RuntimeException with a clear message for abstract classes/interfaces that cannot be allocated.\n- Registered InstanceCreator for a Type: get(TypeToken) should use the InstanceCreator.createInstance(Type) result exactly, bypassing default/unsafe logic, including passing the correct generic Type (e.g., parameterized type) to createInstance.\n- InstanceCreator priority: when both an InstanceCreator and a no-arg constructor exist, InstanceCreator must take precedence.\n- Abstract classes without InstanceCreator and without being a recognized interface default: construct() should throw a RuntimeException describing inability to instantiate.\n- Primitive types / interfaces with no default implementation and no InstanceCreator: construct() should throw a RuntimeException (not silently return null).\n- toString() should return a non-null, non-empty string containing \"ConstructorConstructor\" (sanity check only, not exact format).\n- Verify behavior distinctly for Map vs SortedMap vs LinkedHashMap requests to ensure correct default implementation selection per declared type, not a single hardcoded class.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 597,
+      "output_tokens": 642,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007614,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007614,
+        "upstream_inference_prompt_cost": 0.001194,
+        "upstream_inference_completions_cost": 0.00642
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 111412,
+      "daily_remaining_tokens": 88588
+    }
+  },
+  "headers": {
+    "x-request-id": "l8qg3p5g6hamxnny8d692okf",
+    "date": "Sun, 04 Oct 2026 07:18:39 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

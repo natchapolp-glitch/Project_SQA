@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:40:08.493537+00:00",
+  "ended_at_utc": "2026-10-04T05:40:14.384012+00:00",
+  "raw_body_sha256": "01c7bd904c32f95989dcf2890204618359b2a5ef27c515d31e6046a10ee68bc7",
+  "body": {
+    "id": "gen-1791092409-cYKbVf7epkq8WOOW7bfy",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Valid AR archive: starts with global \"!<arch>\\n\" header; getNextArEntry() should skip it once and parse first entry name/size/metadata correctly.\n- Multiple entries: sequential getNextArEntry() calls should advance offset past padding byte when entry size is odd, and correctly read entry data without corruption.\n- read(byte[], int, int) should return -1 at EOF of current entry (when offset reaches entry's declared length), not read into next entry's header bytes.\n- read() should also respect entry boundary, returning -1 when current entry fully consumed.\n- getNextEntry() after last entry should return null (EOF), not throw.\n- Reading with length 0 should return 0 without advancing stream.\n- Reading from a stream not positioned on any entry (before first getNextArEntry call) should behave per contract (likely IOException or -1).\n- close() must close underlying input and subsequent read/getNextArEntry calls should throw IOException (\"Stream closed\") per ArchiveInputStream base contract.\n- matches(byte[], int) should correctly detect valid AR magic header with sufficient length, and return false for too-short arrays or wrong magic bytes.\n- Entry with GNU long filename (\"#1/\" prefix) or BSD extended name format should be parsed into correct entry name (if applicable in this version).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 547,
+      "output_tokens": 436,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.005454,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.005454,
+        "upstream_inference_prompt_cost": 0.001094,
+        "upstream_inference_completions_cost": 0.00436
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 48242,
+      "daily_remaining_tokens": 151758
+    }
+  },
+  "headers": {
+    "x-request-id": "e52a7ugh8ysjdrjpxukgei6c",
+    "date": "Sun, 04 Oct 2026 05:40:15 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

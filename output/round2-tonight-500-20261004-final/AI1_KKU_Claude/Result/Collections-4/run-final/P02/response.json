@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:38:31.625484+00:00",
+  "ended_at_utc": "2026-10-04T08:38:42.853936+00:00",
+  "raw_body_sha256": "f0f207a55b60881880aea7c82fa95c4d1cc9072972900d3dea0c8c235e227f4e",
+  "body": {
+    "id": "gen-1791103113-RHHybse3hSRVcXnishs9",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.collections.map;\n\nimport static org.junit.Assert.*;\n\nimport java.util.ArrayList;\nimport java.util.Collection;\nimport java.util.HashMap;\nimport java.util.HashSet;\nimport java.util.Iterator;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class MultiValueMapTest {\n\n    @Test\n    public void testPutAndGetCollection() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        map.put(\"A\", \"1\");\n        map.put(\"A\", \"2\");\n        Collection coll = map.getCollection(\"A\");\n        assertNotNull(coll);\n        assertEquals(2, coll.size());\n        assertTrue(coll.contains(\"1\"));\n        assertTrue(coll.contains(\"2\"));\n        assertNull(map.getCollection(\"B\"));\n    }\n\n    @Test\n    public void testRemoveMapping() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        map.put(\"A\", \"1\");\n        map.put(\"A\", \"2\");\n        Object removed = map.removeMapping(\"A\", \"1\");\n        assertEquals(\"1\", removed);\n        assertEquals(1, map.size(\"A\"));\n        Object removedAgain = map.removeMapping(\"A\", \"999\");\n        assertNull(removedAgain);\n        Object removedLast = map.removeMapping(\"A\", \"2\");\n        assertEquals(\"2\", removedLast);\n        assertFalse(map.containsKey(\"A\"));\n        assertNull(map.removeMapping(\"B\", \"x\"));\n    }\n\n    @Test\n    public void testContainsValue() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        map.put(\"A\", \"1\");\n        map.put(\"B\", \"2\");\n        assertTrue(map.containsValue(\"1\"));\n        assertTrue(map.containsValue(\"2\"));\n        assertFalse(map.containsValue(\"3\"));\n        assertTrue(map.containsValue(\"A\", \"1\"));\n        assertFalse(map.containsValue(\"A\", \"2\"));\n        assertFalse(map.containsValue(\"C\", \"1\"));\n    }\n\n    @Test\n    public void testPutAllKeyCollection() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        Collection values = new ArrayList();\n        values.add(\"1\");\n        values.add(\"2\");\n        boolean result = map.putAll(\"A\", values);\n        assertTrue(result);\n        assertEquals(2, map.size(\"A\"));\n\n        boolean emptyResult = map.putAll(\"A\", new ArrayList());\n        assertFalse(emptyResult);\n        assertEquals(2, map.size(\"A\"));\n\n        boolean nullResult = map.putAll(\"B\", null);\n        assertFalse(nullResult);\n        assertFalse(map.containsKey(\"B\"));\n    }\n\n    @Test\n    public void testPutAllMap() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        Map input = new HashMap();\n        input.put(\"A\", \"1\");\n        input.put(\"B\", \"2\");\n        map.putAll(input);\n        assertTrue(map.containsValue(\"A\", \"1\"));\n        assertTrue(map.containsValue(\"B\", \"2\"));\n        assertEquals(2, map.totalSize());\n    }\n\n    @Test\n    public void testValuesAndTotalSizeAndClear() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        map.put(\"A\", \"1\");\n        map.put(\"A\", \"2\");\n        map.put(\"B\", \"3\");\n        assertEquals(3, map.totalSize());\n        Collection allValues = map.values();\n        assertEquals(3, allValues.size());\n        assertTrue(allValues.contains(\"1\"));\n        assertTrue(allValues.contains(\"2\"));\n        assertTrue(allValues.contains(\"3\"));\n\n        map.clear();\n        assertEquals(0, map.totalSize());\n        assertEquals(0, map.values().size());\n    }\n\n    @Test\n    public void testIteratorForKey() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        map.put(\"A\", \"1\");\n        map.put(\"A\", \"2\");\n        Iterator it = map.iterator(\"A\");\n        int count = 0;\n        while (it.hasNext()) {\n            it.next();\n            count++;\n        }\n        assertEquals(2, count);\n\n        Iterator emptyIt = map.iterator(\"B\");\n        assertFalse(emptyIt.hasNext());\n    }\n\n    @Test\n    public void testSizeForKey() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap());\n        assertEquals(0, map.size(\"A\"));\n        map.put(\"A\", \"1\");\n        assertEquals(1, map.size(\"A\"));\n        map.put(\"A\", \"2\");\n        assertEquals(2, map.size(\"A\"));\n    }\n\n    @Test\n    public void testDecorateWithClass() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap(), HashSet.class);\n        map.put(\"A\", \"1\");\n        map.put(\"A\", \"1\");\n        Collection coll = map.getCollection(\"A\");\n        assertTrue(coll instanceof HashSet);\n        assertEquals(1, coll.size());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5610,
+      "output_tokens": 1769,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02891,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02891,
+        "upstream_inference_prompt_cost": 0.01122,
+        "upstream_inference_completions_cost": 0.01769
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 149119,
+      "daily_remaining_tokens": 50881
+    }
+  },
+  "headers": {
+    "x-request-id": "atzt3u8x2c2262slhuclhkbf",
+    "date": "Sun, 04 Oct 2026 08:38:45 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

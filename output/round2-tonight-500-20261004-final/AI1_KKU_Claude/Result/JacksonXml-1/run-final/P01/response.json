@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:07:16.357811+00:00",
+  "ended_at_utc": "2026-10-04T04:07:22.908518+00:00",
+  "raw_body_sha256": "d98811c0a61cb1e495a393c363bf12ab54532c3d9594a7e3c0dd23f38ebc49fd",
+  "body": {
+    "id": "gen-1791086838-X3GPmJxhDtVXzQZHRimk",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Verify `getValueAsString()` returns correct current text for a scalar XML element (e.g. `<a>value</a>`), matching `getText()`.\n- Check `getValueAsString(String defaultValue)` returns the actual text when current token has text, not the default.\n- Check default fallback is returned only when no current text is available (e.g. on START_OBJECT/END_OBJECT tokens without text), both single-arg (null) and default-arg variants.\n- Confirm behavior on empty XML element (`<a></a>` or `<a/>`) — text should be empty string, not null/default, per XML module contract (`_isEmpty` logic).\n- Confirm behavior at `VALUE_NULL` token if XML signals null via xsi:nil — getValueAsString should return default/null appropriately.\n- Confirm getText() and getValueAsString() stay consistent across repeated calls without advancing token (idempotent).\n- Boundary: calling getValueAsString before first nextToken() call (parser positioned before any token) should not throw and should follow defaultValue contract.\n- Ensure receiver setup: build XMLStreamReader from simple XML string, wrap into FromXmlParser via XmlFactory/XmlMapper to get real token stream rather than mocks.\n- Test nested element with attribute-only content (no text) returns default, not attribute value.\n- Test after consuming END_DOCUMENT/close(), getValueAsString does not throw unexpected exceptions (may throw IOException per contract if closed).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2200,
+      "output_tokens": 497,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.00937,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.00937,
+        "upstream_inference_prompt_cost": 0.0044,
+        "upstream_inference_completions_cost": 0.00497
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 172242,
+      "daily_remaining_tokens": 27758
+    }
+  },
+  "headers": {
+    "x-request-id": "siux2nletibwv1b15bd4py5t",
+    "date": "Sun, 04 Oct 2026 04:07:25 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

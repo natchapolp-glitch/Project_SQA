@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:52:59.309518+00:00",
+  "ended_at_utc": "2026-10-04T07:53:10.619613+00:00",
+  "raw_body_sha256": "ad785f99b5167c2825ff2fb871d54df9a4812a5abb9b545c05c689603c0f14d4",
+  "body": {
+    "id": "gen-1791100379-J3gxADgupgueEpbdNQAm",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.math3.util;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport org.apache.commons.math3.exception.DimensionMismatchException;\nimport org.junit.Test;\n\npublic class MathArraysLinearCombinationTest {\n\n    private static final double EPS = 1e-15;\n\n    @Test\n    public void testTwoTermConsistencyWithArrayOverload() {\n        double a1 = 3.5, b1 = -2.5, a2 = 1.25, b2 = 4.75;\n        double expected = MathArrays.linearCombination(\n                new double[] {a1, a2}, new double[] {b1, b2});\n        double actual = MathArrays.linearCombination(a1, b1, a2, b2);\n        assertEquals(expected, actual, EPS);\n    }\n\n    @Test\n    public void testThreeTermConsistencyWithArrayOverload() {\n        double a1 = 2.0, b1 = 3.0, a2 = -1.5, b2 = 4.0, a3 = 0.5, b3 = -2.0;\n        double expected = MathArrays.linearCombination(\n                new double[] {a1, a2, a3}, new double[] {b1, b2, b3});\n        double actual = MathArrays.linearCombination(a1, b1, a2, b2, a3, b3);\n        assertEquals(expected, actual, EPS);\n    }\n\n    @Test\n    public void testFourTermConsistencyWithArrayOverload() {\n        double a1 = 1.0, b1 = 2.0, a2 = 3.0, b2 = 4.0,\n               a3 = 5.0, b3 = 6.0, a4 = 7.0, b4 = 8.0;\n        double expected = MathArrays.linearCombination(\n                new double[] {a1, a2, a3, a4}, new double[] {b1, b2, b3, b4});\n        double actual = MathArrays.linearCombination(a1, b1, a2, b2, a3, b3, a4, b4);\n        assertEquals(expected, actual, EPS);\n    }\n\n    @Test\n    public void testHighPrecisionCancellation() {\n        double[] a = {1.0, 1.0e17, 1.0, -1.0e17};\n        double[] b = {1.0e17, 1.0, -1.0e17, -1.0};\n        double result = MathArrays.linearCombination(a, b);\n        assertEquals(2.0e17, result, 1.0);\n    }\n\n    @Test\n    public void testSymmetry() {\n        double[] a = {1.3, -4.7, 2.2, 0.0001};\n        double[] b = {5.6, 3.3, -1.1, 9999.0};\n        double ab = MathArrays.linearCombination(a, b);\n        double ba = MathArrays.linearCombination(b, a);\n        assertEquals(ab, ba, 0.0);\n    }\n\n    @Test\n    public void testSingleElementArray() {\n        double[] a = {3.14159};\n        double[] b = {2.71828};\n        double expected = a[0] * b[0];\n        double actual = MathArrays.linearCombination(a, b);\n        assertEquals(expected, actual, 1e-12);\n    }\n\n    @Test\n    public void testEmptyArraysReturnZero() {\n        double[] a = {};\n        double[] b = {};\n        double result = MathArrays.linearCombination(a, b);\n        assertEquals(0.0, result, 0.0);\n    }\n\n    @Test\n    public void testDimensionMismatchThrows() {\n        double[] a = {1.0, 2.0, 3.0};\n        double[] b = {1.0, 2.0};\n        try {\n            MathArrays.linearCombination(a, b);\n            fail(\"Expected DimensionMismatchException\");\n        } catch (DimensionMismatchException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testNaNPropagation() {\n        double[] a = {1.0, Double.NaN, 3.0};\n        double[] b = {1.0, 2.0, 3.0};\n        double result = MathArrays.linearCombination(a, b);\n        assertTrue(Double.isNaN(result));\n    }\n\n    @Test\n    public void testInfinityPropagation() {\n        double result = MathArrays.linearCombination(\n                Double.POSITIVE_INFINITY, 1.0, 2.0, 3.0);\n        assertTrue(Double.isInfinite(result));\n        assertTrue(result > 0);\n    }\n\n    @Test\n    public void testNegativeAndZeroValues() {\n        double[] a = {-2.0, 0.0, 5.0};\n        double[] b = {3.0, -0.0, -1.0};\n        double expected = (-2.0 * 3.0) + (0.0 * -0.0) + (5.0 * -1.0);\n        double actual = MathArrays.linearCombination(a, b);\n        assertEquals(expected, actual, 1e-12);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6656,
+      "output_tokens": 1681,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.030122,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.030122,
+        "upstream_inference_prompt_cost": 0.013312,
+        "upstream_inference_completions_cost": 0.01681
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 137700,
+      "daily_remaining_tokens": 62300
+    }
+  },
+  "headers": {
+    "x-request-id": "mwspht4ofocc5qdmdcjz94rn",
+    "date": "Sun, 04 Oct 2026 07:53:11 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

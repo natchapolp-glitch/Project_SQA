@@ -1,0 +1,72 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Closure-2
+Java 11, JUnit 4
+Modified classes: com.google.javascript.jscomp.TypeCheck
+BUGGY API signatures:
+Compiled from "TypeCheck.java"
+public class com.google.javascript.jscomp.TypeCheck implements com.google.javascript.jscomp.NodeTraversal$Callback,com.google.javascript.jscomp.CompilerPass {
+  static final com.google.javascript.jscomp.DiagnosticType UNEXPECTED_TOKEN;
+  static final com.google.javascript.jscomp.DiagnosticType BAD_DELETE;
+  protected static final java.lang.String OVERRIDING_PROTOTYPE_WITH_NON_OBJECT;
+  static final com.google.javascript.jscomp.DiagnosticType DETERMINISTIC_TEST;
+  static final com.google.javascript.jscomp.DiagnosticType DETERMINISTIC_TEST_NO_RESULT;
+  static final com.google.javascript.jscomp.DiagnosticType INEXISTENT_ENUM_ELEMENT;
+  static final com.google.javascript.jscomp.DiagnosticType INEXISTENT_PROPERTY;
+  protected static final com.google.javascript.jscomp.DiagnosticType NOT_A_CONSTRUCTOR;
+  static final com.google.javascript.jscomp.DiagnosticType BIT_OPERATION;
+  static final com.google.javascript.jscomp.DiagnosticType NOT_CALLABLE;
+  static final com.google.javascript.jscomp.DiagnosticType CONSTRUCTOR_NOT_CALLABLE;
+  static final com.google.javascript.jscomp.DiagnosticType FUNCTION_MASKS_VARIABLE;
+  static final com.google.javascript.jscomp.DiagnosticType MULTIPLE_VAR_DEF;
+  static final com.google.javascript.jscomp.DiagnosticType ENUM_DUP;
+  static final com.google.javascript.jscomp.DiagnosticType ENUM_NOT_CONSTANT;
+  static final com.google.javascript.jscomp.DiagnosticType INVALID_INTERFACE_MEMBER_DECLARATION;
+  static final com.google.javascript.jscomp.DiagnosticType INTERFACE_FUNCTION_NOT_EMPTY;
+  static final com.google.javascript.jscomp.DiagnosticType CONFLICTING_EXTENDED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType CONFLICTING_IMPLEMENTED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType BAD_IMPLEMENTED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType HIDDEN_SUPERCLASS_PROPERTY;
+  static final com.google.javascript.jscomp.DiagnosticType HIDDEN_INTERFACE_PROPERTY;
+  static final com.google.javascript.jscomp.DiagnosticType HIDDEN_SUPERCLASS_PROPERTY_MISMATCH;
+  static final com.google.javascript.jscomp.DiagnosticType UNKNOWN_OVERRIDE;
+  static final com.google.javascript.jscomp.DiagnosticType INTERFACE_METHOD_OVERRIDE;
+  static final com.google.javascript.jscomp.DiagnosticType UNKNOWN_EXPR_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType UNRESOLVED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType WRONG_ARGUMENT_COUNT;
+  static final com.google.javascript.jscomp.DiagnosticType ILLEGAL_IMPLICIT_CAST;
+  static final com.google.javascript.jscomp.DiagnosticType INCOMPATIBLE_EXTENDED_PROPERTY_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType EXPECTED_THIS_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType IN_USED_WITH_STRUCT;
+  static final com.google.javascript.jscomp.DiagnosticType ILLEGAL_PROPERTY_CREATION;
+  static final com.google.javascript.jscomp.DiagnosticType ILLEGAL_OBJLIT_KEY;
+  static final com.google.javascript.jscomp.DiagnosticGroup ALL_DIAGNOSTICS;
+  private final com.google.javascript.jscomp.AbstractCompiler compiler;
+  private final com.google.javascript.jscomp.TypeValidator validator;
+  private final com.google.javascript.jscomp.type.ReverseAbstractInterpreter reverseInterpreter;
+  private final com.google.javascript.rhino.jstype.JSTypeRegistry typeRegistry;
+  private com.google.javascript.jscomp.Scope topScope;
+  private com.google.javascript.jscomp.MemoizedScopeCreator scopeCreator;
+  private final com.google.javascript.jscomp.CheckLevel reportMissingOverride;
+  private final com.google.javascript.jscomp.CheckLevel reportUnknownTypes;
+  private boolean reportMissingProperties;
+  private com.google.javascript.jscomp.InferJSDocInfo inferJSDocInfo;
+  private int typedCount;
+  private int nullCount;
+  private int unknownCount;
+  private boolean inExterns;
+  private int noTypeCheckSection;
+  public com.google.javascript.jscomp.TypeCheck(com.google.javascript.jscomp.AbstractCompiler, com.google.javascript.jscomp.type.ReverseAbstractInterpreter, com.google.javascript.rhino.jstype.JSTypeRegistry, com.google.javascript.jscomp.Scope, com.google.javascript.jscomp.MemoizedScopeCreator, com.google.javascript.jscomp.CheckLevel, com.google.javascript.jscomp.CheckLevel);
+  public com.google.javascript.jscomp.TypeCheck(com.google.javascript.jscomp.AbstractCompiler, com.google.javascript.jscomp.type.ReverseAbstractInterpreter, com.google.javascript.rhino.jstype.JSTypeRegistry, com.google.javascript.jscomp.CheckLevel, com.google.javascript.jscomp.CheckLevel);
+  com.google.javascript.jscomp.TypeCheck(com.google.javascript.jscomp.AbstractCompiler, com.google.javascript.jscomp.type.ReverseAbstractInterpreter, com.google.javascript.rhino.jstype.JSTypeRegistry);
+  com.google.javascript.jscomp.TypeCheck reportMissingProperties(boolean);
+  public void process(com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  public com.google.javascript.jscomp.Scope processForTesting(com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  public void check(com.google.javascript.rhino.Node, boolean);
+  private void checkNoTypeCheckSection(com.google.javascript.rhino.Node, boolean);
+  private void report(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, com.google.javascript.jscomp.DiagnosticType, java.lang.String...);
+  public boolean shouldTraverse(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  public void visit(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  private void checkTypeofString(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, java.lang.String);
+  private void doPercentTypedAccounting(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node);
+  private void visitAssign(com.google.javascript.jscomp.NodeTravers

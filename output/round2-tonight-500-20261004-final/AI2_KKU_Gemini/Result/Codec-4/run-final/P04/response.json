@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:34:32.284830+00:00",
+  "ended_at_utc": "2026-10-04T08:34:34.805694+00:00",
+  "raw_body_sha256": "bf34ea60d19cf5d2ea7189be5cd81f4715a7f0b76520dc258ac4ef4b7dea2f4b",
+  "body": {
+    "id": "genai-01a1060d-0068-765e-8ac1-987695d3d083",
+    "object": "chat.completion",
+    "created": 1791102877,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.codec.binary;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.fail;\n\nimport org.apache.commons.codec.DecoderException;\nimport org.apache.commons.codec.EncoderException;\nimport org.junit.Test;\n\npublic class Base64ExtendedAdditionalTest {\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testLineSeparatorContainsBase64CharThrowsException() {\n        byte[] lineSeparator = new byte[] { 'A' };\n        new Base64(76, lineSeparator);\n    }\n\n    @Test\n    public void testObjectEncodeInvalidTypeThrowsEncoderException() {\n        Base64 base64 = new Base64();\n        try {\n            base64.encode(\"NotAByteArray\");\n            fail(\"Expected EncoderException\");\n        } catch (EncoderException e) {\n            assertNotNull(e.getMessage());\n        }\n    }\n\n    @Test\n    public void testObjectDecodeInvalidTypeThrowsDecoderException() {\n        Base64 base64 = new Base64();\n        try {\n            base64.decode(\"NotAByteArrayOrString\");\n            fail(\"Expected DecoderException\");\n        } catch (DecoderException e) {\n            assertNotNull(e.getMessage());\n        }\n    }\n\n    @Test\n    public void testEncodeBase64WithMaxResultSize() {\n        byte[] input = \"The quick brown fox jumps over the lazy dog.\".getBytes();\n        byte[] encoded = Base64.encodeBase64(input, true, false, 10);\n        assertNotNull(encoded);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6300,
+      "completion_tokens": 405,
+      "total_tokens": 6705
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 100592,
+      "daily_remaining_tokens": 249408
+    }
+  },
+  "headers": {
+    "x-request-id": "p65bomk4pv3t8nourku7jjjw",
+    "date": "Sun, 04 Oct 2026 08:34:37 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

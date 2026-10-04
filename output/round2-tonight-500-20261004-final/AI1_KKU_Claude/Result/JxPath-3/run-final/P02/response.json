@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:42:59.935427+00:00",
+  "ended_at_utc": "2026-10-04T07:43:07.615543+00:00",
+  "raw_body_sha256": "b1b0b2332b05ba4ede84ee7e781a63b9c8006edb0094c11be5008b0baf92d902",
+  "body": {
+    "id": "gen-1791099780-jruJc8PKDMU2FHkqBEuG",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.jxpath.ri.model.beans;\n\nimport static org.junit.Assert.*;\n\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.model.NodePointer;\nimport org.apache.commons.jxpath.ri.model.beans.NullPointer;\nimport org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;\nimport org.junit.Before;\nimport org.junit.Test;\n\npublic class NullPropertyPointerTest {\n\n    private NullPropertyPointer pointer;\n\n    @Before\n    public void setUp() {\n        NodePointer root = NodePointer.newNodePointer(\n                new QName(null, \"root\"), new Object(), java.util.Locale.getDefault());\n        NullPointer nullParent = new NullPointer(root, new QName(null, \"parent\"));\n        pointer = new NullPropertyPointer(nullParent);\n    }\n\n    @Test\n    public void testDefaultPropertyName() {\n        assertEquals(\"*\", pointer.getPropertyName());\n        assertEquals(new QName(\"*\"), pointer.getName());\n    }\n\n    @Test\n    public void testSetPropertyNameUpdatesNameAndAsPath() {\n        pointer.setPropertyName(\"foo\");\n        assertEquals(\"foo\", pointer.getPropertyName());\n        assertEquals(new QName(\"foo\"), pointer.getName());\n    }\n\n    @Test\n    public void testBaseAndImmediateNodeAreNull() {\n        assertNull(pointer.getBaseValue());\n        assertNull(pointer.getImmediateNode());\n    }\n\n    @Test\n    public void testIsLeafAndIsActualAndIsContainer() {\n        assertTrue(pointer.isLeaf());\n        assertFalse(pointer.isActual());\n        assertTrue(pointer.isContainer());\n    }\n\n    @Test\n    public void testLengthAndPropertyCountAndNames() {\n        assertEquals(0, pointer.getLength());\n        assertEquals(0, pointer.getPropertyCount());\n        assertNotNull(pointer.getPropertyNames());\n        assertEquals(0, pointer.getPropertyNames().length);\n    }\n\n    @Test\n    public void testIsCollectionDependsOnIndex() {\n        assertFalse(pointer.isCollection());\n        pointer.setPropertyIndex(2);\n        assertTrue(pointer.isCollection());\n    }\n\n    @Test\n    public void testSetNameAttributeValueAsPathEscaping() {\n        pointer.setNameAttributeValue(\"a'b\\\"c\");\n        String path = pointer.asPath();\n        assertTrue(path.contains(\"&apos;\"));\n        assertTrue(path.contains(\"&quot;\"));\n        assertTrue(path.endsWith(\"']\"));\n    }\n\n    @Test\n    public void testSetPropertyIndexWithNegativeAndLargeValues() {\n        pointer.setPropertyIndex(-1);\n        pointer.setPropertyIndex(1000000);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 3960,
+      "output_tokens": 1037,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.01829,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.01829,
+        "upstream_inference_prompt_cost": 0.00792,
+        "upstream_inference_completions_cost": 0.01037
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 130156,
+      "daily_remaining_tokens": 69844
+    }
+  },
+  "headers": {
+    "x-request-id": "mjrfiyb68724bcwfkmgs7hxg",
+    "date": "Sun, 04 Oct 2026 07:43:09 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

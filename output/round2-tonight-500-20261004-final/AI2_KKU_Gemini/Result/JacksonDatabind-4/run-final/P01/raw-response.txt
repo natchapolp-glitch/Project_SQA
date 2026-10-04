@@ -1,0 +1,7 @@
+1. Receiver setup: Initialize `ObjectMapper` and configure context with standard `DeserializationContext`.
+2. Behavior: `StringArrayDeserializer.instance` correctly deserializes JSON arrays into `String[]`.
+3. Boundary: Deserializing empty JSON arrays `[]` should yield an empty `String[]` (length 0).
+4. Boundary: Deserializing JSON arrays containing `null` values should handle element mapping or null-injection correctly.
+5. Behavior: `createContextual` should resolve custom element deserializers (`_elementDeserializer`) via `BeanProperty`.
+6. Boundary: Non-array inputs should trigger `handleNonArray` behavior, respecting `ACCEPT_SINGLE_VALUE_ARRAY` features.
+7. Behavior: Custom element deserialization via `_deserializeCustom` should execute when `_elementDeserializer` is present.

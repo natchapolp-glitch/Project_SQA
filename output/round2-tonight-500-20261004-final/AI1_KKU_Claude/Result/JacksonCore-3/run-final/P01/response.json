@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:24:44.620244+00:00",
+  "ended_at_utc": "2026-10-04T07:24:53.020205+00:00",
+  "raw_body_sha256": "01e53903d17f802c000d4a950a2d50e0903b10eb5125166278cf170df6af496a",
+  "body": {
+    "id": "gen-1791098686-TIkNGDwYQAJwahljbdIO",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "**Target area & likely bug surface:** number/name parsing or leading-zero/float handling in UTF8 byte stream parser (`_verifyNoLeadingZeroes`, `_parseNumber`, `_parseFloat`, `parseName` variants) — verify correctness oracle via JSON spec, not implementation.\n\nUseful behaviors/boundaries to test via `JsonFactory.createParser(InputStream/byte[])`:\n\n1. Valid integers: `0`, `-0`, single-digit `0` followed by `}`/`,`/EOF — must parse as zero, not throw.\n2. Leading zero rejection: `01`, `-01`, `00` must throw `JsonParseException` (unless `ALLOW_NUMERIC_LEADING_ZEROS` enabled, which should permit it).\n3. Negative numbers: `-1`, `-123`, `-0.5` correctness; bare `-` alone is invalid.\n4. Floating point: `0.0`, `0.123`, `1.0e10`, `1E-5`, exponent-only forms like `1e5` valid; malformed `1.` or `.1` invalid.\n5. Large integers crossing buffer boundaries (feed via small buffer sizes) to exercise `_loadToHaveAtLeast`/segment boundaries — value correctness preserved across reads.\n6. Field name parsing boundary cases: short/medium/long names spanning buffer refill boundaries, with/without escapes, verifying symbol table correctness (`getCurrentName()`).\n5. Text extraction (`getText()`, `getTextCharacters()`, `getTextLength()`) consistency after number/string parsing, including multi-byte UTF-8 characters.\n8. End-of-input/incomplete token handling: truncated number/string at EOF should throw, not silently return wrong token.\n9. Binary values (`getBinaryValue`) with base64 variants — correctness and no `_tokenIncomplete` corruption affecting next token.\n10. Repeated calls (`nextToken()` after `nextFieldName()`) ensure internal state (`_tokenIncomplete`, `_quad1`/`_quadBuffer`) doesn't leak stale data into subsequent tokens.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2788,
+      "output_tokens": 742,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.012996,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.012996,
+        "upstream_inference_prompt_cost": 0.005576,
+        "upstream_inference_completions_cost": 0.00742
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 117853,
+      "daily_remaining_tokens": 82147
+    }
+  },
+  "headers": {
+    "x-request-id": "pinddgvkwo1n7fnxoygnvnuc",
+    "date": "Sun, 04 Oct 2026 07:24:55 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

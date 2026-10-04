@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:08:46.886975+00:00",
+  "ended_at_utc": "2026-10-04T07:09:05.317519+00:00",
+  "raw_body_sha256": "8a4172a05f10489c1029e4d5f3bccc827d17760d7934414a28288007df6a0254",
+  "body": {
+    "id": "gen-1791097729-UfN0KCR4xCCvfaUkoipI",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.compress.archivers.tar;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\nimport org.junit.Test;\n\npublic class TarArchiveOutputStreamTest {\n\n    @Test\n    public void writeAndReadBackSmallEntry() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        byte[] content = \"hello world\".getBytes(\"UTF-8\");\n        TarArchiveEntry entry = new TarArchiveEntry(\"test.txt\");\n        entry.setSize(content.length);\n        tos.putArchiveEntry(entry);\n        tos.write(content, 0, content.length);\n        tos.closeArchiveEntry();\n        tos.close();\n\n        TarArchiveInputStream tis = new TarArchiveInputStream(new ByteArrayInputStream(bos.toByteArray()));\n        TarArchiveEntry readEntry = tis.getNextTarEntry();\n        assertEquals(\"test.txt\", readEntry.getName());\n        assertEquals(content.length, readEntry.getSize());\n        byte[] readBuf = new byte[content.length];\n        int read = tis.read(readBuf);\n        assertEquals(content.length, read);\n        assertArrayEquals(content, readBuf);\n        tis.close();\n    }\n\n    @Test\n    public void writeMoreThanDeclaredSizeThrows() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        TarArchiveEntry entry = new TarArchiveEntry(\"toolarge.txt\");\n        entry.setSize(5);\n        tos.putArchiveEntry(entry);\n        byte[] content = \"this is too long\".getBytes(\"UTF-8\");\n        try {\n            tos.write(content, 0, content.length);\n            fail(\"Expected IOException\");\n        } catch (IOException expected) {\n            assertTrue(expected.getMessage().contains(\"exceeds size\"));\n        }\n    }\n\n    @Test\n    public void closeEntryBeforeWritingAllBytesThrows() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        TarArchiveEntry entry = new TarArchiveEntry(\"incomplete.txt\");\n        entry.setSize(10);\n        tos.putArchiveEntry(entry);\n        tos.write(\"short\".getBytes(\"UTF-8\"), 0, 5);\n        try {\n            tos.closeArchiveEntry();\n            fail(\"Expected IOException\");\n        } catch (IOException expected) {\n            assertTrue(expected.getMessage().contains(\"closed at\"));\n        }\n    }\n\n    @Test\n    public void longFileNameWithErrorModeThrowsRuntimeException() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < 110; i++) {\n            sb.append('a');\n        }\n        TarArchiveEntry entry = new TarArchiveEntry(sb.toString());\n        entry.setSize(0);\n        try {\n            tos.putArchiveEntry(entry);\n            fail(\"Expected RuntimeException\");\n        } catch (RuntimeException expected) {\n            assertTrue(expected.getMessage().contains(\"too long\"));\n        }\n    }\n\n    @Test\n    public void longFileNameWithGnuModeWritesLongLinkHeader() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        tos.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);\n        StringBuilder sb = new StringBuilder();\n        for (int i = 0; i < 110; i++) {\n            sb.append('b');\n        }\n        String longName = sb.toString();\n        TarArchiveEntry entry = new TarArchiveEntry(longName);\n        entry.setSize(0);\n        tos.putArchiveEntry(entry);\n        tos.closeArchiveEntry();\n        tos.close();\n\n        TarArchiveInputStream tis = new TarArchiveInputStream(new ByteArrayInputStream(bos.toByteArray()));\n        TarArchiveEntry readEntry = tis.getNextTarEntry();\n        assertEquals(longName, readEntry.getName());\n        tis.close();\n    }\n\n    @Test\n    public void zeroByteEntryClosesWithoutWriting() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        TarArchiveEntry entry = new TarArchiveEntry(\"empty.txt\");\n        entry.setSize(0);\n        tos.putArchiveEntry(entry);\n        tos.closeArchiveEntry();\n        tos.close();\n\n        TarArchiveInputStream tis = new TarArchiveInputStream(new ByteArrayInputStream(bos.toByteArray()));\n        TarArchiveEntry readEntry = tis.getNextTarEntry();\n        assertEquals(\"empty.txt\", readEntry.getName());\n        assertEquals(0, readEntry.getSize());\n        tis.close();\n    }\n\n    @Test\n    public void getRecordSizeReturnsCustomValue() {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos, 10240, 512);\n        assertEquals(512, tos.getRecordSize());\n    }\n\n    @Test\n    public void closeWithoutExplicitFinishStillWritesEOFRecords() throws IOException {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        TarArchiveEntry entry = new TarArchiveEntry(\"file.txt\");\n        entry.setSize(0);\n        tos.putArchiveEntry(entry);\n        tos.closeArchiveEntry();\n        tos.close();\n\n        byte[] result = bos.toByteArray();\n        int recordSize = 512;\n        byte[] lastTwoRecords = new byte[2 * recordSize];\n        System.arraycopy(result, result.length - lastTwoRecords.length, lastTwoRecords, 0, lastTwoRecords.length);\n        byte[] zeros = new byte[2 * recordSize];\n        assertArrayEquals(zeros, lastTwoRecords);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5675,
+      "output_tokens": 2509,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.03644,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.03644,
+        "upstream_inference_prompt_cost": 0.01135,
+        "upstream_inference_completions_cost": 0.02509
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 117789,
+      "daily_remaining_tokens": 82211
+    }
+  },
+  "headers": {
+    "x-request-id": "igv38yyr1ssyjejqd0p1qp48",
+    "date": "Sun, 04 Oct 2026 07:09:06 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

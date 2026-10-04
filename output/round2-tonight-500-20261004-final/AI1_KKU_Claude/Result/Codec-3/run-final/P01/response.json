@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:00:29.792887+00:00",
+  "ended_at_utc": "2026-10-04T07:00:40.662400+00:00",
+  "raw_body_sha256": "15829eabf656acee0a3230392cbb3d0e3f28c33369c5af3e341b489f3f36f5db",
+  "body": {
+    "id": "gen-1791097232-da6UYr6uEM1tixuiFQIi",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Verify `doubleMetaphone(String)` returns empty string for null/empty input, and non-null for normal words (no exceptions thrown).\n- Test known classic examples (e.g., \"Smith\"/\"Smyth\", \"Catherine\", \"Jose\", \"camel\") where primary/alternate codes are documented to match historically—used as oracle via known reference encodings.\n- Validate `isDoubleMetaphoneEqual` symmetry and correctness: equal words give true, clearly different words give false; test with alternate-code matching flag true/false.\n- Boundary: very short strings (length 1-2), strings with only silent-start patterns (e.g., \"GN\", \"PN\", \"WR\"), and strings with non-alphabetic/mixed-case characters (cleanInput should uppercase and strip non-letters).\n- Test `maxCodeLen` getter/setter: default value (4), setting smaller/larger values truncates/extends returned code length appropriately.\n- Confirm `encode(Object)` throws `EncoderException` for non-String input, and `EncoderException` vs `ClassCastException` contract for null or wrong type.\n- Confirm `encode(String)` matches `doubleMetaphone(String, false)` behavior (primary code only).\n- Test alternate-code branch: `doubleMetaphone(String, true)` returns alternate encoding, possibly empty if no alternate exists.\n- Edge case: words with repeated adjacent letters (e.g., \"CC\", \"SS\") and silent letter clusters (e.g., \"GH\", \"PH\", \"TH\") to ensure consonant-handling logic doesn't throw/produce wrong length.\n- Confirm thread-safety/statelessness: multiple calls with different inputs on same instance don't leak state (maxCodeLen persists across calls as configured).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2174,
+      "output_tokens": 592,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.010268,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.010268,
+        "upstream_inference_prompt_cost": 0.004348,
+        "upstream_inference_completions_cost": 0.00592
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 107358,
+      "daily_remaining_tokens": 92642
+    }
+  },
+  "headers": {
+    "x-request-id": "zkzxoic0c3fzt0ayay5tvf50",
+    "date": "Sun, 04 Oct 2026 07:00:40 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

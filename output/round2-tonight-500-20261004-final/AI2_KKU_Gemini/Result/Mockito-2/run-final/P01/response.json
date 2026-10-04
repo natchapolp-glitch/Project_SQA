@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:37:52.315208+00:00",
+  "ended_at_utc": "2026-10-04T06:37:54.164085+00:00",
+  "raw_body_sha256": "0ee18537a14091ca9fc1c5c9b873e3376a19a4341e8ceb61c3129178184216ee",
+  "body": {
+    "id": "genai-01a105a2-2b03-7361-9d18-4452047f82a3",
+    "object": "chat.completion",
+    "created": 1791095876,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- `Timer` setup: instantiate with a valid duration (e.g., positive `long`, zero, or negative).\n- Boundary setup: duration of `0L` milliseconds for instant expiration.\n- Boundary setup: negative duration values to test edge-case behavior.\n- State check before `start()`: `isCounting()` should return `false` initially.\n- State check after `start()`: `isCounting()` should return `true` right away.\n- Time expiration boundary: `isCounting()` transitions to `false` once elapsed time reaches or exceeds `durationMillis`.\n- Re-entrancy: calling `start()` multiple times correctly resets `startTime`.\n- Monotonicity: ensure behavior relies on elapsed time rather than system clock adjustments (if applicable via contract).\n- Null or invalid state: constructor accepts any `long` without throwing immediate exceptions.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 194,
+      "completion_tokens": 181,
+      "total_tokens": 375
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 45634,
+      "daily_remaining_tokens": 304366
+    }
+  },
+  "headers": {
+    "x-request-id": "hkqv7sqf53i8l8axkze4j69o",
+    "date": "Sun, 04 Oct 2026 06:37:56 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

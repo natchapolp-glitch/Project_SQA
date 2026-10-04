@@ -1,0 +1,8 @@
+1. `findRangeBounds` and `iterateRangeBounds` on `CategoryDataset` and `XYDataset` should return `null` for empty or null datasets.
+2. `findRangeBounds` with `includeInterval` flags must correctly handle datasets with `null` or NaN values without throwing `NullPointerException`.
+3. `calculatePieDatasetTotal` should correctly sum all non-null numeric values and handle an empty or null dataset by returning `0.0`.
+4. `createPieDatasetForRow` and `createPieDatasetForColumn` must handle valid row/column keys and out-of-bounds integer indices appropriately (e.g., throwing `IndexOutOfBoundsException`).
+5. `isEmptyOrNull` should return `true` for null datasets or datasets containing no rows/columns/values, and `false` otherwise.
+6. `findDomainBounds` and `findRangeBounds` with custom `List` filters should restrict boundary calculations to the specified subset of series/keys.
+7. Valid receiver setup for dataset methods requires instantiating concrete implementations like `DefaultCategoryDataset`, `XYSeriesCollection`, or `DefaultPieDataset` with populated/unpopulated values.
+8. `findStackedRangeBounds` methods should correctly compute cumulative or stacked positive and negative ranges for `CategoryDataset` and `TableXYDataset`.

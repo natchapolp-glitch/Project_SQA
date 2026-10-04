@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:42:35.551773+00:00",
+  "ended_at_utc": "2026-10-04T06:42:43.103867+00:00",
+  "raw_body_sha256": "6ce782e60651a13baba2c8734f304c39f435ff02deba0b23326ef48e23cfa43c",
+  "body": {
+    "id": "gen-1791096158-4J2pm3H9pGhxBTQzJMVd",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```\nKey behaviors to test:\n\n1. Partial.withFieldAddWrapped(DurationFieldType, int) must wrap the target field value within its min/max bounds\n   (e.g. adding to monthOfYear wraps 12->1), without carrying into other fields, and leave unrelated fields unchanged.\n2. withFieldAddWrapped with amount 0 returns an equal/unchanged Partial (value semantics, likely same values but new instance ok).\n3. withFieldAddWrapped should throw IllegalArgumentException when the DurationFieldType is not supported by this Partial\n   (i.e., no field of that duration type present in iTypes).\n4. withFieldAdded(DurationFieldType, int) with amount 0 should return `this` (no-op identity) per contract; non-zero should add\n   normally and throw on overflow (e.g. DateTimeFieldType.year max) rather than silently wrapping.\n5. UnsupportedDurationField.getInstance(type) must cache and return the *same* instance for repeated calls with equal type\n   (singleton-per-type via cCache), verified via == and equals/hashCode consistency.\n6. UnsupportedDurationField.isSupported() must always return false; isPrecise() reflects unsupported semantics (false).\n7. All arithmetic/mutating methods on UnsupportedDurationField (add, getValue, getMillis, getDifference, etc.) must throw\n   UnsupportedOperationException consistently (via unsupported()).\n8. compareTo(DurationField) for two UnsupportedDurationField instances (or vs itself) should return 0 since both unsupported.\n9. getType()/getName() must return the original DurationFieldType and its name, unaffected by bug area.\n10. Boundary: Partial with multiple fields (e.g. year+month+day) — withFieldAddWrapped on one field must not touch others,\n    even near field boundaries (e.g. day near end-of-month) since Partial fields are independent, not linked like DateTime.\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1910,
+      "output_tokens": 665,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.01047,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.01047,
+        "upstream_inference_prompt_cost": 0.00382,
+        "upstream_inference_completions_cost": 0.00665
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 93988,
+      "daily_remaining_tokens": 106012
+    }
+  },
+  "headers": {
+    "x-request-id": "pqn88xkxwvokjoz00oowpeiu",
+    "date": "Sun, 04 Oct 2026 06:42:46 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

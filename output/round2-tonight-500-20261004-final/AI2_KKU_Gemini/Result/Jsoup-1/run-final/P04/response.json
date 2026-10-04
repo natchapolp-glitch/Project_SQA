@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:12:34.933178+00:00",
+  "ended_at_utc": "2026-10-04T04:12:36.341984+00:00",
+  "raw_body_sha256": "fbe9c077a8b4e6c1e995a385386a70e271f4ba3d23e4f49d4354a20fad218117",
+  "body": {
+    "id": "genai-01a1051d-2476-7d7c-9270-578264659322",
+    "object": "chat.completion",
+    "created": 1791087158,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jsoup.nodes;\n\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class DocumentAdditionalTest {\n\n    @Test\n    public void testNormaliseWithTextNodes() {\n        Document doc = new Document(\"http://example.com\");\n        doc.appendChild(new TextNode(\"Root Text\", \"\"));\n        Element html = doc.appendElement(\"html\");\n        html.appendChild(new TextNode(\"Html Text\", \"\"));\n        \n        Document normalised = doc.normalise();\n        assertNotNull(normalised.body());\n        assertTrue(normalised.body().text().contains(\"Root Text\"));\n        assertTrue(normalised.body().text().contains(\"Html Text\"));\n    }\n\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2137,
+      "completion_tokens": 167,
+      "total_tokens": 2304
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 68322,
+      "daily_remaining_tokens": 281678
+    }
+  },
+  "headers": {
+    "x-request-id": "qjygaqq6q91vep38w3ody87u",
+    "date": "Sun, 04 Oct 2026 04:12:38 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

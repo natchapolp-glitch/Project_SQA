@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:39:41.692280+00:00",
+  "ended_at_utc": "2026-10-04T08:39:45.120434+00:00",
+  "raw_body_sha256": "7419b6f5cf396819e03e68e4c1b808cc4b27d4353783f727d03d2d8c4b88ba22",
+  "body": {
+    "id": "genai-01a10611-b799-7630-98ac-e815ccab62f8",
+    "object": "chat.completion",
+    "created": 1791103186,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.collections.map;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.ArrayList;\nimport java.util.Collection;\nimport java.util.HashMap;\nimport java.util.Iterator;\nimport java.util.List;\n\nimport org.junit.Test;\n\npublic class MultiValueMapTest {\n\n    @Test\n    public void testPutAndGetCollection() {\n        MultiValueMap map = new MultiValueMap();\n        assertNull(map.put(\"key1\", \"val1\"));\n        assertNull(map.put(\"key1\", \"val2\"));\n\n        Collection<?> col = map.getCollection(\"key1\");\n        assertNotNull(col);\n        assertEquals(2, col.size());\n        assertTrue(col.contains(\"val1\"));\n        assertTrue(col.contains(\"val2\"));\n    }\n\n    @Test\n    public void testRemoveMapping() {\n        MultiValueMap map = new MultiValueMap();\n        map.put(\"key1\", \"val1\");\n        map.put(\"key1\", \"val2\");\n\n        Object removed = map.removeMapping(\"key1\", \"val1\");\n        assertEquals(\"val1\", removed);\n        assertEquals(1, map.size(\"key1\"));\n        assertNull(map.removeMapping(\"key1\", \"nonexistent\"));\n        assertNull(map.removeMapping(\"nonexistentKey\", \"val2\"));\n    }\n\n    @Test\n    public void testContainsValue() {\n        MultiValueMap map = new MultiValueMap();\n        map.put(\"key1\", \"val1\");\n        map.put(\"key2\", \"val2\");\n\n        assertTrue(map.containsValue(\"val1\"));\n        assertTrue(map.containsValue(\"val2\"));\n        assertFalse(map.containsValue(\"val3\"));\n\n        assertTrue(map.containsValue(\"key1\", \"val1\"));\n        assertFalse(map.containsValue(\"key1\", \"val2\"));\n        assertFalse(map.containsValue(\"nonexistent\", \"val1\"));\n    }\n\n    @Test\n    public void testPutAllCollection() {\n        MultiValueMap map = new MultiValueMap();\n        List<String> list = new ArrayList<String>();\n        list.add(\"a\");\n        list.add(\"b\");\n\n        boolean changed = map.putAll(\"key1\", list);\n        assertTrue(changed);\n        assertEquals(2, map.size(\"key1\"));\n\n        boolean noChange = map.putAll(\"key1\", null);\n        assertFalse(noChange);\n    }\n\n    @Test\n    public void testDecorateFactory() {\n        MultiValueMap map = MultiValueMap.decorate(new HashMap<Object, Object>(), ArrayList.class);\n        assertNotNull(map);\n        map.put(\"k\", \"v\");\n        assertEquals(1, map.size(\"k\"));\n    }\n\n    @Test\n    public void testIterator() {\n        MultiValueMap map = new MultiValueMap();\n        map.put(\"key1\", \"val1\");\n        map.put(\"key1\", \"val2\");\n\n        Iterator<?> it = map.iterator(\"key1\");\n        assertNotNull(it);\n        assertTrue(it.hasNext());\n\n        Iterator<?> emptyIt = map.iterator(\"nonexistent\");\n        assertNotNull(emptyIt);\n        assertFalse(emptyIt.hasNext());\n    }\n\n    @Test\n    public void testClearAndSize() {\n        MultiValueMap map = new MultiValueMap();\n        map.put(\"key1\", \"val1\");\n        map.put(\"key2\", \"val2\");\n\n        assertEquals(2, map.size());\n        map.clear();\n        assertEquals(0, map.size());\n        assertEquals(0, map.size(\"key1\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3844,
+      "completion_tokens": 911,
+      "total_tokens": 4755
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 92716,
+      "daily_remaining_tokens": 257284
+    }
+  },
+  "headers": {
+    "x-request-id": "pxrobnhzmg0rhtspjbw4w2in",
+    "date": "Sun, 04 Oct 2026 08:39:46 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

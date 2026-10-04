@@ -1,0 +1,52 @@
+package org.jsoup.nodes;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class EntitiesTest {
+
+    @Test
+    public void testUnescapeNamedEntities() {
+        assertEquals("&", Entities.unescape("&amp;"));
+        assertEquals("<", Entities.unescape("&lt;"));
+        assertEquals(">", Entities.unescape("&gt;"));
+        assertEquals("\"", Entities.unescape("&quot;"));
+        assertEquals("<p>", Entities.unescape("&lt;p&gt;"));
+    }
+
+    @Test
+    public void testUnescapeNumericEntities() {
+        assertEquals("A", Entities.unescape("&#65;"));
+        assertEquals("A", Entities.unescape("&#x41;"));
+        assertEquals("A", Entities.unescape("&#X41;"));
+    }
+
+    @Test
+    public void testUnescapeNoEntitiesReturnsSameText() {
+        assertEquals("", Entities.unescape(""));
+        assertEquals("plain text", Entities.unescape("plain text"));
+    }
+
+    @Test
+    public void testUnescapeUnknownEntityLeftLiteral() {
+        assertEquals("&foo;", Entities.unescape("&foo;"));
+    }
+
+    @Test
+    public void testUnescapeEmbeddedInText() {
+        assertEquals("a&b", Entities.unescape("a&amp;b"));
+    }
+
+    @Test
+    public void testEscapeBasicCharacters() {
+        Document.OutputSettings settings = new Document().outputSettings();
+        String escaped = Entities.escape("<div>\"quote\" & more</div>", settings);
+        assertEquals("&lt;div&gt;&quot;quote&quot; &amp; more&lt;/div&gt;", escaped);
+    }
+
+    @Test
+    public void testEscapeEmptyString() {
+        Document.OutputSettings settings = new Document().outputSettings();
+        assertEquals("", Entities.escape("", settings));
+    }
+}

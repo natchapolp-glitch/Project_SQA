@@ -1,0 +1,39 @@
+package org.joda.time.field;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.joda.time.DurationFieldType;
+import org.junit.Test;
+
+public class UnsupportedDurationFieldAdditionalTest {
+
+    @Test
+    public void testCompareTo() {
+        UnsupportedDurationField field1 = UnsupportedDurationField.getInstance(DurationFieldType.eras());
+        UnsupportedDurationField field2 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());
+        assertEquals(0, field1.compareTo(field2));
+        assertEquals(0, field1.compareTo((Object) field2));
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        UnsupportedDurationField field1 = UnsupportedDurationField.getInstance(DurationFieldType.eras());
+        UnsupportedDurationField field2 = UnsupportedDurationField.getInstance(DurationFieldType.eras());
+        UnsupportedDurationField field3 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());
+
+        assertNotNull(field1);
+        assertEquals(field1, field2);
+        assertEquals(field1.hashCode(), field2.hashCode());
+        org.junit.Assert.assertNotEquals(field1, field3);
+        org.junit.Assert.assertNotEquals(field1, null);
+        org.junit.Assert.assertNotEquals(field1, "some string");
+    }
+
+    @Test
+    public void testToString() {
+        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.eras());
+        assertNotNull(field.toString());
+        org.junit.Assert.assertTrue(field.toString().contains("eras"));
+    }
+}

@@ -1,0 +1,10 @@
+- Constructor takes varargs of CharSequence[2] pairs: {key, value}; must build lookup map and record min/max key length (shortest/longest).
+- translate(CharSequence input, int index, Writer out): should check substrings of input starting at index, from longest to shortest key length, return match length if found and write translated value; return 0 if no match found at index (indicates no translation).
+- Boundary: index near end of input where remaining length < longest key — must not throw StringIndexOutOfBoundsException, should just try shorter lengths or return 0.
+- Boundary: index exactly at input.length() - should return 0, no exception.
+- Multiple overlapping-length keys: ensure longest match preference (greedy) is honored, not shortest.
+- Single-character and multi-character keys mixed; test correct selection for both.
+- Empty array constructor (no mappings): shortest/longest undefined, translate should always return 0 safely.
+- Null or empty CharSequence input values should be handled per contract (used via CharSequenceTranslator.translate(CharSequence) wrapping entire String).
+- Verify no exception thrown for index values near buffer boundaries (longest key length > remaining chars in input).
+- Use public translate(CharSequence) from superclass as integration check alongside direct int-returning translate(CharSequence,int,Writer) for unit-level verification with StringWriter.

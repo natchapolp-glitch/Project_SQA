@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:00:52.715224+00:00",
+  "ended_at_utc": "2026-10-04T09:00:54.526091+00:00",
+  "raw_body_sha256": "bccd7366deb4843059f56a83d57afe31a6a54be997f8808a8a7b0bfea5c2c506",
+  "body": {
+    "id": "genai-01a10625-1d45-7126-a576-28432999acb1",
+    "object": "chat.completion",
+    "created": 1791104458,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Receiver setup: Initialize `ObjectMapper` and configure context with standard `DeserializationContext`.\n2. Behavior: `StringArrayDeserializer.instance` correctly deserializes JSON arrays into `String[]`.\n3. Boundary: Deserializing empty JSON arrays `[]` should yield an empty `String[]` (length 0).\n4. Boundary: Deserializing JSON arrays containing `null` values should handle element mapping or null-injection correctly.\n5. Behavior: `createContextual` should resolve custom element deserializers (`_elementDeserializer`) via `BeanProperty`.\n6. Boundary: Non-array inputs should trigger `handleNonArray` behavior, respecting `ACCEPT_SINGLE_VALUE_ARRAY` features.\n7. Behavior: Custom element deserialization via `_deserializeCustom` should execute when `_elementDeserializer` is present.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 610,
+      "completion_tokens": 178,
+      "total_tokens": 788
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 99691,
+      "daily_remaining_tokens": 250309
+    }
+  },
+  "headers": {
+    "x-request-id": "q30ec68yf31hs53b26q735u0",
+    "date": "Sun, 04 Oct 2026 09:00:58 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

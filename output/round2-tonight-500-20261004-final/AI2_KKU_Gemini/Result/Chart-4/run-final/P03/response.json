@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:20:19.961710+00:00",
+  "ended_at_utc": "2026-10-04T08:20:26.191289+00:00",
+  "raw_body_sha256": "8587d9ff4589b542e11bfda42b15c88ea6099f696fcb28d83f47b1b6c91b0fbe",
+  "body": {
+    "id": "genai-01a10600-029f-7121-84fb-9f88889954ca",
+    "object": "chat.completion",
+    "created": 1791102026,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.chart.plot;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\n\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.renderer.xy.StandardXYItemRenderer;\nimport org.jfree.chart.renderer.xy.XYItemRenderer;\nimport org.jfree.data.xy.DefaultXYDataset;\nimport org.junit.Test;\n\npublic class XYPlotTest {\n\n    @Test\n    public void testDefaultConstructor() {\n        XYPlot plot = new XYPlot();\n        assertNotNull(plot.getPlotType());\n        assertEquals(PlotOrientation.VERTICAL, plot.getOrientation());\n    }\n\n    @Test\n    public void testParameterizedConstructor() {\n        DefaultXYDataset dataset = new DefaultXYDataset();\n        NumberAxis domainAxis = new NumberAxis(\"X\");\n        NumberAxis rangeAxis = new NumberAxis(\"Y\");\n        XYItemRenderer renderer = new StandardXYItemRenderer();\n\n        XYPlot plot = new XYPlot(dataset, domainAxis, rangeAxis, renderer);\n        assertEquals(dataset, plot.getDataset());\n        assertEquals(domainAxis, plot.getDomainAxis());\n        assertEquals(rangeAxis, plot.getRangeAxis());\n        assertEquals(renderer, plot.getRenderer());\n    }\n\n    @Test\n    public void testAxisManagement() {\n        XYPlot plot = new XYPlot();\n        NumberAxis extraDomainAxis = new NumberAxis(\"Extra X\");\n        plot.setDomainAxis(1, extraDomainAxis);\n        assertEquals(extraDomainAxis, plot.getDomainAxis(1));\n        assertEquals(2, plot.getDomainAxisCount());\n\n        NumberAxis extraRangeAxis = new NumberAxis(\"Extra Y\");\n        plot.setRangeAxis(1, extraRangeAxis);\n        assertEquals(extraRangeAxis, plot.getRangeAxis(1));\n        assertEquals(2, plot.getRangeAxisCount());\n    }\n\n    @Test\n    public void testClearAxes() {\n        XYPlot plot = new XYPlot();\n        plot.setDomainAxis(1, new NumberAxis(\"X2\"));\n        plot.clearDomainAxes();\n        assertEquals(0, plot.getDomainAxisCount());\n        assertNull(plot.getDomainAxis(0));\n\n        plot.setRangeAxis(1, new NumberAxis(\"Y2\"));\n        plot.clearRangeAxes();\n        assertEquals(0, plot.getRangeAxisCount());\n        assertNull(plot.getRangeAxis(0));\n    }\n\n    @Test\n    public void testOrientationAndOffset() {\n        XYPlot plot = new XYPlot();\n        plot.setOrientation(PlotOrientation.HORIZONTAL);\n        assertEquals(PlotOrientation.HORIZONTAL, plot.getOrientation());\n\n        assertNotNull(plot.getAxisOffset());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7086,
+      "completion_tokens": 651,
+      "total_tokens": 7737
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 116912,
+      "daily_remaining_tokens": 233088
+    }
+  },
+  "headers": {
+    "x-request-id": "pxzzvtzzuim5y13480ijb3p2",
+    "date": "Sun, 04 Oct 2026 08:20:26 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

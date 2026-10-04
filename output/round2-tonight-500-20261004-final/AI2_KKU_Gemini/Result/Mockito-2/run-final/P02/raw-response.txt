@@ -1,0 +1,57 @@
+```java
+package org.mockito.internal.util;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TimerTest {
+
+    @Test
+    public void testInitialStateIsNotCounting() {
+        Timer timer = new Timer(1000L);
+        assertFalse(timer.isCounting());
+    }
+
+    @Test
+    public void testIsCountingAfterStart() {
+        Timer timer = new Timer(1000L);
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void testTimerWithZeroDuration() {
+        Timer timer = new Timer(0L);
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void testTimerExpiration() throws InterruptedException {
+        Timer timer = new Timer(1L);
+        timer.start();
+        Thread.sleep(5L);
+        assertFalse(timer.isCounting());
+    }
+
+    @Test
+    public void testRestartTimer() throws InterruptedException {
+        Timer timer = new Timer(1L);
+        timer.start();
+        Thread.sleep(5L);
+        assertFalse(timer.isCounting());
+
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void testNegativeDuration() {
+        Timer timer = new Timer(-100L);
+        timer.start();
+        assertFalse(timer.isCounting());
+    }
+}
+```

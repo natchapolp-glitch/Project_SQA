@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:39:23.317551+00:00",
+  "ended_at_utc": "2026-10-04T07:39:27.707072+00:00",
+  "raw_body_sha256": "02347f4b0e818cdcab95d6fa2ec4514cf204e4eebcf70a5d7a124c80fb04998e",
+  "body": {
+    "id": "genai-01a105da-82ea-7d41-8bc5-3c42d6bcc6c5",
+    "object": "chat.completion",
+    "created": 1791099568,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jsoup.nodes;\n\nimport org.jsoup.parser.Parser;\nimport org.jsoup.parser.Tag;\nimport org.jsoup.select.Elements;\nimport org.junit.Test;\n\nimport java.util.HashSet;\nimport java.util.Set;\n\nimport static org.junit.Assert.*;\n\npublic class ElementTest {\n\n    @Test\n    public void testElementCreationAndTag() {\n        Tag tag = Tag.valueOf(\"div\");\n        Element el = new Element(tag, \"http://example.com\");\n        assertEquals(\"div\", el.tagName());\n        assertEquals(\"div\", el.nodeName());\n        assertEquals(tag, el.tag());\n        assertTrue(el.isBlock());\n        assertEquals(\"http://example.com\", el.baseUri());\n    }\n\n    @Test\n    public void testAppendAndPrependChild() {\n        Element parent = new Element(Tag.valueOf(\"div\"), \"\");\n        Element child1 = new Element(Tag.valueOf(\"span\"), \"\");\n        Element child2 = new Element(Tag.valueOf(\"a\"), \"\");\n\n        parent.appendChild(child1);\n        parent.prependChild(child2);\n\n        assertEquals(2, parent.children().size());\n        assertEquals(\"a\", parent.child(0).tagName());\n        assertEquals(\"span\", parent.child(1).tagName());\n        assertEquals(parent, child1.parent());\n        assertEquals(parent, child2.parent());\n    }\n\n    @Test\n    public void testIdAndAttributes() {\n        Element el = new Element(Tag.valueOf(\"p\"), \"\");\n        el.attr(\"id\", \"my-id\");\n        el.attr(\"class\", \"foo bar\");\n\n        assertEquals(\"my-id\", el.id());\n        assertTrue(el.hasClass(\"foo\"));\n        assertTrue(el.hasClass(\"bar\"));\n        assertFalse(el.hasClass(\"baz\"));\n\n        el.addClass(\"baz\");\n        assertTrue(el.hasClass(\"baz\"));\n\n        el.removeClass(\"foo\");\n        assertFalse(el.hasClass(\"foo\"));\n\n        el.toggleClass(\"bar\");\n        assertFalse(el.hasClass(\"bar\"));\n        el.toggleClass(\"bar\");\n        assertTrue(el.hasClass(\"bar\"));\n    }\n\n    @Test\n    public void testTextAndHtml() {\n        Element el = new Element(Tag.valueOf(\"div\"), \"\");\n        el.text(\"Hello & welcome\");\n        assertEquals(\"Hello & welcome\", el.text());\n        assertTrue(el.hasText());\n\n        el.html(\"<span>Child</span>\");\n        assertEquals(\"<span>Child</span>\", el.html());\n        assertEquals(\"Child\", el.text());\n    }\n\n    @Test\n    public void testSiblingNavigation() {\n        Document doc = Parser.parse(\"<div><p>First</p><p>Second</p><p>Third</p></div>\", \"\");\n        Element div = doc.select(\"div\").first();\n        Elements pList = div.children();\n\n        assertEquals(3, pList.size());\n        Element p1 = pList.get(0);\n        Element p2 = pList.get(1);\n        Element p3 = pList.get(2);\n\n        assertEquals(p1, p2.previousElementSibling());\n        assertEquals(p3, p2.nextElementSibling());\n        assertNull(p1.previousElementSibling());\n        assertNull(p3.nextElementSibling());\n\n        assertEquals(p1, p1.firstElementSibling());\n        assertEquals(p3, p1.lastElementSibling());\n        assertEquals(Integer.valueOf(0), p1.elementSiblingIndex());\n        assertEquals(Integer.valueOf(1), p2.elementSiblingIndex());\n        assertEquals(Integer.valueOf(2), p3.elementSiblingIndex());\n    }\n\n    @Test\n    public void testClassNamesManagement() {\n        Element el = new Element(Tag.valueOf(\"div\"), \"\");\n        Set<String> classes = new HashSet<String>();\n        classes.add(\"c1\");\n        classes.add(\"c2\");\n\n        el.classNames(classes);\n        Set<String> fetched = el.classNames();\n        assertEquals(2, fetched.size());\n        assertTrue(fetched.contains(\"c1\"));\n        assertTrue(fetched.contains(\"c2\"));\n\n        assertEquals(\"c1 c2\", el.className());\n    }\n\n    @Test\n    public void testEmptyAndWrap() {\n        Element el = new Element(Tag.valueOf(\"div\"), \"\");\n        el.appendChild(new Element(Tag.valueOf(\"span\"), \"\"));\n        assertFalse(el.children().isEmpty());\n\n        el.empty();\n        assertTrue(el.children().isEmpty());\n    }\n}\n```\n\n```java\npackage org.jsoup.parser;\n\nimport org.jsoup.nodes.Document;\nimport org.jsoup.nodes.Element;\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class ParserTest {\n\n    @Test\n    public void testParseBasicHtml() {\n        String html = \"<html><head><title>Test</title></head><body><div id='d1'>Hello</div></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com\");\n\n        assertNotNull(doc);\n        assertEquals(\"Test\", doc.title());\n        Element div = doc.getElementById(\"d1\");\n        assertNotNull(div);\n        assertEquals(\"Hello\", div.text());\n    }\n\n    @Test\n    public void testParseBodyFragment() {\n        String fragment = \"<p>Fragment text</p>\";\n        Document doc = Parser.parseBodyFragment(fragment, \"http://example.com\");\n\n        assertNotNull(doc);\n        Element p = doc.select(\"p\").first();\n        assertNotNull(p);\n        assertEquals(\"Fragment text\", p.text());\n        assertEquals(\"body\", p.parent().tagName());\n    }\n\n    @Test\n    public void testParseCommentsAndDeclarations() {\n        String html = \"<div><!-- Comment --></div>\";\n        Document doc = Parser.parse(html, \"\");\n        assertNotNull(doc);\n        assertTrue(doc.text().isEmpty());\n    }\n}\n```\n\n```java\npackage org.jsoup.parser;\n\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class TagTest {\n\n    @Test\n    public void testValueOfKnownBlockTag() {\n        Tag tag = Tag.valueOf(\"div\");\n        assertNotNull(tag);\n        assertEquals(\"div\", tag.getName());\n        assertTrue(tag.isBlock());\n    }\n\n    @Test\n    public void testValueOfKnownInlineTag() {\n        Tag tag = Tag.valueOf(\"span\");\n        assertNotNull(tag);\n        assertEquals(\"span\", tag.getName());\n        assertFalse(tag.isBlock());\n    }\n\n    @Test\n    public void testValueOfUnknownTag() {\n        Tag tag = Tag.valueOf(\"custom-element\");\n        assertNotNull(tag);\n        assertEquals(\"custom-element\", tag.getName());\n        assertFalse(tag.isBlock());\n    }\n\n    @Test\n    public void testCaseInsensitivity() {\n        Tag t1 = Tag.valueOf(\"DIV\");\n        Tag t2 = Tag.valueOf(\"div\");\n        assertSame(t1, t2);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5334,
+      "completion_tokens": 1641,
+      "total_tokens": 6975
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 96891,
+      "daily_remaining_tokens": 253109
+    }
+  },
+  "headers": {
+    "x-request-id": "gm48jew58mtduff2xjs6zpqo",
+    "date": "Sun, 04 Oct 2026 07:39:28 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

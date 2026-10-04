@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:13:31.489233+00:00",
+  "ended_at_utc": "2026-10-04T08:13:34.808938+00:00",
+  "raw_body_sha256": "938921cdc5dce08dd937a82fd71d2c11eb63e7b3188e90ed17d99a74aee7f94f",
+  "body": {
+    "id": "genai-01a105f9-c2bc-7d18-9335-d9a52b19ca15",
+    "object": "chat.completion",
+    "created": 1791101616,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.joda.time;\n\nimport org.joda.time.chrono.ISOChronology;\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class MutableDateTimeTest {\n\n    @Test\n    public void testDefaultConstructorAndNow() {\n        MutableDateTime mdt1 = new MutableDateTime();\n        MutableDateTime mdt2 = MutableDateTime.now();\n        assertNotNull(mdt1);\n        assertNotNull(mdt2);\n        assertTrue(mdt1.getMillis() <= System.currentTimeMillis());\n    }\n\n    @Test\n    public void testZoneAndChronologyConstructors() {\n        DateTimeZone zone = DateTimeZone.forID(\"UTC\");\n        Chronology chrono = ISOChronology.getInstance(zone);\n        \n        MutableDateTime mdt = new MutableDateTime(2023, 6, 15, 12, 30, 0, 0, chrono);\n        assertEquals(zone, mdt.getZone());\n        assertEquals(chrono, mdt.getChronology());\n        assertEquals(2023, mdt.getYear());\n        assertEquals(6, mdt.getMonthOfYear());\n        assertEquals(15, mdt.getDayOfMonth());\n    }\n\n    @Test\n    public void testParseMethods() {\n        MutableDateTime mdt = MutableDateTime.parse(\"2020-02-29T15:45:30.000Z\");\n        assertEquals(2020, mdt.getYear());\n        assertEquals(2, mdt.getMonthOfYear());\n        assertEquals(29, mdt.getDayOfMonth());\n        assertEquals(15, mdt.getHourOfDay());\n        assertEquals(45, mdt.getMinuteOfHour());\n        assertEquals(30, mdt.getSecondOfMinute());\n    }\n\n    @Test\n    public void testSettersAndAdders() {\n        MutableDateTime mdt = new MutableDateTime(2023, 1, 15, 10, 0, 0, 0);\n        mdt.setYear(2024);\n        mdt.addMonths(2);\n        mdt.addDays(5);\n        mdt.addHours(3);\n        mdt.addMinutes(15);\n        mdt.addSeconds(10);\n        mdt.addMillis(500);\n\n        assertEquals(2024, mdt.getYear());\n        assertEquals(3, mdt.getMonthOfYear());\n        assertEquals(20, mdt.getDayOfMonth());\n        assertEquals(13, mdt.getHourOfDay());\n        assertEquals(15, mdt.getMinuteOfHour());\n        assertEquals(10, mdt.getSecondOfMinute());\n        assertEquals(500, mdt.getMillisOfSecond());\n    }\n\n    @Test\n    public void testSetDateAndTimeBulk() {\n        MutableDateTime mdt = new MutableDateTime(0L);\n        mdt.setDate(2015, 10, 5);\n        mdt.setTime(14, 20, 35, 123);\n\n        assertEquals(2015, mdt.getYear());\n        assertEquals(10, mdt.getMonthOfYear());\n        assertEquals(5, mdt.getDayOfMonth());\n        assertEquals(14, mdt.getHourOfDay());\n        assertEquals(20, mdt.getMinuteOfHour());\n        assertEquals(35, mdt.getSecondOfMinute());\n        assertEquals(123, mdt.getMillisOfSecond());\n    }\n\n    @Test\n    public void testRoundingConfiguration() {\n        MutableDateTime mdt = new MutableDateTime(2023, 6, 15, 12, 34, 56, 789);\n        DateTimeField field = mdt.getChronology().minuteOfHour();\n        mdt.setRounding(field, MutableDateTime.ROUND_FLOOR);\n\n        assertEquals(field, mdt.getRoundingField());\n        assertEquals(MutableDateTime.ROUND_FLOOR, mdt.getRoundingMode());\n    }\n\n    @Test\n    public void testZoneRetainFields() {\n        MutableDateTime mdt = new MutableDateTime(2023, 6, 15, 12, 0, 0, 0, DateTimeZone.forID(\"UTC\"));\n        mdt.setZoneRetainFields(DateTimeZone.forID(\"America/New_York\"));\n        assertEquals(DateTimeZone.forID(\"America/New_York\"), mdt.getZone());\n        assertEquals(12, mdt.getHourOfDay());\n    }\n\n    @Test\n    public void testPropertiesAndCloning() {\n        MutableDateTime mdt = new MutableDateTime(2023, 5, 10, 8, 0, 0, 0);\n        MutableDateTime clone = (MutableDateTime) mdt.clone();\n        assertEquals(mdt, clone);\n\n        mdt.property(DateTimeFieldType.dayOfMonth()).add(5);\n        assertEquals(15, mdt.getDayOfMonth());\n        assertEquals(10, clone.getDayOfMonth());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6886,
+      "completion_tokens": 1191,
+      "total_tokens": 8077
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 96745,
+      "daily_remaining_tokens": 253255
+    }
+  },
+  "headers": {
+    "x-request-id": "lserdhmk829sps47nvzhar2j",
+    "date": "Sun, 04 Oct 2026 08:13:36 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

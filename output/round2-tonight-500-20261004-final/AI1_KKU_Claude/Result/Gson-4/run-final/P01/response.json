@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:51:05.794232+00:00",
+  "ended_at_utc": "2026-10-04T08:51:13.141477+00:00",
+  "raw_body_sha256": "f2fde5a61e6075886905330dcb7ff5aa2a0a575fbd306181190f923c3471e3e5",
+  "body": {
+    "id": "gen-1791103868-M7jUK6lL0PXrpbKJ4Gis",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Key behaviors/boundaries to test:\n\n- `JsonReader.nextLong()` on a value that parses as a valid double but is NOT exactly representable/expressible as a long (e.g. very large exponent numeric strings, or fractional-looking but integral-value numbers like \"1.0\") — contract: should throw `NumberFormatException` unless value is exactly a long; verify it does not silently return a truncated/incorrect long.\n- `JsonReader.nextLong()` on a quoted string value containing a valid long (e.g. `\"123\"`), with lenient mode on/off — must parse successfully.\n- `JsonReader.nextDouble()` boundary: strictly-non-finite values (\"NaN\", \"Infinity\") should throw `MalformedJsonException` when `lenient=false`, succeed when `lenient=true`.\n- `JsonReader.peek()`/`doPeek()` correctly distinguishing PEEKED_LONG vs PEEKED_NUMBER for inputs like \"9223372036854775807\" (Long.MAX_VALUE) vs \"9223372036854775808\" (overflow) — boundary at Long.MAX/MIN_VALUE.\n- `nextInt()` on a long-valued number exceeding int range should throw `NumberFormatException`, not silently truncate.\n- `JsonWriter.value(String)` / `jsonValue` with null argument respecting `serializeNulls` flag.\n- Receiver setup: construct `JsonReader` with `StringReader`, call `setLenient` appropriately before invoking peek/next* methods; ensure `beginArray`/`endArray` wrapping for top-level non-lenient docs.\n- Round-trip test: write a number via `JsonWriter.value(long)`, read back via `nextLong()`/`nextDouble()` to confirm numeric fidelity for edge values (Long.MIN_VALUE, Long.MAX_VALUE, 0).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2643,
+      "output_tokens": 639,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.011676,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.011676,
+        "upstream_inference_prompt_cost": 0.005286,
+        "upstream_inference_completions_cost": 0.00639
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 152634,
+      "daily_remaining_tokens": 47366
+    }
+  },
+  "headers": {
+    "x-request-id": "mit5fgrzdqs12c1v8iddg1km",
+    "date": "Sun, 04 Oct 2026 08:51:15 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

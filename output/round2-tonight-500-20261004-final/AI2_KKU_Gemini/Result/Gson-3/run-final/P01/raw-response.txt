@@ -1,0 +1,7 @@
+- Valid receiver setup: Instantiate `ConstructorConstructor` with a configured or empty `Map<Type, InstanceCreator<?>>`.
+- Behavior: `get(TypeToken<T>)` returns an `ObjectConstructor<T>` for instantiating the requested type.
+- Boundary: Requesting a registered type via `InstanceCreator` should correctly invoke that creator.
+- Boundary: Requesting standard collections (List, Set, Map) should return default implementation constructors.
+- Boundary: Requesting classes with no-arg constructors should use default constructors.
+- Boundary: Requesting classes without no-arg constructors should fall back to unsafe allocators or handle gracefully.
+- Behavior: Unregistered raw types and generic types resolve to appropriate fallback instantiation strategies.

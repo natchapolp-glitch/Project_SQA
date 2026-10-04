@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:43:16.236148+00:00",
+  "ended_at_utc": "2026-10-04T08:43:18.192848+00:00",
+  "raw_body_sha256": "7d2d7afba8e1c394bb87b17925ab264726689a71c875e01f06387c1e779de858",
+  "body": {
+    "id": "genai-01a10614-f717-7a21-a815-5cad436cba75",
+    "object": "chat.completion",
+    "created": 1791103399,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "Valid receiver setup: Instantiate archive output streams (`CpioArchiveOutputStream`, `TarArchiveOutputStream`, `ZipArchiveOutputStream`) wrapping a `ByteArrayOutputStream` or temporary `File`.\nBehavior: `putArchiveEntry` must correctly handle entries with valid metadata (names, sizes, formats) and reject invalid or duplicate states.\nBehavior: `closeArchiveEntry` and `finish` must properly write trailers, paddings, and end-of-archive markers without throwing unexpected IOExceptions.\nBoundary: Writing zero bytes or empty entries vs. writing large data streams exceeding entry size bounds.\nBoundary: Long file names and special flags (e.g., Tar long file modes, Zip UTF-8/EFS flags, Cpio formats) at their boundaries.\nBehavior: `ChangeSetPerformer` correctly applies additions, deletions, and modifications to existing archives without corrupting entry streams.\nBehavior: Calling `write`, `closeArchiveEntry`, or `finish` on closed or uninitialized stream states must throw appropriate `IOException` or `IllegalStateException`.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1795,
+      "completion_tokens": 213,
+      "total_tokens": 2008
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 100262,
+      "daily_remaining_tokens": 249738
+    }
+  },
+  "headers": {
+    "x-request-id": "bjqyjfuzf7x0w68hihjk7jm5",
+    "date": "Sun, 04 Oct 2026 08:43:19 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

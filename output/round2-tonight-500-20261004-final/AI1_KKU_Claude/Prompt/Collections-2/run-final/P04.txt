@@ -1,0 +1,597 @@
+Extend a valid base suite using ONLY new test classes; do not repeat, modify, replace or redefine any base file. Return new COMPLETE Java test files in java fences with at most 4 additional @Test methods total, or exactly NO_CHANGE. Use Java 7-compatible JUnit 4 and meaningful assertions based on documented contracts. Fixed coverage counters/uncovered line numbers are hints; line numbers may differ in buggy source. Use only the supplied buggy context and APIs. No added dependencies, production/build changes, random/time/network/process/file access, assumptions or ignored tests.
+
+Case: Collections-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.collections.ExtendedProperties
+
+BUGGY API signatures (may include private members):
+Compiled from "ExtendedProperties.java"
+public class org.apache.commons.collections.ExtendedProperties extends java.util.Hashtable {
+  private org.apache.commons.collections.ExtendedProperties defaults;
+  protected java.lang.String file;
+  protected java.lang.String basePath;
+  protected java.lang.String fileSeparator;
+  protected boolean isInitialized;
+  protected static java.lang.String include;
+  protected java.util.ArrayList keysAsListed;
+  protected static final java.lang.String START_TOKEN;
+  protected static final java.lang.String END_TOKEN;
+  protected java.lang.String interpolate(java.lang.String);
+  protected java.lang.String interpolateHelper(java.lang.String, java.util.List);
+  private static java.lang.String escape(java.lang.String);
+  private static java.lang.String unescape(java.lang.String);
+  private static int countPreceding(java.lang.String, int, char);
+  private static boolean endsWithSlash(java.lang.String);
+  public org.apache.commons.collections.ExtendedProperties();
+  public org.apache.commons.collections.ExtendedProperties(java.lang.String) throws java.io.IOException;
+  public org.apache.commons.collections.ExtendedProperties(java.lang.String, java.lang.String) throws java.io.IOException;
+  public boolean isInitialized();
+  public java.lang.String getInclude();
+  public void setInclude(java.lang.String);
+  public void load(java.io.InputStream) throws java.io.IOException;
+  public synchronized void load(java.io.InputStream, java.lang.String) throws java.io.IOException;
+  public java.lang.Object getProperty(java.lang.String);
+  public void addProperty(java.lang.String, java.lang.Object);
+  private void addPropertyDirect(java.lang.String, java.lang.Object);
+  private void addPropertyInternal(java.lang.String, java.lang.Object);
+  public void setProperty(java.lang.String, java.lang.Object);
+  public synchronized void save(java.io.OutputStream, java.lang.String) throws java.io.IOException;
+  public void combine(org.apache.commons.collections.ExtendedProperties);
+  public void clearProperty(java.lang.String);
+  public java.util.Iterator getKeys();
+  public java.util.Iterator getKeys(java.lang.String);
+  public org.apache.commons.collections.ExtendedProperties subset(java.lang.String);
+  public void display();
+  public java.lang.String getString(java.lang.String);
+  public java.lang.String getString(java.lang.String, java.lang.String);
+  public java.util.Properties getProperties(java.lang.String);
+  public java.util.Properties getProperties(java.lang.String, java.util.Properties);
+  public java.lang.String[] getStringArray(java.lang.String);
+  public java.util.Vector getVector(java.lang.String);
+  public java.util.Vector getVector(java.lang.String, java.util.Vector);
+  public java.util.List getList(java.lang.String);
+  public java.util.List getList(java.lang.String, java.util.List);
+  public boolean getBoolean(java.lang.String);
+  public boolean getBoolean(java.lang.String, boolean);
+  public java.lang.Boolean getBoolean(java.lang.String, java.lang.Boolean);
+  public java.lang.String testBoolean(java.lang.String);
+  public byte getByte(java.lang.String);
+  public byte getByte(java.lang.String, byte);
+  public java.lang.Byte getByte(java.lang.String, java.lang.Byte);
+  public short getShort(java.lang.String);
+  public short getShort(java.lang.String, short);
+  public java.lang.Short getShort(java.lang.String, java.lang.Short);
+  public int getInt(java.lang.String);
+  public int getInt(java.lang.String, int);
+  public int getInteger(java.lang.String);
+  public int getInteger(java.lang.String, int);
+  public java.lang.Integer getInteger(java.lang.String, java.lang.Integer);
+  public long getLong(java.lang.String);
+  public long getLong(java.lang.String, long);
+  public java.lang.Long getLong(java.lang.String, java.lang.Long);
+  public float getFloat(java.lang.String);
+  public float getFloat(java.lang.String, float);
+  public java.lang.Float getFloat(java.lang.String, java.lang.Float);
+  public double getDouble(java.lang.String);
+  public double getDouble(java.lang.String, double);
+  public java.lang.Double getDouble(java.lang.String, java.lang.Double);
+  public static org.apache.commons.collections.ExtendedProperties convertProperties(java.util.Properties);
+  static boolean access$000(java.lang.String);
+  static {};
+}
+
+
+BUGGY source excerpt: org.apache.commons.collections.ExtendedProperties (truncated=True)
+```java
+/*
+ *  Copyright 2001-2006 The Apache Software Foundation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.apache.commons.collections;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+/**
+ * This class extends normal Java properties by adding the possibility
+ * to use the same key many times concatenating the value strings
+ * instead of overwriting them.
+ * <p>
+ * <b>Please consider using the <code>PropertiesConfiguration</code> class in
+ * Commons-Configuration as soon as it is released.</b>
+ * <p>
+ * The Extended Properties syntax is explained here:
+ *
+ * <ul>
+ *  <li>
+ *   Each property has the syntax <code>key = value</code>
+ *  </li>
+ *  <li>
+ *   The <i>key</i> may use any character but the equal sign '='.
+ *  </li>
+ *  <li>
+ *   <i>value</i> may be separated on different lines if a backslash
+ *   is placed at the end of the line that continues below.
+ *  </li>
+ *  <li>
+ *   If <i>value</i> is a list of strings, each token is separated
+ *   by a comma ','.
+ *  </li>
+ *  <li>
+ *   Commas in each token are escaped placing a backslash right before
+ *   the comma.
+ *  </li>
+ *  <li>
+ *   Backslashes are escaped by using two consecutive backslashes i.e. \\
+ *  </li>
+ *  <li>
+ *   If a <i>key</i> is used more than once, the values are appended
+ *   as if they were on the same line separated with commas.
+ *  </li>
+ *  <li>
+ *   Blank lines and lines starting with character '#' are skipped.
+ *  </li>
+ *  <li>
+ *   If a property is named "include" (or whatever is defined by
+ *   setInclude() and getInclude() and the value of that property is
+ *   the full path to a file on disk, that file will be included into
+ *   the ConfigurationsRepository. You can also pull in files relative
+ *   to the parent configuration file. So if you have something
+ *   like the following:
+ *
+ *   include = additional.properties
+ *
+ *   Then "additional.properties" is expected to be in the same
+ *   directory as the parent configuration file.
+ * 
+ *   Duplicate name values will be replaced, so be careful.
+ *
+ *  </li>
+ * </ul>
+ *
+ * <p>Here is an example of a valid extended properties file:
+ *
+ * <p><pre>
+ *      # lines starting with # are comments
+ *
+ *      # This is the simplest property
+ *      key = value
+ *
+ *      # A long property may be separated on multiple lines
+ *      longvalue = aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \
+ *                  aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+ *
+ *      # This is a property with many tokens
+ *      tokens_on_a_line = first token, second token
+ *
+ *      # This sequence generates exactly the same result
+ *      tokens_on_multiple_lines = first token
+ *      tokens_on_multiple_lines = second token
+ *
+ *      # commas may be escaped in tokens
+ *      commas.escaped = Hi\, what'up?
+ * </pre>
+ *
+ * <p><b>NOTE</b>: this class has <b>not</b> been written for
+ * performance nor low memory usage.  In fact, it's way slower than it
+ * could be and generates too much memory garbage.  But since
+ * performance is not an issue during intialization (and there is not
+ * much time to improve it), I wrote it this way.  If you don't like
+ * it, go ahead and tune it up!
+ *
+ * @since Commons Collections 1.0
+ * @version $Revision$ $Date$
+ * 
+ * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
+ * @author <a href="mailto:jon@latchkey.com">Jon S. Stevens</a>
+ * @author <a href="mailto:daveb@miceda-data">Dave Bryson</a>
+ * @author <a href="mailto:jvanzyl@periapt.com">Jason van Zyl</a>
+ * @author <a href="mailto:geirm@optonline.net">Geir Magnusson Jr.</a>
+ * @author <a href="mailto:leon@opticode.co.za">Leon Messerschmidt</a>
+ * @author <a href="mailto:kjohnson@transparent.com">Kent Johnson</a>
+ * @author <a href="mailto:dlr@finemaltcoding.com">Daniel Rall</a>
+ * @author <a href="mailto:ipriha@surfeu.fi">Ilkka Priha</a>
+ * @author Janek Bogucki
+ * @author Mohan Kishore
+ * @author Stephen Colebourne
+ * @author Shinobu Kawai
+ * @author <a href="mailto:hps@intermeta.de">Henning P. Schmiedehausen</a>
+ */
+public class ExtendedProperties extends Hashtable {
+    
+    /**
+     * Default configurations repository.
+     */
+    private ExtendedProperties defaults;
+
+    /**
+     * The file connected to this repository (holding comments and
+     * such).
+     *
+     * @serial
+     */
+    protected String file;
+
+    /**
+     * Base path of the configuration file used to create
+     * this ExtendedProperties object.
+     */
+    protected String basePath;
+
+    /**
+     * File separator.
+     */
+    protected String fileSeparator = System.getProperty("file.separator");
+
+    /**
+     * Has this configuration been intialized.
+     */
+    protected boolean isInitialized = false;
+
+    /**
+     * This is the name of the property that can point to other
+     * properties file for including other properties files.
+     */
+
+    /**
+     * This is the default name of the property that can point to other
+     * properties file for including other properties files.
+     * 
+     * @deprecated Use getInclude() and setInclude() methods which operate
+     * on an instance variable from v3.3. Due to be removed in v4.0.
+     */
+    protected static String include = "include";
+
+    /**
+     * These are the keys in the order they listed
+     * in the configuration file. This is useful when
+     * you wish to perform operations with configuration
+     * information in a particular order.
+     */
+    protected ArrayList keysAsListed = new ArrayList();
+
+    protected final static String START_TOKEN="${";
+    protected final static String END_TOKEN="}";
+
+
+    /**
+     * Interpolate key names to handle ${key} stuff
+     *
+     * @param base string to interpolate
+     * @return returns the key name with the ${key} substituted
+     */
+    protected String interpolate(String base) {
+        // COPIED from [configuration] 2003-12-29
+        return (interpolateHelper(base, null));
+    }
+
+    /**
+     * Recursive handler for multiple levels of interpolation.
+     *
+     * When called the first time, priorVariables should be null.
+     *
+     * @param base string with the ${key} variables
+     * @param priorVariables serves two purposes: to allow checking for
+     * loops, and creating a meaningful exception message should a loop
+     * occur.  It's 0'th element will be set to the value of base from
+     * the first call.  All subsequent interpolated variables are added
+     * afterward.
+     *
+     * @return the string with the interpolation taken care of
+     */
+    protected String interpolateHelper(String base, List priorVariables) {
+        // COPIED from [configuration] 2003-12-29
+        if (base == null) {
+            return null;
+        }
+
+        // on the first call initialize priorVariables
+        // and add base as the first element
+        if (priorVariables == null) {
+            priorVariables = new ArrayList();
+            priorVariables.add(base);
+        }
+
+        int begin = -1;
+        int end = -1;
+        int prec = 0 - END_TOKEN.length();
+        String variable = null;
+        StringBuffer result = new StringBuffer();
+
+        // FIXME: we should probably allow the escaping of the start token
+        while (((begin = base.indexOf(START_TOKEN, prec + END_TOKEN.length())) > -1)
+            && ((end = base.indexOf(END_TOKEN, begin)) > -1)) {
+            result.append(base.substring(prec + END_TOKEN.length(), begin));
+            variable = base.substring(begin + START_TOKEN.length(), end);
+
+            // if we've got a loop, create a useful exception message and throw
+            if (priorVariables.contains(variable)) {
+                String initialBase = priorVariables.remove(0).toString();
+                priorVariables.add(variable);
+                StringBuffer priorVariableSb = new StringBuffer();
+
+                // create a nice trace of interpolated variables like so:
+                // var1->var2->var3
+                for (Iterator it = priorVariables.iterator(); it.hasNext();) {
+                    priorVariableSb.append(it.next());
+                    if (it.hasNext()) {
+                        priorVariableSb.append("->");
+                    }
+                }
+
+                throw new IllegalStateException(
+                    "infinite loop in property interpolation of " + initialBase + ": " + priorVariableSb.toString());
+            }
+            // otherwise, add this variable to the interpolation list.
+            else {
+                priorVariables.add(variable);
+            }
+
+            //QUESTION: getProperty or getPropertyDirect
+            Object value = getProperty(variable);
+            if (value != null) {
+                result.append(interpolateHelper(value.toString(), priorVariables));
+
+                // pop the interpolated variable off the stack
+                // this maintains priorVariables correctness for
+                // properties with multiple interpolations, e.g.
+                // prop.name=${some.other.prop1}/blahblah/${some.other.prop2}
+                priorVariables.remove(priorVariables.size() - 1);
+            } else if (defaults != null && defaults.getString(variable, null) != null) {
+                result.append(defaults.getString(variable));
+            } else {
+                //variable not defined - so put it back in the value
+                result.append(START_TOKEN).append(variable).append(END_TOKEN);
+            }
+            prec = end;
+        }
+        result.append(base.substring(prec + END_TOKEN.length(), base.length()));
+
+        return result.toString();
+    }
+    
+    /**
+     * Inserts a backslash before every comma and backslash. 
+     */
+    private static String escape(String s) {
+        StringBuffer buf = new StringBuffer(s);
+        for (int i = 0; i < buf.length(); i++) {
+            char c = buf.charAt(i);
+            if (c == ',' || c == '\\') {
+                buf.insert(i, '\\');
+                i++;
+            }
+        }
+        return buf.toString();
+    }
+    
+    /**
+     * Removes a backslash from every pair of backslashes. 
+     */
+    private static String unescape(String s) {
+        StringBuffer buf = new StringBuffer(s);
+        for (int i = 0; i < buf.length() - 1; i++) {
+            char c1 = buf.charAt(i);
+            char c2 = buf.charAt(i + 1);
+            if (c1 == '\\' && c2 == '\\') {
+                buf.deleteCharAt(i);
+            }
+        }
+        return buf.toString();
+    }
+
+    /**
+     * Counts the number of successive times 'ch' appears in the
+     * 'line' before the position indicated by the 'index'.
+     */
+    private static int countPreceding(String line, int index, char ch) {
+        int i;
+        for (i = index - 1; i >= 0; i--) {
+            if (line.charAt(i) != ch) {
+                break;
+            }
+        }
+        return index - 1 - i;
+    }
+
+    /**
+     * Checks if the line ends with odd number of backslashes 
+     */
+    private static boolean endsWithSlash(String line) {
+        if (!line.endsWith(
+```
+
+
+Unchanged base files:
+FILE org/apache/commons/collections/ExtendedPropertiesTest.java
+```java
+package org.apache.commons.collections;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.junit.Test;
+
+public class ExtendedPropertiesTest {
+
+    @Test
+    public void testAddPropertyAccumulatesMultipleValues() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.addProperty("key", "value1");
+        ep.addProperty("key", "value2");
+        Object val = ep.getProperty("key");
+        assertTrue(val instanceof Vector);
+        Vector v = (Vector) val;
+        assertEquals(2, v.size());
+        assertEquals("value1", v.get(0));
+        assertEquals("value2", v.get(1));
+    }
+
+    @Test
+    public void testSetPropertyReplacesExistingValue() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.addProperty("key", "value1");
+        ep.addProperty("key", "value2");
+        ep.setProperty("key", "newvalue");
+        Object val = ep.getProperty("key");
+        assertEquals("newvalue", val);
+    }
+
+    @Test
+    public void testGetPropertyMissingKeyReturnsNull() {
+        ExtendedProperties ep = new ExtendedProperties();
+        assertNull(ep.getProperty("missing"));
+    }
+
+    @Test
+    public void testGetStringArrayAndVectorFromCommaSeparatedValue() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.addProperty("list", "a,b,c");
+        String[] arr = ep.getStringArray("list");
+        assertEquals(3, arr.length);
+        assertEquals("a", arr[0]);
+        assertEquals("b", arr[1]);
+        assertEquals("c", arr[2]);
+
+        Vector vec = ep.getVector("list");
+        assertEquals(3, vec.size());
+        assertEquals("a", vec.get(0));
+    }
+
+    @Test
+    public void testGetBooleanParsesVariants() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("flagTrue", "true");
+        ep.setProperty("flagYes", "yes");
+        ep.setProperty("flagOn", "on");
+        ep.setProperty("flagFalse", "false");
+
+        assertTrue(ep.getBoolean("flagTrue"));
+        assertTrue(ep.getBoolean("flagYes"));
+        assertTrue(ep.getBoolean("flagOn"));
+        assertFalse(ep.getBoolean("flagFalse"));
+
+        assertTrue(ep.getBoolean("missing", true));
+        assertFalse(ep.getBoolean("missing", false));
+    }
+
+    @Test
+    public void testGetIntValidAndDefault() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("num", "42");
+        assertEquals(42, ep.getInt("num"));
+        assertEquals(99, ep.getInt("missing", 99));
+    }
+
+    @Test(expected = NoSuchElementException2.class)
+    public void placeholderNeverUsed() {
+        // placeholder to keep class structure consistent, not executed
+        throw new NoSuchElementException2();
+    }
+
+    static class NoSuchElementException2 extends RuntimeException {
+    }
+
+    @Test
+    public void testClearPropertyRemovesKey() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("key", "value");
+        assertNotNull(ep.getProperty("key"));
+        ep.clearProperty("key");
+        assertNull(ep.getProperty("key"));
+
+        Iterator it = ep.getKeys();
+        while (it.hasNext()) {
+            assertFalse("key".equals(it.next()));
+        }
+    }
+
+    @Test
+    public void testSubsetReturnsScopedProperties() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("db.driver", "mysql");
+        ep.setProperty("db.url", "jdbc:mysql://localhost");
+        ep.setProperty("other.key", "value");
+
+        ExtendedProperties subset = ep.subset("db");
+        assertEquals("mysql", subset.getString("driver"));
+        assertEquals("jdbc:mysql://localhost", subset.getString("url"));
+        assertNull(subset.getString("other.key", null));
+    }
+
+    @Test
+    public void testInterpolateResolvesReferencedProperty() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("base", "/home/user");
+        ep.setProperty("path", "${base}/data");
+        assertEquals("/home/user/data", ep.getString("path"));
+    }
+
+    @Test
+    public void testLoadParsesCommentsAndContinuationLines() throws IOException {
+        String content = "# comment line\n"
+                + "key1 = value1\n"
+                + "\n"
+                + "longkey = aaa\\\n"
+                + "bbb\n";
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.load(new ByteArrayInputStream(content.getBytes("UTF-8")));
+
+        assertEquals("value1", ep.getString("key1"));
+        assertEquals("aaabbb", ep.getString("longkey"));
+    }
+
+    @Test
+    public void testGetKeysIterationOrderMatchesInsertion() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("first", "1");
+        ep.setProperty("second", "2");
+        ep.setProperty("third", "3");
+
+        Iterator it = ep.getKeys();
+        assertEquals("first", it.next());
+        assertEquals("second", it.next());
+        assertEquals("third", it.next());
+        assertFalse(it.hasNext());
+    }
+}
+
+```
+
+Fixed coverage:
+{"line_covered": 206, "line_total": 473, "branch_covered": 92, "branch_total": 274, "uncovered_fixed_lines": [253, 254, 255, 259, 260, 261, 262, 266, 267, 284, 285, 288, 301, 302, 303, 304, 305, 306, 309, 321, 433, 434, 439, 459, 460, 469, 470, 472, 473, 475, 477, 478, 480, 481, 482, 484, 485, 487, 488, 490]}

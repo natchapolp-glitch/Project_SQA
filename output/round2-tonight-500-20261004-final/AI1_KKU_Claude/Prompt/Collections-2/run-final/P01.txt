@@ -1,0 +1,81 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Collections-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.collections.ExtendedProperties
+BUGGY API signatures:
+Compiled from "ExtendedProperties.java"
+public class org.apache.commons.collections.ExtendedProperties extends java.util.Hashtable {
+  private org.apache.commons.collections.ExtendedProperties defaults;
+  protected java.lang.String file;
+  protected java.lang.String basePath;
+  protected java.lang.String fileSeparator;
+  protected boolean isInitialized;
+  protected static java.lang.String include;
+  protected java.util.ArrayList keysAsListed;
+  protected static final java.lang.String START_TOKEN;
+  protected static final java.lang.String END_TOKEN;
+  protected java.lang.String interpolate(java.lang.String);
+  protected java.lang.String interpolateHelper(java.lang.String, java.util.List);
+  private static java.lang.String escape(java.lang.String);
+  private static java.lang.String unescape(java.lang.String);
+  private static int countPreceding(java.lang.String, int, char);
+  private static boolean endsWithSlash(java.lang.String);
+  public org.apache.commons.collections.ExtendedProperties();
+  public org.apache.commons.collections.ExtendedProperties(java.lang.String) throws java.io.IOException;
+  public org.apache.commons.collections.ExtendedProperties(java.lang.String, java.lang.String) throws java.io.IOException;
+  public boolean isInitialized();
+  public java.lang.String getInclude();
+  public void setInclude(java.lang.String);
+  public void load(java.io.InputStream) throws java.io.IOException;
+  public synchronized void load(java.io.InputStream, java.lang.String) throws java.io.IOException;
+  public java.lang.Object getProperty(java.lang.String);
+  public void addProperty(java.lang.String, java.lang.Object);
+  private void addPropertyDirect(java.lang.String, java.lang.Object);
+  private void addPropertyInternal(java.lang.String, java.lang.Object);
+  public void setProperty(java.lang.String, java.lang.Object);
+  public synchronized void save(java.io.OutputStream, java.lang.String) throws java.io.IOException;
+  public void combine(org.apache.commons.collections.ExtendedProperties);
+  public void clearProperty(java.lang.String);
+  public java.util.Iterator getKeys();
+  public java.util.Iterator getKeys(java.lang.String);
+  public org.apache.commons.collections.ExtendedProperties subset(java.lang.String);
+  public void display();
+  public java.lang.String getString(java.lang.String);
+  public java.lang.String getString(java.lang.String, java.lang.String);
+  public java.util.Properties getProperties(java.lang.String);
+  public java.util.Properties getProperties(java.lang.String, java.util.Properties);
+  public java.lang.String[] getStringArray(java.lang.String);
+  public java.util.Vector getVector(java.lang.String);
+  public java.util.Vector getVector(java.lang.String, java.util.Vector);
+  public java.util.List getList(java.lang.String);
+  public java.util.List getList(java.lang.String, java.util.List);
+  public boolean getBoolean(java.lang.String);
+  public boolean getBoolean(java.lang.String, boolean);
+  public java.lang.Boolean getBoolean(java.lang.String, java.lang.Boolean);
+  public java.lang.String testBoolean(java.lang.String);
+  public byte getByte(java.lang.String);
+  public byte getByte(java.lang.String, byte);
+  public java.lang.Byte getByte(java.lang.String, java.lang.Byte);
+  public short getShort(java.lang.String);
+  public short getShort(java.lang.String, short);
+  public java.lang.Short getShort(java.lang.String, java.lang.Short);
+  public int getInt(java.lang.String);
+  public int getInt(java.lang.String, int);
+  public int getInteger(java.lang.String);
+  public int getInteger(java.lang.String, int);
+  public java.lang.Integer getInteger(java.lang.String, java.lang.Integer);
+  public long getLong(java.lang.String);
+  public long getLong(java.lang.String, long);
+  public java.lang.Long getLong(java.lang.String, java.lang.Long);
+  public float getFloat(java.lang.String);
+  public float getFloat(java.lang.String, float);
+  public java.lang.Float getFloat(java.lang.String, java.lang.Float);
+  public double getDouble(java.lang.String);
+  public double getDouble(java.lang.String, double);
+  public java.lang.Double getDouble(java.lang.String, java.lang.Double);
+  public static org.apache.commons.collections.ExtendedProperties convertProperties(java.util.Properties);
+  static boolean access$000(java.lang.String);
+  static {};
+}
+

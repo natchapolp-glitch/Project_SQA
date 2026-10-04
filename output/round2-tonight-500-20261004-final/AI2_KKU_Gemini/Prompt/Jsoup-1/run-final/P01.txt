@@ -1,0 +1,22 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Jsoup-1
+Java 11, JUnit 4
+Modified classes: org.jsoup.nodes.Document
+BUGGY API signatures:
+Compiled from "Document.java"
+public class org.jsoup.nodes.Document extends org.jsoup.nodes.Element {
+  public org.jsoup.nodes.Document(java.lang.String);
+  public static org.jsoup.nodes.Document createShell(java.lang.String);
+  public org.jsoup.nodes.Element head();
+  public org.jsoup.nodes.Element body();
+  public java.lang.String title();
+  public void title(java.lang.String);
+  public org.jsoup.nodes.Element createElement(java.lang.String);
+  public org.jsoup.nodes.Document normalise();
+  private void normalise(org.jsoup.nodes.Element);
+  public java.lang.String outerHtml();
+  public org.jsoup.nodes.Element text(java.lang.String);
+  public java.lang.String nodeName();
+}
+

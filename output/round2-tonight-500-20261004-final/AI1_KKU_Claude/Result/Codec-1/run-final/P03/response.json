@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:41:01.061982+00:00",
+  "ended_at_utc": "2026-10-04T03:41:10.121812+00:00",
+  "raw_body_sha256": "949281d66c93b74b91d3c011f99559a112a7abdb7b748abd9f04a420f54d6243",
+  "body": {
+    "id": "gen-1791085262-sjhVCW9cidJ2mzmWl3Jv",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.codec.language;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\nimport org.apache.commons.codec.EncoderException;\n\npublic class Codec1Test {\n\n    @Test\n    public void testCaverphoneNullAndEmpty() {\n        Caverphone caverphone = new Caverphone();\n        assertEquals(\"1111111111\", caverphone.caverphone(null));\n        assertEquals(\"1111111111\", caverphone.caverphone(\"\"));\n    }\n\n    @Test\n    public void testCaverphoneKnownValues() {\n        Caverphone caverphone = new Caverphone();\n        assertEquals(\"TMSN1111\", caverphone.caverphone(\"Thompson\"));\n        assertEquals(\"SMT1111111\".substring(0, \"SMT1111111\".length()), caverphone.caverphone(\"Smith\").substring(0, caverphone.caverphone(\"Smith\").length()));\n    }\n\n    @Test\n    public void testIsCaverphoneEqual() {\n        Caverphone caverphone = new Caverphone();\n        assertTrue(caverphone.isCaverphoneEqual(\"Thompson\", \"Thompson\"));\n        assertFalse(caverphone.isCaverphoneEqual(\"Thompson\", \"Smith\"));\n    }\n\n    @Test\n    public void testCaverphoneEncodeObject() throws EncoderException {\n        Caverphone caverphone = new Caverphone();\n        Object result = caverphone.encode((Object) \"Thompson\");\n        assertEquals(caverphone.caverphone(\"Thompson\"), result);\n    }\n\n    @Test(expected = EncoderException.class)\n    public void testCaverphoneEncodeObjectInvalidType() throws EncoderException {\n        Caverphone caverphone = new Caverphone();\n        caverphone.encode((Object) Integer.valueOf(1));\n    }\n\n    @Test\n    public void testMetaphoneNullAndEmpty() {\n        Metaphone metaphone = new Metaphone();\n        assertEquals(\"\", metaphone.metaphone(null));\n        assertEquals(\"\", metaphone.metaphone(\"\"));\n    }\n\n    @Test\n    public void testMetaphoneKnownValues() {\n        Metaphone metaphone = new Metaphone();\n        assertEquals(\"0MSN\", metaphone.metaphone(\"Thompson\"));\n        assertEquals(\"NT\", metaphone.metaphone(\"Knight\"));\n    }\n\n    @Test\n    public void testMetaphoneMaxCodeLenDefaultAndSetter() {\n        Metaphone metaphone = new Metaphone();\n        assertEquals(4, metaphone.getMaxCodeLen());\n        metaphone.setMaxCodeLen(6);\n        assertEquals(6, metaphone.getMaxCodeLen());\n        String code = metaphone.metaphone(\"Thompson\");\n        assertTrue(code.length() <= 6);\n    }\n\n    @Test\n    public void testIsMetaphoneEqual() {\n        Metaphone metaphone = new Metaphone();\n        assertTrue(metaphone.isMetaphoneEqual(\"Thompson\", \"Thompson\"));\n        assertFalse(metaphone.isMetaphoneEqual(\"Thompson\", \"Knight\"));\n    }\n\n    @Test\n    public void testSoundexUtilsClean() {\n        assertNull(SoundexUtils.clean(null));\n        assertEquals(\"\", SoundexUtils.clean(\"\"));\n        assertEquals(\"ABC\", SoundexUtils.clean(\"a1b2c3\"));\n        assertEquals(\"ABC\", SoundexUtils.clean(\"ABC\"));\n    }\n\n    @Test\n    public void testSoundexUtilsDifferenceEncoded() {\n        assertEquals(0, SoundexUtils.differenceEncoded(null, \"ABC\"));\n        assertEquals(0, SoundexUtils.differenceEncoded(\"ABC\", null));\n        assertEquals(4, SoundexUtils.differenceEncoded(\"W123\", \"W123\"));\n        assertEquals(0, SoundexUtils.differenceEncoded(\"A000\", \"B111\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8886,
+      "output_tokens": 1391,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.031682,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.031682,
+        "upstream_inference_prompt_cost": 0.017772,
+        "upstream_inference_completions_cost": 0.01391
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 94879,
+      "daily_remaining_tokens": 105121
+    }
+  },
+  "headers": {
+    "x-request-id": "ijgvkqkoysetksl01g6vejfk",
+    "date": "Sun, 04 Oct 2026 03:41:12 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,127 @@
+```java
+package com.google.javascript.rhino.jstype;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import com.google.javascript.rhino.ErrorReporter;
+import com.google.javascript.rhino.jstype.StaticScope;
+import com.google.javascript.rhino.jstype.StaticSlot;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class NamedTypeTest {
+
+  private JSTypeRegistry registry;
+  private List<String> warnings;
+  private ErrorReporter testReporter;
+
+  private static class EmptyScope implements StaticScope<JSType> {
+    @Override
+    public StaticSlot<JSType> getSlot(String name) {
+      return null;
+    }
+    @Override
+    public StaticScope<JSType> getParentScope() {
+      return null;
+    }
+    @Override
+    public JSType getTypeOfThis() {
+      return null;
+    }
+  }
+
+  @Before
+  public void setUp() {
+    registry = new JSTypeRegistry(null);
+    warnings = new ArrayList<String>();
+    testReporter = new ErrorReporter() {
+      @Override
+      public void warning(String message, String sourceName, int line, int lineOffset) {
+        warnings.add(message);
+      }
+      @Override
+      public void error(String message, String sourceName, int line, int lineOffset) {
+        warnings.add(message);
+      }
+    };
+  }
+
+  @Test
+  public void testGetReferencedTypeBeforeResolution() {
+    NamedType namedType = new NamedType(registry, "Foo", "test.js", 1, 1);
+    JSType referenced = namedType.getReferencedType();
+    assertNotNull(referenced);
+    assertTrue(referenced.isUnknownType());
+  }
+
+  @Test
+  public void testHasReferenceNameTrueForNonEmpty() {
+    NamedType namedType = new NamedType(registry, "Foo", "test.js", 1, 1);
+    assertTrue(namedType.hasReferenceName());
+    assertEquals("Foo", namedType.getReferenceName());
+  }
+
+  @Test
+  public void testIsNamedTypeAndNominalType() {
+    NamedType namedType = new NamedType(registry, "Foo", "test.js", 1, 1);
+    assertTrue(namedType.isNamedType());
+    assertTrue(namedType.isNominalType());
+  }
+
+  @Test
+  public void testResolveViaRegistrySucceeds() {
+    JSType numberType = registry.getNativeType(JSTypeNative.NUMBER_TYPE);
+    registry.declareType("MyNumber", numberType);
+    NamedType namedType = new NamedType(registry, "MyNumber", "test.js", 1, 1);
+    JSType resolved = namedType.resolveInternal(testReporter, new EmptyScope());
+    assertTrue(warnings.isEmpty());
+    assertTrue(resolved.isEquivalentTo(numberType)
+        || namedType.getReferencedType().isEquivalentTo(numberType));
+  }
+
+  @Test
+  public void testUnresolvedTypeTriggersWarning() {
+    NamedType namedType = new NamedType(registry, "UnknownFoo", "test.js", 1, 1);
+    namedType.resolveInternal(testReporter, new EmptyScope());
+    assertFalse(warnings.isEmpty());
+    boolean found = false;
+    for (String w : warnings) {
+      if (w.contains("UnknownFoo")) {
+        found = true;
+      }
+    }
+    assertTrue(found);
+  }
+
+  @Test
+  public void testSetValidatorReturnsTrueOnFirstCall() {
+    NamedType namedType = new NamedType(registry, "Foo", "test.js", 1, 1);
+    com.google.common.base.Predicate<JSType> validator =
+        new com.google.common.base.Predicate<JSType>() {
+          @Override
+          public boolean apply(JSType input) {
+            return true;
+          }
+        };
+    assertTrue(namedType.setValidator(validator));
+  }
+
+  @Test
+  public void testGetReferencedTypeAfterResolution() {
+    JSType numberType = registry.getNativeType(JSTypeNative.NUMBER_TYPE);
+    registry.declareType("MyNumber2", numberType);
+    NamedType namedType = new NamedType(registry, "MyNumber2", "test.js", 1, 1);
+    namedType.resolveInternal(testReporter, new EmptyScope());
+    JSType referenced = namedType.getReferencedType();
+    assertNotNull(referenced);
+    assertTrue(referenced.isEquivalentTo(numberType));
+  }
+}
+```

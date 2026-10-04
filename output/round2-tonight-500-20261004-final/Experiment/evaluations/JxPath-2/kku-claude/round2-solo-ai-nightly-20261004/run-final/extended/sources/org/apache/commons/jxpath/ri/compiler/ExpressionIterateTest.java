@@ -1,0 +1,127 @@
+package org.apache.commons.jxpath.ri.compiler;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.Iterator;
+
+import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.ri.EvalContext;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.junit.Test;
+
+public class ExpressionIterateTest {
+
+    private static class FixedExpression extends Expression {
+        Object computeResult;
+
+        FixedExpression(Object computeResult) {
+            this.computeResult = computeResult;
+        }
+
+        public boolean computeContextDependent() {
+            return false;
+        }
+
+        public Object computeValue(EvalContext context) {
+            return computeResult;
+        }
+
+        public Object compute(EvalContext context) {
+            return computeResult;
+        }
+    }
+
+    @Test
+    public void testIterateWithNonEvalContextResult() {
+        FixedExpression expr = new FixedExpression("single-value");
+        Iterator it = expr.iterate(null);
+        assertTrue(it.hasNext());
+        assertEquals("single-value", it.next());
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testIteratePointersWithNullResultReturnsEmptyIterator() {
+        FixedExpression expr = new FixedExpression(null);
+        Iterator it = expr.iteratePointers(null);
+        assertFalse(it.hasNext());
+        assertEquals(Collections.EMPTY_LIST.iterator().hasNext(), it.hasNext());
+    }
+
+    @Test
+    public void testIteratePointersWrapsPlainValueInNodePointer() {
+        FixedExpression expr = new FixedExpression("wrapped-value");
+
+        EvalContext rootContext = new EvalContext() {
+            public EvalContext getRootContext() {
+                return this;
+            }
+
+            public NodePointer getCurrentNodePointer() {
+                return null;
+            }
+
+            public int getCurrentPosition() {
+                return 0;
+            }
+
+            public boolean setPosition(int position) {
+                return false;
+            }
+
+            public boolean nextNode() {
+                return false;
+            }
+
+            public Object getValue() {
+                return null;
+            }
+
+            public Pointer getSingleNodePointer() {
+                return null;
+            }
+
+            public EvalContext getConstantContext(Object value) {
+                return null;
+            }
+
+            public EvalContext getRelativeContext(EvalContext parent) {
+                return null;
+            }
+
+            public int getDocumentOrder() {
+                return 0;
+            }
+
+            public boolean isChildOrderingRequired() {
+                return false;
+            }
+        };
+
+        Iterator it = expr.iteratePointers(rootContext);
+        assertTrue(it.hasNext());
+        Object next = it.next();
+        assertTrue(next instanceof Pointer);
+        assertEquals("wrapped-value", ((Pointer) next).getValue());
+    }
+
+    @Test
+    public void testPointerIteratorPassesThroughExistingPointer() {
+        Pointer samplePointer = NodePointer.newNodePointer(
+                new QName(null, "value"), "existing", null);
+        java.util.List<Object> list = new java.util.ArrayList<Object>();
+        list.add(samplePointer);
+        Iterator source = list.iterator();
+
+        Expression.PointerIterator pointerIterator = new Expression.PointerIterator(
+                source, new QName(null, "value"), null);
+
+        assertTrue(pointerIterator.hasNext());
+        Object result = pointerIterator.next();
+        assertTrue(result == samplePointer);
+    }
+}

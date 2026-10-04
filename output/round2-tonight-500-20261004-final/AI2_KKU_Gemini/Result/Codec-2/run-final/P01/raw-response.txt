@@ -1,0 +1,7 @@
+1. Valid receiver setup: instantiate `Base64` using default constructor, or constructors with `boolean` (URL-safe), `int` (line length), or `int` and `byte[]` (line length and custom separator).
+2. Boundary behavior: encoding empty byte arrays `new byte[0]` or null inputs should return empty arrays or handle gracefully per contract.
+3. Decoding boundary: decoding malformed Base64 data, inputs with invalid characters, whitespace, or incorrect padding length.
+4. Chunking boundary: encoding with line length constraints (e.g., `chunkSize > 0`) should insert correct line separators (`CHUNK_SEPARATOR`).
+5. URL-safe encoding: verify `encodeBase64URLSafe` and `Base64(true)` use `-` and `_` instead of `+` and `/`, omitting padding `=` if required by spec.
+6. Integer codec behavior: `encodeInteger` and `decodeInteger` should correctly handle positive/negative `BigInteger` values with minimal byte representation.
+7. State integrity: incremental streaming encode/decode via internal buffer (`buf`, `pos`, `readPos`, `eof`, `modulus`) across multiple `encode`/`decode` calls.

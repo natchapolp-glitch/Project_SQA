@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:55:46.732584+00:00",
+  "ended_at_utc": "2026-10-04T08:55:53.990289+00:00",
+  "raw_body_sha256": "4641c1873b197319d30f33cd93f3c89d930c43313cd4d3a501ed599462ace34c",
+  "body": {
+    "id": "gen-1791104148-H7y6k3gz0TXRIqCl43HM",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "**Key behaviors/contracts to test:**\n\n1. `resetWithEmpty()` → `size()==0`, `getTextBuffer()` returns valid array, `contentsAsString()` returns `\"\"`.\n2. `resetWithShared(buf, offset, len)` → `size()==len`, `getTextOffset()==offset`, `hasTextAsCharacters()==true`, no copy made (shares reference until mutated).\n3. `resetWithCopy(buf, offset, len)` → contents equal to source slice, but underlying buffer must be independent (mutating original array afterward shouldn't change contents).\n4. `resetWithString(str)` → `contentsAsString()` equals original string (fast path), `size()` matches length.\n5. `append(char)` repeatedly beyond initial segment capacity must trigger segment expansion (`expand`), preserving all appended chars in `contentsAsArray()`/`contentsAsString()`.\n6. `append(char[], int, int)` and `append(String, int, int)` with partial ranges must only append the specified sub-range, and large inputs spanning multiple segments must be reassembled correctly via `contentsAsString()`.\n7. `getCurrentSegment()`/`expandCurrentSegment()`/`expandCurrentSegment(int)` must return arrays with length >= requested, preserving previously written current-segment content.\n8. `finishCurrentSegment()` moves current segment into segment list and returns a new current segment array (non-null), with `size()` reflecting total of previous segments + current content length.\n9. `contentsAsDouble()`/`contentsAsDecimal()` on numeric text (e.g., `\"123.45\"`) parse correctly; invalid text should throw `NumberFormatException`.\n10. `ensureNotShared()` on a shared-input buffer must unshare (copy) so subsequent `append` doesn't corrupt original shared source array; boundary cases: zero-length input, `resetWithShared` with `len==0`, `setCurrentLength(0)` resets size correctly.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 987,
+      "output_tokens": 675,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008724,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008724,
+        "upstream_inference_prompt_cost": 0.001974,
+        "upstream_inference_completions_cost": 0.00675
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 153832,
+      "daily_remaining_tokens": 46168
+    }
+  },
+  "headers": {
+    "x-request-id": "ui37it980mqfu069i0oszjmu",
+    "date": "Sun, 04 Oct 2026 08:55:55 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

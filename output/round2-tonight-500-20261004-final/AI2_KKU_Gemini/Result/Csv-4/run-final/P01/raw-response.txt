@@ -1,0 +1,10 @@
+1. Verify receiver setup using `CSVParser.parse(String, CSVFormat)` or `new CSVParser(Reader, CSVFormat)` with valid formats.
+2. Test header map initialization via `getHeaderMap()` when `CSVFormat` has headers defined (e.g., `withHeader(...)`).
+3. Validate behavior when headers are configured but the input CSV string is completely empty or missing lines.
+4. Check behavior of `getHeaderMap()` when the CSV format does not specify headers (should return null or empty map per contract).
+5. Ensure `initializeHeader()` correctly maps header names to their respective 0-based integer column indices.
+6. Test parser creation and header parsing using `File`, `URL`, and `String` static factory `parse` methods.
+7. Verify duplicate header handling according to the `CSVFormat` configuration during parser initialization.
+8. Check that calling `getRecords()` or iterating over records correctly utilizes the initialized header map.
+9. Verify `close()` behavior and subsequent calls on closed parsers regarding header access and record parsing.
+10. Test boundary conditions with headers containing empty strings, whitespace, or special delimiter characters.

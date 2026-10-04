@@ -1,0 +1,75 @@
+package org.joda.time;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
+
+public class MutableDateTimeTest {
+
+    @Test
+    public void testSetRoundingFloor() {
+        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);
+        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);
+        assertEquals(MutableDateTime.ROUND_FLOOR, mdt.getRoundingMode());
+        assertEquals(mdt.getChronology().hourOfDay(), mdt.getRoundingField());
+        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);
+        assertEquals(expected.getMillis(), mdt.getMillis());
+    }
+
+    @Test
+    public void testSetRoundingCeiling() {
+        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);
+        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_CEILING);
+        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 11, 0, 0, 0, DateTimeZone.UTC);
+        assertEquals(expected.getMillis(), mdt.getMillis());
+    }
+
+    @Test
+    public void testSetRoundingNullClearsRounding() {
+        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);
+        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);
+        mdt.setRounding(null);
+        assertNull(mdt.getRoundingField());
+        assertEquals(MutableDateTime.ROUND_NONE, mdt.getRoundingMode());
+        long before = mdt.getMillis();
+        mdt.setMillis(before + 12345L);
+        assertEquals(before + 12345L, mdt.getMillis());
+    }
+
+    @Test
+    public void testSetMillisRoundedWhenRoundingSet() {
+        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
+        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);
+        MutableDateTime unrounded = new MutableDateTime(2000, 1, 1, 10, 45, 0, 0, DateTimeZone.UTC);
+        mdt.setMillis(unrounded.getMillis());
+        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);
+        assertEquals(expected.getMillis(), mdt.getMillis());
+    }
+
+    @Test
+    public void testAddRoundsResult() {
+        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);
+        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);
+        mdt.add(90L * 60L * 1000L);
+        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 11, 0, 0, 0, DateTimeZone.UTC);
+        assertEquals(expected.getMillis(), mdt.getMillis());
+    }
+
+    @Test
+    public void testSetRoundingSingleArgDefaultsToFloor() {
+        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);
+        mdt.setRounding(mdt.getChronology().hourOfDay());
+        assertEquals(MutableDateTime.ROUND_FLOOR, mdt.getRoundingMode());
+        MutableDateTime expected = new MutableDateTime(2000, 1, 1, 10, 0, 0, 0, DateTimeZone.UTC);
+        assertEquals(expected.getMillis(), mdt.getMillis());
+    }
+
+    @Test
+    public void testCopyPreservesMillisNotRoundingState() {
+        MutableDateTime mdt = new MutableDateTime(2000, 1, 1, 10, 30, 45, 500, DateTimeZone.UTC);
+        mdt.setRounding(mdt.getChronology().hourOfDay(), MutableDateTime.ROUND_FLOOR);
+        MutableDateTime copy = mdt.copy();
+        assertEquals(mdt.getMillis(), copy.getMillis());
+    }
+}

@@ -1,0 +1,387 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: JxPath-3
+Java 11, JUnit 4
+Modified classes: org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer
+
+BUGGY API signatures (may include private members):
+Compiled from "NullPropertyPointer.java"
+public class org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer extends org.apache.commons.jxpath.ri.model.beans.PropertyPointer {
+  private java.lang.String propertyName;
+  private boolean byNameAttribute;
+  public org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer(org.apache.commons.jxpath.ri.model.NodePointer);
+  public org.apache.commons.jxpath.ri.QName getName();
+  public void setPropertyIndex(int);
+  public int getLength();
+  public java.lang.Object getBaseValue();
+  public java.lang.Object getImmediateNode();
+  public boolean isLeaf();
+  public org.apache.commons.jxpath.ri.model.NodePointer getValuePointer();
+  protected boolean isActualProperty();
+  public boolean isActual();
+  public boolean isContainer();
+  public void setValue(java.lang.Object);
+  public org.apache.commons.jxpath.ri.model.NodePointer createPath(org.apache.commons.jxpath.JXPathContext);
+  public org.apache.commons.jxpath.ri.model.NodePointer createPath(org.apache.commons.jxpath.JXPathContext, java.lang.Object);
+  public org.apache.commons.jxpath.ri.model.NodePointer createChild(org.apache.commons.jxpath.JXPathContext, org.apache.commons.jxpath.ri.QName, int);
+  public org.apache.commons.jxpath.ri.model.NodePointer createChild(org.apache.commons.jxpath.JXPathContext, org.apache.commons.jxpath.ri.QName, int, java.lang.Object);
+  public java.lang.String getPropertyName();
+  public void setPropertyName(java.lang.String);
+  public void setNameAttributeValue(java.lang.String);
+  public boolean isCollection();
+  public int getPropertyCount();
+  public java.lang.String[] getPropertyNames();
+  public java.lang.String asPath();
+  private java.lang.String escape(java.lang.String);
+}
+
+
+BUGGY source excerpt: org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.model.beans;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathInvalidAccessException;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+
+/**
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public class NullPropertyPointer extends PropertyPointer {
+
+    private String propertyName = "*";
+    private boolean byNameAttribute = false;
+
+    /**
+     */
+    public NullPropertyPointer(NodePointer parent) {
+        super(parent);
+    }
+
+    public QName getName() {
+        return new QName(propertyName);
+    }
+
+    public void setPropertyIndex(int index) {
+    }
+
+    public int getLength() {
+        return 0;
+    }
+
+    public Object getBaseValue() {
+        return null;
+    }
+
+    public Object getImmediateNode() {
+        return null;
+    }
+
+    public boolean isLeaf() {
+        return true;
+    }    
+
+    public NodePointer getValuePointer() {
+        return new NullPointer(this,  new QName(getPropertyName()));
+    }
+
+    protected boolean isActualProperty() {
+        return false;
+    }
+
+    public boolean isActual() {
+        return false;
+    }
+
+    public boolean isContainer() {
+        return true;
+    }
+
+    public void setValue(Object value) {
+        if (parent == null || parent.isContainer()) {
+            throw new JXPathInvalidAccessException(
+                "Cannot set property "
+                    + asPath()
+                    + ", the target object is null");
+        }
+        else if (parent instanceof PropertyOwnerPointer &&
+                ((PropertyOwnerPointer) parent).
+                    isDynamicPropertyDeclarationSupported()){
+            // If the parent property owner can create
+            // a property automatically - let it do so
+            PropertyPointer propertyPointer =
+                ((PropertyOwnerPointer) parent).getPropertyPointer();
+            propertyPointer.setPropertyName(propertyName);
+            propertyPointer.setValue(value);
+        }
+        else {
+            throw new JXPathInvalidAccessException(
+                "Cannot set property "
+                    + asPath()
+                    + ", path does not match a changeable location");
+        }
+    }
+
+    public NodePointer createPath(JXPathContext context) {
+        NodePointer newParent = parent.createPath(context);
+        if (isAttribute()) {
+            return newParent.createAttribute(context, getName());
+        }
+        else {
+            // Consider these two use cases:
+            // 1. The parent pointer of NullPropertyPointer is 
+            //    a PropertyOwnerPointer other than NullPointer. When we call 
+            //    createPath on it, it most likely returns itself. We then
+            //    take a PropertyPointer from it and get the PropertyPointer
+            //    to expand the collection for the corresponding property.
+            //
+            // 2. The parent pointer of NullPropertyPointer is a NullPointer.
+            //    When we call createPath, it may return a PropertyOwnerPointer
+            //    or it may return anything else, like a DOMNodePointer.
+            //    In the former case we need to do exactly what we did in use 
+            //    case 1.  In the latter case, we simply request that the 
+            //    non-property pointer expand the collection by itself.
+            if (newParent instanceof PropertyOwnerPointer) {
+                PropertyOwnerPointer pop = (PropertyOwnerPointer) newParent;
+                newParent = pop.getPropertyPointer();
+            }
+            return newParent.createChild(context, getName(), getIndex());
+        }
+    }
+
+    public NodePointer createPath(JXPathContext context, Object value) {
+        NodePointer newParent = parent.createPath(context);
+        if (isAttribute()) {
+            NodePointer pointer = newParent.createAttribute(context, getName());
+            pointer.setValue(value);
+            return pointer;
+        }
+        else {
+            if (newParent instanceof PropertyOwnerPointer) {
+                PropertyOwnerPointer pop = (PropertyOwnerPointer) newParent;
+                newParent = pop.getPropertyPointer();
+            }
+            return newParent.createChild(context, getName(), index, value);
+        }
+    }
+    
+    public NodePointer createChild(
+            JXPathContext context,
+            QName name, 
+            int index)
+    {
+        return createPath(context).createChild(context, name, index);
+    }
+        
+    public NodePointer createChild(
+            JXPathContext context,
+            QName name, 
+            int index,
+            Object value) 
+    {
+        return createPath(context).createChild(context, name, index, value);
+    }
+
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    public void setNameAttributeValue(String attributeValue) {
+        this.propertyName = attributeValue;
+        byNameAttribute = true;
+    }
+
+    public boolean isCollection() {
+        return getIndex() != WHOLE_COLLECTION;
+    }
+
+    public int getPropertyCount() {
+        return 0;
+    }
+
+    public String[] getPropertyNames() {
+        return new String[0];
+    }
+
+    public String asPath() {
+        if (!byNameAttribute) {
+            return super.asPath();
+        }
+        else {
+            StringBuffer buffer = new StringBuffer();
+            buffer.append(getImmediateParentPointer().asPath());
+            buffer.append("[@name='");
+            buffer.append(escape(getPropertyName()));
+            buffer.append("']");
+            if (index != WHOLE_COLLECTION) {
+                buffer.append('[').append(index + 1).append(']');
+            }
+            return buffer.toString();
+        }
+    }
+
+    private String escape(String string) {
+        int index = string.indexOf('\'');
+        while (index != -1) {
+            string =
+                string.substring(0, index)
+                    + "&apos;"
+                    + string.substring(index + 1);
+            index = string.indexOf('\'');
+        }
+        index = string.indexOf('\"');
+        while (index != -1) {
+            string =
+                string.substring(0, index)
+                    + "&quot;"
+                    + string.substring(index + 1);
+            index = string.indexOf('\"');
+        }
+        return string;
+    }
+}
+
+```
+
+
+Original generated source:
+```java
+package org.apache.commons.jxpath.ri.model.beans;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathInvalidAccessException;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class NullPropertyPointerTest {
+
+    @Test
+    public void testInitialState() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+
+        assertEquals("*", pointer.getPropertyName());
+        assertEquals(0, pointer.getLength());
+        assertNull(pointer.getBaseValue());
+        assertNull(pointer.getImmediateNode());
+        assertTrue(pointer.isLeaf());
+        assertFalse(pointer.isActual());
+        assertTrue(pointer.isContainer());
+        assertEquals(0, pointer.getPropertyCount());
+        assertArrayEquals(new String[0], pointer.getPropertyNames());
+    }
+
+    @Test
+    public void testPropertyNameAndNameAttribute() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+
+        pointer.setPropertyName("foo");
+        assertEquals("foo", pointer.getPropertyName());
+        assertEquals("foo", pointer.getName().getName());
+
+        pointer.setNameAttributeValue("bar's name");
+        assertEquals("bar&apos;s name", pointer.getPropertyName());
+        assertTrue(pointer.asPath().contains("[@name='bar&apos;s name']"));
+    }
+
+    @Test
+    public void testValuePointer() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+        pointer.setPropertyName("childProp");
+
+        NodePointer valuePtr = pointer.getValuePointer();
+        assertNotNull(valuePtr);
+        assertEquals("childProp", valuePtr.getName().getName());
+    }
+
+    @Test(expected = JXPathInvalidAccessException.class)
+    public void testSetValueWithNullParent() {
+        NullPropertyPointer pointer = new NullPropertyPointer(null);
+        pointer.setValue("value");
+    }
+
+    @Test
+    public void testIsCollection() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+
+        assertFalse(pointer.isCollection());
+        pointer.setIndex(0);
+        assertTrue(pointer.isCollection());
+    }
+
+    @Test
+    public void testCreateChild() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+        JXPathContext context = JXPathContext.newContext(new Object());
+
+        try {
+            pointer.createChild(context, new QName("sub"), 0);
+        } catch (Exception e) {
+            assertNotNull(e);
+        }
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+ant/ant-optional/1.5/ant-optional-1.5.jar
+      [get] To: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/target/lib/ant-optional-1.5.jar
+
+compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/build.xml:36: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+compile.gen.tests:
+     [echo] classes.dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/target/classes
+     [echo] build.home: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/target/classes/..
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/JxPath-3/f/.test_suite/org/apache/commons/jxpath/ri/model/beans/NullPropertyPointerTest.java:15: error: no suitable constructor found for NullPointer(QName)
+    [javac]         NodePointer parent = new NullPointer(new QName("test"));
+    [javac]                              ^
+    [javac]     constructor NullPointer.NullPointer(QName,Locale) is not applicable
+    [javac]       (actual and formal argument lists differ in length)
+    [javac]     constructor NullPointer.NullPointer(NodePointer,QName) is not applicable
+    [javac]       (actual and formal argument lists differ in length)
+    [javac]     constructor NullPointer.NullPointer(Locale,String) is not applicable
+    [javac]       (actual and formal argument lists differ in length)
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 0 seconds
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

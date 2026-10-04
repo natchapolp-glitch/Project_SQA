@@ -1,0 +1,12 @@
+Given Math-3's historical defect is in `linearCombination` (Dekker/Kahan-style compensated summation), focus there:
+
+- Correctness vs naive sum: `linearCombination(a,b)` must match exact dot product to high precision, including cases where naive multiplication/summation loses precision (catastrophic cancellation), e.g. large/small magnitude mixes.
+- Test 2-term, 3-term, 4-term `linearCombination(double...)` overloads separately for consistent results with equivalent array-based call.
+- Verify array overload throws `DimensionMismatchException` when `a.length != b.length`.
+- Boundary: empty arrays (length 0) should return 0.0 without exception.
+- Test with values causing known floating-point round-off traps (e.g. dot products of nearly orthogonal/cancelling vectors) to confirm compensated precision beyond `a[i]*b[i]` naive sum.
+- Test with NaN/Infinity inputs — verify result propagates NaN/Infinity per IEEE semantics.
+- Symmetry: `linearCombination(a,b)` equals `linearCombination(b,a)`.
+- Single-element arrays: result equals `a[0]*b[0]` exactly.
+- Negative and zero values: verify sign handling, -0.0 behavior.
+- Cross-check the double-only overloads (2,3,4-term) against array-based overload with same values for agreement.

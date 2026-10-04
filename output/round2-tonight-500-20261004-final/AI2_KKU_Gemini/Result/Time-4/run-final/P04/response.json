@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:41:57.262146+00:00",
+  "ended_at_utc": "2026-10-04T09:41:59.105271+00:00",
+  "raw_body_sha256": "4e1be2cfc06613a9e5ea05b599f584c58b10f5d7336bf50488dd39a70958baea",
+  "body": {
+    "id": "genai-01a1064a-b5d8-7eea-9535-43f1b8c588ff",
+    "object": "chat.completion",
+    "created": 1791106921,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.joda.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.junit.Test;\n\npublic class PartialAdditionalTest {\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testArrayConstructorNullTypes() {\n        new Partial(null, new int[] { 2023 });\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testArrayConstructorNullValues() {\n        new Partial(new DateTimeFieldType[] { DateTimeFieldType.year() }, null);\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testArrayConstructorMismatchedLengths() {\n        new Partial(new DateTimeFieldType[] { DateTimeFieldType.year() }, new int[] { 2023, 6 });\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testArrayConstructorNullTypeInArray() {\n        new Partial(new DateTimeFieldType[] { null }, new int[] { 2023 });\n    }\n\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5447,
+      "completion_tokens": 252,
+      "total_tokens": 5699
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 136420,
+      "daily_remaining_tokens": 213580
+    }
+  },
+  "headers": {
+    "x-request-id": "bhls4944r1pubp6s13r3gmu2",
+    "date": "Sun, 04 Oct 2026 09:42:01 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

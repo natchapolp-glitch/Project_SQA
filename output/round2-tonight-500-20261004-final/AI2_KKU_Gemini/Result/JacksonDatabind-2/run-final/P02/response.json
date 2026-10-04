@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:58:44.284103+00:00",
+  "ended_at_utc": "2026-10-04T05:58:48.270504+00:00",
+  "raw_body_sha256": "be97084487c526dfd086aad9153562615fec1add8a8b3fb2323e6c7076c14bc9",
+  "body": {
+    "id": "genai-01a1057e-5bf5-740b-884f-e59a1fe0b4eb",
+    "object": "chat.completion",
+    "created": 1791093529,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.databind.util;\n\nimport static org.junit.Assert.*;\n\nimport java.io.IOException;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.core.JsonGenerator;\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonToken;\nimport com.fasterxml.jackson.core.ObjectCodec;\nimport com.fasterxml.jackson.core.Version;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.util.TokenBuffer;\n\npublic class TokenBufferTest {\n\n    @Test\n    public void testLifecycleAndVersion() throws IOException {\n        ObjectMapper mapper = new ObjectMapper();\n        TokenBuffer buf = new TokenBuffer(mapper);\n        assertFalse(buf.isClosed());\n        Version version = buf.version();\n        assertNotNull(version);\n\n        buf.close();\n        assertTrue(buf.isClosed());\n    }\n\n    @Test\n    public void testBasicWritingAndParsing() throws IOException {\n        ObjectMapper mapper = new ObjectMapper();\n        TokenBuffer buf = new TokenBuffer(mapper, false);\n\n        buf.writeStartObject();\n        buf.writeFieldName(\"testField\");\n        buf.writeString(\"testValue\");\n        buf.writeNumber(123);\n        buf.writeEndObject();\n        buf.close();\n\n        assertEquals(JsonToken.START_OBJECT, buf.firstToken());\n\n        JsonParser parser = buf.asParser(mapper);\n        assertEquals(JsonToken.START_OBJECT, parser.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, parser.nextToken());\n        assertEquals(\"testField\", parser.getCurrentName());\n        assertEquals(JsonToken.VALUE_STRING, parser.nextToken());\n        assertEquals(\"testValue\", parser.getText());\n        assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());\n        assertEquals(123, parser.getIntValue());\n        assertEquals(JsonToken.END_OBJECT, parser.nextToken());\n        assertNull(parser.nextToken());\n        parser.close();\n    }\n\n    @Test\n    public void testArrayWritingAndFirstToken() throws IOException {\n        TokenBuffer buf = new TokenBuffer((ObjectCodec) null, true);\n        assertNull(buf.firstToken());\n\n        buf.writeStartArray();\n        buf.writeBoolean(true);\n        buf.writeNull();\n        buf.writeEndArray();\n\n        assertEquals(JsonToken.START_ARRAY, buf.firstToken());\n\n        JsonParser parser = buf.asParser();\n        assertEquals(JsonToken.START_ARRAY, parser.nextToken());\n        assertEquals(JsonToken.VALUE_TRUE, parser.nextToken());\n        assertEquals(JsonToken.VALUE_NULL, parser.nextToken());\n        assertEquals(JsonToken.END_ARRAY, parser.nextToken());\n        parser.close();\n    }\n\n    @Test\n    public void testAppendBuffer() throws IOException {\n        ObjectMapper mapper = new ObjectMapper();\n        TokenBuffer buf1 = new TokenBuffer(mapper);\n        buf1.writeNumber(42);\n\n        TokenBuffer buf2 = new TokenBuffer(mapper);\n        buf2.writeString(\"hello\");\n\n        buf1.append(buf2);\n\n        JsonParser parser = buf1.asParser();\n        assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());\n        assertEquals(42, parser.getIntValue());\n        assertEquals(JsonToken.VALUE_STRING, parser.nextToken());\n        assertEquals(\"hello\", parser.getText());\n        assertNull(parser.nextToken());\n        parser.close();\n    }\n\n    @Test\n    public void testSerializeToGenerator() throws IOException {\n        ObjectMapper mapper = new ObjectMapper();\n        TokenBuffer buf = new TokenBuffer(mapper);\n        buf.writeStartObject();\n        buf.writeFieldName(\"key\");\n        buf.writeString(\"val\");\n        buf.writeEndObject();\n\n        TokenBuffer buf2 = new TokenBuffer(mapper);\n        buf.serialize(buf2);\n\n        JsonParser parser = buf2.asParser();\n        assertEquals(JsonToken.START_OBJECT, parser.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, parser.nextToken());\n        assertEquals(\"key\", parser.getCurrentName());\n        assertEquals(JsonToken.VALUE_STRING, parser.nextToken());\n        assertEquals(\"val\", parser.getText());\n        assertEquals(JsonToken.END_OBJECT, parser.nextToken());\n        parser.close();\n    }\n\n    @Test\n    public void testCodecAndFeatureManagement() {\n        ObjectMapper mapper = new ObjectMapper();\n        TokenBuffer buf = new TokenBuffer(mapper);\n        assertSame(mapper, buf.getCodec());\n\n        ObjectCodec newCodec = new ObjectMapper();\n        buf.setCodec(newCodec);\n        assertSame(newCodec, buf.getCodec());\n\n        assertFalse(buf.isEnabled(JsonGenerator.Feature.AUTO_CLOSE_TARGET));\n        buf.enable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);\n        assertTrue(buf.isEnabled(JsonGenerator.Feature.AUTO_CLOSE_TARGET));\n        buf.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);\n        assertFalse(buf.isEnabled(JsonGenerator.Feature.AUTO_CLOSE_TARGET));\n\n        int mask = buf.getFeatureMask();\n        buf.setFeatureMask(mask);\n        assertEquals(mask, buf.getFeatureMask());\n\n        assertNotNull(buf.useDefaultPrettyPrinter());\n        assertNotNull(buf.getOutputContext());\n        assertFalse(buf.canWriteBinaryNatively());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4821,
+      "completion_tokens": 1247,
+      "total_tokens": 6068
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 50683,
+      "daily_remaining_tokens": 299317
+    }
+  },
+  "headers": {
+    "x-request-id": "xfwrd185g30ffyahkk8oj7uw",
+    "date": "Sun, 04 Oct 2026 05:58:49 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

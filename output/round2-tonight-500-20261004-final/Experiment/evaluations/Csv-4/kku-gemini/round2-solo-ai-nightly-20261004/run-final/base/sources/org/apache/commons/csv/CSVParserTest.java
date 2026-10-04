@@ -1,0 +1,92 @@
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class CSVParserTest {
+
+    @Test
+    public void testParseStringWithoutHeader() throws IOException {
+        String code = "a,b,c\n1,2,3\n4,5,6";
+        CSVParser parser = CSVParser.parse(code, CSVFormat.DEFAULT);
+        assertNull(parser.getHeaderMap());
+        
+        var records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("1", records.get(0).get(0));
+        assertEquals("6", records.get(1).get(2));
+        parser.close();
+        assertTrue(parser.isClosed());
+    }
+
+    @Test
+    public void testParseStringWithExplicitHeader() throws IOException {
+        String code = "1,2,3\n4,5,6";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader("Col1", "Col2", "Col3");
+        CSVParser parser = CSVParser.parse(code, format);
+        
+        Map<String, Integer> headerMap = parser.getHeaderMap();
+        assertNotNull(headerMap);
+        assertEquals(3, headerMap.size());
+        assertEquals(Integer.valueOf(0), headerMap.get("Col1"));
+        assertEquals(Integer.valueOf(1), headerMap.get("Col2"));
+        assertEquals(Integer.valueOf(2), headerMap.get("Col3"));
+        
+        var records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("1", records.get(0).get("Col1"));
+        assertEquals("5", records.get(1).get("Col2"));
+        parser.close();
+    }
+
+    @Test
+    public void testParseStringWithFirstLineHeader() throws IOException {
+        String code = "HeaderA,HeaderB\nx,y\nz,w";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader();
+        CSVParser parser = CSVParser.parse(code, format);
+        
+        Map<String, Integer> headerMap = parser.getHeaderMap();
+        assertNotNull(headerMap);
+        assertEquals(2, headerMap.size());
+        assertEquals(Integer.valueOf(0), headerMap.get("HeaderA"));
+        assertEquals(Integer.valueOf(1), headerMap.get("HeaderB"));
+        
+        var records = parser.getRecords();
+        assertEquals(2, records.size());
+        assertEquals("x", records.get(0).get("HeaderA"));
+        assertEquals("w", records.get(1).get("HeaderB"));
+        parser.close();
+    }
+
+    @Test
+    public void testParseStringWithSkipHeaderRecord() throws IOException {
+        String code = "Name,Age\nAlice,30\nBob,25";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader("Name", "Age").withSkipHeaderRecord(true);
+        CSVParser parser = CSVParser.parse(code, format);
+        
+        var records = parser.getRecords();
+        assertEquals(3, records.size());
+        assertEquals("Name", records.get(0).get("Name"));
+        assertEquals("Alice", records.get(1).get("Name"));
+        assertEquals("30", records.get(1).get("Age"));
+        parser.close();
+    }
+
+    @Test
+    public void testEmptyParserWithHeader() throws IOException {
+        String code = "";
+        CSVFormat format = CSVFormat.DEFAULT.withHeader("A", "B");
+        CSVParser parser = CSVParser.parse(code, format);
+        
+        assertNotNull(parser.getHeaderMap());
+        assertTrue(parser.getRecords().isEmpty());
+        parser.close();
+    }
+}

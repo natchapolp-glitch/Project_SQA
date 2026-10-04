@@ -1,0 +1,12 @@
+Key behaviors/boundaries to test for XYPlot (likely focus: getDomainAxisIndex/dataset-renderer mapping or axis retrieval, given Chart-4 historically concerns `getDomainAxisIndex`):
+
+- `getDomainAxis(0)` on a plot constructed via the 4-arg constructor should return the originally supplied domain axis instance.
+- `setDomainAxis(int, ValueAxis)` with index >0 should extend `domainAxes` list; `getDomainAxis(index)` should return exactly that axis, and lower indices unaffected.
+- Index lookup: given an axis instance previously set via `setDomainAxis(i, axis)`, searching for its index (e.g., `getDomainAxisIndex(axis)`) should return `i`; for an axis never added, should return -1 (NOT found), not throw.
+- `getDomainAxis(index)` for unset/non-existent index should return `null` rather than throwing, per ObjectList semantics.
+- Axes equal by reference identity matter—two distinct ValueAxis instances with identical field values should NOT both match the same index unless they are `.equals()`-equal; verify whether lookup uses `==` or `.equals()`.
+- `setDomainAxis(0, axis)` replacing the primary axis should update what `getDomainAxis()` (no-arg) returns.
+- Construct plot with no dataset/axes (no-arg constructor), then call `setDomainAxis(0, axis)` — should not NPE, and retrieval should work.
+- `clearDomainAxes()` should reset axis count/list so subsequent `getDomainAxis(0)` returns null.
+- Verify `getDomainAxisCount()` reflects highest set index + 1 after sparse `setDomainAxis(i, axis)` calls.
+- Test symmetric range-axis equivalents if the bug also covers `getRangeAxisIndex`/`getRangeAxis`.

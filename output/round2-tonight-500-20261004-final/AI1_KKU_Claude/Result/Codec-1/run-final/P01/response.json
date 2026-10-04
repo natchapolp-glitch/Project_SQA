@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:40:32.430039+00:00",
+  "ended_at_utc": "2026-10-04T03:40:40.432436+00:00",
+  "raw_body_sha256": "96db38399f2956471060ccf116f2931844819e5c0b221d812cbdda065666763a",
+  "body": {
+    "id": "gen-1791085234-EJA2i3bKnlRj2H6emNDe",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Useful behaviors, boundaries, and setups to test:\n\n1. `SoundexUtils.clean(String)`: null input → null; empty string → empty; string with digits/whitespace/punctuation → stripped to uppercase letters only; already-clean string unchanged.\n2. `Caverphone.caverphone(String)` / `encode(String)`: null or empty input should not throw (likely returns empty-padded code or empty string); verify exact known caverphone codes for canonical names (e.g., \"Thompson\", \"Smith\") per documented algorithm.\n3. `Caverphone.isCaverphoneEqual`: two strings with same caverphone code → true; differing codes → false; case-insensitivity via clean().\n4. `Metaphone.metaphone(String)`: null/empty → empty string, not exception; verify known metaphone outputs for canonical test words (e.g., \"Thompson\"→\"TMSN\", \"Knight\"→\"NT\").\n5. `Metaphone.setMaxCodeLen`/`getMaxCodeLen`: default value (commonly 4); setting smaller/larger length truncates/extends output length accordingly.\n6. `Metaphone.isMetaphoneEqual`: same logic equality check, case-insensitive, whitespace-trimmed via clean.\n7. `SoundexUtils.difference` and `differenceEncoded`: identical encoded strings → max difference (length of shorter code); completely different → 0; null arguments handling (NPE or 0, per contract).\n8. Single-character and whitespace-only inputs across all encoders, to check no ArrayIndexOutOfBounds/StringIndexOutOfBounds.\n9. Encoder generic `encode(Object)` with non-String type should throw `EncoderException`; with String should delegate correctly to `encode(String)`.\n10. Idempotence: encoding already-encoded (uppercase, no spaces) string yields the same code (receiver setup: new instance each test, no shared state).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1017,
+      "output_tokens": 650,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008534,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008534,
+        "upstream_inference_prompt_cost": 0.002034,
+        "upstream_inference_completions_cost": 0.0065
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 76458,
+      "daily_remaining_tokens": 123542
+    }
+  },
+  "headers": {
+    "x-request-id": "bu6j31twjur1pyxf8z9g48zo",
+    "date": "Sun, 04 Oct 2026 03:40:42 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T04:11:04.611259+00:00",
+  "ended_at_utc": "2026-10-04T04:11:09.989826+00:00",
+  "raw_body_sha256": "fc063a496689a02483235c3db0f8f8484981829cfb4e75fac30cc8ade2747557",
+  "body": {
+    "id": "gen-1791087065-JhUZwGK34HFsTx1OiIM4",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `createShell(baseUri)` should produce html>head,body structure; verify tags/order and baseUri propagation.\n- `title()` getter: returns empty string when no title element exists, trims whitespace/newlines from title text when present.\n- `title(String)` setter: should create title element in head if missing and set text; must escape/encode text properly, not insert raw HTML.\n- `title(String)` called with null should throw (per contract) or be validated—check expected exception behavior.\n- `normalise()` should ensure exactly one head and one body, moving stray head/body-destined nodes into proper location, and move text/nodes outside html into body.\n- `normalise()` should be idempotent: calling twice yields same structure/html without duplicating head/body or losing content.\n- `head()`/`body()` should return existing elements if present without duplicating when called multiple times or after normalise().\n- `outerHtml()` should include doctype if present and reflect normalised structure with correct nesting/indentation.\n- `text(String)` on Document should set body's text (not replace whole doc structure) and return the Document itself for chaining.\n- `nodeName()` should always return `\"#document\"` regardless of receiver state.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 480,
+      "output_tokens": 383,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.00479,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.00479,
+        "upstream_inference_prompt_cost": 0.00096,
+        "upstream_inference_completions_cost": 0.00383
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 97816,
+      "daily_remaining_tokens": 102184
+    }
+  },
+  "headers": {
+    "x-request-id": "zom4bwh19269nndj80jt19m9",
+    "date": "Sun, 04 Oct 2026 04:11:10 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

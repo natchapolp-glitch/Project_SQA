@@ -1,0 +1,122 @@
+{
+  "account_assignments": [
+    {
+      "alias": "a01",
+      "host": "champ-pc1",
+      "quota_status": "pending_observation"
+    }
+  ],
+  "api_policy": "champ-pc1 sends all owners; keys/ledger stay on one host; no automatic account switch",
+  "cpu_claim_policy": "one CPU stage per host; queue lease decides among assigned host pool",
+  "job_owner_immutable": true,
+  "live_workers_started": false,
+  "other_accounts": "unassigned; assign only after observed quota and notification before switch",
+  "runners": [
+    {
+      "account_coordinator": true,
+      "approaches": [
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "global_api_limit": 2,
+      "max_outstanding_per_account": 1,
+      "owners": [
+        "champ",
+        "beam",
+        "aom"
+      ],
+      "role": "champ",
+      "stages": [
+        "generate"
+      ],
+      "worker_id": "champ-pc1"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "beam"
+      ],
+      "role": "beam",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "beam-pc1"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "aom",
+        "champ"
+      ],
+      "role": "aom",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "aom-pc1"
+    },
+    {
+      "approaches": [
+        "cmaes",
+        "fscs-art",
+        "kku-claude",
+        "kku-gemini"
+      ],
+      "generation_approaches": [
+        "cmaes",
+        "fscs-art"
+      ],
+      "max_cpu_slots": 1,
+      "owners": [
+        "aom",
+        "champ"
+      ],
+      "role": "aom",
+      "stages": [
+        "prepare",
+        "generate",
+        "evaluate"
+      ],
+      "worker_id": "aom-pc2"
+    }
+  ],
+  "schema_version": 1,
+  "status": "proposal_pending_team_host_review",
+  "revision": 2,
+  "supersedes_sha256": "5034311a3522c8b98bd30c7d3ad5aea8778395f3fe62b5ee6c1bf22702ac1255",
+  "beam_host_change": {
+    "requested_by": "beam",
+    "confirmed_host_count": 1,
+    "active_worker_id": "beam-pc1",
+    "retired_worker_ids": [
+      "beam-pc2",
+      "beam-pc3"
+    ],
+    "cpu_slots": 1,
+    "reason": "Beam confirmed one physical host in this session",
+    "other_owner_assignments_unchanged": true
+  }
+}

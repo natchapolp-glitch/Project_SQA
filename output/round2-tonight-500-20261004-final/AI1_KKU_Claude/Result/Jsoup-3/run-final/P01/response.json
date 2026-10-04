@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:38:31.192991+00:00",
+  "ended_at_utc": "2026-10-04T07:38:42.732107+00:00",
+  "raw_body_sha256": "ce4da46aecedec36b0643d4d864ddaa8c39bd531f9e939df501be2729d71a85c",
+  "body": {
+    "id": "gen-1791099514-jzbavgt1OCOQIC9ACf90",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Behaviors/boundaries to test:\n\n1. `className()`/`classNames()`/`hasClass()` on element with no `class` attribute — should return empty string/empty set, not throw.\n2. `addClass`/`removeClass`/`toggleClass` on element with no prior class attribute — verify correct attribute creation, idempotency, and whitespace-separated token handling (dedupe, case sensitivity per hasClass).\n3. `classNames(Set<String>)` setter — verify it replaces existing classes and `attr(\"class\")` reflects new joined value; empty set should clear/remove class attribute cleanly.\n4. `text()` and `html()` round-tripping through `Parser.parse` for nested block vs inline tags (`isBlock`/`preserveWhitespace` from `Tag`), e.g. `<pre>`/`<textarea>` whitespace preservation vs normal block collapsing.\n5. `Tag.isBlock()` / `canContainBlock` semantics affecting parser's `stackHasValidParent`/`popStackToSuitableContainer` — e.g. inserting a block tag inside an inline-only container should relocate to valid ancestor (`defaultAncestor`), confirmed via parsed DOM structure.\n6. `appendElement`/`prependElement`/`appendChild`/`prependChild` ordering and parent/child linkage correctness, including boundary of empty children list.\n7. `parent()`, `parents()`, sibling navigation (`nextElementSibling`, `previousElementSibling`, `firstElementSibling`, `lastElementSibling`, `elementSiblingIndex`) on root element (no parent) — must return null/empty Elements/0 without NPE.\n8. `getElementById`, `getElementsByAttributeValue*` family — case sensitivity, empty-value match, no-match returns empty Elements, not null.\n9. `select()` with malformed/empty selector string — contract-defined exception type (e.g., `Selector.SelectorParseException`) vs silently empty.\n10. `Parser.parseBodyFragment` vs `parse` — fragment should not auto-wrap in extra html/head when combined with existing doc structure; verify body-only content placement.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2792,
+      "output_tokens": 731,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.012894,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.012894,
+        "upstream_inference_prompt_cost": 0.005584,
+        "upstream_inference_completions_cost": 0.00731
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 125847,
+      "daily_remaining_tokens": 74153
+    }
+  },
+  "headers": {
+    "x-request-id": "zmzkhagmdsd1edgdkatzj777",
+    "date": "Sun, 04 Oct 2026 07:38:42 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

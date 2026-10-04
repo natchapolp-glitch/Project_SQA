@@ -1,0 +1,9 @@
+- parseInt/parseLong (char[] & String): correct parsing of positive/negative, min/max values, leading '+'/'-' handling, boundary at Integer.MIN_VALUE/MAX_VALUE and Long.MIN_VALUE/MAX_VALUE (use MIN_LONG_STR_NO_SIGN/MAX_LONG_STR boundaries), invalid input (non-digit) behavior per contract (NumberFormatException expected by javadoc), leading zeros.
+- inLongRange(char[]/String, negative flag): boundary values exactly at Long.MIN_VALUE/MAX_VALUE, one past boundary (overflow), same digit count but larger magnitude, empty/short strings.
+- parseAsInt/parseAsLong/parseAsDouble: fallback default value returned on malformed input instead of throwing, correct parse on valid input, null/empty string handling.
+- parseDouble: correct value for normal doubles, NASTY_SMALL_DOUBLE constant parsing precision bug check, NumberFormatException on invalid text.
+- parseBigDecimal(String/char[]/char[],offset,len): correct value construction from subrange, NumberFormatException on bad input, exact offset/length boundary correctness (no extra chars included).
+- TextBuffer.append/contentsAsString/contentsAsArray: receiver must be freshly constructed or reset (resetWithEmpty/resetWithShared/resetWithCopy) before append; verify segment growth across MIN/MAX_SEGMENT_LEN boundaries, multiple appends spanning segments, contentsAsString/Array consistency after segment buildup.
+- contentsAsDouble/contentsAsDecimal: correctness when buffer content represents valid numeric text, exception on invalid text, especially after multi-segment accumulation (bug likely involves incorrect content assembly across segments).
+- getTextBuffer/getCurrentSegment/finishCurrentSegment: correct offset/length reporting after appends and segment transitions.
+- ensureNotShared/unshare: verify independent mutation after resetWithShared then append, confirming no aliasing of original array.

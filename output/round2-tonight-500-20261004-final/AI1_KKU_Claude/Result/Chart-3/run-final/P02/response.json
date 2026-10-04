@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:46:28.262097+00:00",
+  "ended_at_utc": "2026-10-04T06:46:38.811319+00:00",
+  "raw_body_sha256": "30c1b4868752eafec84b6b39dc16971397798102b002da6497a512611f8e04f9",
+  "body": {
+    "id": "gen-1791096388-3p4I2uWCZdyL59V4YIed",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jfree.data.time;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\n\npublic class TimeSeriesTest {\n\n    @Test\n    public void addOrUpdate_updatesExistingPeriod_returnsOldItem_countUnchanged() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        Day day1 = new Day(1, 1, 2010);\n        Day day2 = new Day(2, 1, 2010);\n        series.add(day1, 10.0);\n        series.add(day2, 20.0);\n\n        TimeSeriesDataItem old = series.addOrUpdate(day1, 100.0);\n\n        assertNotNull(old);\n        assertEquals(10.0, old.getValue().doubleValue(), 0.0001);\n        assertEquals(2, series.getItemCount());\n        assertEquals(100.0, series.getValue(day1).doubleValue(), 0.0001);\n    }\n\n    @Test\n    public void addOrUpdate_newPeriod_increasesCount_returnsNull() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        Day day1 = new Day(1, 1, 2010);\n        series.add(day1, 10.0);\n\n        Day day2 = new Day(2, 1, 2010);\n        TimeSeriesDataItem old = series.addOrUpdate(day2, 20.0);\n\n        assertNull(old);\n        assertEquals(2, series.getItemCount());\n        assertEquals(20.0, series.getValue(day2).doubleValue(), 0.0001);\n    }\n\n    @Test\n    public void addOrUpdate_respectsMaximumItemCount() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        series.setMaximumItemCount(2);\n        Day day1 = new Day(1, 1, 2010);\n        Day day2 = new Day(2, 1, 2010);\n        Day day3 = new Day(3, 1, 2010);\n\n        series.addOrUpdate(day1, 10.0);\n        series.addOrUpdate(day2, 20.0);\n        series.addOrUpdate(day3, 30.0);\n\n        assertEquals(2, series.getItemCount());\n        assertNull(series.getDataItem(day1));\n        assertEquals(20.0, series.getValue(day2).doubleValue(), 0.0001);\n        assertEquals(30.0, series.getValue(day3).doubleValue(), 0.0001);\n    }\n\n    @Test\n    public void addOrUpdate_zeroMaximumItemCount_doesNotAdd() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        series.setMaximumItemCount(0);\n        Day day1 = new Day(1, 1, 2010);\n\n        series.addOrUpdate(day1, 10.0);\n\n        assertEquals(0, series.getItemCount());\n    }\n\n    @Test\n    public void minYmaxY_updatedCorrectlyAfterAddOrUpdate() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        Day day1 = new Day(1, 1, 2010);\n        Day day2 = new Day(2, 1, 2010);\n        Day day3 = new Day(3, 1, 2010);\n        series.add(day1, 5.0);\n        series.add(day2, 10.0);\n        series.add(day3, 1.0);\n\n        assertEquals(1.0, series.getMinY(), 0.0001);\n        assertEquals(10.0, series.getMaxY(), 0.0001);\n\n        series.addOrUpdate(day2, -50.0);\n        assertEquals(-50.0, series.getMinY(), 0.0001);\n\n        series.addOrUpdate(day2, 1000.0);\n        assertEquals(1000.0, series.getMaxY(), 0.0001);\n    }\n\n    @Test\n    public void addOrUpdate_itemsRemainSortedWithoutDuplicates() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        Day day1 = new Day(1, 1, 2010);\n        Day day2 = new Day(2, 1, 2010);\n        Day day3 = new Day(3, 1, 2010);\n\n        series.addOrUpdate(day2, 20.0);\n        series.addOrUpdate(day1, 10.0);\n        series.addOrUpdate(day3, 30.0);\n        series.addOrUpdate(day2, 200.0);\n\n        assertEquals(3, series.getItemCount());\n        assertEquals(day1, series.getTimePeriod(0));\n        assertEquals(day2, series.getTimePeriod(1));\n        assertEquals(day3, series.getTimePeriod(2));\n        assertEquals(200.0, series.getValue(day2).doubleValue(), 0.0001);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7185,
+      "output_tokens": 1607,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.03044,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.03044,
+        "upstream_inference_prompt_cost": 0.01437,
+        "upstream_inference_completions_cost": 0.01607
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 107952,
+      "daily_remaining_tokens": 92048
+    }
+  },
+  "headers": {
+    "x-request-id": "zyb5gymav0nknn7hahq1n351",
+    "date": "Sun, 04 Oct 2026 06:46:40 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

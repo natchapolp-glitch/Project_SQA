@@ -1,0 +1,22 @@
+## Analysis of Testable Behaviors
+
+**`unescape(String)` — likely bug target:**
+- Basic named entity: `"&amp;"` → `"&"`, `"&lt;"` → `"<"`, `"&gt;"` → `">"`, `"&quot;"` → `"\""`
+- Numeric decimal entity: `"&#65;"` → `"A"`
+- Numeric hex entity: `"&#x41;"` or `"&#X41;"` → `"A"`
+- Entity without trailing semicolon (legacy HTML laxity): e.g. `"&amp"` → `"&"` depending on base-entity table support
+- Unknown/invalid entity left unchanged: `"&foo;"` → `"&foo;"`
+- Plain text with no entities returned unchanged (identity)
+- Null/empty string handling — empty string → empty string; verify no exception
+- Multiple entities in one string: `"&lt;p&gt;"` → `"<p>"`
+- Entity embedded mid-string with adjacent text: `"a&amp;b"` → `"a&b"`
+- Case sensitivity: entities are case-sensitive (`&AMP;` vs `&amp;` may differ)
+- Malformed numeric entity (e.g., `"&#;"`, `"&#xZZ;"`) should not crash, stays literal or partially processed
+
+**`escape(String, OutputSettings)` — receiver setup:**
+- Requires a valid `Document.OutputSettings` instance (default constructor) to drive charset/escape mode
+- Basic special chars escaped: `<`, `>`, `&`, `"` in XML/HTML mode
+- Non-ASCII chars escaped per charset encoder capability (base vs extended mode)
+- Empty string input → empty string output
+
+**Setup note:** Since methods are package-private (`static`, no modifier), tests must reside in `org.jsoup.nodes` package to access them without reflection.

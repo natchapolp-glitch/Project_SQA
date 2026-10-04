@@ -1,0 +1,10 @@
+- addProperty/setProperty with same key multiple times: verify list accumulation (Vector) vs replacement semantics, and type of stored value for single vs multiple values.
+- getStringArray/getVector/getList on key with comma-separated single value vs multiple addProperty calls: check splitting/trimming behavior and escaping of commas.
+- getProperty on missing key: should return null (and check defaults chain fallback via setDefaults/combine if constructible).
+- getBoolean/getByte/getShort/getInt/getLong/getFloat/getDouble: valid parse, default-value overloads when key absent, and NumberFormatException/ClassCastException when value malformed—verify exception type thrown.
+- testBoolean: accepts true/false/yes/no/on/off/1/0 variants; returns null for unrecognized string.
+- clearProperty: removes key entirely, subsequent getProperty returns null, iterator from getKeys() no longer includes it.
+- getKeys()/getKeys(prefix): iteration order matches insertion order (keysAsListed), prefix filtering returns only matching dotted keys.
+- subset(prefix): returned ExtendedProperties contains only keys under prefix with prefix stripped, independent instance.
+- interpolate via getString: ${key} substitution resolves to other property values, including nested/undefined tokens left literal.
+- load(InputStream) with comment lines, continuation lines (trailing backslash), include directive, and duplicate keys: verify correct parsing matches Hashtable put semantics per documented format.

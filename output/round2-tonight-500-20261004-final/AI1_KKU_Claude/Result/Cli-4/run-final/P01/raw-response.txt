@@ -1,0 +1,9 @@
+- Setup: use a concrete Parser subclass (e.g. GnuParser/PosixParser/BasicParser) with Options containing a required option (setRequired(true)); verify parse() throws MissingOptionException when that option is absent from args.
+- Verify parse() succeeds and does NOT throw MissingOptionException when the required option IS present in args.
+- Verify that calling parse() twice on the same Parser instance (reusing the Parser object with different Options/args) correctly resets internal state (requiredOptions list) each time, rather than carrying stale required-options from a prior invocation.
+- Test with multiple required options: ensure MissingOptionException lists/contains all missing required options, not just one.
+- Test with Properties overload: required option satisfied via default Properties value should not trigger MissingOptionException.
+- Test with no required options defined: parse() with arbitrary args should succeed without exception.
+- Boundary: required option present as part of an option group—verify required-group semantics still correctly detected as satisfied or missing.
+- Confirm CommandLine returned contains correct values/presence for options when required options are satisfied, ensuring no side-effects from the required-check logic corrupt parsed results.
+- Test sequential parse() calls with first invocation missing required option (expect exception) followed by second invocation with all required options present (expect success) to confirm state is not polluted across calls.

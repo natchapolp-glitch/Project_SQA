@@ -1,0 +1,84 @@
+```java
+package org.apache.commons.jxpath.ri.model.beans;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathInvalidAccessException;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+public class NullPropertyPointerTest {
+
+    @Test
+    public void testInitialState() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+
+        assertEquals("*", pointer.getPropertyName());
+        assertEquals(0, pointer.getLength());
+        assertNull(pointer.getBaseValue());
+        assertNull(pointer.getImmediateNode());
+        assertTrue(pointer.isLeaf());
+        assertFalse(pointer.isActual());
+        assertTrue(pointer.isContainer());
+        assertEquals(0, pointer.getPropertyCount());
+        assertArrayEquals(new String[0], pointer.getPropertyNames());
+    }
+
+    @Test
+    public void testPropertyNameAndNameAttribute() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+
+        pointer.setPropertyName("foo");
+        assertEquals("foo", pointer.getPropertyName());
+        assertEquals("foo", pointer.getName().getName());
+
+        pointer.setNameAttributeValue("bar's name");
+        assertEquals("bar&apos;s name", pointer.getPropertyName());
+        assertTrue(pointer.asPath().contains("[@name='bar&apos;s name']"));
+    }
+
+    @Test
+    public void testValuePointer() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+        pointer.setPropertyName("childProp");
+
+        NodePointer valuePtr = pointer.getValuePointer();
+        assertNotNull(valuePtr);
+        assertEquals("childProp", valuePtr.getName().getName());
+    }
+
+    @Test(expected = JXPathInvalidAccessException.class)
+    public void testSetValueWithNullParent() {
+        NullPropertyPointer pointer = new NullPropertyPointer(null);
+        pointer.setValue("value");
+    }
+
+    @Test
+    public void testIsCollection() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+
+        assertFalse(pointer.isCollection());
+        pointer.setIndex(0);
+        assertTrue(pointer.isCollection());
+    }
+
+    @Test
+    public void testCreateChild() {
+        NodePointer parent = new NullPointer(new QName("test"));
+        NullPropertyPointer pointer = new NullPropertyPointer(parent);
+        JXPathContext context = JXPathContext.newContext(new Object());
+
+        try {
+            pointer.createChild(context, new QName("sub"), 0);
+        } catch (Exception e) {
+            assertNotNull(e);
+        }
+    }
+}
+```

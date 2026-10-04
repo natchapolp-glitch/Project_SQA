@@ -1,0 +1,11 @@
+**Behaviors to probe:**
+1. Basic single-element XML (`<root>text</root>`) — sequence: START_ELEMENT → TEXT → END_ELEMENT → END, correct localName/namespaceURI/text at each step.
+2. Element with attributes — ATTRIBUTE_NAME/ATTRIBUTE_VALUE pairs emitted in order before TEXT/END_ELEMENT; `hasAttributes()` true/false correctly.
+3. Repeated sibling elements with same name (triggers `repeatElement`/`REPLAY_*` logic) — verify duplicate START_ELEMENT replay produces correct localName and doesn't duplicate attributes/text incorrectly.
+4. Nested elements (parent/child) — correct stack of namespace/localName through descent and ascent, `skipEndElement()` behavior when child has no text.
+5. Mixed content / whitespace-only text nodes — `_collectUntilTag`/`_skipUntilTag` must not misclassify as XML_TEXT vs skip, boundary with CDATA.
+6. Self-closing empty element (`<a/>`) — immediate START_ELEMENT then END_ELEMENT, no TEXT token emitted, text value null/empty.
+7. End-of-document — after root END_ELEMENT, `next()` returns XML_END consistently on repeated calls.
+8. `getCurrentLocation()`/`getTokenLocation()` non-null and consistent across token transitions.
+9. `close()` vs `closeCompletely()` — verify underlying reader closed appropriately, no exceptions on double-close.
+10. Namespaced XML (prefixes/xmlns) — `getNamespaceURI()` correctness for elements/attributes.

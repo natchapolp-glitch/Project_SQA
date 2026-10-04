@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:35:29.537296+00:00",
+  "ended_at_utc": "2026-10-04T09:35:35.928506+00:00",
+  "raw_body_sha256": "ff81fa1af8f23d8e358adf2c3531d1c46612f9fc2be1636a455b15a33aa9e63d",
+  "body": {
+    "id": "genai-01a10644-d1f7-7274-ac48-92f889d0a7d8",
+    "object": "chat.completion",
+    "created": 1791106535,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.mockito.exceptions;\n\nimport org.junit.Test;\nimport org.mockito.exceptions.base.MockitoException;\nimport org.mockito.exceptions.misusing.InvalidUseOfMatchersException;\nimport org.mockito.exceptions.misusing.MissingMethodInvocationException;\nimport org.mockito.exceptions.misusing.NotAMockException;\nimport org.mockito.exceptions.misusing.NullInsteadOfMockException;\nimport org.mockito.exceptions.misusing.UnfinishedStubbingException;\nimport org.mockito.exceptions.misusing.UnfinishedVerificationException;\nimport org.mockito.exceptions.verification.CannotVerifyStubOnlyMock;\nimport org.mockito.internal.matchers.LocalizedMatcher;\n\nimport java.util.ArrayList;\nimport java.util.List;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\npublic class ReporterTest {\n\n    @Test(expected = MockitoException.class)\n    public void testCheckedExceptionInvalid() {\n        Reporter reporter = new Reporter();\n        reporter.checkedExceptionInvalid(new Exception(\"test\"));\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testCannotStubWithNullThrowable() {\n        Reporter reporter = new Reporter();\n        reporter.cannotStubWithNullThrowable();\n    }\n\n    @Test(expected = UnfinishedStubbingException.class)\n    public void testUnfinishedStubbing() {\n        Reporter reporter = new Reporter();\n        reporter.unfinishedStubbing(null);\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testIncorrectUseOfApi() {\n        Reporter reporter = new Reporter();\n        reporter.incorrectUseOfApi();\n    }\n\n    @Test(expected = MissingMethodInvocationException.class)\n    public void testMissingMethodInvocation() {\n        Reporter reporter = new Reporter();\n        reporter.missingMethodInvocation();\n    }\n\n    @Test(expected = UnfinishedVerificationException.class)\n    public void testUnfinishedVerificationException() {\n        Reporter reporter = new Reporter();\n        reporter.unfinishedVerificationException(null);\n    }\n\n    @Test(expected = NotAMockException.class)\n    public void testNotAMockPassedToVerify() {\n        Reporter reporter = new Reporter();\n        reporter.notAMockPassedToVerify(String.class);\n    }\n\n    @Test(expected = NullInsteadOfMockException.class)\n    public void testNullPassedToVerify() {\n        Reporter reporter = new Reporter();\n        reporter.nullPassedToVerify();\n    }\n\n    @Test(expected = InvalidUseOfMatchersException.class)\n    public void testInvalidUseOfMatchers() {\n        Reporter reporter = new Reporter();\n        List<LocalizedMatcher> matchers = new ArrayList<LocalizedMatcher>();\n        reporter.invalidUseOfMatchers(2, matchers);\n    }\n\n    @Test(expected = CannotVerifyStubOnlyMock.class)\n    public void testStubPassedToVerify() {\n        Reporter reporter = new Reporter();\n        reporter.stubPassedToVerify();\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testCannotMockFinalClass() {\n        Reporter reporter = new Reporter();\n        reporter.cannotMockFinalClass(String.class);\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testWantedAtMostX() {\n        Reporter reporter = new Reporter();\n        reporter.wantedAtMostX(5, 10);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4682,
+      "completion_tokens": 792,
+      "total_tokens": 5474
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 114637,
+      "daily_remaining_tokens": 235363
+    }
+  },
+  "headers": {
+    "x-request-id": "ryvi8gu194bk9oayyhtf9j1t",
+    "date": "Sun, 04 Oct 2026 09:35:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

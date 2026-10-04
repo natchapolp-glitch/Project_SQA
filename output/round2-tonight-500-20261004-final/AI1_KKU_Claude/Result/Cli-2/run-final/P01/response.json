@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:22:30.696188+00:00",
+  "ended_at_utc": "2026-10-04T05:22:38.405554+00:00",
+  "raw_body_sha256": "e3abe9cf5e6f4156f53a2e841e8e6c97d6170573cd34316bdc3070e5852886fa",
+  "body": {
+    "id": "gen-1791091353-MdwtTj362fEWWJmlbjXt",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Verify `flatten(Options, String[], boolean)` correctly separates recognized options from non-option arguments, preserving order.\n- Test long-form options (`--option`, `--option=value`) are tokenized intact without bursting.\n- Test short-form single-hyphen options (`-a`, `-abc` clustering of flags) are burst into individual tokens via `burstToken`.\n- Test option requiring an argument correctly consumes the following token as its value, not as a separate option.\n- Test `--` triggers `eatTheRest`/`stopAtNonOption` semantics: all subsequent tokens treated as literal arguments, unprocessed.\n- Test unrecognized option with `stopAtNonOption=true` halts parsing and gobbles remaining tokens as-is.\n- Test unrecognized option with `stopAtNonOption=false` treats unknown token as a plain non-option argument.\n- Test a lone `\"-\"` is treated as a non-option argument, not an option marker.\n- Test empty args array returns empty flattened array; null Options or null args behavior (should match superclass contract, likely NPE).\n- Test quoted argument values containing spaces/equals signs are preserved verbatim after flattening.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 482,
+      "output_tokens": 398,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.004944,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.004944,
+        "upstream_inference_prompt_cost": 0.000964,
+        "upstream_inference_completions_cost": 0.00398
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 19959,
+      "daily_remaining_tokens": 180041
+    }
+  },
+  "headers": {
+    "x-request-id": "nowhqajsnrggbzefap7nld2d",
+    "date": "Sun, 04 Oct 2026 05:22:38 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

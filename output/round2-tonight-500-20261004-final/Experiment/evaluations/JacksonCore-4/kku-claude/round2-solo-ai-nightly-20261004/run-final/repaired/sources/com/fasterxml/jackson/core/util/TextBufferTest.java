@@ -1,0 +1,128 @@
+package com.fasterxml.jackson.core.util;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import java.math.BigDecimal;
+
+public class TextBufferTest {
+
+    @Test
+    public void testResetWithEmpty() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        assertEquals(0, tb.size());
+        assertNotNull(tb.getTextBuffer());
+        assertEquals("", tb.contentsAsString());
+    }
+
+    @Test
+    public void testResetWithSharedBuffer() {
+        TextBuffer tb = new TextBuffer(null);
+        char[] src = "hello world".toCharArray();
+        tb.resetWithShared(src, 2, 5);
+        assertEquals(5, tb.size());
+        assertEquals(2, tb.getTextOffset());
+        assertTrue(tb.hasTextAsCharacters());
+        assertEquals("llo w", tb.contentsAsString());
+    }
+
+    @Test
+    public void testResetWithCopyIsIndependent() {
+        TextBuffer tb = new TextBuffer(null);
+        char[] src = "abcdef".toCharArray();
+        tb.resetWithCopy(src, 1, 4);
+        assertEquals("bcde", tb.contentsAsString());
+        src[1] = 'Z';
+        assertEquals("bcde", tb.contentsAsString());
+    }
+
+    @Test
+    public void testResetWithString() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithString("hello");
+        assertEquals(5, tb.size());
+        assertEquals("hello", tb.contentsAsString());
+    }
+
+    @Test
+    public void testAppendSingleCharsAcrossSegments() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        StringBuilder expected = new StringBuilder();
+        for (int i = 0; i < 5000; i++) {
+            char c = (char) ('a' + (i % 26));
+            tb.append(c);
+            expected.append(c);
+        }
+        assertEquals(expected.length(), tb.size());
+        assertEquals(expected.toString(), tb.contentsAsString());
+    }
+
+    @Test
+    public void testAppendCharArrayAndStringRanges() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        char[] data = "0123456789".toCharArray();
+        tb.append(data, 2, 5);
+        assertEquals("23456", tb.contentsAsString());
+
+        TextBuffer tb2 = new TextBuffer(null);
+        tb2.resetWithEmpty();
+        tb2.append("abcdefgh", 3, 4);
+        assertEquals("defg", tb2.contentsAsString());
+    }
+
+    @Test
+    public void testExpandCurrentSegmentAndFinish() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        tb.append('x');
+        tb.append('y');
+        char[] expanded = tb.expandCurrentSegment();
+        assertTrue(expanded.length > 2);
+        assertEquals('x', expanded[0]);
+        assertEquals('y', expanded[1]);
+
+        char[] finished = tb.finishCurrentSegment();
+        assertNotNull(finished);
+    }
+
+    @Test
+    public void testContentsAsDoubleAndDecimal() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithString("123.45");
+        assertEquals(123.45, tb.contentsAsDouble(), 0.0001);
+        assertEquals(new BigDecimal("123.45"), tb.contentsAsDecimal());
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testContentsAsDoubleInvalid() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithString("not-a-number");
+        tb.contentsAsDouble();
+    }
+
+    @Test
+    public void testSetCurrentLengthResetsSize() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        tb.append('a');
+        tb.append('b');
+        tb.append('c');
+        tb.setCurrentLength(1);
+        assertEquals(1, tb.size());
+        assertEquals("a", tb.contentsAsString());
+    }
+
+    @Test
+    public void testEmptyAndGetCurrentSegmentResetsSize() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        tb.append('a');
+        tb.append('b');
+        char[] seg = tb.emptyAndGetCurrentSegment();
+        assertNotNull(seg);
+        assertEquals(0, tb.getCurrentSegmentSize());
+    }
+}

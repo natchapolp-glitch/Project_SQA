@@ -1,0 +1,10 @@
+- Writing `null` value via `XmlMapper` should still produce a root element (using ROOT_NAME_FOR_NULL or configured root name), not an empty/invalid document.
+- Serializing null with an explicit root name set (via `@JacksonXmlRootElement` or config) should use that name for the wrapper element.
+- Serializing a plain non-null POJO should proceed normally through serializeValue overloads, unaffected by null-handling path.
+- Serializing an array/collection root value should trigger `_startRootArray` correctly, emitting repeated wrapped elements with proper root/child names.
+- Verify behavior when JsonGenerator passed is not a `ToXmlGenerator` (e.g., wrapped) — `_asXmlGenerator` must still unwrap/support XML generation or throw appropriate `JsonMappingException` if impossible.
+- Check `_rootNameFromConfig()` boundary: no config root name set (returns null) vs. explicit root name configured.
+- Confirm `createInstance` returns a new provider preserving `_rootNameLookup` and config/factory supplied.
+- Test nested null field (not root) to ensure only root-null special-cases hit `_serializeXmlNull`, not nested nulls.
+- Validate QName namespace handling when root name has namespace prefix/URI set vs. default (no namespace).
+- Ensure serialization round-trips to valid XML string via `XmlMapper.writeValueAsString`, confirming no corrupt/malformed XML for null case.

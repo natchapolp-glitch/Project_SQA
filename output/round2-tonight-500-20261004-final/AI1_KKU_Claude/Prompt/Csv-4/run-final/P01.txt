@@ -1,0 +1,30 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Csv-4
+Java 11, JUnit 4
+Modified classes: org.apache.commons.csv.CSVParser
+BUGGY API signatures:
+Compiled from "CSVParser.java"
+public final class org.apache.commons.csv.CSVParser implements java.lang.Iterable<org.apache.commons.csv.CSVRecord>, java.io.Closeable {
+  private final org.apache.commons.csv.CSVFormat format;
+  private final java.util.Map<java.lang.String, java.lang.Integer> headerMap;
+  private final org.apache.commons.csv.Lexer lexer;
+  private final java.util.List<java.lang.String> record;
+  private long recordNumber;
+  private final org.apache.commons.csv.Token reusableToken;
+  public static org.apache.commons.csv.CSVParser parse(java.io.File, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  public static org.apache.commons.csv.CSVParser parse(java.lang.String, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  public static org.apache.commons.csv.CSVParser parse(java.net.URL, java.nio.charset.Charset, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  public org.apache.commons.csv.CSVParser(java.io.Reader, org.apache.commons.csv.CSVFormat) throws java.io.IOException;
+  private void addRecordValue();
+  public void close() throws java.io.IOException;
+  public long getCurrentLineNumber();
+  public java.util.Map<java.lang.String, java.lang.Integer> getHeaderMap();
+  public long getRecordNumber();
+  public java.util.List<org.apache.commons.csv.CSVRecord> getRecords() throws java.io.IOException;
+  private java.util.Map<java.lang.String, java.lang.Integer> initializeHeader() throws java.io.IOException;
+  public boolean isClosed();
+  public java.util.Iterator<org.apache.commons.csv.CSVRecord> iterator();
+  org.apache.commons.csv.CSVRecord nextRecord() throws java.io.IOException;
+}
+

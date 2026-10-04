@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:45:07.999185+00:00",
+  "ended_at_utc": "2026-10-04T05:45:18.207129+00:00",
+  "raw_body_sha256": "15dc908ae36817bdf7ad68107b2fed1c0499d700909c895cd1b681068e62449b",
+  "body": {
+    "id": "gen-1791092710-SmUd8q776cjul7KWwenf",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Looking at the uncovered lines (87-91), this corresponds to the `get(String name)` method's handling when the mapping exists but the index might be out of bounds relative to `values` array - this is the known bug in CSV-2 where `get(String)` doesn't check `isSet` and can throw `ArrayIndexOutOfBoundsException` instead of returning null, or the inconsistency between `isSet` and `get`.\n\nLet me write tests that explore this contract: when a column is mapped but its index exceeds the actual values array length (inconsistent record), `get(String)` should ideally behave consistently with `isSet`, but given the buggy code directly indexes `values[index.intValue()]` without bounds checking.\n\n```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.fail;\n\nimport java.util.HashMap;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVRecordExtraTest {\n\n    private Map<String, Integer> createMapping(String... names) {\n        Map<String, Integer> mapping = new HashMap<String, Integer>();\n        for (int i = 0; i < names.length; i++) {\n            mapping.put(names[i], i);\n        }\n        return mapping;\n    }\n\n    @Test\n    public void testGetByNameWhenMappedIndexOutOfBoundsThrows() {\n        // mapping declares col2 at index 1, but values array only has 1 element\n        String[] values = {\"a\"};\n        Map<String, Integer> mapping = createMapping(\"col1\", \"col2\");\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n\n        // isSet correctly reports false for col2 since its index exceeds values.length\n        assertFalse(record.isSet(\"col2\"));\n\n        // get(\"col1\") still works fine as index 0 is within bounds\n        assertEquals(\"a\", record.get(\"col1\"));\n\n        // get(\"col2\") attempts values[1] on a length-1 array -> should throw\n        try {\n            record.get(\"col2\");\n            fail(\"Expected ArrayIndexOutOfBoundsException when mapped index exceeds values length\");\n        } catch (ArrayIndexOutOfBoundsException e) {\n            // expected per current (buggy) implementation which lacks bounds checking\n        }\n    }\n\n    @Test\n    public void testIsSetFalseForMissingName() {\n        String[] values = {\"a\", \"b\"};\n        Map<String, Integer> mapping = createMapping(\"col1\", \"col2\");\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        assertFalse(record.isSet(\"notThere\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 4274,
+      "output_tokens": 909,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.017638,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.017638,
+        "upstream_inference_prompt_cost": 0.008548,
+        "upstream_inference_completions_cost": 0.00909
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 58856,
+      "daily_remaining_tokens": 141144
+    }
+  },
+  "headers": {
+    "x-request-id": "u4ffl4i0upt34yvbg8dbxgrn",
+    "date": "Sun, 04 Oct 2026 05:45:18 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:48:23.560393+00:00",
+  "ended_at_utc": "2026-10-04T07:48:25.789999+00:00",
+  "raw_body_sha256": "6d7d560938ff5f565c319887285d9d1a4a5b09655422031df94dde6e92690129",
+  "body": {
+    "id": "genai-01a105e2-b983-7632-bd99-676ff82c8d80",
+    "object": "chat.completion",
+    "created": 1791100107,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- Valid receiver setup: Instantiate `LookupTranslator` with a non-null 2D array of lookup character sequences (e.g., `new CharSequence[][]{{\"key\", \"value\"}}`).\n- Boundary: Pass a `null` lookup array to the constructor or an array containing `null` entries to verify exception handling.\n- Boundary: Translate with an input `CharSequence` where length is 0 (empty string) or index `index` is at the boundaries (0 and `input.length()`).\n- Behavior: `translate` must return 0 when the remaining input at `index` does not match any key in the lookup map.\n- Behavior: `translate` must correctly write the mapped replacement to the `Writer` and return the exact consumed character length of the matched key.\n- Boundary: Overlapping keys in the lookup map (e.g., `\"a\"` and `\"ab\"`); translator should prioritize the longest match according to `longest`.\n- Boundary: Input string shorter than the shortest lookup key (`shortest`); verify no translation occurs and 0 is returned.\n- Behavior: When input is `null` at `translate`, or `Writer` is `null`, adhere to contract (typically throw `IllegalArgumentException` or `IOException`).\n- Behavior: Ensure `shortest` and `longest` internal fields correctly compute the min and max lengths of provided keys upon construction.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 260,
+      "completion_tokens": 288,
+      "total_tokens": 548
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 98688,
+      "daily_remaining_tokens": 251312
+    }
+  },
+  "headers": {
+    "x-request-id": "n0c6dwgjnnbh04fmtpj8rdfs",
+    "date": "Sun, 04 Oct 2026 07:48:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

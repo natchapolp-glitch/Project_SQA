@@ -1,0 +1,18 @@
+{
+  "case": "Mockito-2",
+  "classes_modified": [
+    "org.mockito.internal.util.Timer"
+  ],
+  "source_excerpts": [
+    {
+      "class": "org.mockito.internal.util.Timer",
+      "excerpt": "package org.mockito.internal.util;\n\n\npublic class Timer {\n\n    private final long durationMillis;\n    private long startTime = -1;\n\n    public Timer(long durationMillis) {\n        this.durationMillis = durationMillis;\n    }\n\n    /**\n     * Informs whether the timer is still counting down.\n     */\n    public boolean isCounting() {\n        assert startTime != -1;\n        return System.currentTimeMillis() - startTime <= durationMillis;\n    }\n\n    /**\n     * Starts the timer count down.\n     */\n    public void start() {\n        startTime = System.currentTimeMillis();\n    }\n\n}\n",
+      "original_characters": 579,
+      "truncated": false
+    }
+  ],
+  "buggy_signatures": "Compiled from \"Timer.java\"\npublic class org.mockito.internal.util.Timer {\n  private final long durationMillis;\n  private long startTime;\n  static final boolean $assertionsDisabled;\n  public org.mockito.internal.util.Timer(long);\n  public boolean isCounting();\n  public void start();\n  static {};\n}\n",
+  "signatures_truncated": false,
+  "source_character_count": 579,
+  "context_knowledge": "buggy production source and API metadata only"
+}

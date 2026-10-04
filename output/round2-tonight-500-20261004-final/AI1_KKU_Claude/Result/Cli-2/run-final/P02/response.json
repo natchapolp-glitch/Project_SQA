@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:22:38.601805+00:00",
+  "ended_at_utc": "2026-10-04T05:22:48.242862+00:00",
+  "raw_body_sha256": "26dd56b2ca75efdd226f6ac75a3addd05f84fc692bcd0aad1f58ea146ccc4408",
+  "body": {
+    "id": "gen-1791091359-1ZPKSmpgmN1TcIAJjY9v",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.cli;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class PosixParserTest {\n\n    @Test\n    public void testLongOptionWithEquals() {\n        Options options = new Options();\n        options.addOption(\"f\", \"file\", true, \"file option\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"--file=test.txt\" }, true);\n\n        assertArrayEquals(new String[] { \"--file\", \"test.txt\" }, result);\n    }\n\n    @Test\n    public void testLongOptionWithoutEquals() {\n        Options options = new Options();\n        options.addOption(\"v\", \"verbose\", false, \"verbose flag\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"--verbose\" }, true);\n\n        assertArrayEquals(new String[] { \"--verbose\" }, result);\n    }\n\n    @Test\n    public void testBurstingClusteredFlags() {\n        Options options = new Options();\n        options.addOption(\"a\", false, \"a flag\");\n        options.addOption(\"b\", false, \"b flag\");\n        options.addOption(\"c\", false, \"c flag\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"-abc\" }, true);\n\n        assertArrayEquals(new String[] { \"-a\", \"-b\", \"-c\" }, result);\n    }\n\n    @Test\n    public void testShortOptionWithArgument() {\n        Options options = new Options();\n        options.addOption(\"f\", true, \"file option\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"-f\", \"test.txt\" }, true);\n\n        assertArrayEquals(new String[] { \"-f\", \"test.txt\" }, result);\n    }\n\n    @Test\n    public void testDoubleHyphenStopsProcessing() {\n        Options options = new Options();\n        options.addOption(\"a\", false, \"a flag\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"-a\", \"--\", \"-b\", \"value\" }, true);\n\n        assertArrayEquals(new String[] { \"-a\", \"--\", \"-b\", \"value\" }, result);\n    }\n\n    @Test\n    public void testUnrecognizedOptionStopsAtNonOption() {\n        Options options = new Options();\n        options.addOption(\"a\", false, \"a flag\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"-a\", \"-x\", \"value\" }, true);\n\n        assertArrayEquals(new String[] { \"-a\" }, result);\n    }\n\n    @Test\n    public void testUnrecognizedOptionNoStopAtNonOption() {\n        Options options = new Options();\n        options.addOption(\"a\", false, \"a flag\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"foo\", \"-a\" }, false);\n\n        assertArrayEquals(new String[] { \"foo\", \"-a\" }, result);\n    }\n\n    @Test\n    public void testLoneHyphenTreatedAsToken() {\n        Options options = new Options();\n        options.addOption(\"a\", false, \"a flag\");\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[] { \"-\", \"-a\" }, true);\n\n        assertArrayEquals(new String[] { \"-\", \"-a\" }, result);\n    }\n\n    @Test\n    public void testEmptyArgumentsArray() {\n        Options options = new Options();\n\n        PosixParser parser = new PosixParser();\n        String[] result = parser.flatten(options, new String[0], true);\n\n        assertEquals(0, result.length);\n    }\n\n    @Test(expected = NullPointerException.class)\n    public void testNullArgumentsThrowsException() {\n        Options options = new Options();\n\n        PosixParser parser = new PosixParser();\n        parser.flatten(options, null, true);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 4641,
+      "output_tokens": 1355,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.022832,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.022832,
+        "upstream_inference_prompt_cost": 0.009282,
+        "upstream_inference_completions_cost": 0.01355
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 25955,
+      "daily_remaining_tokens": 174045
+    }
+  },
+  "headers": {
+    "x-request-id": "m578kkx7kvnjufq9t1g8dyt7",
+    "date": "Sun, 04 Oct 2026 05:22:49 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

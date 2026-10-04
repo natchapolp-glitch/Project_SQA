@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:23:07.514864+00:00",
+  "ended_at_utc": "2026-10-04T06:23:26.873354+00:00",
+  "raw_body_sha256": "2c715b908b1f430fe38611b4ee024873e9d7f71f8f1f2d0c133acc2d7bb9c842",
+  "body": {
+    "id": "gen-1791094989-9ZjITUsFPsSz1uTQH8UH",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "For population=1, successes=1, sample=1: cumulativeProbability(0) should be 0 since P(X=0)=0 and P(X=1)=1, but lower bound equals upper bound (both 1), so x=0 < domain[0]=1, giving cdf=0... Let me recheck: the failure says expected 0 but was 1, at line 121 which is `assertEquals(0.0, dist.cumulativeProbability(0), EPS);`. Since lower bound = upper bound = 1, domain[0]=1, x=0 < 1, so cumulativeProbability(0) should return 0.0. But actual is 1 — meaning probability(0) must be 1, not 0, contradicting test's assumption at line with `assertEquals(0.0, dist.probability(0), EPS);`. Given population=1, successes=1, sample=1, the only possible value is 1 with probability 1, so probability(0) should be 0 and probability(1) should be 1 — but test got cumulativeProbability(0)=1 meaning something differs. This suggests getSupportLowerBound()=1 actually (since m+n-N=1+1-1=1), not 0 as asserted. The test's assumption that lower bound is 0 is wrong.\n\n```java\npackage org.apache.commons.math3.distribution;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\n\nimport org.apache.commons.math3.exception.NotPositiveException;\nimport org.apache.commons.math3.exception.NotStrictlyPositiveException;\nimport org.apache.commons.math3.exception.NumberIsTooLargeException;\nimport org.junit.Test;\n\npublic class HypergeometricDistributionTest {\n\n    private static final double EPS = 1e-9;\n\n    @Test\n    public void testConstructorAndGetters() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        assertEquals(10, dist.getPopulationSize());\n        assertEquals(5, dist.getNumberOfSuccesses());\n        assertEquals(5, dist.getSampleSize());\n        assertTrue(dist.isSupportConnected());\n    }\n\n    @Test\n    public void testConstructorExceptions() {\n        try {\n            new HypergeometricDistribution(0, 1, 1);\n            org.junit.Assert.fail(\"Expected NotStrictlyPositiveException\");\n        } catch (NotStrictlyPositiveException e) {\n            // expected\n        }\n\n        try {\n            new HypergeometricDistribution(10, -1, 5);\n            org.junit.Assert.fail(\"Expected NotPositiveException\");\n        } catch (NotPositiveException e) {\n            // expected\n        }\n\n        try {\n            new HypergeometricDistribution(10, 5, -1);\n            org.junit.Assert.fail(\"Expected NotPositiveException\");\n        } catch (NotPositiveException e) {\n            // expected\n        }\n\n        try {\n            new HypergeometricDistribution(10, 11, 5);\n            org.junit.Assert.fail(\"Expected NumberIsTooLargeException\");\n        } catch (NumberIsTooLargeException e) {\n            // expected\n        }\n\n        try {\n            new HypergeometricDistribution(10, 5, 11);\n            org.junit.Assert.fail(\"Expected NumberIsTooLargeException\");\n        } catch (NumberIsTooLargeException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testSupportBounds() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        assertEquals(0, dist.getSupportLowerBound());\n        assertEquals(5, dist.getSupportUpperBound());\n\n        HypergeometricDistribution dist2 = new HypergeometricDistribution(10, 8, 7);\n        assertEquals(5, dist2.getSupportLowerBound());\n        assertEquals(7, dist2.getSupportUpperBound());\n    }\n\n    @Test\n    public void testProbabilityOutsideSupportIsZero() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        int lower = dist.getSupportLowerBound();\n        int upper = dist.getSupportUpperBound();\n        assertEquals(0.0, dist.probability(lower - 1), EPS);\n        assertEquals(0.0, dist.probability(upper + 1), EPS);\n        assertTrue(dist.probability(lower) > 0.0);\n        assertTrue(dist.probability(upper) > 0.0);\n    }\n\n    @Test\n    public void testCumulativeProbabilityBoundsAndSum() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        int lower = dist.getSupportLowerBound();\n        int upper = dist.getSupportUpperBound();\n\n        assertEquals(0.0, dist.cumulativeProbability(lower - 1), EPS);\n        assertEquals(1.0, dist.cumulativeProbability(upper), EPS);\n\n        double sum = 0.0;\n        double prev = 0.0;\n        for (int x = lower; x <= upper; x++) {\n            sum += dist.probability(x);\n            double cdf = dist.cumulativeProbability(x);\n            assertTrue(cdf >= prev - EPS);\n            prev = cdf;\n        }\n        assertEquals(1.0, sum, EPS);\n\n        assertEquals(1.0, dist.upperCumulativeProbability(lower), EPS);\n        assertEquals(0.0, dist.upperCumulativeProbability(upper + 1), EPS);\n    }\n\n    @Test\n    public void testNumericalMeanAndVariance() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        double expectedMean = (5.0 * 5.0) / 10.0;\n        assertEquals(expectedMean, dist.getNumericalMean(), EPS);\n\n        double N = 10.0, m = 5.0, n = 5.0;\n        double expectedVariance = (n * m * (N - n) * (N - m)) / (N * N * (N - 1));\n        assertEquals(expectedVariance, dist.getNumericalVariance(), EPS);\n    }\n\n    @Test\n    public void testSinglePointSupport() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(1, 1, 1);\n        assertEquals(1, dist.getSupportLowerBound());\n        assertEquals(1, dist.getSupportUpperBound());\n        assertEquals(1.0, dist.probability(1), EPS);\n        assertEquals(1.0, dist.cumulativeProbability(1), EPS);\n        assertEquals(0.0, dist.cumulativeProbability(0), EPS);\n    }\n\n    @Test\n    public void testSmallValuesNoOffByOne() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(5, 0, 3);\n        assertEquals(0, dist.getSupportLowerBound());\n        assertEquals(0, dist.getSupportUpperBound());\n        assertEquals(1.0, dist.probability(0), EPS);\n        assertEquals(1.0, dist.cumulativeProbability(0), EPS);\n        assertEquals(0.0, dist.probability(1), EPS);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8769,
+      "output_tokens": 2503,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.042568,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.042568,
+        "upstream_inference_prompt_cost": 0.017538,
+        "upstream_inference_completions_cost": 0.02503
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 110173,
+      "daily_remaining_tokens": 89827
+    }
+  },
+  "headers": {
+    "x-request-id": "b6k38mm8aougn2ylb2erokcb",
+    "date": "Sun, 04 Oct 2026 06:23:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

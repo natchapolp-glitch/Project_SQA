@@ -1,0 +1,7 @@
+1. Valid receiver setup: Initialize `CpioArchiveOutputStream` wrapping a valid `OutputStream` (e.g., `ByteArrayOutputStream`) and a supported CPIO format constant.
+2. Boundary behavior: `putNextEntry` / `putArchiveEntry` must throw an `IOException` if called after `close()` or `finish()`.
+3. Valid behavior: Successfully write multiple archive entries with associated payloads using `putNextEntry`, `write`, and `closeArchiveEntry`.
+4. Boundary behavior: Writing data via `write()` when no entry is currently open must throw an `IOException`.
+5. Valid behavior: `finish()` writes trailer entries (like the traditional `TRAILER!!!` entry) and flushes the underlying stream without closing it.
+6. Boundary behavior: Calling `finish()` multiple times or calling `close()` after `finish()` should handle state transitions gracefully without duplicate trailers.
+7. Valid behavior: `closeArchiveEntry()` validates entry size constraints (matching declared vs. actual written bytes) and pads output streams per CPIO format rules.

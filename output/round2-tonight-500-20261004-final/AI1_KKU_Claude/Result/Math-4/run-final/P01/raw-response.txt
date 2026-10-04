@@ -1,0 +1,10 @@
+- `intersection(subline, includeEndPoints)` should return the point where both finite segments cross, when it lies within both segments' bounds (test with simple perpendicular/crossing segments at known coordinates).
+- With `includeEndPoints=true`, intersection exactly at an endpoint of either segment should be returned (boundary inclusion case).
+- With `includeEndPoints=false`, an intersection lying exactly on an endpoint should return null (strict interior containment).
+- If the computed intersection point of the underlying infinite lines lies outside one sub-segment's interval, `intersection` must return null even though the lines themselves cross.
+- Parallel, non-intersecting sub-lines should return null.
+- Collinear overlapping sub-lines (segments on same line) should return null (no unique point) — check both 2D and 3D.
+- For 3D: two lines that are skew (non-intersecting, non-parallel in 3D) should return null even if their 2D-like projections would seem to cross.
+- `getSegments()` on a sub-line built from two endpoints should return a single segment with those endpoints (within tolerance), verifying `buildIntervalSet` correctness.
+- Constructing a `SubLine` from two identical points should throw `MathIllegalArgumentException` (degenerate line).
+- Verify symmetric behavior: `a.intersection(b, flag)` equals `b.intersection(a, flag)` for both true/false flags.

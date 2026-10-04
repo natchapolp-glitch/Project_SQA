@@ -1,0 +1,105 @@
+package org.apache.commons.codec.binary;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigInteger;
+
+import org.junit.Test;
+
+public class Base64Test {
+
+    @Test
+    public void testDefaultConstructorAndIsUrlSafe() {
+        Base64 base64 = new Base64();
+        assertFalse(base64.isUrlSafe());
+    }
+
+    @Test
+    public void testUrlSafeConstructor() {
+        Base64 base64 = new Base64(true);
+        assertTrue(base64.isUrlSafe());
+    }
+
+    @Test
+    public void testEncodeDecodeStandardStatic() {
+        byte[] original = "Hello, World!".getBytes();
+        byte[] encoded = Base64.encodeBase64(original);
+        assertNotNull(encoded);
+        
+        byte[] decoded = Base64.decodeBase64(encoded);
+        assertArrayEquals(original, decoded);
+    }
+
+    @Test
+    public void testEncodeDecodeChunked() {
+        byte[] original = new byte[200];
+        for (int i = 0; i < original.length; i++) {
+            original[i] = (byte) i;
+        }
+        byte[] encoded = Base64.encodeBase64Chunked(original);
+        assertNotNull(encoded);
+        
+        byte[] decoded = Base64.decodeBase64(encoded);
+        assertArrayEquals(original, decoded);
+    }
+
+    @Test
+    public void testEncodeBase64URLSafe() {
+        byte[] data = new byte[] { (byte) 0xff, (byte) 0xef, (byte) 0xbf };
+        byte[] urlSafeEncoded = Base64.encodeBase64URLSafe(data);
+        assertNotNull(urlSafeEncoded);
+        
+        for (byte b : urlSafeEncoded) {
+            assertFalse(b == '+');
+            assertFalse(b == '/');
+            assertFalse(b == '=');
+        }
+
+        byte[] decoded = Base64.decodeBase64(urlSafeEncoded);
+        assertArrayEquals(data, decoded);
+    }
+
+    @Test
+    public void testIntegerCodec() {
+        BigInteger original = new BigInteger("12345678901234567890");
+        byte[] encoded = Base64.encodeInteger(original);
+        assertNotNull(encoded);
+
+        BigInteger decoded = Base64.decodeInteger(encoded);
+        assertEquals(original, decoded);
+    }
+
+    @Test
+    public void testIsBase64Char() {
+        assertTrue(Base64.isBase64((byte) 'A'));
+        assertTrue(Base64.isBase64((byte) 'z'));
+        assertTrue(Base64.isBase64((byte) '0'));
+        assertTrue(Base64.isBase64((byte) '+'));
+        assertTrue(Base64.isBase64((byte) '/'));
+        assertTrue(Base64.isBase64((byte) '='));
+        assertFalse(Base64.isBase64((byte) ' '));
+        assertFalse(Base64.isBase64((byte) '!'));
+    }
+
+    @Test
+    public void testDiscardWhitespace() {
+        byte[] input = "SGVsbG8=\r\n V29ybGQ=".getBytes();
+        byte[] cleaned = Base64.discardWhitespace(input);
+        assertNotNull(cleaned);
+        byte[] decoded = Base64.decodeBase64(cleaned);
+        assertArrayEquals("Hello, World".getBytes(), decoded);
+    }
+
+    @Test
+    public void testEmptyAndNullArrays() {
+        assertNull(Base64.encodeBase64(null));
+        assertNull(Base64.decodeBase64((byte[]) null));
+        
+        assertArrayEquals(new byte[0], Base64.encodeBase64(new byte[0]));
+        assertArrayEquals(new byte[0], Base64.decodeBase64(new byte[0]));
+    }
+}

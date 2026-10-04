@@ -1,0 +1,137 @@
+package org.apache.commons.math3.distribution;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.math3.exception.NotPositiveException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.NumberIsTooLargeException;
+import org.junit.Test;
+
+public class HypergeometricDistributionTest {
+
+    private static final double EPS = 1e-9;
+
+    @Test
+    public void testConstructorAndGetters() {
+        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);
+        assertEquals(10, dist.getPopulationSize());
+        assertEquals(5, dist.getNumberOfSuccesses());
+        assertEquals(5, dist.getSampleSize());
+        assertTrue(dist.isSupportConnected());
+    }
+
+    @Test
+    public void testConstructorExceptions() {
+        try {
+            new HypergeometricDistribution(0, 1, 1);
+            org.junit.Assert.fail("Expected NotStrictlyPositiveException");
+        } catch (NotStrictlyPositiveException e) {
+            // expected
+        }
+
+        try {
+            new HypergeometricDistribution(10, -1, 5);
+            org.junit.Assert.fail("Expected NotPositiveException");
+        } catch (NotPositiveException e) {
+            // expected
+        }
+
+        try {
+            new HypergeometricDistribution(10, 5, -1);
+            org.junit.Assert.fail("Expected NotPositiveException");
+        } catch (NotPositiveException e) {
+            // expected
+        }
+
+        try {
+            new HypergeometricDistribution(10, 11, 5);
+            org.junit.Assert.fail("Expected NumberIsTooLargeException");
+        } catch (NumberIsTooLargeException e) {
+            // expected
+        }
+
+        try {
+            new HypergeometricDistribution(10, 5, 11);
+            org.junit.Assert.fail("Expected NumberIsTooLargeException");
+        } catch (NumberIsTooLargeException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testSupportBounds() {
+        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);
+        assertEquals(0, dist.getSupportLowerBound());
+        assertEquals(5, dist.getSupportUpperBound());
+
+        HypergeometricDistribution dist2 = new HypergeometricDistribution(10, 8, 7);
+        assertEquals(5, dist2.getSupportLowerBound());
+        assertEquals(7, dist2.getSupportUpperBound());
+    }
+
+    @Test
+    public void testProbabilityOutsideSupportIsZero() {
+        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+        assertEquals(0.0, dist.probability(lower - 1), EPS);
+        assertEquals(0.0, dist.probability(upper + 1), EPS);
+        assertTrue(dist.probability(lower) > 0.0);
+        assertTrue(dist.probability(upper) > 0.0);
+    }
+
+    @Test
+    public void testCumulativeProbabilityBoundsAndSum() {
+        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);
+        int lower = dist.getSupportLowerBound();
+        int upper = dist.getSupportUpperBound();
+
+        assertEquals(0.0, dist.cumulativeProbability(lower - 1), EPS);
+        assertEquals(1.0, dist.cumulativeProbability(upper), EPS);
+
+        double sum = 0.0;
+        double prev = 0.0;
+        for (int x = lower; x <= upper; x++) {
+            sum += dist.probability(x);
+            double cdf = dist.cumulativeProbability(x);
+            assertTrue(cdf >= prev - EPS);
+            prev = cdf;
+        }
+        assertEquals(1.0, sum, EPS);
+
+        assertEquals(1.0, dist.upperCumulativeProbability(lower), EPS);
+        assertEquals(0.0, dist.upperCumulativeProbability(upper + 1), EPS);
+    }
+
+    @Test
+    public void testNumericalMeanAndVariance() {
+        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);
+        double expectedMean = (5.0 * 5.0) / 10.0;
+        assertEquals(expectedMean, dist.getNumericalMean(), EPS);
+
+        double N = 10.0, m = 5.0, n = 5.0;
+        double expectedVariance = (n * m * (N - n) * (N - m)) / (N * N * (N - 1));
+        assertEquals(expectedVariance, dist.getNumericalVariance(), EPS);
+    }
+
+    @Test
+    public void testSinglePointSupport() {
+        HypergeometricDistribution dist = new HypergeometricDistribution(1, 1, 1);
+        assertEquals(1, dist.getSupportLowerBound());
+        assertEquals(1, dist.getSupportUpperBound());
+        assertEquals(1.0, dist.probability(1), EPS);
+        assertEquals(1.0, dist.cumulativeProbability(1), EPS);
+        assertEquals(0.0, dist.cumulativeProbability(0), EPS);
+    }
+
+    @Test
+    public void testSmallValuesNoOffByOne() {
+        HypergeometricDistribution dist = new HypergeometricDistribution(5, 0, 3);
+        assertEquals(0, dist.getSupportLowerBound());
+        assertEquals(0, dist.getSupportUpperBound());
+        assertEquals(1.0, dist.probability(0), EPS);
+        assertEquals(1.0, dist.cumulativeProbability(0), EPS);
+        assertEquals(0.0, dist.probability(1), EPS);
+    }
+}

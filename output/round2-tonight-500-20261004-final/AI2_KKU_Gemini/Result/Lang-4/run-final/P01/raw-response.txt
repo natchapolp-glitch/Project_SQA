@@ -1,0 +1,9 @@
+- Valid receiver setup: Instantiate `LookupTranslator` with a non-null 2D array of lookup character sequences (e.g., `new CharSequence[][]{{"key", "value"}}`).
+- Boundary: Pass a `null` lookup array to the constructor or an array containing `null` entries to verify exception handling.
+- Boundary: Translate with an input `CharSequence` where length is 0 (empty string) or index `index` is at the boundaries (0 and `input.length()`).
+- Behavior: `translate` must return 0 when the remaining input at `index` does not match any key in the lookup map.
+- Behavior: `translate` must correctly write the mapped replacement to the `Writer` and return the exact consumed character length of the matched key.
+- Boundary: Overlapping keys in the lookup map (e.g., `"a"` and `"ab"`); translator should prioritize the longest match according to `longest`.
+- Boundary: Input string shorter than the shortest lookup key (`shortest`); verify no translation occurs and 0 is returned.
+- Behavior: When input is `null` at `translate`, or `Writer` is `null`, adhere to contract (typically throw `IllegalArgumentException` or `IOException`).
+- Behavior: Ensure `shortest` and `longest` internal fields correctly compute the min and max lengths of provided keys upon construction.

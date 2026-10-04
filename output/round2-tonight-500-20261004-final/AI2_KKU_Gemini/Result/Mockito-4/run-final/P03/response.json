@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:35:50.877083+00:00",
+  "ended_at_utc": "2026-10-04T09:35:53.627800+00:00",
+  "raw_body_sha256": "4391ade909ddcbf999d372618ab49c529e72605e7acdb0c551e69cb07e21bdce",
+  "body": {
+    "id": "genai-01a10645-1eda-71d4-892e-2ad18db15c9d",
+    "object": "chat.completion",
+    "created": 1791106555,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.mockito.exceptions;\n\nimport org.junit.Test;\nimport org.mockito.exceptions.base.MockitoException;\nimport org.mockito.exceptions.misusing.InvalidUseOfMatchersException;\nimport org.mockito.exceptions.misusing.MissingMethodInvocationException;\nimport org.mockito.exceptions.misusing.NotAMockException;\nimport org.mockito.exceptions.misusing.NullInsteadOfMockException;\nimport org.mockito.exceptions.misusing.UnfinishedStubbingException;\nimport org.mockito.exceptions.misusing.UnfinishedVerificationException;\nimport org.mockito.internal.matchers.LocalizedMatcher;\n\nimport java.util.ArrayList;\nimport java.util.List;\n\npublic class ReporterTest {\n\n    @Test(expected = MockitoException.class)\n    public void testCheckedExceptionInvalid() {\n        Reporter reporter = new Reporter();\n        reporter.checkedExceptionInvalid(new Exception(\"test\"));\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testCannotStubWithNullThrowable() {\n        Reporter reporter = new Reporter();\n        reporter.cannotStubWithNullThrowable();\n    }\n\n    @Test(expected = UnfinishedStubbingException.class)\n    public void testUnfinishedStubbing() {\n        Reporter reporter = new Reporter();\n        reporter.unfinishedStubbing(null);\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testIncorrectUseOfApi() {\n        Reporter reporter = new Reporter();\n        reporter.incorrectUseOfApi();\n    }\n\n    @Test(expected = MissingMethodInvocationException.class)\n    public void testMissingMethodInvocation() {\n        Reporter reporter = new Reporter();\n        reporter.missingMethodInvocation();\n    }\n\n    @Test(expected = UnfinishedVerificationException.class)\n    public void testUnfinishedVerificationException() {\n        Reporter reporter = new Reporter();\n        reporter.unfinishedVerificationException(null);\n    }\n\n    @Test(expected = NotAMockException.class)\n    public void testNotAMockPassedToVerify() {\n        Reporter reporter = new Reporter();\n        reporter.notAMockPassedToVerify(String.class);\n    }\n\n    @Test(expected = NullInsteadOfMockException.class)\n    public void testNullPassedToVerify() {\n        Reporter reporter = new Reporter();\n        reporter.nullPassedToVerify();\n    }\n\n    @Test(expected = InvalidUseOfMatchersException.class)\n    public void testInvalidUseOfMatchers() {\n        Reporter reporter = new Reporter();\n        List<LocalizedMatcher> matchers = new ArrayList<LocalizedMatcher>();\n        reporter.invalidUseOfMatchers(2, matchers);\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testStubPassedToVerify() {\n        Reporter reporter = new Reporter();\n        reporter.stubPassedToVerify();\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testCannotMockFinalClass() {\n        Reporter reporter = new Reporter();\n        reporter.cannotMockFinalClass(String.class);\n    }\n\n    @Test(expected = MockitoException.class)\n    public void testWantedAtMostX() {\n        Reporter reporter = new Reporter();\n        reporter.wantedAtMostX(5, 10);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6027,
+      "completion_tokens": 751,
+      "total_tokens": 6778
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 121415,
+      "daily_remaining_tokens": 228585
+    }
+  },
+  "headers": {
+    "x-request-id": "lgv7281bunka8ophp9isht16",
+    "date": "Sun, 04 Oct 2026 09:35:55 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

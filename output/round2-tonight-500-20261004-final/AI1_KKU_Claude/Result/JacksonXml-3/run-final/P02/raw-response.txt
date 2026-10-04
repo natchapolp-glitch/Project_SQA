@@ -1,0 +1,108 @@
+```java
+package com.fasterxml.jackson.dataformat.xml.deser;
+
+import java.io.IOException;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
+
+public class FromXmlParserTest
+{
+    private FromXmlParser createParser(String xml) throws IOException {
+        XmlFactory f = new XmlFactory();
+        return (FromXmlParser) f.createParser(xml);
+    }
+
+    @Test
+    public void testSimpleTextValue() throws IOException {
+        FromXmlParser p = createParser("<root>value</root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        assertEquals("value", p.getText());
+        assertEquals("value", p.getValueAsString());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testEmptyElementTextIsEmptyString() throws IOException {
+        FromXmlParser p = createParser("<root></root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        JsonToken t = p.nextToken();
+        assertEquals(JsonToken.VALUE_STRING, t);
+        assertEquals("", p.getText());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testNextTextValueMatchesNextTokenGetText() throws IOException {
+        FromXmlParser p1 = createParser("<root>hello</root>");
+        assertEquals(JsonToken.START_OBJECT, p1.nextToken());
+        String text1 = p1.nextTextValue();
+        assertEquals("hello", text1);
+        p1.close();
+
+        FromXmlParser p2 = createParser("<root>hello</root>");
+        assertEquals(JsonToken.START_OBJECT, p2.nextToken());
+        assertEquals(JsonToken.VALUE_STRING, p2.nextToken());
+        assertEquals("hello", p2.getText());
+        p2.close();
+    }
+
+    @Test
+    public void testNextTextValueReturnsNullForNonTextToken() throws IOException {
+        FromXmlParser p = createParser("<root><child>v</child></root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        String val = p.nextTextValue();
+        assertNull(val);
+        assertEquals(JsonToken.START_OBJECT, p.currentToken());
+        p.close();
+    }
+
+    @Test
+    public void testGetValueAsStringWithDefaultOnNonTextToken() throws IOException {
+        FromXmlParser p = createParser("<root><child>v</child></root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals("fallback", p.getValueAsString("fallback"));
+        p.close();
+    }
+
+    @Test
+    public void testRepeatedGetTextCallsIdempotent() throws IOException {
+        FromXmlParser p = createParser("<root>repeat</root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.VALUE_STRING, p.nextToken());
+        String first = p.getText();
+        String second = p.getText();
+        assertEquals(first, second);
+        assertEquals("repeat", first);
+        p.close();
+    }
+
+    @Test
+    public void testOverrideCurrentNameAffectsGetCurrentName() throws IOException {
+        FromXmlParser p = createParser("<root><child>v</child></root>");
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("child", p.getCurrentName());
+        p.overrideCurrentName("renamed");
+        assertEquals("renamed", p.getCurrentName());
+        p.close();
+    }
+
+    @Test
+    public void testCloseIsIdempotentAndSetsClosedFlag() throws IOException {
+        FromXmlParser p = createParser("<root>text</root>");
+        assertFalse(p.isClosed());
+        p.close();
+        assertTrue(p.isClosed());
+        p.close();
+        assertTrue(p.isClosed());
+    }
+}
+```

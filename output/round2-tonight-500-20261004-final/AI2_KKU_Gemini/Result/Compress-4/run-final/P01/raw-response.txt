@@ -1,0 +1,7 @@
+Valid receiver setup: Instantiate archive output streams (`CpioArchiveOutputStream`, `TarArchiveOutputStream`, `ZipArchiveOutputStream`) wrapping a `ByteArrayOutputStream` or temporary `File`.
+Behavior: `putArchiveEntry` must correctly handle entries with valid metadata (names, sizes, formats) and reject invalid or duplicate states.
+Behavior: `closeArchiveEntry` and `finish` must properly write trailers, paddings, and end-of-archive markers without throwing unexpected IOExceptions.
+Boundary: Writing zero bytes or empty entries vs. writing large data streams exceeding entry size bounds.
+Boundary: Long file names and special flags (e.g., Tar long file modes, Zip UTF-8/EFS flags, Cpio formats) at their boundaries.
+Behavior: `ChangeSetPerformer` correctly applies additions, deletions, and modifications to existing archives without corrupting entry streams.
+Behavior: Calling `write`, `closeArchiveEntry`, or `finish` on closed or uninitialized stream states must throw appropriate `IOException` or `IllegalStateException`.

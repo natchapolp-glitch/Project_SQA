@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:30:22.930697+00:00",
+  "ended_at_utc": "2026-10-04T03:30:35.449600+00:00",
+  "raw_body_sha256": "2feca1efb5102165a5b1fb8845206c9270c50bcaaec08e98747d0a79e1e7053b",
+  "body": {
+    "id": "gen-1791084624-EKrVQlzyhG8k6ulblab5",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jfree.chart.renderer.category;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\n\nimport org.jfree.data.Range;\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\nimport org.junit.Test;\n\npublic class AbstractCategoryItemRendererTest {\n\n    private AbstractCategoryItemRenderer createRenderer() {\n        return new LineAndShapeRenderer();\n    }\n\n    @Test\n    public void findRangeBounds_nullDataset_returnsNull() {\n        AbstractCategoryItemRenderer renderer = createRenderer();\n        Range range = renderer.findRangeBounds((CategoryDataset) null);\n        assertNull(range);\n    }\n\n    @Test\n    public void findRangeBounds_emptyDataset_returnsNull() {\n        AbstractCategoryItemRenderer renderer = createRenderer();\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        Range range = renderer.findRangeBounds(dataset);\n        assertNull(range);\n    }\n\n    @Test\n    public void findRangeBounds_singleValue_returnsEqualBounds() {\n        AbstractCategoryItemRenderer renderer = createRenderer();\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(5.0, \"Row1\", \"Col1\");\n        Range range = renderer.findRangeBounds(dataset);\n        assertEquals(5.0, range.getLowerBound(), 0.0001);\n        assertEquals(5.0, range.getUpperBound(), 0.0001);\n    }\n\n    @Test\n    public void findRangeBounds_multipleValues_returnsMinMax() {\n        AbstractCategoryItemRenderer renderer = createRenderer();\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(1.0, \"Row1\", \"Col1\");\n        dataset.addValue(10.0, \"Row1\", \"Col2\");\n        dataset.addValue(-3.0, \"Row2\", \"Col1\");\n        dataset.addValue(7.0, \"Row2\", \"Col2\");\n        Range range = renderer.findRangeBounds(dataset);\n        assertEquals(-3.0, range.getLowerBound(), 0.0001);\n        assertEquals(10.0, range.getUpperBound(), 0.0001);\n    }\n\n    @Test\n    public void findRangeBounds_nullValuesIgnored() {\n        AbstractCategoryItemRenderer renderer = createRenderer();\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(2.0, \"Row1\", \"Col1\");\n        dataset.addValue((Number) null, \"Row1\", \"Col2\");\n        dataset.addValue(4.0, \"Row2\", \"Col1\");\n        Range range = renderer.findRangeBounds(dataset);\n        assertEquals(2.0, range.getLowerBound(), 0.0001);\n        assertEquals(4.0, range.getUpperBound(), 0.0001);\n    }\n\n    @Test\n    public void findRangeBounds_allNullValues_returnsNull() {\n        AbstractCategoryItemRenderer renderer = createRenderer();\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue((Number) null, \"Row1\", \"Col1\");\n        dataset.addValue((Number) null, \"Row2\", \"Col1\");\n        Range range = renderer.findRangeBounds(dataset);\n        assertNull(range);\n    }\n\n    @Test\n    public void findRangeBounds_negativeOnlyValues_correctBounds() {\n        AbstractCategoryItemRenderer renderer = createRenderer();\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(-5.0, \"Row1\", \"Col1\");\n        dataset.addValue(-1.0, \"Row1\", \"Col2\");\n        dataset.addValue(-10.0, \"Row2\", \"Col1\");\n        Range range = renderer.findRangeBounds(dataset);\n        assertEquals(-10.0, range.getLowerBound(), 0.0001);\n        assertEquals(-1.0, range.getUpperBound(), 0.0001);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8872,
+      "output_tokens": 1523,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.032974,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.032974,
+        "upstream_inference_prompt_cost": 0.017744,
+        "upstream_inference_completions_cost": 0.01523
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 86422,
+      "daily_remaining_tokens": 113578
+    }
+  },
+  "headers": {
+    "x-request-id": "qwke54b92nyeewegax8ir47t",
+    "date": "Sun, 04 Oct 2026 03:30:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

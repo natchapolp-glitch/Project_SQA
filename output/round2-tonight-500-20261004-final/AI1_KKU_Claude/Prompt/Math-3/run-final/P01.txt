@@ -1,0 +1,52 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Math-3
+Java 11, JUnit 4
+Modified classes: org.apache.commons.math3.util.MathArrays
+BUGGY API signatures:
+Compiled from "MathArrays.java"
+public class org.apache.commons.math3.util.MathArrays {
+  private static final int SPLIT_FACTOR;
+  private org.apache.commons.math3.util.MathArrays();
+  public static double[] scale(double, double[]);
+  public static void scaleInPlace(double, double[]);
+  public static double[] ebeAdd(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double[] ebeSubtract(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double[] ebeMultiply(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double[] ebeDivide(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double distance1(double[], double[]);
+  public static int distance1(int[], int[]);
+  public static double distance(double[], double[]);
+  public static double distance(int[], int[]);
+  public static double distanceInf(double[], double[]);
+  public static int distanceInf(int[], int[]);
+  public static <T extends java.lang.Comparable<? super T>> boolean isMonotonic(T[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean);
+  public static boolean isMonotonic(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean);
+  public static boolean checkOrder(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean, boolean) throws org.apache.commons.math3.exception.NonMonotonicSequenceException;
+  public static void checkOrder(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, boolean) throws org.apache.commons.math3.exception.NonMonotonicSequenceException;
+  public static void checkOrder(double[]) throws org.apache.commons.math3.exception.NonMonotonicSequenceException;
+  public static void checkRectangular(long[][]) throws org.apache.commons.math3.exception.NullArgumentException, org.apache.commons.math3.exception.DimensionMismatchException;
+  public static void checkPositive(double[]) throws org.apache.commons.math3.exception.NotStrictlyPositiveException;
+  public static void checkNonNegative(long[]) throws org.apache.commons.math3.exception.NotPositiveException;
+  public static void checkNonNegative(long[][]) throws org.apache.commons.math3.exception.NotPositiveException;
+  public static double safeNorm(double[]);
+  public static void sortInPlace(double[], double[]...) throws org.apache.commons.math3.exception.DimensionMismatchException, org.apache.commons.math3.exception.NullArgumentException;
+  public static void sortInPlace(double[], org.apache.commons.math3.util.MathArrays$OrderDirection, double[]...) throws org.apache.commons.math3.exception.NullArgumentException, org.apache.commons.math3.exception.DimensionMismatchException;
+  public static int[] copyOf(int[]);
+  public static double[] copyOf(double[]);
+  public static int[] copyOf(int[], int);
+  public static double[] copyOf(double[], int);
+  public static double linearCombination(double[], double[]) throws org.apache.commons.math3.exception.DimensionMismatchException;
+  public static double linearCombination(double, double, double, double);
+  public static double linearCombination(double, double, double, double, double, double);
+  public static double linearCombination(double, double, double, double, double, double, double, double);
+  public static boolean equals(float[], float[]);
+  public static boolean equalsIncludingNaN(float[], float[]);
+  public static boolean equals(double[], double[]);
+  public static boolean equalsIncludingNaN(double[], double[]);
+  public static double[] normalizeArray(double[], double) throws org.apache.commons.math3.exception.MathIllegalArgumentException, org.apache.commons.math3.exception.MathArithmeticException;
+  public static <T> T[] buildArray(org.apache.commons.math3.Field<T>, int);
+  public static <T> T[][] buildArray(org.apache.commons.math3.Field<T>, int, int);
+  public static double[] convolve(double[], double[]) throws org.apache.commons.math3.exception.NullArgumentException, org.apache.commons.math3.exception.NoDataException;
+}
+

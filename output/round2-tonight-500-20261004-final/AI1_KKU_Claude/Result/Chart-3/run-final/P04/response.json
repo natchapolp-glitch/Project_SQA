@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:47:04.054369+00:00",
+  "ended_at_utc": "2026-10-04T06:47:10.012798+00:00",
+  "raw_body_sha256": "83f7abc0fd8e83b59f756f99380f8a6e9f271a66801085c23d3f72e5c5192d4a",
+  "body": {
+    "id": "gen-1791096424-hmLgenpHggCYaqTlwJaT",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jfree.data.time;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\n\npublic class TimeSeriesExtraTest {\n\n    @Test\n    public void setMaximumItemCount_negative_throwsException() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        try {\n            series.setMaximumItemCount(-1);\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void setMaximumItemAge_negative_throwsException() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        try {\n            series.setMaximumItemAge(-1L);\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void setMaximumItemCount_reducesExistingItems() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        Day day1 = new Day(1, 1, 2010);\n        Day day2 = new Day(2, 1, 2010);\n        Day day3 = new Day(3, 1, 2010);\n        series.add(day1, 10.0);\n        series.add(day2, 20.0);\n        series.add(day3, 30.0);\n\n        series.setMaximumItemCount(2);\n\n        assertEquals(2, series.getItemCount());\n        assertNull(series.getDataItem(day1));\n        assertEquals(20.0, series.getValue(day2).doubleValue(), 0.0001);\n        assertEquals(30.0, series.getValue(day3).doubleValue(), 0.0001);\n    }\n\n    @Test\n    public void getDomainAndRangeDescriptions_defaultValues() {\n        TimeSeries series = new TimeSeries(\"Test\");\n        assertEquals(\"Time\", series.getDomainDescription());\n        assertEquals(\"Value\", series.getRangeDescription());\n\n        series.setDomainDescription(\"MyDomain\");\n        series.setRangeDescription(\"MyRange\");\n\n        assertEquals(\"MyDomain\", series.getDomainDescription());\n        assertEquals(\"MyRange\", series.getRangeDescription());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8420,
+      "output_tokens": 752,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02436,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02436,
+        "upstream_inference_prompt_cost": 0.01684,
+        "upstream_inference_completions_cost": 0.00752
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 117124,
+      "daily_remaining_tokens": 82876
+    }
+  },
+  "headers": {
+    "x-request-id": "rueo65ej3bjqjqg9i8p0ptk3",
+    "date": "Sun, 04 Oct 2026 06:47:10 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

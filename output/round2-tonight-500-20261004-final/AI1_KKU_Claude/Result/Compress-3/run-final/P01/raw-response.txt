@@ -1,0 +1,10 @@
+- Valid receiver: construct with a `ByteArrayOutputStream`/`OutputStream` wrapped in `TarArchiveOutputStream`, optionally with custom blockSize/recordSize.
+- `putArchiveEntry`/`write`/`closeArchiveEntry` for a normal small file: verify written bytes match entry size and content round-trips when re-read via `TarArchiveInputStream`.
+- Writing more bytes than declared entry size via `write` should throw `IOException` ("request to write...bytes exceeds size...").
+- Closing an entry (`closeArchiveEntry`) before writing all declared bytes should throw `IOException` (size mismatch detection).
+- Entry name length boundary: name <=100 chars writes fine; name >100 chars with `LONGFILE_ERROR` (default) throws `RuntimeException`; with `LONGFILE_TRUNCATE` truncates to 100 chars; with `LONGFILE_GNU` writes extra GNU long-name header entry correctly.
+- `finish()` must write two EOF records and be callable only once; calling `write`/`putArchiveEntry` after `finish()` or `close()` should fail appropriately.
+- `close()` without prior `finish()` should implicitly call `finish()`, flush and close underlying stream without exception.
+- Multiple entries in sequence: verify correct padding to record size boundaries between entries.
+- Zero-byte entry: `putArchiveEntry` then immediately `closeArchiveEntry` with no `write` calls should succeed without exception.
+- `getRecordSize()` should return the record size matching constructor argument (e.g., default 512 or custom value).

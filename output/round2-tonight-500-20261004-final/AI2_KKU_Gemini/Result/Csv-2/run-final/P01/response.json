@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:45:28.664859+00:00",
+  "ended_at_utc": "2026-10-04T05:45:30.775891+00:00",
+  "raw_body_sha256": "45a8f8bddb7acbefcdb501ac53603c676e23772ae134de3f4ded54db29420557",
+  "body": {
+    "id": "genai-01a10572-3167-79ad-86c6-bb6e94c14ee7",
+    "object": "chat.completion",
+    "created": 1791092732,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "Valid receiver setup: instantiate `CSVRecord` with a string array of values, a mapping of headers to indices (`Map<String, Integer>`), a comment string, and a record number.\nBoundary condition: calling `get(String)` or `get(int)` with column names or indices outside the defined mapping or array bounds.\nBehavior: `get(String)` must correctly retrieve values using the header name from the mapping.\nBehavior: `get(int)` must retrieve values by exact array index without throwing unexpected exceptions when valid.\nBoundary condition: mapping contains keys, but the values array is shorter than the mapped indices (inconsistent state).\nBehavior: `isConsistent()` should return false if the record's value array length differs from mapping expectations, and true otherwise.\nBehavior: `isMapped(String)` should return true only if the given header exists in the mapping.\nBehavior: `isSet(String)` should return true if the header is mapped *and* the corresponding index points to a non-null value within the values array bounds.\nBehavior: `size()` must return the exact length of the underlying values array.\nBehavior: `iterator()` must iterate sequentially over all elements in the values array.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 414,
+      "completion_tokens": 252,
+      "total_tokens": 666
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 32226,
+      "daily_remaining_tokens": 317774
+    }
+  },
+  "headers": {
+    "x-request-id": "hqwrahdmau1noo5aeov4849k",
+    "date": "Sun, 04 Oct 2026 05:45:32 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

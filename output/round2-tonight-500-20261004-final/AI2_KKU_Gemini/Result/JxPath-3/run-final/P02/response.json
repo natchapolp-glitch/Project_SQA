@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:44:23.682960+00:00",
+  "ended_at_utc": "2026-10-04T07:44:26.231392+00:00",
+  "raw_body_sha256": "c7d91c4dffbb540b5bb7d690f8ebfa996e56577aa25533f2c7f6160bcd03bf07",
+  "body": {
+    "id": "genai-01a105df-15e4-7d22-ad76-086e9efd530d",
+    "object": "chat.completion",
+    "created": 1791099868,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.jxpath.ri.model.beans;\n\nimport org.apache.commons.jxpath.JXPathContext;\nimport org.apache.commons.jxpath.JXPathInvalidAccessException;\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.model.NodePointer;\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class NullPropertyPointerTest {\n\n    @Test\n    public void testInitialState() {\n        NodePointer parent = new NullPointer(new QName(\"test\"));\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n\n        assertEquals(\"*\", pointer.getPropertyName());\n        assertEquals(0, pointer.getLength());\n        assertNull(pointer.getBaseValue());\n        assertNull(pointer.getImmediateNode());\n        assertTrue(pointer.isLeaf());\n        assertFalse(pointer.isActual());\n        assertTrue(pointer.isContainer());\n        assertEquals(0, pointer.getPropertyCount());\n        assertArrayEquals(new String[0], pointer.getPropertyNames());\n    }\n\n    @Test\n    public void testPropertyNameAndNameAttribute() {\n        NodePointer parent = new NullPointer(new QName(\"test\"));\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n\n        pointer.setPropertyName(\"foo\");\n        assertEquals(\"foo\", pointer.getPropertyName());\n        assertEquals(\"foo\", pointer.getName().getName());\n\n        pointer.setNameAttributeValue(\"bar's name\");\n        assertEquals(\"bar&apos;s name\", pointer.getPropertyName());\n        assertTrue(pointer.asPath().contains(\"[@name='bar&apos;s name']\"));\n    }\n\n    @Test\n    public void testValuePointer() {\n        NodePointer parent = new NullPointer(new QName(\"test\"));\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n        pointer.setPropertyName(\"childProp\");\n\n        NodePointer valuePtr = pointer.getValuePointer();\n        assertNotNull(valuePtr);\n        assertEquals(\"childProp\", valuePtr.getName().getName());\n    }\n\n    @Test(expected = JXPathInvalidAccessException.class)\n    public void testSetValueWithNullParent() {\n        NullPropertyPointer pointer = new NullPropertyPointer(null);\n        pointer.setValue(\"value\");\n    }\n\n    @Test\n    public void testIsCollection() {\n        NodePointer parent = new NullPointer(new QName(\"test\"));\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n\n        assertFalse(pointer.isCollection());\n        pointer.setIndex(0);\n        assertTrue(pointer.isCollection());\n    }\n\n    @Test\n    public void testCreateChild() {\n        NodePointer parent = new NullPointer(new QName(\"test\"));\n        NullPropertyPointer pointer = new NullPropertyPointer(parent);\n        JXPathContext context = JXPathContext.newContext(new Object());\n\n        try {\n            pointer.createChild(context, new QName(\"sub\"), 0);\n        } catch (Exception e) {\n            assertNotNull(e);\n        }\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2704,
+      "completion_tokens": 704,
+      "total_tokens": 3408
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 93585,
+      "daily_remaining_tokens": 256415
+    }
+  },
+  "headers": {
+    "x-request-id": "juan627xqvml8z4a7yvxnh5c",
+    "date": "Sun, 04 Oct 2026 07:44:28 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

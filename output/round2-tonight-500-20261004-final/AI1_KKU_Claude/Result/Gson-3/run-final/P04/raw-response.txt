@@ -1,0 +1,69 @@
+```java
+package com.google.gson.internal;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+import org.junit.Test;
+
+import com.google.gson.InstanceCreator;
+import com.google.gson.reflect.TypeToken;
+
+public class ConstructorConstructorExtraTest {
+
+  private enum Color { RED, GREEN, BLUE }
+
+  private static ConstructorConstructor newCC() {
+    return new ConstructorConstructor(Collections.<Type, InstanceCreator<?>>emptyMap());
+  }
+
+  @Test
+  public void setInterfaceUsesLinkedHashSet() {
+    ConstructorConstructor cc = newCC();
+    ObjectConstructor<Set> ctor = cc.get(TypeToken.get(Set.class));
+    Object result = ctor.construct();
+    assertNotNull(result);
+    assertTrue(result instanceof java.util.LinkedHashSet);
+  }
+
+  @Test
+  public void queueInterfaceUsesLinkedList() {
+    ConstructorConstructor cc = newCC();
+    ObjectConstructor<Queue> ctor = cc.get(TypeToken.get(Queue.class));
+    Object result = ctor.construct();
+    assertNotNull(result);
+    assertTrue(result instanceof java.util.LinkedList);
+  }
+
+  @Test
+  public void parameterizedMapWithStringKeyUsesLinkedTreeMap() {
+    ConstructorConstructor cc = newCC();
+    Type mapOfStringString = new TypeToken<Map<String, String>>() {}.getType();
+    ObjectConstructor<Map<String, String>> ctor =
+        cc.get((TypeToken<Map<String, String>>) TypeToken.get(mapOfStringString));
+    Object result = ctor.construct();
+    assertNotNull(result);
+    assertTrue(result instanceof LinkedTreeMap);
+  }
+
+  @Test
+  public void enumSetConstructsCorrectly() {
+    ConstructorConstructor cc = newCC();
+    Type enumSetOfColor = new TypeToken<EnumSet<Color>>() {}.getType();
+    ObjectConstructor<EnumSet<Color>> ctor =
+        cc.get((TypeToken<EnumSet<Color>>) TypeToken.get(enumSetOfColor));
+    EnumSet<Color> result = ctor.construct();
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+  }
+}
+```

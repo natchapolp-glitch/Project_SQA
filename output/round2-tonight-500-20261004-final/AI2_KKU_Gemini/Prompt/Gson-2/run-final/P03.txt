@@ -1,0 +1,609 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Gson-2
+Java 11, JUnit 4
+Modified classes: com.google.gson.internal.bind.TypeAdapters
+
+BUGGY API signatures (may include private members):
+Compiled from "TypeAdapters.java"
+public final class com.google.gson.internal.bind.TypeAdapters {
+  public static final com.google.gson.TypeAdapter<java.lang.Class> CLASS;
+  public static final com.google.gson.TypeAdapterFactory CLASS_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.util.BitSet> BIT_SET;
+  public static final com.google.gson.TypeAdapterFactory BIT_SET_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.Boolean> BOOLEAN;
+  public static final com.google.gson.TypeAdapter<java.lang.Boolean> BOOLEAN_AS_STRING;
+  public static final com.google.gson.TypeAdapterFactory BOOLEAN_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.Number> BYTE;
+  public static final com.google.gson.TypeAdapterFactory BYTE_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.Number> SHORT;
+  public static final com.google.gson.TypeAdapterFactory SHORT_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.Number> INTEGER;
+  public static final com.google.gson.TypeAdapterFactory INTEGER_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.Number> LONG;
+  public static final com.google.gson.TypeAdapter<java.lang.Number> FLOAT;
+  public static final com.google.gson.TypeAdapter<java.lang.Number> DOUBLE;
+  public static final com.google.gson.TypeAdapter<java.lang.Number> NUMBER;
+  public static final com.google.gson.TypeAdapterFactory NUMBER_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.Character> CHARACTER;
+  public static final com.google.gson.TypeAdapterFactory CHARACTER_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.String> STRING;
+  public static final com.google.gson.TypeAdapter<java.math.BigDecimal> BIG_DECIMAL;
+  public static final com.google.gson.TypeAdapter<java.math.BigInteger> BIG_INTEGER;
+  public static final com.google.gson.TypeAdapterFactory STRING_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.StringBuilder> STRING_BUILDER;
+  public static final com.google.gson.TypeAdapterFactory STRING_BUILDER_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.lang.StringBuffer> STRING_BUFFER;
+  public static final com.google.gson.TypeAdapterFactory STRING_BUFFER_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.net.URL> URL;
+  public static final com.google.gson.TypeAdapterFactory URL_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.net.URI> URI;
+  public static final com.google.gson.TypeAdapterFactory URI_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.net.InetAddress> INET_ADDRESS;
+  public static final com.google.gson.TypeAdapterFactory INET_ADDRESS_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.util.UUID> UUID;
+  public static final com.google.gson.TypeAdapterFactory UUID_FACTORY;
+  public static final com.google.gson.TypeAdapterFactory TIMESTAMP_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.util.Calendar> CALENDAR;
+  public static final com.google.gson.TypeAdapterFactory CALENDAR_FACTORY;
+  public static final com.google.gson.TypeAdapter<java.util.Locale> LOCALE;
+  public static final com.google.gson.TypeAdapterFactory LOCALE_FACTORY;
+  public static final com.google.gson.TypeAdapter<com.google.gson.JsonElement> JSON_ELEMENT;
+  public static final com.google.gson.TypeAdapterFactory JSON_ELEMENT_FACTORY;
+  public static final com.google.gson.TypeAdapterFactory ENUM_FACTORY;
+  private com.google.gson.internal.bind.TypeAdapters();
+  public static <TT> com.google.gson.TypeAdapterFactory newFactory(com.google.gson.reflect.TypeToken<TT>, com.google.gson.TypeAdapter<TT>);
+  public static <TT> com.google.gson.TypeAdapterFactory newFactory(java.lang.Class<TT>, com.google.gson.TypeAdapter<TT>);
+  public static <TT> com.google.gson.TypeAdapterFactory newFactory(java.lang.Class<TT>, java.lang.Class<TT>, com.google.gson.TypeAdapter<? super TT>);
+  public static <TT> com.google.gson.TypeAdapterFactory newFactoryForMultipleTypes(java.lang.Class<TT>, java.lang.Class<? extends TT>, com.google.gson.TypeAdapter<? super TT>);
+  public static <T1> com.google.gson.TypeAdapterFactory newTypeHierarchyFactory(java.lang.Class<T1>, com.google.gson.TypeAdapter<T1>);
+  static {};
+}
+
+
+BUGGY source excerpt: com.google.gson.internal.bind.TypeAdapters (truncated=True)
+```java
+/*
+ * Copyright (C) 2011 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.gson.internal.bind;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.internal.LazilyParsedNumber;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.sql.Timestamp;
+import java.util.BitSet;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.UUID;
+
+/**
+ * Type adapters for basic types.
+ */
+public final class TypeAdapters {
+  private TypeAdapters() {
+    throw new UnsupportedOperationException();
+  }
+
+  @SuppressWarnings("rawtypes")
+  public static final TypeAdapter<Class> CLASS = new TypeAdapter<Class>() {
+    @Override
+    public void write(JsonWriter out, Class value) throws IOException {
+      if (value == null) {
+        out.nullValue();
+      } else {
+        throw new UnsupportedOperationException("Attempted to serialize java.lang.Class: "
+            + value.getName() + ". Forgot to register a type adapter?");
+      }
+    }
+    @Override
+    public Class read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      } else {
+        throw new UnsupportedOperationException(
+            "Attempted to deserialize a java.lang.Class. Forgot to register a type adapter?");
+      }
+    }
+  };
+  public static final TypeAdapterFactory CLASS_FACTORY = newFactory(Class.class, CLASS);
+
+  public static final TypeAdapter<BitSet> BIT_SET = new TypeAdapter<BitSet>() {
+    public BitSet read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+
+      BitSet bitset = new BitSet();
+      in.beginArray();
+      int i = 0;
+      JsonToken tokenType = in.peek();
+      while (tokenType != JsonToken.END_ARRAY) {
+        boolean set;
+        switch (tokenType) {
+        case NUMBER:
+          set = in.nextInt() != 0;
+          break;
+        case BOOLEAN:
+          set = in.nextBoolean();
+          break;
+        case STRING:
+          String stringValue = in.nextString();
+          try {
+            set = Integer.parseInt(stringValue) != 0;
+          } catch (NumberFormatException e) {
+            throw new JsonSyntaxException(
+                "Error: Expecting: bitset number value (1, 0), Found: " + stringValue);
+          }
+          break;
+        default:
+          throw new JsonSyntaxException("Invalid bitset value type: " + tokenType);
+        }
+        if (set) {
+          bitset.set(i);
+        }
+        ++i;
+        tokenType = in.peek();
+      }
+      in.endArray();
+      return bitset;
+    }
+
+    public void write(JsonWriter out, BitSet src) throws IOException {
+      if (src == null) {
+        out.nullValue();
+        return;
+      }
+
+      out.beginArray();
+      for (int i = 0; i < src.length(); i++) {
+        int value = (src.get(i)) ? 1 : 0;
+        out.value(value);
+      }
+      out.endArray();
+    }
+  };
+
+  public static final TypeAdapterFactory BIT_SET_FACTORY = newFactory(BitSet.class, BIT_SET);
+
+  public static final TypeAdapter<Boolean> BOOLEAN = new TypeAdapter<Boolean>() {
+    @Override
+    public Boolean read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      } else if (in.peek() == JsonToken.STRING) {
+        // support strings for compatibility with GSON 1.7
+        return Boolean.parseBoolean(in.nextString());
+      }
+      return in.nextBoolean();
+    }
+    @Override
+    public void write(JsonWriter out, Boolean value) throws IOException {
+      if (value == null) {
+        out.nullValue();
+        return;
+      }
+      out.value(value);
+    }
+  };
+
+  /**
+   * Writes a boolean as a string. Useful for map keys, where booleans aren't
+   * otherwise permitted.
+   */
+  public static final TypeAdapter<Boolean> BOOLEAN_AS_STRING = new TypeAdapter<Boolean>() {
+    @Override public Boolean read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      return Boolean.valueOf(in.nextString());
+    }
+
+    @Override public void write(JsonWriter out, Boolean value) throws IOException {
+      out.value(value == null ? "null" : value.toString());
+    }
+  };
+
+  public static final TypeAdapterFactory BOOLEAN_FACTORY
+      = newFactory(boolean.class, Boolean.class, BOOLEAN);
+
+  public static final TypeAdapter<Number> BYTE = new TypeAdapter<Number>() {
+    @Override
+    public Number read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      try {
+        int intValue = in.nextInt();
+        return (byte) intValue;
+      } catch (NumberFormatException e) {
+        throw new JsonSyntaxException(e);
+      }
+    }
+    @Override
+    public void write(JsonWriter out, Number value) throws IOException {
+      out.value(value);
+    }
+  };
+
+  public static final TypeAdapterFactory BYTE_FACTORY
+      = newFactory(byte.class, Byte.class, BYTE);
+
+  public static final TypeAdapter<Number> SHORT = new TypeAdapter<Number>() {
+    @Override
+    public Number read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      try {
+        return (short) in.nextInt();
+      } catch (NumberFormatException e) {
+        throw new JsonSyntaxException(e);
+      }
+    }
+    @Override
+    public void write(JsonWriter out, Number value) throws IOException {
+      out.value(value);
+    }
+  };
+
+  public static final TypeAdapterFactory SHORT_FACTORY
+      = newFactory(short.class, Short.class, SHORT);
+
+  public static final TypeAdapter<Number> INTEGER = new TypeAdapter<Number>() {
+    @Override
+    public Number read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      try {
+        return in.nextInt();
+      } catch (NumberFormatException e) {
+        throw new JsonSyntaxException(e);
+      }
+    }
+    @Override
+    public void write(JsonWriter out, Number value) throws IOException {
+      out.value(value);
+    }
+  };
+
+  public static final TypeAdapterFactory INTEGER_FACTORY
+      = newFactory(int.class, Integer.class, INTEGER);
+
+  public static final TypeAdapter<Number> LONG = new TypeAdapter<Number>() {
+    @Override
+    public Number read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      try {
+        return in.nextLong();
+      } catch (NumberFormatException e) {
+        throw new JsonSyntaxException(e);
+      }
+    }
+    @Override
+    public void write(JsonWriter out, Number value) throws IOException {
+      out.value(value);
+    }
+  };
+
+  public static final TypeAdapter<Number> FLOAT = new TypeAdapter<Number>() {
+    @Override
+    public Number read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      return (float) in.nextDouble();
+    }
+    @Override
+    public void write(JsonWriter out, Number value) throws IOException {
+      out.value(value);
+    }
+  };
+
+  public static final TypeAdapter<Number> DOUBLE = new TypeAdapter<Number>() {
+    @Override
+    public Number read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      return in.nextDouble();
+    }
+    @Override
+    public void write(JsonWriter out, Number value) throws IOException {
+      out.value(value);
+    }
+  };
+
+  public static final TypeAdapter<Number> NUMBER = new TypeAdapter<Number>() {
+    @Override
+    public Number read(JsonReader in) throws IOException {
+      JsonToken jsonToken = in.peek();
+      switch (jsonToken) {
+      case NULL:
+        in.nextNull();
+        return null;
+      case NUMBER:
+        return new LazilyParsedNumber(in.nextString());
+      default:
+        throw new JsonSyntaxException("Expecting number, got: " + jsonToken);
+      }
+    }
+    @Override
+    public void write(JsonWriter out, Number value) throws IOException {
+      out.value(value);
+    }
+  };
+
+  public static final TypeAdapterFactory NUMBER_FACTORY = newFactory(Number.class, NUMBER);
+
+  public static final TypeAdapter<Character> CHARACTER = new TypeAdapter<Character>() {
+    @Override
+    public Character read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      String str = in.nextString();
+      if (str.length() != 1) {
+        throw new JsonSyntaxException("Expecting character, got: " + str);
+      }
+      return str.charAt(0);
+    }
+    @Override
+    public void write(JsonWriter out, Character value) throws IOException {
+      out.value(value == null ? null : String.valueOf(value));
+    }
+  };
+
+  public static final TypeAdapterFactory CHARACTER_FACTORY
+      = newFactory(char.class, Character.class, CHARACTER);
+
+  public static final TypeAdapter<String> STRING = new TypeAdapter<String>() {
+    @Override
+    public String read(JsonReader in) throws IOException {
+      JsonToken peek = in.peek();
+      if (peek == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      /* coerce booleans to strings for backwards compatibility */
+      if (peek == JsonToken.BOOLEAN) {
+        return Boolean.toString(in.nextBoolean());
+      }
+      return in.nextString();
+    }
+    @Override
+    public void write(JsonWriter out, String value) throws IOException {
+      out.value(value);
+    }
+  };
+  
+  public static final TypeAdapter<BigDecimal> BIG_DECIMAL = new TypeAdapter<BigDecimal>() {
+    @Override public BigDecimal read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      try {
+        return new BigDecimal(in.nextString());
+      } catch (NumberFormatException e) {
+        throw new JsonSyntaxException(e);
+      }
+    }
+
+    @Override public void write(JsonWriter out, BigDecimal value) throws IOException {
+      out.value(value);
+    }
+  };
+  
+  public static final TypeAdapter<BigInteger> BIG_INTEGER = new TypeAdapter<BigInteger>() {
+    @Override public BigInteger read(JsonReader in) throws IOException {
+      if (in.peek() == JsonToken.NULL) {
+        in.nextNull();
+        return null;
+      }
+      try {
+        return new BigInteger(in.nextString());
+      } catch (NumberFormatException e) {
+        throw new JsonSyntaxException(e);
+      }
+    }
+
+    @Override public void write(JsonWriter out, BigInteger value) throws IOException {
+   
+```
+
+
+Original generated source:
+```java
+package com.google.gson.internal.bind;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
+import java.util.BitSet;
+import java.util.UUID;
+import org.junit.Test;
+
+public class TypeAdaptersTest {
+
+  @Test
+  public void testBooleanAdapter() throws IOException {
+    TypeAdapter<Boolean> adapter = TypeAdapters.BOOLEAN;
+    String jsonTrue = adapter.toJson(true);
+    assertEquals("true", jsonTrue);
+
+    Boolean parsedTrue = adapter.fromJson("true");
+    assertTrue(parsedTrue);
+
+    Boolean parsedNull = adapter.fromJson("null");
+    assertNull(parsedNull);
+  }
+
+  @Test
+  public void testIntegerAdapter() throws IOException {
+    TypeAdapter<Number> adapter = TypeAdapters.INTEGER;
+    String json = adapter.toJson(123);
+    assertEquals("123", json);
+
+    Number parsed = adapter.fromJson("456");
+    assertEquals(456, parsed.intValue());
+
+    assertNull(adapter.fromJson("null"));
+  }
+
+  @Test(expected = JsonSyntaxException.class)
+  public void testIntegerAdapterInvalid() throws IOException {
+    TypeAdapters.INTEGER.fromJson("\"abc\"");
+  }
+
+  @Test
+  public void testStringAdapter() throws IOException {
+    TypeAdapter<String> adapter = TypeAdapters.STRING;
+    String json = adapter.toJson("hello");
+    assertEquals("\"hello\"", json);
+
+    String parsed = adapter.fromJson("\"world\"");
+    assertEquals("world", parsed);
+
+    assertNull(adapter.fromJson("null"));
+  }
+
+  @Test
+  public void testBitSetAdapter() throws IOException {
+    TypeAdapter<BitSet> adapter = TypeAdapters.BIT_SET;
+    BitSet bitSet = new BitSet();
+    bitSet.set(0);
+    bitSet.set(2);
+
+    String json = adapter.toJson(bitSet);
+    assertNotNull(json);
+
+    BitSet parsed = adapter.fromJson(json);
+    assertNotNull(parsed);
+    assertTrue(parsed.get(0));
+    assertTrue(!parsed.get(1));
+    assertTrue(parsed.get(2));
+
+    assertNull(adapter.fromJson("null"));
+  }
+
+  @Test
+  public void testUuidAdapter() throws IOException {
+    TypeAdapter<UUID> adapter = TypeAdapters.UUID;
+    UUID uuid = UUID.randomUUID();
+    String json = adapter.toJson(uuid);
+    assertNotNull(json);
+
+    UUID parsed = adapter.fromJson(json);
+    assertEquals(uuid, parsed);
+
+    assertNull(adapter.fromJson("null"));
+  }
+
+  @Test
+  public void testFactoryCreation() {
+    TypeAdapterFactory factory = TypeAdapters.newFactory(Integer.class, TypeAdapters.INTEGER);
+    assertNotNull(factory);
+    
+    Gson gson = new Gson();
+    assertNotNull(factory.create(gson, TypeToken.get(Integer.class)));
+  }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+.................... OK
+Running ant (compile.gen.tests)............................................ FAIL
+Executed command:  cd /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f && ant -f /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml -Dd4j.home=/home/team/sqa-round2/defects4j -Dd4j.dir.projects=/home/team/sqa-round2/defects4j/framework/projects -Dbasedir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f -Dd4j.test.dir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f/.test_suite compile.gen.tests 2>&1
+Buildfile: /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml
+
+test-offline:
+
+get-deps:
+
+gson-from-maven.compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f/gson/maven-build.xml:73: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+compile:
+
+compile.gen.tests:
+     [echo] classes.dir: target/classes
+     [echo] build.home: target/classes/..
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Gson-2/f/.test_suite/com/google/gson/internal/bind/TypeAdaptersTest.java:95: error: cannot find symbol
+    [javac]     TypeAdapterFactory factory = TypeAdapters.newFactory(Integer.class, TypeAdapters.INTEGER);
+    [javac]     ^
+    [javac]   symbol:   class TypeAdapterFactory
+    [javac]   location: class TypeAdaptersTest
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 1 second
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

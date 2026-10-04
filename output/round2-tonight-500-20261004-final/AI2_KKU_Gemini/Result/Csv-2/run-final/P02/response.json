@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:45:30.965398+00:00",
+  "ended_at_utc": "2026-10-04T05:45:34.211139+00:00",
+  "raw_body_sha256": "c9f71498d7188a268b555f4f5b1f99b2b046258d92a78b7f78aa531002079d0c",
+  "body": {
+    "id": "genai-01a10572-400a-710c-9e8a-ee205c9a9ead",
+    "object": "chat.completion",
+    "created": 1791092736,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.HashMap;\nimport java.util.Iterator;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVRecordTest {\n\n    @Test\n    public void testGetByIndex() {\n        String[] values = new String[] { \"A\", \"B\", \"C\" };\n        CSVRecord record = new CSVRecord(values, null, \"comment\", 1L);\n\n        assertEquals(\"A\", record.get(0));\n        assertEquals(\"B\", record.get(1));\n        assertEquals(\"C\", record.get(2));\n        assertEquals(\"comment\", record.getComment());\n        assertEquals(1L, record.getRecordNumber());\n        assertEquals(3, record.size());\n    }\n\n    @Test\n    public void testGetByName() {\n        String[] values = new String[] { \"Val1\", \"Val2\" };\n        Map<String, Integer> mapping = new HashMap<String, Integer>();\n        mapping.put(\"First\", 0);\n        mapping.put(\"Second\", 1);\n\n        CSVRecord record = new CSVRecord(values, mapping, null, 2L);\n\n        assertEquals(\"Val1\", record.get(\"First\"));\n        assertEquals(\"Val2\", record.get(\"Second\"));\n        assertNull(record.get(\"NonExistent\"));\n    }\n\n    @Test(expected = IllegalStateException.class)\n    public void testGetByNameWithoutMapping() {\n        String[] values = new String[] { \"Val1\" };\n        CSVRecord record = new CSVRecord(values, null, null, 1L);\n        record.get(\"First\");\n    }\n\n    @Test\n    public void testIsConsistent() {\n        String[] values = new String[] { \"A\", \"B\" };\n        Map<String, Integer> mapping = new HashMap<String, Integer>();\n        mapping.put(\"Col1\", 0);\n        mapping.put(\"Col2\", 1);\n\n        CSVRecord consistentRecord = new CSVRecord(values, mapping, null, 1L);\n        assertTrue(consistentRecord.isConsistent());\n\n        Map<String, Integer> inconsistentMapping = new HashMap<String, Integer>(mapping);\n        inconsistentMapping.put(\"Col3\", 2);\n        CSVRecord inconsistentRecord = new CSVRecord(values, inconsistentMapping, null, 2L);\n        assertFalse(inconsistentRecord.isConsistent());\n\n        CSVRecord noMappingRecord = new CSVRecord(values, null, null, 3L);\n        assertTrue(noMappingRecord.isConsistent());\n    }\n\n    @Test\n    public void testIsMappedAndIsSet() {\n        String[] values = new String[] { \"Val1\" };\n        Map<String, Integer> mapping = new HashMap<String, Integer>();\n        mapping.put(\"Present\", 0);\n        mapping.put(\"OutOfBounds\", 5);\n\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n\n        assertTrue(record.isMapped(\"Present\"));\n        assertTrue(record.isMapped(\"OutOfBounds\"));\n        assertFalse(record.isMapped(\"Missing\"));\n\n        assertTrue(record.isSet(\"Present\"));\n        assertFalse(record.isSet(\"OutOfBounds\"));\n        assertFalse(record.isSet(\"Missing\"));\n    }\n\n    @Test\n    public void testIteratorAndToString() {\n        String[] values = new String[] { \"X\", \"Y\" };\n        CSVRecord record = new CSVRecord(values, null, null, 1L);\n\n        Iterator<String> iterator = record.iterator();\n        assertTrue(iterator.hasNext());\n        assertEquals(\"X\", iterator.next());\n        assertTrue(iterator.hasNext());\n        assertEquals(\"Y\", iterator.next());\n        assertFalse(iterator.hasNext());\n\n        assertEquals(Arrays.toString(values), record.toString());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2055,
+      "completion_tokens": 923,
+      "total_tokens": 2978
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 35204,
+      "daily_remaining_tokens": 314796
+    }
+  },
+  "headers": {
+    "x-request-id": "ban01ihb40sm46zb8n2p1tji",
+    "date": "Sun, 04 Oct 2026 05:45:36 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:00:40.840931+00:00",
+  "ended_at_utc": "2026-10-04T07:00:55.755067+00:00",
+  "raw_body_sha256": "d5d0bebe9eb3be99c1c4aef94b9a4efcd7c927c78b385bbb384c45a519d2988e",
+  "body": {
+    "id": "gen-1791097241-cuwY8GmLh9z19POBxXX7",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.codec.language;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.apache.commons.codec.EncoderException;\nimport org.junit.Test;\n\npublic class DoubleMetaphoneTest {\n\n    @Test\n    public void testNullAndEmptyInput() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        assertEquals(null, metaphone.doubleMetaphone(null));\n        assertEquals(\"\", metaphone.doubleMetaphone(\"\"));\n        assertEquals(\"\", metaphone.doubleMetaphone(\"   \"));\n    }\n\n    @Test\n    public void testKnownEncodings() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        assertEquals(\"SMT\", metaphone.doubleMetaphone(\"Smith\"));\n        assertEquals(\"SMT\", metaphone.doubleMetaphone(\"Smyth\"));\n        assertEquals(metaphone.doubleMetaphone(\"Smith\"), metaphone.doubleMetaphone(\"Smyth\"));\n        assertEquals(\"JTRN\", metaphone.doubleMetaphone(\"Jane\"));\n        assertNotNull(metaphone.doubleMetaphone(\"Catherine\"));\n    }\n\n    @Test\n    public void testIsDoubleMetaphoneEqual() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        assertTrue(metaphone.isDoubleMetaphoneEqual(\"Smith\", \"Smyth\"));\n        assertTrue(metaphone.isDoubleMetaphoneEqual(\"Smith\", \"Smith\"));\n        assertFalse(metaphone.isDoubleMetaphoneEqual(\"Smith\", \"Jones\"));\n        assertTrue(metaphone.isDoubleMetaphoneEqual(\"Smith\", \"Smyth\", false));\n    }\n\n    @Test\n    public void testSilentStartPrefixes() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        String gn = metaphone.doubleMetaphone(\"Gnome\");\n        String kn = metaphone.doubleMetaphone(\"Knight\");\n        String pn = metaphone.doubleMetaphone(\"Pneumonia\");\n        String wr = metaphone.doubleMetaphone(\"Wrinkle\");\n        String ps = metaphone.doubleMetaphone(\"Psycho\");\n        assertNotNull(gn);\n        assertNotNull(kn);\n        assertNotNull(pn);\n        assertNotNull(wr);\n        assertNotNull(ps);\n        assertFalse(gn.startsWith(\"KN\"));\n    }\n\n    @Test\n    public void testMaxCodeLenGetterSetter() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        assertEquals(4, metaphone.getMaxCodeLen());\n        String longWord = \"Czerwinski\";\n        String defaultCode = metaphone.doubleMetaphone(longWord);\n        assertTrue(defaultCode.length() <= 4);\n\n        metaphone.setMaxCodeLen(6);\n        assertEquals(6, metaphone.getMaxCodeLen());\n        String longerCode = metaphone.doubleMetaphone(longWord);\n        assertTrue(longerCode.length() <= 6);\n        assertTrue(longerCode.length() >= defaultCode.length());\n\n        metaphone.setMaxCodeLen(1);\n        String shortCode = metaphone.doubleMetaphone(longWord);\n        assertTrue(shortCode.length() <= 1);\n    }\n\n    @Test\n    public void testEncodeObjectThrowsOnNonString() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        try {\n            metaphone.encode(Integer.valueOf(42));\n            org.junit.Assert.fail(\"Expected EncoderException\");\n        } catch (EncoderException e) {\n            assertTrue(e.getMessage().contains(\"DoubleMetaphone\"));\n        }\n    }\n\n    @Test\n    public void testEncodeStringMatchesPrimary() throws EncoderException {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        String value = \"Williams\";\n        assertEquals(metaphone.doubleMetaphone(value, false), metaphone.encode(value));\n        assertEquals(metaphone.doubleMetaphone(value, false), metaphone.encode((Object) value));\n    }\n\n    @Test\n    public void testAlternateEncoding() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        String primary = metaphone.doubleMetaphone(\"Smith\", false);\n        String alternate = metaphone.doubleMetaphone(\"Smith\", true);\n        assertNotNull(primary);\n        assertNotNull(alternate);\n    }\n\n    @Test\n    public void testMixedCaseAndNonAlphabeticCharacters() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        String upper = metaphone.doubleMetaphone(\"SMITH\");\n        String lower = metaphone.doubleMetaphone(\"smith\");\n        String mixed = metaphone.doubleMetaphone(\"SmItH\");\n        String withSpaces = metaphone.doubleMetaphone(\"Sm1th!\");\n        assertEquals(upper, lower);\n        assertEquals(upper, mixed);\n        assertNotNull(withSpaces);\n    }\n\n    @Test\n    public void testRepeatedConsonantClusters() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        assertNotNull(metaphone.doubleMetaphone(\"Accord\"));\n        assertNotNull(metaphone.doubleMetaphone(\"Mississippi\"));\n        assertNotNull(metaphone.doubleMetaphone(\"Rough\"));\n        assertNotNull(metaphone.doubleMetaphone(\"Philosophy\"));\n        assertNotNull(metaphone.doubleMetaphone(\"Thought\"));\n    }\n\n    @Test\n    public void testStatelessAcrossCalls() {\n        DoubleMetaphone metaphone = new DoubleMetaphone();\n        metaphone.setMaxCodeLen(4);\n        String first = metaphone.doubleMetaphone(\"Smith\");\n        String second = metaphone.doubleMetaphone(\"Jones\");\n        String firstAgain = metaphone.doubleMetaphone(\"Smith\");\n        assertEquals(first, firstAgain);\n        assertFalse(first.equals(second));\n        assertEquals(4, metaphone.getMaxCodeLen());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7243,
+      "output_tokens": 2323,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.037716,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.037716,
+        "upstream_inference_prompt_cost": 0.014486,
+        "upstream_inference_completions_cost": 0.02323
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 116924,
+      "daily_remaining_tokens": 83076
+    }
+  },
+  "headers": {
+    "x-request-id": "p3tsn3bnk606lckygcx8qlqm",
+    "date": "Sun, 04 Oct 2026 07:00:57 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,6 @@
+Valid receiver setup: static utility methods in `Entities` require no instance; initialize `Document$OutputSettings` or `CharsetEncoder` and `EscapeMode` for escape tests.
+Escape behavior (String, OutputSettings): correctly maps special characters according to the specified escape mode and output charset encoder.
+Escape boundary (charset limits): characters not representable in the target charset encoder must fall back to numeric entity references (e.g., `&#x...;` or `&#...;`).
+Escape boundary (null/empty inputs): passing `null` string or empty string `""` to `escape` should return an empty string or handle gracefully without throwing NullPointerException.
+Unescape behavior (String): replaces HTML entities (both named like `&amp;` and numeric like `&#38;`, `&#x26;`) with their corresponding Unicode characters.
+Unescape boundary (malformed entities): unrecognized or incomplete entities (e.g., `&notanentity`, dangling `&`) must remain unescaped without throwing exceptions.

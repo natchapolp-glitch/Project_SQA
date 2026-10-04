@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:42:43.277451+00:00",
+  "ended_at_utc": "2026-10-04T06:43:01.067683+00:00",
+  "raw_body_sha256": "a1c7c375968b64bc6c820b03d69ecff99cfa2689408f5dfc7d3aa53a505eac57",
+  "body": {
+    "id": "gen-1791096166-zhMqCzutpX4LHFm0HPEK",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.joda.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNotSame;\nimport static org.junit.Assert.assertSame;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport org.junit.Test;\n\npublic class PartialTest {\n\n    @Test\n    public void testWithFieldAddWrapped_wrapsWithinField() {\n        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 11);\n        Partial result = p.withFieldAddWrapped(DurationFieldType.months(), 3);\n        assertEquals(2, result.getValue(0));\n        assertEquals(11, p.getValue(0));\n    }\n\n    @Test\n    public void testWithFieldAddWrapped_doesNotAffectOtherFields() {\n        Partial p = new Partial(new DateTimeFieldType[] {\n                DateTimeFieldType.year(), DateTimeFieldType.monthOfYear(), DateTimeFieldType.dayOfMonth() },\n                new int[] { 2004, 5, 15 });\n        Partial result = p.withFieldAddWrapped(DurationFieldType.months(), 20);\n        assertEquals(2004, result.getValue(0));\n        assertEquals(15, result.getValue(2));\n    }\n\n    @Test\n    public void testWithFieldAddWrapped_zeroAmountUnchangedValues() {\n        Partial p = new Partial(DateTimeFieldType.dayOfMonth(), 10);\n        Partial result = p.withFieldAddWrapped(DurationFieldType.days(), 0);\n        assertEquals(10, result.getValue(0));\n    }\n\n    @Test\n    public void testWithFieldAddWrapped_unsupportedFieldThrows() {\n        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 5);\n        try {\n            p.withFieldAddWrapped(DurationFieldType.hours(), 1);\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException expected) {\n        }\n    }\n\n    @Test\n    public void testWithFieldAdded_zeroAmountReturnsSameInstance() {\n        Partial p = new Partial(DateTimeFieldType.year(), 2000);\n        Partial result = p.withFieldAdded(DurationFieldType.years(), 0);\n        assertSame(p, result);\n    }\n\n    @Test\n    public void testWithFieldAdded_overflowThrows() {\n        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 11);\n        try {\n            p.withFieldAdded(DurationFieldType.months(), 5);\n            fail(\"Expected IllegalArgumentException on overflow\");\n        } catch (IllegalArgumentException expected) {\n        }\n    }\n\n    @Test\n    public void testWithFieldAdded_normalAddition() {\n        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 5);\n        Partial result = p.withFieldAdded(DurationFieldType.months(), 2);\n        assertEquals(7, result.getValue(0));\n        assertNotSame(p, result);\n    }\n}\n```\n\n```java\npackage org.joda.time.field;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertSame;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport org.joda.time.DurationFieldType;\nimport org.junit.Test;\n\npublic class UnsupportedDurationFieldTest {\n\n    @Test\n    public void testGetInstance_cachesSameInstance() {\n        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());\n        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());\n        assertSame(f1, f2);\n    }\n\n    @Test\n    public void testIsSupportedAndIsPrecise() {\n        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        assertFalse(f.isSupported());\n        assertTrue(f.isPrecise());\n    }\n\n    @Test\n    public void testGetTypeAndName() {\n        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.weekyears());\n        assertEquals(DurationFieldType.weekyears(), f.getType());\n        assertEquals(DurationFieldType.weekyears().getName(), f.getName());\n    }\n\n    @Test\n    public void testArithmeticMethodsThrowUnsupported() {\n        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.months());\n        try {\n            f.getValue(100L);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException expected) {\n        }\n        try {\n            f.add(100L, 5);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException expected) {\n        }\n        try {\n            f.getDifference(100L, 50L);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException expected) {\n        }\n        try {\n            f.getMillis(5);\n            fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException expected) {\n        }\n    }\n\n    @Test\n    public void testGetUnitMillisAndCompareTo() {\n        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.days());\n        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.hours());\n        assertEquals(0L, f1.getUnitMillis());\n        assertEquals(0, f1.compareTo(f2));\n    }\n\n    @Test\n    public void testEqualsAndHashCode() {\n        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.minutes());\n        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.minutes());\n        assertTrue(f1.equals(f2));\n        assertEquals(f1.hashCode(), f2.hashCode());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7162,
+      "output_tokens": 2249,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.036814,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.036814,
+        "upstream_inference_prompt_cost": 0.014324,
+        "upstream_inference_completions_cost": 0.02249
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 103399,
+      "daily_remaining_tokens": 96601
+    }
+  },
+  "headers": {
+    "x-request-id": "pwhopkf0muxdlt07kx3utoyi",
+    "date": "Sun, 04 Oct 2026 06:43:01 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

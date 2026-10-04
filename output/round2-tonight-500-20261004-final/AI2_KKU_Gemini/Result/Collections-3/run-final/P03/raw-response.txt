@@ -1,0 +1,182 @@
+```java
+package org.apache.commons.collections;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import org.junit.Test;
+
+public class CollectionUtilsTest {
+
+    @Test
+    public void testUnionAndIntersection() {
+        List<String> list1 = Arrays.asList("a", "b", "c", "c");
+        List<String> list2 = Arrays.asList("b", "c", "c", "d");
+
+        Collection<String> unionResult = CollectionUtils.union(list1, list2);
+        assertEquals(6, unionResult.size());
+
+        Collection<String> intersectionResult = CollectionUtils.intersection(list1, list2);
+        assertEquals(3, intersectionResult.size());
+        assertEquals(3, CollectionUtils.cardinality("c", intersectionResult));
+    }
+
+    @Test
+    public void testDisjunctionAndSubtract() {
+        List<String> list1 = Arrays.asList("a", "b", "c", "c");
+        List<String> list2 = Arrays.asList("b", "c", "d");
+
+        Collection<String> disjunctionResult = CollectionUtils.disjunction(list1, list2);
+        assertEquals(3, disjunctionResult.size());
+
+        Collection<String> subtractResult = CollectionUtils.subtract(list1, list2);
+        assertEquals(2, subtractResult.size());
+        assertEquals(1, CollectionUtils.cardinality("c", subtractResult));
+    }
+
+    @Test
+    public void testCardinalityAndGetCardinalityMap() {
+        List<String> list = Arrays.asList("apple", "banana", "apple", "cherry", "apple");
+        assertEquals(3, CollectionUtils.cardinality("apple", list));
+        assertEquals(0, CollectionUtils.cardinality("grape", list));
+
+        Map<Object, Integer> map = CollectionUtils.getCardinalityMap(list);
+        assertEquals(Integer.valueOf(3), map.get("apple"));
+        assertEquals(Integer.valueOf(1), map.get("banana"));
+        assertNull(map.get("grape"));
+    }
+
+    @Test
+    public void testSubCollectionAndEqualCollection() {
+        List<String> sub = Arrays.asList("a", "b");
+        List<String> superColl = Arrays.asList("a", "b", "c", "d");
+        List<String> equalColl = Arrays.asList("b", "a");
+
+        assertTrue(CollectionUtils.isSubCollection(sub, superColl));
+        assertTrue(CollectionUtils.isProperSubCollection(sub, superColl));
+        assertFalse(CollectionUtils.isProperSubCollection(superColl, superColl));
+        assertTrue(CollectionUtils.isEqualCollection(sub, equalColl));
+        assertFalse(CollectionUtils.isEqualCollection(sub, superColl));
+    }
+
+    @Test
+    public void testContainsAnyAndIsEmptySize() {
+        List<String> list1 = Arrays.asList("a", "b");
+        List<String> list2 = Arrays.asList("b", "c");
+        List<String> list3 = Arrays.asList("x", "y");
+
+        assertTrue(CollectionUtils.containsAny(list1, list2));
+        assertFalse(CollectionUtils.containsAny(list1, list3));
+
+        assertFalse(CollectionUtils.isEmpty(list1));
+        assertTrue(CollectionUtils.isEmpty(CollectionUtils.EMPTY_COLLECTION));
+        assertTrue(CollectionUtils.isNotEmpty(list1));
+
+        assertEquals(2, CollectionUtils.size(list1));
+        assertEquals(0, CollectionUtils.size(null));
+        assertTrue(CollectionUtils.sizeIsEmpty(Collections.EMPTY_LIST));
+        assertTrue(CollectionUtils.sizeIsEmpty(null));
+    }
+
+    @Test
+    public void testSelectAndRejectAndCollect() {
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+        Predicate evenPredicate = new Predicate() {
+            public boolean evaluate(Object object) {
+                return ((Integer) object).intValue() % 2 == 0;
+            }
+        };
+
+        Collection<Integer> evens = CollectionUtils.select(list, evenPredicate);
+        assertEquals(2, evens.size());
+
+        Collection<Integer> odds = CollectionUtils.selectRejected(list, evenPredicate);
+        assertEquals(3, odds.size());
+
+        Transformer toStringTransformer = new Transformer() {
+            public Object transform(Object input) {
+                return String.valueOf(input);
+            }
+        };
+
+        Collection<String> strings = CollectionUtils.collect(list, toStringTransformer);
+        assertEquals(5, strings.size());
+        assertTrue(strings.contains("3"));
+    }
+
+    @Test
+    public void testAddAllAndAddIgnoreNull() {
+        List<String> list = new ArrayList<String>();
+        assertTrue(CollectionUtils.addIgnoreNull(list, "item"));
+        assertFalse(CollectionUtils.addIgnoreNull(list, null));
+        assertEquals(1, list.size());
+
+        String[] array = {"a", "b"};
+        CollectionUtils.addAll(list, array);
+        assertEquals(3, list.size());
+
+        Vector<String> vector = new Vector<String>();
+        vector.add("c");
+        vector.add("d");
+        CollectionUtils.addAll(list, vector.elements());
+        assertEquals(5, list.size());
+
+        CollectionUtils.addAll(list, vector.iterator());
+        assertEquals(7, list.size());
+    }
+
+    @Test
+    public void testIndexAndGet() {
+        List<String> list = Arrays.asList("zero", "one", "two");
+        assertEquals("one", CollectionUtils.get(list, 1));
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("key1", "val1");
+        assertEquals("val1", map.get("key1"));
+
+        assertEquals("one", CollectionUtils.index(list, 1));
+        assertNull(CollectionUtils.get(null, 0));
+        assertNull(CollectionUtils.get(list, 5));
+    }
+
+    @Test
+    public void testDecorators() {
+        List<String> list = new ArrayList<String>();
+        Collection<String> syncColl = CollectionUtils.synchronizedCollection(list);
+        assertNotNull(syncColl);
+
+        Collection<String> unmodColl = CollectionUtils.unmodifiableCollection(list);
+        assertNotNull(unmodColl);
+
+        Predicate notNullPred = new Predicate() {
+            public boolean evaluate(Object object) {
+                return object != null;
+            }
+        };
+        Collection<String> predColl = CollectionUtils.predicatedCollection(list, notNullPred);
+        assertNotNull(predColl);
+
+        Collection<String> typedColl = CollectionUtils.typedCollection(list, String.class);
+        assertNotNull(typedColl);
+
+        Transformer identity = new Transformer() {
+            public Object transform(Object input) {
+                return input;
+            }
+        };
+        Collection<String> transColl = CollectionUtils.transformedCollection(list, identity);
+        assertNotNull(transColl);
+    }
+}
+```

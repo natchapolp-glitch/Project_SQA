@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:41:24.393155+00:00",
+  "ended_at_utc": "2026-10-04T03:41:27.716463+00:00",
+  "raw_body_sha256": "39a543a46c5782fd9e73cb0b9e7b13acfc6272c40acc1203da1074ac1add9aaf",
+  "body": {
+    "id": "genai-01a10500-9b9a-76b3-aa09-b9a087b7b963",
+    "object": "chat.completion",
+    "created": 1791085288,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.codec.language;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.apache.commons.codec.EncoderException;\nimport org.junit.Test;\n\npublic class Codec1LanguageTest {\n\n    @Test\n    public void testCaverphoneEncodingAndEquality() {\n        Caverphone caverphone = new Caverphone();\n        assertEquals(\"1111111111\", caverphone.caverphone(null));\n        assertEquals(\"1111111111\", caverphone.caverphone(\"\"));\n        \n        String code1 = caverphone.caverphone(\"David\");\n        String code2 = caverphone.caverphone(\"Tavit\");\n        assertNotNull(code1);\n        assertTrue(caverphone.isCaverphoneEqual(\"David\", \"Tavit\"));\n    }\n\n    @Test(expected = EncoderException.class)\n    public void testCaverphoneObjectEncoderException() throws EncoderException {\n        Caverphone caverphone = new Caverphone();\n        caverphone.encode(Integer.valueOf(123));\n    }\n\n    @Test\n    public void testCaverphoneObjectEncoderValid() throws EncoderException {\n        Caverphone caverphone = new Caverphone();\n        Object encoded = caverphone.encode(\"Test\");\n        assertNotNull(encoded);\n    }\n\n    @Test\n    public void testMetaphoneEncodingAndOptions() {\n        Metaphone metaphone = new Metaphone();\n        assertEquals(\"\", metaphone.metaphone(null));\n        assertEquals(\"\", metaphone.metaphone(\"\"));\n        assertEquals(\"A\", metaphone.metaphone(\"A\"));\n\n        String code = metaphone.metaphone(\"programming\");\n        assertNotNull(code);\n\n        metaphone.setMaxCodeLen(6);\n        assertEquals(6, metaphone.getMaxCodeLen());\n    }\n\n    @Test(expected = EncoderException.class)\n    public void testMetaphoneObjectEncoderException() throws EncoderException {\n        Metaphone metaphone = new Metaphone();\n        metaphone.encode(Boolean.TRUE);\n    }\n\n    @Test\n    public void testMetaphoneEquality() {\n        Metaphone metaphone = new Metaphone();\n        assertTrue(metaphone.isMetaphoneEqual(\"Smith\", \"Smyth\"));\n        assertFalse(metaphone.isMetaphoneEqual(\"Smith\", \"Jones\"));\n    }\n\n    @Test\n    public void testSoundexUtilsClean() {\n        assertEquals(\"ABC\", SoundexUtils.clean(\"a-b_c123\"));\n        assertEquals(\"\", SoundexUtils.clean(\"\"));\n        assertEquals(null, SoundexUtils.clean(null));\n        assertEquals(\"XYZ\", SoundexUtils.clean(\"XYZ\"));\n    }\n\n    @Test\n    public void testSoundexUtilsDifferenceEncoded() {\n        assertEquals(4, SoundexUtils.differenceEncoded(\"AB12\", \"AB12\"));\n        assertEquals(0, SoundexUtils.differenceEncoded(null, \"AB12\"));\n        assertEquals(0, SoundexUtils.differenceEncoded(\"AB12\", null));\n        assertTrue(SoundexUtils.differenceEncoded(\"A123\", \"A124\") >= 0);\n    }\n\n    @Test\n    public void testSoundexUtilsDifference() throws EncoderException {\n        Caverphone caverphone = new Caverphone();\n        int diff = SoundexUtils.difference(caverphone, \"Testing\", \"Tasting\");\n        assertTrue(diff >= 0);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4518,
+      "completion_tokens": 826,
+      "total_tokens": 5344
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 53304,
+      "daily_remaining_tokens": 296696
+    }
+  },
+  "headers": {
+    "x-request-id": "m5zf0zpyxfbu7ulrdkl6ebg4",
+    "date": "Sun, 04 Oct 2026 03:41:28 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

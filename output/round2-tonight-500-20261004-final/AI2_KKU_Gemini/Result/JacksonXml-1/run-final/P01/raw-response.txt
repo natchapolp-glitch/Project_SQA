@@ -1,0 +1,10 @@
+Valid receiver setup: Instantiate `FromXmlParser` using `IOContext`, codec, and a StAX `XMLStreamReader` initialized with XML content.
+Verify `nextToken()` correctly advances through element start, text/value, and end tokens according to standard JSON-over-XML mapping.
+Check behavior of `nextTextValue()` when encountering text elements versus structural start/end tags.
+Test text extraction methods (`getText()`, `getValueAsString()`, `getTextCharacters()`) at XML element boundaries and empty elements.
+Validate `isExpectedStartArrayToken()` and virtual wrapping behavior via `addVirtualWrapping(Set)` for collection deserialization.
+Test number and binary parsing (`getIntValue()`, `getBinaryValue()`) on valid numeric and base64-encoded XML text content.
+Verify correct handling of custom text element names configured via `setXMLTextElementName(String)`.
+Check state consistency when closing the parser (`close()`, `isClosed()`) and releasing buffers.
+Validate behavior with format features enabled/disabled via `enable`, `disable`, and `configure`.
+Ensure proper location reporting (`getCurrentLocation()`, `getTokenLocation()`) and current name tracking during parsing.

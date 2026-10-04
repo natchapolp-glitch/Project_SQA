@@ -1,0 +1,10 @@
+1. Receiver setup: Instantiate `MultiValueMap` via default constructor or `decorate(new HashMap(), ArrayList.class)`.
+2. `put(key, value)` adds a value to the collection mapped to the key, returning the added value or collection addition result.
+3. `removeMapping(key, value)` removes a specific value from the collection mapped to the key, returning the removed value or null.
+4. `containsValue(value)` returns true if the global value exists across any mapped collection.
+5. `containsValue(key, value)` returns true only if the specific key's collection contains the given value.
+6. `values()` returns a collection view of all aggregated values across all keys.
+7. `totalSize()` returns the total count of all values across all keys in the map.
+8. `size(key)` returns the number of values mapped to the specified key.
+9. Boundary: Removing the last value for a key should clean up the key entry or empty collection state properly.
+10. Boundary: `putAll(key, collection)` with an empty collection should not create empty collection mappings or fail.

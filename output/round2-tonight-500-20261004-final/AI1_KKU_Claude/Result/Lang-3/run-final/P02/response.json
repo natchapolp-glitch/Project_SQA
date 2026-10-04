@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:16:42.385176+00:00",
+  "ended_at_utc": "2026-10-04T06:17:01.241599+00:00",
+  "raw_body_sha256": "123acbd253300890e815bb12b2ab8ebb5701389e0dbb505a8684c10d7aabf041",
+  "body": {
+    "id": "gen-1791094604-JOBbooOV9WOzd76Q9nV8",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.lang3.math;\n\nimport static org.junit.Assert.*;\n\nimport java.math.BigDecimal;\nimport java.math.BigInteger;\n\nimport org.junit.Test;\n\npublic class NumberUtilsCreateNumberTest {\n\n    @Test\n    public void testCreateNumberNullAndEmpty() {\n        assertNull(NumberUtils.createNumber(null));\n        try {\n            NumberUtils.createNumber(\"\");\n            fail(\"Expected NumberFormatException\");\n        } catch (NumberFormatException expected) {\n        }\n    }\n\n    @Test\n    public void testCreateNumberPlainIntegers() {\n        assertEquals(Integer.valueOf(123), NumberUtils.createNumber(\"123\"));\n        assertEquals(Integer.valueOf(Integer.MAX_VALUE), NumberUtils.createNumber(String.valueOf(Integer.MAX_VALUE)));\n        assertEquals(Long.valueOf((long) Integer.MAX_VALUE + 1L),\n                NumberUtils.createNumber(String.valueOf((long) Integer.MAX_VALUE + 1L)));\n        assertEquals(Long.valueOf(Long.MAX_VALUE), NumberUtils.createNumber(String.valueOf(Long.MAX_VALUE)));\n        BigInteger beyondLong = BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE);\n        assertEquals(beyondLong, NumberUtils.createNumber(beyondLong.toString()));\n    }\n\n    @Test\n    public void testCreateNumberSuffixes() {\n        assertEquals(Long.valueOf(1L), NumberUtils.createNumber(\"1L\"));\n        assertEquals(Long.valueOf(1L), NumberUtils.createNumber(\"1l\"));\n        assertEquals(Float.valueOf(1.0f), NumberUtils.createNumber(\"1F\"));\n        assertEquals(Float.valueOf(1.0f), NumberUtils.createNumber(\"1f\"));\n        assertEquals(Double.valueOf(1.0d), NumberUtils.createNumber(\"1D\"));\n        assertEquals(Double.valueOf(1.0d), NumberUtils.createNumber(\"1d\"));\n        try {\n            NumberUtils.createNumber(\"1LL\");\n            fail(\"Expected NumberFormatException\");\n        } catch (NumberFormatException expected) {\n        }\n    }\n\n    @Test\n    public void testCreateNumberHex() {\n        assertEquals(Integer.valueOf(0x1A), NumberUtils.createNumber(\"0x1A\"));\n        assertEquals(Integer.valueOf(-0x1A), NumberUtils.createNumber(\"-0x1A\"));\n        assertEquals(Integer.valueOf(0x1A), NumberUtils.createNumber(\"#1A\"));\n    }\n\n    @Test\n    public void testCreateNumberScientificAndDecimal() {\n        assertEquals(Double.valueOf(1.2e3), NumberUtils.createNumber(\"1.2e3\"));\n        assertEquals(Double.valueOf(1.2e3), NumberUtils.createNumber(\"1.2e3D\"));\n        assertEquals(Double.valueOf(1e10), NumberUtils.createNumber(\"1e10\"));\n        assertEquals(new BigDecimal(\"0.0\"), NumberUtils.createNumber(\"0.0\"));\n        assertEquals(new BigDecimal(\"-0.0\"), NumberUtils.createNumber(\"-0.0\"));\n    }\n\n    @Test\n    public void testCreateNumberInvalidStrings() {\n        String[] invalid = { \"1.2.3\", \"abc\", \"--1\", \".\" , \"d\", \"f\" };\n        for (String s : invalid) {\n            try {\n                NumberUtils.createNumber(s);\n                fail(\"Expected NumberFormatException for input: \" + s);\n            } catch (NumberFormatException expected) {\n            }\n        }\n    }\n}\n```\n\n```java\npackage org.apache.commons.lang3.math;\n\nimport static org.junit.Assert.*;\n\nimport org.junit.Test;\n\npublic class NumberUtilsConvertTest {\n\n    @Test\n    public void testToIntConversions() {\n        assertEquals(0, NumberUtils.toInt(null));\n        assertEquals(0, NumberUtils.toInt(\"\"));\n        assertEquals(1, NumberUtils.toInt(\"1\"));\n        assertEquals(1, NumberUtils.toInt(null, 1));\n        assertEquals(1, NumberUtils.toInt(\"\", 1));\n        assertEquals(1, NumberUtils.toInt(\"1\", 0));\n        assertEquals(5, NumberUtils.toInt(\"abc\", 5));\n    }\n\n    @Test\n    public void testToLongConversions() {\n        assertEquals(0L, NumberUtils.toLong(null));\n        assertEquals(0L, NumberUtils.toLong(\"\"));\n        assertEquals(1L, NumberUtils.toLong(\"1\"));\n        assertEquals(1L, NumberUtils.toLong(null, 1L));\n        assertEquals(1L, NumberUtils.toLong(\"\", 1L));\n        assertEquals(1L, NumberUtils.toLong(\"1\", 0L));\n    }\n\n    @Test\n    public void testToFloatAndDoubleConversions() {\n        assertEquals(0.0f, NumberUtils.toFloat(null), 0.0f);\n        assertEquals(0.0f, NumberUtils.toFloat(\"\"), 0.0f);\n        assertEquals(1.5f, NumberUtils.toFloat(\"1.5\"), 0.0f);\n        assertEquals(1.1f, NumberUtils.toFloat(null, 1.1f), 0.0f);\n        assertEquals(0.0d, NumberUtils.toDouble(null), 0.0d);\n        assertEquals(1.5d, NumberUtils.toDouble(\"1.5\"), 0.0d);\n        assertEquals(1.1d, NumberUtils.toDouble(\"\", 1.1d), 0.0d);\n    }\n\n    @Test\n    public void testToByteAndShortConversions() {\n        assertEquals((byte) 0, NumberUtils.toByte(null));\n        assertEquals((byte) 1, NumberUtils.toByte(\"1\"));\n        assertEquals((byte) 1, NumberUtils.toByte(null, (byte) 1));\n        assertEquals((short) 0, NumberUtils.toShort(null));\n        assertEquals((short) 1, NumberUtils.toShort(\"1\"));\n        assertEquals((short) 1, NumberUtils.toShort(null, (short) 1));\n    }\n\n    @Test\n    public void testMinMaxArrays() {\n        assertEquals(1, NumberUtils.min(new int[] {3, 1, 2}));\n        assertEquals(3, NumberUtils.max(new int[] {3, 1, 2}));\n        assertEquals(1L, NumberUtils.min(new long[] {3L, 1L, 2L}));\n        assertEquals(3L, NumberUtils.max(new long[] {3L, 1L, 2L}));\n    }\n\n    @Test\n    public void testIsDigitsAndIsNumber() {\n        assertTrue(NumberUtils.isDigits(\"12345\"));\n        assertFalse(NumberUtils.isDigits(\"12.45\"));\n        assertTrue(NumberUtils.isNumber(\"1.5\"));\n        assertFalse(NumberUtils.isNumber(\"abc\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7027,
+      "output_tokens": 2555,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.039604,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.039604,
+        "upstream_inference_prompt_cost": 0.014054,
+        "upstream_inference_completions_cost": 0.02555
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 93335,
+      "daily_remaining_tokens": 106665
+    }
+  },
+  "headers": {
+    "x-request-id": "kklt3rt72hanrn4ukr8kwvi0",
+    "date": "Sun, 04 Oct 2026 06:17:01 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

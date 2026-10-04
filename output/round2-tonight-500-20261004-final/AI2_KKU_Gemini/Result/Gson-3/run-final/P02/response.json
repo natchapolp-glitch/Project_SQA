@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:20:18.068680+00:00",
+  "ended_at_utc": "2026-10-04T07:20:21.030914+00:00",
+  "raw_body_sha256": "ce4c542ad96d8d394cfa8c99731bbcffb81bf23f3ebe76b5805d7892df25dbda",
+  "body": {
+    "id": "genai-01a105c9-0101-7cfc-9e91-ee37e1faf551",
+    "object": "chat.completion",
+    "created": 1791098421,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.lang.reflect.Type;\nimport java.util.ArrayList;\nimport java.util.Collection;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.Set;\n\nimport org.junit.Test;\n\nimport com.google.gson.InstanceCreator;\nimport com.google.gson.reflect.TypeToken;\n\npublic class ConstructorConstructorTest {\n\n  public static class SampleClass {\n    public boolean initialized = true;\n  }\n\n  @Test\n  public void testGetWithDefaultConstructor() {\n    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());\n    ObjectConstructor<SampleClass> creator = constructorConstructor.get(TypeToken.get(SampleClass.class));\n    assertNotNull(creator);\n    SampleClass instance = creator.construct();\n    assertNotNull(instance);\n    assertTrue(instance.initialized);\n  }\n\n  @Test\n  public void testGetWithInstanceCreator() {\n    Map<Type, InstanceCreator<?>> map = new HashMap<Type, InstanceCreator<?>>();\n    final SampleClass customInstance = new SampleClass();\n    customInstance.initialized = false;\n    map.put(SampleClass.class, new InstanceCreator<SampleClass>() {\n      @Override\n      public SampleClass createInstance(Type type) {\n        return customInstance;\n      }\n    });\n\n    ConstructorConstructor constructorConstructor = new ConstructorConstructor(map);\n    ObjectConstructor<SampleClass> creator = constructorConstructor.get(TypeToken.get(SampleClass.class));\n    assertNotNull(creator);\n    SampleClass instance = creator.construct();\n    assertNotNull(instance);\n    assertTrue(!instance.initialized);\n  }\n\n  @Test\n  public void testGetWithCollectionInterface() {\n    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());\n    ObjectConstructor<Collection> creator = constructorConstructor.get(TypeToken.get(Collection.class));\n    assertNotNull(creator);\n    Collection<?> instance = creator.construct();\n    assertNotNull(instance);\n    assertTrue(instance instanceof ArrayList);\n  }\n\n  @Test\n  public void testGetWithListInterface() {\n    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());\n    ObjectConstructor<List> creator = constructorConstructor.get(TypeToken.get(List.class));\n    assertNotNull(creator);\n    List<?> instance = creator.construct();\n    assertNotNull(instance);\n  }\n\n  @Test\n  public void testGetWithMapInterface() {\n    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());\n    ObjectConstructor<Map> creator = constructorConstructor.get(TypeToken.get(Map.class));\n    assertNotNull(creator);\n    Map<?, ?> instance = creator.construct();\n    assertNotNull(instance);\n  }\n\n  @Test\n  public void testToString() {\n    Map<Type, InstanceCreator<?>> map = new HashMap<Type, InstanceCreator<?>>();\n    ConstructorConstructor constructorConstructor = new ConstructorConstructor(map);\n    String result = constructorConstructor.toString();\n    assertNotNull(result);\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2518,
+      "completion_tokens": 761,
+      "total_tokens": 3279
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 78533,
+      "daily_remaining_tokens": 271467
+    }
+  },
+  "headers": {
+    "x-request-id": "taq3d8hhdribyufia1e156rn",
+    "date": "Sun, 04 Oct 2026 07:20:21 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

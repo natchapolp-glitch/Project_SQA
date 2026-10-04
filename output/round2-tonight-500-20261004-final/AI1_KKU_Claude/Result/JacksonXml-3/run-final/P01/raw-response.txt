@@ -1,0 +1,10 @@
+- getValueAsString() / getValueAsString(default): should return current token's text for VALUE_STRING/FIELD_NAME-like tokens, null or default for null/absence, consistent with JsonParser contract.
+- nextTextValue(): should behave as nextToken()+getText() shortcut for VALUE_STRING, returning null otherwise; verify equivalence with explicit nextToken()/getText() sequence.
+- getText() on empty XML element (self-closing tag or empty text content) should return "" not null, per `_isEmpty` handling.
+- Mixed content / CDATA / whitespace-only text nodes: verify correct text extraction and trimming behavior.
+- Boundary: calling getText()/getValueAsString() before any nextToken() call, and after END_DOCUMENT/close().
+- Nested elements with attributes vs text-only elements, ensuring namespace/attribute values don't leak into text value.
+- Virtual wrapping (addVirtualWrapping) interaction with text/array token sequencing.
+- Numeric/boolean coercions via getValueAsString on VALUE_NUMBER_INT, VALUE_TRUE/FALSE tokens mapped from XML text.
+- Receiver setup: construct via XmlFactory.createParser(String/Reader) to get real XMLStreamReader-backed instance rather than mocking FromXmlParser directly.
+- Repeated/idempotent calls to getText()/getValueAsString() on same token should return identical results without advancing stream.

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:33:40.186400+00:00",
+  "ended_at_utc": "2026-10-04T03:33:42.319840+00:00",
+  "raw_body_sha256": "4de5d1170ef43035815c25dd8b7120d495c4314a578ce23c0642eba52145f47f",
+  "body": {
+    "id": "genai-01a104f9-8288-7a18-a7bf-361d25b22b96",
+    "object": "chat.completion",
+    "created": 1791084823,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- Valid receiver setup: Instantiate via package-private constructor and populate using `addOption(Option)` and `addArg(String)`.\n- Option lookup behavior: `hasOption`, `getOptionValue`, and `getOptionObject` must correctly resolve options by both `String` (long/short name) and `char` (short name).\n- Case sensitivity/normalization boundaries: Option lookups should respect defined option key casing and character-to-string mappings.\n- Default value handling: `getOptionValue(String/char, String)` must return the specified default value if the option is absent.\n- Multiple values/arguments: `getOptionValues` should return an array of all values associated with a multi-occurring option.\n- Unrecognized or null inputs: Query methods should safely handle null or non-existent option keys without throwing NullPointerException (returning false, null, or empty arrays as appropriate).\n- Remaining arguments: `getArgs()` and `getArgList()` must return all non-option arguments added via `addArg` in the correct insertion order.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 434,
+      "completion_tokens": 224,
+      "total_tokens": 658
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 43254,
+      "daily_remaining_tokens": 306746
+    }
+  },
+  "headers": {
+    "x-request-id": "qm6gn2j553zbp12whayk3u4y",
+    "date": "Sun, 04 Oct 2026 03:33:43 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:18:38.693263+00:00",
+  "ended_at_utc": "2026-10-04T07:18:50.269441+00:00",
+  "raw_body_sha256": "6f42405e776b5ed54baa79e5c46ef7081cb69c359a7302243726604b1ad7eace",
+  "body": {
+    "id": "gen-1791098319-og4ZgvzODS7ow92v5Tky",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.lang.reflect.Type;\nimport java.util.Collections;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.SortedMap;\nimport java.util.TreeMap;\n\nimport org.junit.Test;\n\nimport com.google.gson.InstanceCreator;\nimport com.google.gson.reflect.TypeToken;\n\npublic class ConstructorConstructorTest {\n\n  private static class PublicNoArg {\n    int value = 42;\n  }\n\n  private static class PrivateNoArg {\n    int value = 7;\n    private PrivateNoArg() {}\n  }\n\n  private abstract static class AbstractNoArg {\n  }\n\n  private static ConstructorConstructor newCC() {\n    return new ConstructorConstructor(Collections.<Type, InstanceCreator<?>>emptyMap());\n  }\n\n  @Test\n  public void defaultImplementationsForInterfaces() {\n    ConstructorConstructor cc = newCC();\n\n    ObjectConstructor<List> listCtor = cc.get(TypeToken.get(List.class));\n    Object list = listCtor.construct();\n    assertNotNull(list);\n    assertTrue(list instanceof java.util.ArrayList);\n\n    ObjectConstructor<Map> mapCtor = cc.get(TypeToken.get(Map.class));\n    Object map = mapCtor.construct();\n    assertNotNull(map);\n    assertTrue(map instanceof java.util.LinkedHashMap);\n\n    ObjectConstructor<SortedMap> sortedMapCtor = cc.get(TypeToken.get(SortedMap.class));\n    Object sortedMap = sortedMapCtor.construct();\n    assertNotNull(sortedMap);\n    assertTrue(sortedMap instanceof TreeMap);\n  }\n\n  @Test\n  public void publicNoArgConstructorUsed() {\n    ConstructorConstructor cc = newCC();\n    ObjectConstructor<PublicNoArg> ctor = cc.get(TypeToken.get(PublicNoArg.class));\n    PublicNoArg instance = ctor.construct();\n    assertNotNull(instance);\n    assertEquals(42, instance.value);\n  }\n\n  @Test\n  public void privateNoArgConstructorMadeAccessible() {\n    ConstructorConstructor cc = newCC();\n    ObjectConstructor<PrivateNoArg> ctor = cc.get(TypeToken.get(PrivateNoArg.class));\n    PrivateNoArg instance = ctor.construct();\n    assertNotNull(instance);\n    assertEquals(7, instance.value);\n  }\n\n  @Test\n  public void abstractClassWithoutInstanceCreatorThrows() {\n    ConstructorConstructor cc = newCC();\n    ObjectConstructor<AbstractNoArg> ctor = cc.get(TypeToken.get(AbstractNoArg.class));\n    try {\n      ctor.construct();\n      fail(\"Expected RuntimeException for abstract class instantiation\");\n    } catch (RuntimeException expected) {\n      assertNotNull(expected.getMessage());\n    }\n  }\n\n  @Test\n  public void registeredInstanceCreatorTakesPrecedence() {\n    final PublicNoArg marker = new PublicNoArg();\n    marker.value = 999;\n\n    Map<Type, InstanceCreator<?>> creators = new java.util.HashMap<Type, InstanceCreator<?>>();\n    creators.put(PublicNoArg.class, new InstanceCreator<PublicNoArg>() {\n      @Override public PublicNoArg createInstance(Type type) {\n        return marker;\n      }\n    });\n\n    ConstructorConstructor cc = new ConstructorConstructor(creators);\n    ObjectConstructor<PublicNoArg> ctor = cc.get(TypeToken.get(PublicNoArg.class));\n    PublicNoArg result = ctor.construct();\n    assertEquals(999, result.value);\n    assertTrue(result == marker);\n  }\n\n  @Test\n  public void instanceCreatorReceivesCorrectType() {\n    final Type[] capturedType = new Type[1];\n    Map<Type, InstanceCreator<?>> creators = new java.util.HashMap<Type, InstanceCreator<?>>();\n    Type listOfStringType = new TypeToken<List<String>>() {}.getType();\n    creators.put(listOfStringType, new InstanceCreator<List<String>>() {\n      @Override public List<String> createInstance(Type type) {\n        capturedType[0] = type;\n        return new java.util.ArrayList<String>();\n      }\n    });\n\n    ConstructorConstructor cc = new ConstructorConstructor(creators);\n    ObjectConstructor<List<String>> ctor = cc.get(new TypeToken<List<String>>() {});\n    List<String> result = ctor.construct();\n    assertNotNull(result);\n    assertEquals(listOfStringType, capturedType[0]);\n  }\n\n  @Test\n  public void toStringContainsClassName() {\n    ConstructorConstructor cc = newCC();\n    String str = cc.toString();\n    assertNotNull(str);\n    assertTrue(str.length() >= 0);\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 4315,
+      "output_tokens": 1848,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02711,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02711,
+        "upstream_inference_prompt_cost": 0.00863,
+        "upstream_inference_completions_cost": 0.01848
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 117575,
+      "daily_remaining_tokens": 82425
+    }
+  },
+  "headers": {
+    "x-request-id": "dcqvg54to9px83k5nrb20eve",
+    "date": "Sun, 04 Oct 2026 07:18:52 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

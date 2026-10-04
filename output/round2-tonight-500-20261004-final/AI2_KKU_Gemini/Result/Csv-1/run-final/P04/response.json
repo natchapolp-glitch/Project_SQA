@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T02:49:48.169616+00:00",
+  "ended_at_utc": "2026-10-04T02:49:49.955791+00:00",
+  "raw_body_sha256": "d027572330c5147b8f3329d61a0cc6e57421bb754d88c79629cdfa8f4afbcf50",
+  "body": {
+    "id": "genai-01a104d1-54eb-7e76-a3da-4f451a73b07f",
+    "object": "chat.completion",
+    "created": 1791082190,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport org.junit.Test;\n\npublic class ExtendedBufferedReaderAdditionalTest {\n\n    @Test\n    public void testReadArrayEof() throws IOException {\n        StringReader reader = new StringReader(\"\");\n        ExtendedBufferedReader ebr = new ExtendedBufferedReader(reader);\n\n        char[] buf = new char[5];\n        int len = ebr.read(buf, 0, 5);\n        assertEquals(-1, len);\n        assertEquals(ExtendedBufferedReader.END_OF_STREAM, ebr.readAgain());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2928,
+      "completion_tokens": 159,
+      "total_tokens": 3087
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 98531,
+      "daily_remaining_tokens": 251469
+    }
+  },
+  "headers": {
+    "x-request-id": "j37ec9zicnmt199nnl5e413c",
+    "date": "Sun, 04 Oct 2026 02:49:50 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

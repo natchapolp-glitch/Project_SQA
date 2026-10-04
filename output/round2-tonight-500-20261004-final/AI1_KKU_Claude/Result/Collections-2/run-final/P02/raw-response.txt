@@ -1,0 +1,159 @@
+```java
+package org.apache.commons.collections;
+
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
+
+import org.junit.Test;
+
+public class ExtendedPropertiesTest {
+
+    @Test
+    public void testAddPropertyAccumulatesMultipleValues() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.addProperty("key", "value1");
+        ep.addProperty("key", "value2");
+        Object val = ep.getProperty("key");
+        assertTrue(val instanceof Vector);
+        Vector v = (Vector) val;
+        assertEquals(2, v.size());
+        assertEquals("value1", v.get(0));
+        assertEquals("value2", v.get(1));
+    }
+
+    @Test
+    public void testSetPropertyReplacesExistingValue() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.addProperty("key", "value1");
+        ep.addProperty("key", "value2");
+        ep.setProperty("key", "newvalue");
+        Object val = ep.getProperty("key");
+        assertEquals("newvalue", val);
+    }
+
+    @Test
+    public void testGetPropertyMissingKeyReturnsNull() {
+        ExtendedProperties ep = new ExtendedProperties();
+        assertNull(ep.getProperty("missing"));
+    }
+
+    @Test
+    public void testGetStringArrayAndVectorFromCommaSeparatedValue() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.addProperty("list", "a,b,c");
+        String[] arr = ep.getStringArray("list");
+        assertEquals(3, arr.length);
+        assertEquals("a", arr[0]);
+        assertEquals("b", arr[1]);
+        assertEquals("c", arr[2]);
+
+        Vector vec = ep.getVector("list");
+        assertEquals(3, vec.size());
+        assertEquals("a", vec.get(0));
+    }
+
+    @Test
+    public void testGetBooleanParsesVariants() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("flagTrue", "true");
+        ep.setProperty("flagYes", "yes");
+        ep.setProperty("flagOn", "on");
+        ep.setProperty("flagFalse", "false");
+
+        assertTrue(ep.getBoolean("flagTrue"));
+        assertTrue(ep.getBoolean("flagYes"));
+        assertTrue(ep.getBoolean("flagOn"));
+        assertFalse(ep.getBoolean("flagFalse"));
+
+        assertTrue(ep.getBoolean("missing", true));
+        assertFalse(ep.getBoolean("missing", false));
+    }
+
+    @Test
+    public void testGetIntValidAndDefault() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("num", "42");
+        assertEquals(42, ep.getInt("num"));
+        assertEquals(99, ep.getInt("missing", 99));
+    }
+
+    @Test(expected = NoSuchElementException2.class)
+    public void placeholderNeverUsed() {
+        // placeholder to keep class structure consistent, not executed
+        throw new NoSuchElementException2();
+    }
+
+    static class NoSuchElementException2 extends RuntimeException {
+    }
+
+    @Test
+    public void testClearPropertyRemovesKey() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("key", "value");
+        assertNotNull(ep.getProperty("key"));
+        ep.clearProperty("key");
+        assertNull(ep.getProperty("key"));
+
+        Iterator it = ep.getKeys();
+        while (it.hasNext()) {
+            assertFalse("key".equals(it.next()));
+        }
+    }
+
+    @Test
+    public void testSubsetReturnsScopedProperties() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("db.driver", "mysql");
+        ep.setProperty("db.url", "jdbc:mysql://localhost");
+        ep.setProperty("other.key", "value");
+
+        ExtendedProperties subset = ep.subset("db");
+        assertEquals("mysql", subset.getString("driver"));
+        assertEquals("jdbc:mysql://localhost", subset.getString("url"));
+        assertNull(subset.getString("other.key", null));
+    }
+
+    @Test
+    public void testInterpolateResolvesReferencedProperty() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("base", "/home/user");
+        ep.setProperty("path", "${base}/data");
+        assertEquals("/home/user/data", ep.getString("path"));
+    }
+
+    @Test
+    public void testLoadParsesCommentsAndContinuationLines() throws IOException {
+        String content = "# comment line\n"
+                + "key1 = value1\n"
+                + "\n"
+                + "longkey = aaa\\\n"
+                + "bbb\n";
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.load(new ByteArrayInputStream(content.getBytes("UTF-8")));
+
+        assertEquals("value1", ep.getString("key1"));
+        assertEquals("aaabbb", ep.getString("longkey"));
+    }
+
+    @Test
+    public void testGetKeysIterationOrderMatchesInsertion() {
+        ExtendedProperties ep = new ExtendedProperties();
+        ep.setProperty("first", "1");
+        ep.setProperty("second", "2");
+        ep.setProperty("third", "3");
+
+        Iterator it = ep.getKeys();
+        assertEquals("first", it.next());
+        assertEquals("second", it.next());
+        assertEquals("third", it.next());
+        assertFalse(it.hasNext());
+    }
+}
+```

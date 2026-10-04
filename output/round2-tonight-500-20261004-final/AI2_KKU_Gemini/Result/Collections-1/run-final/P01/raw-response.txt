@@ -1,0 +1,10 @@
+1. Valid receiver setup: Instantiate `Flat3Map` using the default constructor or by copying an existing `Map`.
+2. Boundary behavior: Test adding up to 3 key-value entries which fit in the flat internal representation (key1/value1, key2/value2, key3/value3).
+3. Boundary behavior: Test adding a 4th entry to trigger transition (`convertToMap`) from flat structure to `AbstractHashedMap` delegate.
+4. Key lookup: Verify `get(Object)`, `containsKey(Object)`, and `remove(Object)` behave correctly across both flat and delegated states.
+5. Null handling: Verify support for `null` keys and values in both flat and delegated modes, following standard `Map` contracts.
+6. Bulk operations: Test `putAll(Map)` with varying sizes to ensure smooth crossing of the 3-to-4 element capacity threshold.
+7. Iteration and views: Check that `entrySet()`, `keySet()`, `values()`, and `mapIterator()` accurately reflect elements in both states.
+8. Lifecycle: Verify `clear()` resets the map back to an empty flat structure, and `isEmpty()` and `size()` report correctly.
+9. Object contract: Test `clone()`, `equals(Object)`, and `hashCode()` for consistency between flat and delegate-backed maps.
+10. Serialization: Verify `writeObject` and `readObject` preserve state correctly across serialization boundaries.

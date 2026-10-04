@@ -1,0 +1,71 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Chart-1
+Java 11, JUnit 4
+Modified classes: org.jfree.chart.renderer.category.AbstractCategoryItemRenderer
+BUGGY API signatures:
+Compiled from "AbstractCategoryItemRenderer.java"
+public abstract class org.jfree.chart.renderer.category.AbstractCategoryItemRenderer extends org.jfree.chart.renderer.AbstractRenderer implements org.jfree.chart.renderer.category.CategoryItemRenderer,java.lang.Cloneable,org.jfree.chart.util.PublicCloneable,java.io.Serializable {
+  private static final long serialVersionUID;
+  private org.jfree.chart.plot.CategoryPlot plot;
+  private org.jfree.chart.util.ObjectList itemLabelGeneratorList;
+  private org.jfree.chart.labels.CategoryItemLabelGenerator baseItemLabelGenerator;
+  private org.jfree.chart.util.ObjectList toolTipGeneratorList;
+  private org.jfree.chart.labels.CategoryToolTipGenerator baseToolTipGenerator;
+  private org.jfree.chart.util.ObjectList urlGeneratorList;
+  private org.jfree.chart.urls.CategoryURLGenerator baseURLGenerator;
+  private org.jfree.chart.labels.CategorySeriesLabelGenerator legendItemLabelGenerator;
+  private org.jfree.chart.labels.CategorySeriesLabelGenerator legendItemToolTipGenerator;
+  private org.jfree.chart.labels.CategorySeriesLabelGenerator legendItemURLGenerator;
+  private java.util.List backgroundAnnotations;
+  private java.util.List foregroundAnnotations;
+  private transient int rowCount;
+  private transient int columnCount;
+  protected org.jfree.chart.renderer.category.AbstractCategoryItemRenderer();
+  public int getPassCount();
+  public org.jfree.chart.plot.CategoryPlot getPlot();
+  public void setPlot(org.jfree.chart.plot.CategoryPlot);
+  public org.jfree.chart.labels.CategoryItemLabelGenerator getItemLabelGenerator(int, int, boolean);
+  public org.jfree.chart.labels.CategoryItemLabelGenerator getSeriesItemLabelGenerator(int);
+  public void setSeriesItemLabelGenerator(int, org.jfree.chart.labels.CategoryItemLabelGenerator);
+  public void setSeriesItemLabelGenerator(int, org.jfree.chart.labels.CategoryItemLabelGenerator, boolean);
+  public org.jfree.chart.labels.CategoryItemLabelGenerator getBaseItemLabelGenerator();
+  public void setBaseItemLabelGenerator(org.jfree.chart.labels.CategoryItemLabelGenerator);
+  public void setBaseItemLabelGenerator(org.jfree.chart.labels.CategoryItemLabelGenerator, boolean);
+  public org.jfree.chart.labels.CategoryToolTipGenerator getToolTipGenerator(int, int, boolean);
+  public org.jfree.chart.labels.CategoryToolTipGenerator getSeriesToolTipGenerator(int);
+  public void setSeriesToolTipGenerator(int, org.jfree.chart.labels.CategoryToolTipGenerator);
+  public void setSeriesToolTipGenerator(int, org.jfree.chart.labels.CategoryToolTipGenerator, boolean);
+  public org.jfree.chart.labels.CategoryToolTipGenerator getBaseToolTipGenerator();
+  public void setBaseToolTipGenerator(org.jfree.chart.labels.CategoryToolTipGenerator);
+  public void setBaseToolTipGenerator(org.jfree.chart.labels.CategoryToolTipGenerator, boolean);
+  public org.jfree.chart.urls.CategoryURLGenerator getURLGenerator(int, int, boolean);
+  public org.jfree.chart.urls.CategoryURLGenerator getSeriesURLGenerator(int);
+  public void setSeriesURLGenerator(int, org.jfree.chart.urls.CategoryURLGenerator);
+  public void setSeriesURLGenerator(int, org.jfree.chart.urls.CategoryURLGenerator, boolean);
+  public org.jfree.chart.urls.CategoryURLGenerator getBaseURLGenerator();
+  public void setBaseURLGenerator(org.jfree.chart.urls.CategoryURLGenerator);
+  public void setBaseURLGenerator(org.jfree.chart.urls.CategoryURLGenerator, boolean);
+  public void addAnnotation(org.jfree.chart.annotations.CategoryAnnotation);
+  public void addAnnotation(org.jfree.chart.annotations.CategoryAnnotation, org.jfree.chart.util.Layer);
+  public boolean removeAnnotation(org.jfree.chart.annotations.CategoryAnnotation);
+  public void removeAnnotations();
+  public org.jfree.chart.labels.CategorySeriesLabelGenerator getLegendItemLabelGenerator();
+  public void setLegendItemLabelGenerator(org.jfree.chart.labels.CategorySeriesLabelGenerator);
+  public org.jfree.chart.labels.CategorySeriesLabelGenerator getLegendItemToolTipGenerator();
+  public void setLegendItemToolTipGenerator(org.jfree.chart.labels.CategorySeriesLabelGenerator);
+  public org.jfree.chart.labels.CategorySeriesLabelGenerator getLegendItemURLGenerator();
+  public void setLegendItemURLGenerator(org.jfree.chart.labels.CategorySeriesLabelGenerator);
+  public int getRowCount();
+  public int getColumnCount();
+  protected org.jfree.chart.renderer.category.CategoryItemRendererState createState(org.jfree.chart.plot.PlotRenderingInfo);
+  public org.jfree.chart.renderer.category.CategoryItemRendererState initialise(java.awt.Graphics2D, java.awt.geom.Rectangle2D, org.jfree.chart.plot.CategoryPlot, org.jfree.data.category.CategoryDataset, org.jfree.chart.plot.PlotRenderingInfo);
+  public org.jfree.data.Range findRangeBounds(org.jfree.data.category.CategoryDataset);
+  protected org.jfree.data.Range findRangeBounds(org.jfree.data.category.CategoryDataset, boolean);
+  public double getItemMiddle(java.lang.Comparable, java.lang.Comparable, org.jfree.data.category.CategoryDataset, org.jfree.chart.axis.CategoryAxis, java.awt.geom.Rectangle2D, org.jfree.chart.util.RectangleEdge);
+  public void drawBackground(java.awt.Graphics2D, org.jfree.chart.plot.CategoryPlot, java.awt.geom.Rectangle2D);
+  public void drawOutline(java.awt.Graphics2D, org.jfree.chart.plot.CategoryPlot, java.awt.geom.Rectangle2D);
+  public void drawDomainLine(java.awt.Graphics2D, org.jfree.chart.plot.CategoryPlot, java.awt.geom.Rectangle2D, double, java.awt.Paint, java.awt.Stroke);
+  public void drawRangeLine(java.awt.Graphics2D, org.jfree.chart.plot.CategoryPlot, org.jfree.chart.axis.ValueAxis, java.awt.geom.Rectangle2D, double, java.awt.Paint, java.awt.Stroke);
+  public void drawDomainMarker(java.awt.Graphics2D, org.jfree.chart.plot.CategoryPlot, org.jfree.chart.axis.CategoryAxis, org.jfree.chart.plot.CategoryMarker, java.awt.geom.Rectangle2D);
+  public void drawRangeMarker(java.awt.Graphics2D, org.jfree.chart.plot.CategoryPlot, org.jfree.chart.axis.ValueAxis, org.jfree.chart.p

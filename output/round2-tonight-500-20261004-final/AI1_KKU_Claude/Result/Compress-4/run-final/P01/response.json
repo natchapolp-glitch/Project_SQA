@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:42:41.198796+00:00",
+  "ended_at_utc": "2026-10-04T08:42:47.513713+00:00",
+  "raw_body_sha256": "38e6b2cb1dc75d99bef7ddc037b8107639900ad064931e69f0aa66e856f8d88d",
+  "body": {
+    "id": "gen-1791103362-1SQw1rZdIyIIxkvVI9a1",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Key behaviors/boundaries to probe (likely regression: finish()/close() idempotency and double-close handling):\n\n- Calling finish() then close() should not throw or double-write end records/trailers.\n- Calling close() without finish() should implicitly call finish() first (valid archive produced).\n- Calling finish() twice should throw IOException (\"stream already finished\" or similar), not silently succeed or NPE.\n- Calling close() twice should be a no-op the second time (no exception), per Closeable contract looseness used by compress.\n- putArchiveEntry()/write() after finish() or close() should throw IOException (\"stream closed\"/\"finished\").\n- For TarArchiveOutputStream: closeArchiveEntry() without matching putArchiveEntry should throw IOException.\n- For CpioArchiveOutputStream: finish() must flush pending entry/trailer records exactly once; verify writeHeader only invoked appropriately.\n- For ZipArchiveOutputStream: finish() should write central directory once; verify no IOException on normal single finish+close sequence with zero entries (empty archive).\n- ChangeSetPerformer: verify perform() behavior with empty changes set on a valid ArchiveInputStream/OutputStream pair is a no-op (copies entries unchanged).\n- Receiver setup: must construct output stream around a valid underlying OutputStream (e.g., ByteArrayOutputStream) before invoking putArchiveEntry/write/finish/close.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2771,
+      "output_tokens": 486,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.010402,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.010402,
+        "upstream_inference_prompt_cost": 0.005542,
+        "upstream_inference_completions_cost": 0.00486
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 146272,
+      "daily_remaining_tokens": 53728
+    }
+  },
+  "headers": {
+    "x-request-id": "w29d4x21kvh47n5kl4k5zrxx",
+    "date": "Sun, 04 Oct 2026 08:42:49 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

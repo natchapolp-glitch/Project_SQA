@@ -1,0 +1,84 @@
+package org.apache.commons.codec.language;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.codec.EncoderException;
+import org.junit.Test;
+
+public class DoubleMetaphoneTest {
+
+    @Test
+    public void testDoubleMetaphoneBasicAndNull() {
+        DoubleMetaphone dm = new DoubleMetaphone();
+        assertNull(dm.doubleMetaphone(null));
+        assertEquals("", dm.doubleMetaphone(""));
+        assertEquals("", dm.doubleMetaphone("   "));
+        
+        assertNotNull(dm.doubleMetaphone("Smith"));
+        assertNotNull(dm.doubleMetaphone("Smith", true));
+    }
+
+    @Test
+    public void testMaxCodeLen() {
+        DoubleMetaphone dm = new DoubleMetaphone();
+        assertEquals(4, dm.getMaxCodeLen());
+        
+        dm.setMaxCodeLen(2);
+        assertEquals(2, dm.getMaxCodeLen());
+        assertEquals("SM", dm.doubleMetaphone("Smith"));
+        
+        dm.setMaxCodeLen(6);
+        assertEquals(6, dm.getMaxCodeLen());
+        assertEquals("SM0", dm.doubleMetaphone("Smith"));
+    }
+
+    @Test
+    public void testIsDoubleMetaphoneEqual() {
+        DoubleMetaphone dm = new DoubleMetaphone();
+        assertTrue(dm.isDoubleMetaphoneEqual("Smith", "Smythe"));
+        assertTrue(dm.isDoubleMetaphoneEqual("CIA", "CIA", true));
+        assertFalse(dm.isDoubleMetaphoneEqual("Smith", "Jones"));
+    }
+
+    @Test
+    public void testEncodeMethods() throws EncoderException {
+        DoubleMetaphone dm = new DoubleMetaphone();
+        assertNotNull(dm.encode("Smith"));
+        
+        Object encodedObj = dm.encode((Object) "Washington");
+        assertNotNull(encodedObj);
+        assertTrue(encodedObj instanceof String);
+    }
+
+    @Test(expected = EncoderException.class)
+    public void testEncodeInvalidObject() throws EncoderException {
+        DoubleMetaphone dm = new DoubleMetaphone();
+        dm.encode(Integer.valueOf(123));
+    }
+
+    @Test
+    public void testSpecialCasesAndConsonants() {
+        DoubleMetaphone dm = new DoubleMetaphone();
+        
+        assertNotNull(dm.doubleMetaphone("caesar"));
+        assertNotNull(dm.doubleMetaphone("focaccia"));
+        assertNotNull(dm.doubleMetaphone("Czerny"));
+        assertNotNull(dm.doubleMetaphone("\u00D1et"));
+        assertNotNull(dm.doubleMetaphone("\u00C7ade"));
+    }
+
+    @Test
+    public void testSilentStartsAndSlavoGermanic() {
+        DoubleMetaphone dm = new DoubleMetaphone();
+        
+        assertNotNull(dm.doubleMetaphone("gnat"));
+        assertNotNull(dm.doubleMetaphone("knight"));
+        assertNotNull(dm.doubleMetaphone("pneumatic"));
+        assertNotNull(dm.doubleMetaphone("wrench"));
+        assertNotNull(dm.doubleMetaphone("psalm"));
+    }
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:43:52.721210+00:00",
+  "ended_at_utc": "2026-10-04T06:43:54.873972+00:00",
+  "raw_body_sha256": "0cc4ad1917a77a8201699771d948bf04ca620e5d4446b28a38e16c9dde911567",
+  "body": {
+    "id": "genai-01a105a7-ae04-7568-9170-85090bcbe302",
+    "object": "chat.completion",
+    "created": 1791096237,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.joda.time.field;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.joda.time.DurationFieldType;\nimport org.junit.Test;\n\npublic class UnsupportedDurationFieldAdditionalTest {\n\n    @Test\n    public void testCompareTo() {\n        UnsupportedDurationField field1 = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        UnsupportedDurationField field2 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());\n        assertEquals(0, field1.compareTo(field2));\n        assertEquals(0, field1.compareTo((Object) field2));\n    }\n\n    @Test\n    public void testEqualsAndHashCode() {\n        UnsupportedDurationField field1 = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        UnsupportedDurationField field2 = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        UnsupportedDurationField field3 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());\n\n        assertNotNull(field1);\n        assertEquals(field1, field2);\n        assertEquals(field1.hashCode(), field2.hashCode());\n        org.junit.Assert.assertNotEquals(field1, field3);\n        org.junit.Assert.assertNotEquals(field1, null);\n        org.junit.Assert.assertNotEquals(field1, \"some string\");\n    }\n\n    @Test\n    public void testToString() {\n        UnsupportedDurationField field = UnsupportedDurationField.getInstance(DurationFieldType.eras());\n        assertNotNull(field.toString());\n        org.junit.Assert.assertTrue(field.toString().contains(\"eras\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5723,
+      "completion_tokens": 382,
+      "total_tokens": 6105
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 66436,
+      "daily_remaining_tokens": 283564
+    }
+  },
+  "headers": {
+    "x-request-id": "q5h2si5zf87mu3s5fmmrajb7",
+    "date": "Sun, 04 Oct 2026 06:43:57 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:05:38.679275+00:00",
+  "ended_at_utc": "2026-10-04T07:05:44.735372+00:00",
+  "raw_body_sha256": "512624614d2f6593c9001231068963b0405234393f398f4024d93df8ef3507c0",
+  "body": {
+    "id": "gen-1791097540-6RWPS8PYtaGDKmFXWMMu",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.collections;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Collection;\nimport java.util.List;\n\nimport org.junit.Test;\n\npublic class CollectionUtilsExtraTest {\n\n    @Test\n    public void testDisjunctionWithEmptyCollection() {\n        List<String> a = new ArrayList<String>();\n        List<String> b = Arrays.asList(\"x\", \"y\", \"y\");\n\n        Collection disjunction = CollectionUtils.disjunction(a, b);\n        assertEquals(1, CollectionUtils.cardinality(\"x\", disjunction));\n        assertEquals(2, CollectionUtils.cardinality(\"y\", disjunction));\n        assertEquals(3, disjunction.size());\n    }\n\n    @Test\n    public void testUnionWithNullElements() {\n        List<String> a = new ArrayList<String>();\n        a.add(\"a\");\n        a.add(null);\n        List<String> b = new ArrayList<String>();\n        b.add(null);\n        b.add(\"b\");\n\n        Collection union = CollectionUtils.union(a, b);\n        assertEquals(1, CollectionUtils.cardinality(\"a\", union));\n        assertEquals(1, CollectionUtils.cardinality(\"b\", union));\n        assertEquals(1, CollectionUtils.cardinality(null, union));\n        assertEquals(3, union.size());\n    }\n\n    @Test\n    public void testIsEqualCollectionDifferentElementsSameSize() {\n        List<String> a = Arrays.asList(\"a\", \"b\");\n        List<String> b = Arrays.asList(\"c\", \"d\");\n        assertFalse(CollectionUtils.isEqualCollection(a, b));\n    }\n\n    @Test\n    public void testIsProperSubCollectionEqualSizeIsFalse() {\n        List<String> a = Arrays.asList(\"a\", \"b\");\n        List<String> b = Arrays.asList(\"a\", \"b\");\n        assertFalse(CollectionUtils.isProperSubCollection(a, b));\n        assertTrue(CollectionUtils.isSubCollection(a, b));\n        assertTrue(CollectionUtils.isEqualCollection(a, b));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8582,
+      "output_tokens": 794,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.025104,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.025104,
+        "upstream_inference_prompt_cost": 0.017164,
+        "upstream_inference_completions_cost": 0.00794
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 126895,
+      "daily_remaining_tokens": 73105
+    }
+  },
+  "headers": {
+    "x-request-id": "w777amqzto7q5zgpqspl3yib",
+    "date": "Sun, 04 Oct 2026 07:05:46 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

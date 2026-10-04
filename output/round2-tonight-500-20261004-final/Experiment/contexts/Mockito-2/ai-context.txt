@@ -1,0 +1,49 @@
+Case: Mockito-2
+Java 11, JUnit 4
+Modified classes: org.mockito.internal.util.Timer
+
+BUGGY API signatures (may include private members):
+Compiled from "Timer.java"
+public class org.mockito.internal.util.Timer {
+  private final long durationMillis;
+  private long startTime;
+  static final boolean $assertionsDisabled;
+  public org.mockito.internal.util.Timer(long);
+  public boolean isCounting();
+  public void start();
+  static {};
+}
+
+
+BUGGY source excerpt: org.mockito.internal.util.Timer (truncated=False)
+```java
+package org.mockito.internal.util;
+
+
+public class Timer {
+
+    private final long durationMillis;
+    private long startTime = -1;
+
+    public Timer(long durationMillis) {
+        this.durationMillis = durationMillis;
+    }
+
+    /**
+     * Informs whether the timer is still counting down.
+     */
+    public boolean isCounting() {
+        assert startTime != -1;
+        return System.currentTimeMillis() - startTime <= durationMillis;
+    }
+
+    /**
+     * Starts the timer count down.
+     */
+    public void start() {
+        startTime = System.currentTimeMillis();
+    }
+
+}
+
+```

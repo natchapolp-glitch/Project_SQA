@@ -1,0 +1,9 @@
+- Focus: `getNamespaceURI(String prefix)` resolution likely mishandles default/empty prefix or "xml"/"xmlns" reserved prefixes vs documented XML namespace spec.
+- Verify `getNamespaceURI(Node)`/`getNamespaceURI(Object)` returns correct URI for elements with explicit xmlns, inherited namespace from ancestor, and no namespace (null/"").
+- Check `getPrefix` returns null or "" appropriately when node has no prefix vs explicit prefix.
+- Confirm `compareChildNodePointers` orders siblings correctly for duplicate-named elements, text nodes, and mixed node types (ordering boundary: equal nodes, adjacent text).
+- Validate `testNode(NodeTest)` for element name match, wildcard "*", processing-instruction test, text/comment node tests.
+- Ensure `getLength()` and `isLeaf()` correctly reflect child count (0 for leaf, >0 for element with children) and `isCollection()` always false.
+- Setup prerequisite: build minimal DOM/JDOM document tree with root element, nested child elements (same/different names), text nodes, attributes with namespaces, and a root `NodePointer` context via `DOMNodePointer`/`JDOMNodePointer` constructors.
+- Edge cases: root node (no parent), node with xml: or xmlns: prefix, node with null namespace URI, empty document fragment.
+- Compare DOM and JDOM implementations for symmetric behavior on same logical namespace scenarios (regression parity check).

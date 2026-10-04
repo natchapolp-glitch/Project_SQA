@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:58:14.790227+00:00",
+  "ended_at_utc": "2026-10-04T03:58:16.572774+00:00",
+  "raw_body_sha256": "eb205ec791a6bfe67181715ad4c5de34820afa8a179a9c0e393a301f3e06fd81",
+  "body": {
+    "id": "genai-01a10510-0028-727e-8a47-eaabc496b221",
+    "object": "chat.completion",
+    "created": 1791086297,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Valid receiver setup: Instantiate `TextBuffer` using a `BufferRecycler` instance (or null if supported by constructor).\n2. Boundary behavior: `NumberInput.parseInt`, `parseLong`, and `inLongRange` must correctly handle char array offsets and lengths without IndexOutOfBoundsException.\n3. Overflow boundaries: `NumberInput` range checks (`inLongRange`, `MAX_LONG_STR`, `MIN_LONG_STR_NO_SIGN`) must accurately parse numbers near `Long.MIN_VALUE` and `Long.MAX_VALUE`.\n4. Exceptional behavior: `NumberInput.parseBigDecimal` and `TextBuffer.contentsAsDecimal` must throw `NumberFormatException` on malformed inputs or strings exceeding reasonable bounds.\n5. TextBuffer state boundaries: `resetWithShared`, `resetWithCopy`, and `resetWithString` must properly initialize internal pointers and lengths.\n6. TextBuffer mutation: `append` methods and segment expansion (`expandCurrentSegment`, `finishCurrentSegment`) must preserve character data integrity across segment boundaries.\n7. Result conversion: `contentsAsString` and `contentsAsArray` must return accurate representations reflecting the exact current size and offsets of the text buffer.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 991,
+      "completion_tokens": 251,
+      "total_tokens": 1242
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 1242,
+      "daily_remaining_tokens": 348758
+    }
+  },
+  "headers": {
+    "x-request-id": "bfkh5sk4umfyxteahl0ddl0i",
+    "date": "Sun, 04 Oct 2026 03:58:17 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

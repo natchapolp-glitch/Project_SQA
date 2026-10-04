@@ -1,0 +1,59 @@
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.StringReader;
+import org.junit.Test;
+
+public class LexerAdditionalTest {
+
+    private static final class ConcreteLexer extends Lexer {
+        ConcreteLexer(CSVFormat format, ExtendedBufferedReader in) {
+            super(format, in);
+        }
+
+        @Override
+        Token nextToken(Token reusableToken) throws IOException {
+            return reusableToken;
+        }
+    }
+
+    private Lexer createLexer(CSVFormat format, String input) {
+        return new ConcreteLexer(format, new ExtendedBufferedReader(new StringReader(input)));
+    }
+
+    @Test
+    public void testReadEscapeAdditionalCases() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT;
+        Lexer lexer1 = createLexer(format, "r");
+        assertEquals(Constants.CR, lexer1.readEscape());
+
+        Lexer lexer2 = createLexer(format, "t");
+        assertEquals(Constants.TAB, lexer2.readEscape());
+
+        Lexer lexer3 = createLexer(format, "b");
+        assertEquals(Constants.BACKSPACE, lexer3.readEscape());
+
+        Lexer lexer4 = createLexer(format, "f");
+        assertEquals(Constants.FF, lexer4.readEscape());
+    }
+
+    @Test
+    public void testReadEscapeControlChars() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT;
+        // Testing escaping of characters like CR, LF, FF, TAB, BACKSPACE directly or other default cases
+        Lexer lexer = createLexer(format, "\n");
+        assertEquals(Constants.LF, lexer.readEscape());
+    }
+
+    @Test
+    public void testReadEndOfLineCrLf() throws IOException {
+        CSVFormat format = CSVFormat.DEFAULT;
+        Lexer lexer = createLexer(format, "\n");
+        assertTrue(lexer.readEndOfLine(Constants.CR));
+    }
+}
+```

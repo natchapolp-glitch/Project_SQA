@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:18:48.383731+00:00",
+  "ended_at_utc": "2026-10-04T09:18:54.879980+00:00",
+  "raw_body_sha256": "5fefdd6f8094d00e4cff5ffe316923397920b5910e1ec83bc28da34af947e3be",
+  "body": {
+    "id": "genai-01a10635-8c92-7b71-96d5-c0e0db5bfa0b",
+    "object": "chat.completion",
+    "created": 1791105535,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.lang3;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.List;\nimport java.util.Locale;\nimport java.util.Set;\n\nimport org.junit.Test;\n\npublic class LocaleUtilsTest {\n\n    @Test\n    public void testToLocale_Valid() {\n        Locale loc1 = LocaleUtils.toLocale(\"en\");\n        assertNotNull(loc1);\n        assertEquals(\"en\", loc1.getLanguage());\n        assertEquals(\"\", loc1.getCountry());\n\n        Locale loc2 = LocaleUtils.toLocale(\"en_GB\");\n        assertNotNull(loc2);\n        assertEquals(\"en\", loc2.getLanguage());\n        assertEquals(\"GB\", loc2.getCountry());\n\n        Locale loc3 = LocaleUtils.toLocale(\"en_GB_xxx\");\n        assertNotNull(loc3);\n        assertEquals(\"en\", loc3.getLanguage());\n        assertEquals(\"GB\", loc3.getCountry());\n        assertEquals(\"xxx\", loc3.getVariant());\n    }\n\n    @Test\n    public void testToLocale_Null() {\n        assertNull(LocaleUtils.toLocale(null));\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testToLocale_InvalidFormat() {\n        LocaleUtils.toLocale(\"invalid\");\n    }\n\n    @Test\n    public void testLocaleLookupList() {\n        Locale locale = new Locale(\"fr\", \"CA\", \"xxx\");\n        List<Locale> list = LocaleUtils.localeLookupList(locale);\n        assertNotNull(list);\n        assertEquals(3, list.size());\n        assertEquals(new Locale(\"fr\", \"CA\", \"xxx\"), list.get(0));\n        assertEquals(new Locale(\"fr\", \"CA\"), list.get(1));\n        assertEquals(new Locale(\"fr\"), list.get(2));\n    }\n\n    @Test\n    public void testLocaleLookupListWithDefault() {\n        Locale locale = new Locale(\"fr\", \"CA\");\n        Locale defaultLocale = new Locale(\"en\", \"US\");\n        List<Locale> list = LocaleUtils.localeLookupList(locale, defaultLocale);\n        assertNotNull(list);\n        assertEquals(3, list.size());\n        assertEquals(new Locale(\"fr\", \"CA\"), list.get(0));\n        assertEquals(new Locale(\"fr\"), list.get(1));\n        assertEquals(new Locale(\"en\", \"US\"), list.get(2));\n    }\n\n    @Test\n    public void testAvailableLocaleMethods() {\n        List<Locale> list = LocaleUtils.availableLocaleList();\n        assertNotNull(list);\n        assertFalse(list.isEmpty());\n\n        Set<Locale> set = LocaleUtils.availableLocaleSet();\n        assertNotNull(set);\n        assertFalse(set.isEmpty());\n\n        Locale us = Locale.US;\n        assertEquals(list.contains(us), LocaleUtils.isAvailableLocale(us));\n        assertFalse(LocaleUtils.isAvailableLocale(new Locale(\"q1\", \"Q2\", \"Q3\")));\n    }\n\n    @Test\n    public void testLanguagesAndCountriesBy() {\n        List<Locale> langs = LocaleUtils.languagesByCountry(\"US\");\n        assertNotNull(langs);\n\n        List<Locale> countries = LocaleUtils.countriesByLanguage(\"en\");\n        assertNotNull(countries);\n\n        assertTrue(LocaleUtils.languagesByCountry(null).isEmpty());\n        assertTrue(LocaleUtils.countriesByLanguage(null).isEmpty());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3759,
+      "completion_tokens": 833,
+      "total_tokens": 4592
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 105848,
+      "daily_remaining_tokens": 244152
+    }
+  },
+  "headers": {
+    "x-request-id": "da4dx6hv0gbtkmde2nrcmxpq",
+    "date": "Sun, 04 Oct 2026 09:18:55 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

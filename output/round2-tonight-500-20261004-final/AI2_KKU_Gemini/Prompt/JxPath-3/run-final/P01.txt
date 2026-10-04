@@ -1,0 +1,36 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JxPath-3
+Java 11, JUnit 4
+Modified classes: org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer
+BUGGY API signatures:
+Compiled from "NullPropertyPointer.java"
+public class org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer extends org.apache.commons.jxpath.ri.model.beans.PropertyPointer {
+  private java.lang.String propertyName;
+  private boolean byNameAttribute;
+  public org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer(org.apache.commons.jxpath.ri.model.NodePointer);
+  public org.apache.commons.jxpath.ri.QName getName();
+  public void setPropertyIndex(int);
+  public int getLength();
+  public java.lang.Object getBaseValue();
+  public java.lang.Object getImmediateNode();
+  public boolean isLeaf();
+  public org.apache.commons.jxpath.ri.model.NodePointer getValuePointer();
+  protected boolean isActualProperty();
+  public boolean isActual();
+  public boolean isContainer();
+  public void setValue(java.lang.Object);
+  public org.apache.commons.jxpath.ri.model.NodePointer createPath(org.apache.commons.jxpath.JXPathContext);
+  public org.apache.commons.jxpath.ri.model.NodePointer createPath(org.apache.commons.jxpath.JXPathContext, java.lang.Object);
+  public org.apache.commons.jxpath.ri.model.NodePointer createChild(org.apache.commons.jxpath.JXPathContext, org.apache.commons.jxpath.ri.QName, int);
+  public org.apache.commons.jxpath.ri.model.NodePointer createChild(org.apache.commons.jxpath.JXPathContext, org.apache.commons.jxpath.ri.QName, int, java.lang.Object);
+  public java.lang.String getPropertyName();
+  public void setPropertyName(java.lang.String);
+  public void setNameAttributeValue(java.lang.String);
+  public boolean isCollection();
+  public int getPropertyCount();
+  public java.lang.String[] getPropertyNames();
+  public java.lang.String asPath();
+  private java.lang.String escape(java.lang.String);
+}
+

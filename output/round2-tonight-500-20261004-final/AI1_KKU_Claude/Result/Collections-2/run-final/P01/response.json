@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:35:16.420472+00:00",
+  "ended_at_utc": "2026-10-04T05:35:25.641963+00:00",
+  "raw_body_sha256": "726cd775d0d6dd7d81c1ed395b43383d12b4929f22e82ee47a53666e2bfe1371",
+  "body": {
+    "id": "gen-1791092119-4e2CWT2JzyNgZwAAH8d7",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- addProperty/setProperty with same key multiple times: verify list accumulation (Vector) vs replacement semantics, and type of stored value for single vs multiple values.\n- getStringArray/getVector/getList on key with comma-separated single value vs multiple addProperty calls: check splitting/trimming behavior and escaping of commas.\n- getProperty on missing key: should return null (and check defaults chain fallback via setDefaults/combine if constructible).\n- getBoolean/getByte/getShort/getInt/getLong/getFloat/getDouble: valid parse, default-value overloads when key absent, and NumberFormatException/ClassCastException when value malformed—verify exception type thrown.\n- testBoolean: accepts true/false/yes/no/on/off/1/0 variants; returns null for unrecognized string.\n- clearProperty: removes key entirely, subsequent getProperty returns null, iterator from getKeys() no longer includes it.\n- getKeys()/getKeys(prefix): iteration order matches insertion order (keysAsListed), prefix filtering returns only matching dotted keys.\n- subset(prefix): returned ExtendedProperties contains only keys under prefix with prefix stripped, independent instance.\n- interpolate via getString: ${key} substitution resolves to other property values, including nested/undefined tokens left literal.\n- load(InputStream) with comment lines, continuation lines (trailing backslash), include directive, and duplicate keys: verify correct parsing matches Hashtable put semantics per documented format.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1832,
+      "output_tokens": 510,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008764,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008764,
+        "upstream_inference_prompt_cost": 0.003664,
+        "upstream_inference_completions_cost": 0.0051
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 28695,
+      "daily_remaining_tokens": 171305
+    }
+  },
+  "headers": {
+    "x-request-id": "q566g5nnzaeg9jp1tdxbfvbl",
+    "date": "Sun, 04 Oct 2026 05:35:26 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

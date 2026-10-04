@@ -1,0 +1,587 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Time-3
+Java 11, JUnit 4
+Modified classes: org.joda.time.MutableDateTime
+
+BUGGY API signatures (may include private members):
+Compiled from "MutableDateTime.java"
+public class org.joda.time.MutableDateTime extends org.joda.time.base.BaseDateTime implements org.joda.time.ReadWritableDateTime,java.lang.Cloneable,java.io.Serializable {
+  private static final long serialVersionUID;
+  public static final int ROUND_NONE;
+  public static final int ROUND_FLOOR;
+  public static final int ROUND_CEILING;
+  public static final int ROUND_HALF_FLOOR;
+  public static final int ROUND_HALF_CEILING;
+  public static final int ROUND_HALF_EVEN;
+  private org.joda.time.DateTimeField iRoundingField;
+  private int iRoundingMode;
+  public static org.joda.time.MutableDateTime now();
+  public static org.joda.time.MutableDateTime now(org.joda.time.DateTimeZone);
+  public static org.joda.time.MutableDateTime now(org.joda.time.Chronology);
+  public static org.joda.time.MutableDateTime parse(java.lang.String);
+  public static org.joda.time.MutableDateTime parse(java.lang.String, org.joda.time.format.DateTimeFormatter);
+  public org.joda.time.MutableDateTime();
+  public org.joda.time.MutableDateTime(org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(org.joda.time.Chronology);
+  public org.joda.time.MutableDateTime(long);
+  public org.joda.time.MutableDateTime(long, org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(long, org.joda.time.Chronology);
+  public org.joda.time.MutableDateTime(java.lang.Object);
+  public org.joda.time.MutableDateTime(java.lang.Object, org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(java.lang.Object, org.joda.time.Chronology);
+  public org.joda.time.MutableDateTime(int, int, int, int, int, int, int);
+  public org.joda.time.MutableDateTime(int, int, int, int, int, int, int, org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(int, int, int, int, int, int, int, org.joda.time.Chronology);
+  public org.joda.time.DateTimeField getRoundingField();
+  public int getRoundingMode();
+  public void setRounding(org.joda.time.DateTimeField);
+  public void setRounding(org.joda.time.DateTimeField, int);
+  public void setMillis(long);
+  public void setMillis(org.joda.time.ReadableInstant);
+  public void add(long);
+  public void add(org.joda.time.ReadableDuration);
+  public void add(org.joda.time.ReadableDuration, int);
+  public void add(org.joda.time.ReadablePeriod);
+  public void add(org.joda.time.ReadablePeriod, int);
+  public void setChronology(org.joda.time.Chronology);
+  public void setZone(org.joda.time.DateTimeZone);
+  public void setZoneRetainFields(org.joda.time.DateTimeZone);
+  public void set(org.joda.time.DateTimeFieldType, int);
+  public void add(org.joda.time.DurationFieldType, int);
+  public void setYear(int);
+  public void addYears(int);
+  public void setWeekyear(int);
+  public void addWeekyears(int);
+  public void setMonthOfYear(int);
+  public void addMonths(int);
+  public void setWeekOfWeekyear(int);
+  public void addWeeks(int);
+  public void setDayOfYear(int);
+  public void setDayOfMonth(int);
+  public void setDayOfWeek(int);
+  public void addDays(int);
+  public void setHourOfDay(int);
+  public void addHours(int);
+  public void setMinuteOfDay(int);
+  public void setMinuteOfHour(int);
+  public void addMinutes(int);
+  public void setSecondOfDay(int);
+  public void setSecondOfMinute(int);
+  public void addSeconds(int);
+  public void setMillisOfDay(int);
+  public void setMillisOfSecond(int);
+  public void addMillis(int);
+  public void setDate(long);
+  public void setDate(org.joda.time.ReadableInstant);
+  public void setDate(int, int, int);
+  public void setTime(long);
+  public void setTime(org.joda.time.ReadableInstant);
+  public void setTime(int, int, int, int);
+  public void setDateTime(int, int, int, int, int, int, int);
+  public org.joda.time.MutableDateTime$Property property(org.joda.time.DateTimeFieldType);
+  public org.joda.time.MutableDateTime$Property era();
+  public org.joda.time.MutableDateTime$Property centuryOfEra();
+  public org.joda.time.MutableDateTime$Property yearOfCentury();
+  public org.joda.time.MutableDateTime$Property yearOfEra();
+  public org.joda.time.MutableDateTime$Property year();
+  public org.joda.time.MutableDateTime$Property weekyear();
+  public org.joda.time.MutableDateTime$Property monthOfYear();
+  public org.joda.time.MutableDateTime$Property weekOfWeekyear();
+  public org.joda.time.MutableDateTime$Property dayOfYear();
+  public org.joda.time.MutableDateTime$Property dayOfMonth();
+  public org.joda.time.MutableDateTime$Property dayOfWeek();
+  public org.joda.time.MutableDateTime$Property hourOfDay();
+  public org.joda.time.MutableDateTime$Property minuteOfDay();
+  public org.joda.time.MutableDateTime$Property minuteOfHour();
+  public org.joda.time.MutableDateTime$Property secondOfDay();
+  public org.joda.time.MutableDateTime$Property secondOfMinute();
+  public org.joda.time.MutableDateTime$Property millisOfDay();
+  public org.joda.time.MutableDateTime$Property millisOfSecond();
+  public org.joda.time.MutableDateTime copy();
+  public java.lang.Object clone();
+  public java.lang.String toString();
+}
+
+
+BUGGY source excerpt: org.joda.time.MutableDateTime (truncated=True)
+```java
+/*
+ *  Copyright 2001-2013 Stephen Colebourne
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.joda.time;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Locale;
+
+import org.joda.convert.FromString;
+import org.joda.convert.ToString;
+import org.joda.time.base.BaseDateTime;
+import org.joda.time.chrono.ISOChronology;
+import org.joda.time.field.AbstractReadableInstantFieldProperty;
+import org.joda.time.field.FieldUtils;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+/**
+ * MutableDateTime is the standard implementation of a modifiable datetime class.
+ * It holds the datetime as milliseconds from the Java epoch of 1970-01-01T00:00:00Z.
+ * <p>
+ * This class uses a Chronology internally. The Chronology determines how the
+ * millisecond instant value is converted into the date time fields.
+ * The default Chronology is <code>ISOChronology</code> which is the agreed
+ * international standard and compatible with the modern Gregorian calendar.
+ * <p>
+ * Each individual field can be accessed in two ways:
+ * <ul>
+ * <li><code>getHourOfDay()</code>
+ * <li><code>hourOfDay().get()</code>
+ * </ul>
+ * The second technique also provides access to other useful methods on the
+ * field:
+ * <ul>
+ * <li>get numeric value
+ * <li>set numeric value
+ * <li>add to numeric value
+ * <li>add to numeric value wrapping with the field
+ * <li>get text value
+ * <li>get short text value
+ * <li>set text value
+ * <li>field maximum value
+ * <li>field minimum value
+ * </ul>
+ *
+ * <p>
+ * MutableDateTime is mutable and not thread-safe, unless concurrent threads
+ * are not invoking mutator methods.
+ *
+ * @author Guy Allard
+ * @author Brian S O'Neill
+ * @author Stephen Colebourne
+ * @author Mike Schrag
+ * @since 1.0
+ * @see DateTime
+ */
+public class MutableDateTime
+        extends BaseDateTime
+        implements ReadWritableDateTime, Cloneable, Serializable {
+
+    /** Serialization version */
+    private static final long serialVersionUID = 2852608688135209575L;
+
+    /** Rounding is disabled */
+    public static final int ROUND_NONE = 0;
+    /** Rounding mode as described by {@link DateTimeField#roundFloor} */
+    public static final int ROUND_FLOOR = 1;
+    /** Rounding mode as described by {@link DateTimeField#roundCeiling} */
+    public static final int ROUND_CEILING = 2;
+    /** Rounding mode as described by {@link DateTimeField#roundHalfFloor} */
+    public static final int ROUND_HALF_FLOOR = 3;
+    /** Rounding mode as described by {@link DateTimeField#roundHalfCeiling} */
+    public static final int ROUND_HALF_CEILING = 4;
+    /** Rounding mode as described by {@link DateTimeField#roundHalfEven} */
+    public static final int ROUND_HALF_EVEN = 5;
+
+    /** The field to round on */
+    private DateTimeField iRoundingField;
+    /** The mode of rounding */
+    private int iRoundingMode;
+
+    //-----------------------------------------------------------------------
+    /**
+     * Obtains a {@code MutableDateTime} set to the current system millisecond time
+     * using <code>ISOChronology</code> in the default time zone.
+     * 
+     * @return the current date-time, not null
+     * @since 2.0
+     */
+    public static MutableDateTime now() {
+        return new MutableDateTime();
+    }
+
+    /**
+     * Obtains a {@code MutableDateTime} set to the current system millisecond time
+     * using <code>ISOChronology</code> in the specified time zone.
+     *
+     * @param zone  the time zone, not null
+     * @return the current date-time, not null
+     * @since 2.0
+     */
+    public static MutableDateTime now(DateTimeZone zone) {
+        if (zone == null) {
+            throw new NullPointerException("Zone must not be null");
+        }
+        return new MutableDateTime(zone);
+    }
+
+    /**
+     * Obtains a {@code MutableDateTime} set to the current system millisecond time
+     * using the specified chronology.
+     *
+     * @param chronology  the chronology, not null
+     * @return the current date-time, not null
+     * @since 2.0
+     */
+    public static MutableDateTime now(Chronology chronology) {
+        if (chronology == null) {
+            throw new NullPointerException("Chronology must not be null");
+        }
+        return new MutableDateTime(chronology);
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Parses a {@code MutableDateTime} from the specified string.
+     * <p>
+     * This uses {@link ISODateTimeFormat#dateTimeParser()}.
+     * 
+     * @param str  the string to parse, not null
+     * @since 2.0
+     */
+    @FromString
+    public static MutableDateTime parse(String str) {
+        return parse(str, ISODateTimeFormat.dateTimeParser().withOffsetParsed());
+    }
+
+    /**
+     * Parses a {@code MutableDateTime} from the specified string using a formatter.
+     * 
+     * @param str  the string to parse, not null
+     * @param formatter  the formatter to use, not null
+     * @since 2.0
+     */
+    public static MutableDateTime parse(String str, DateTimeFormatter formatter) {
+        return formatter.parseDateTime(str).toMutableDateTime();
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Constructs an instance set to the current system millisecond time
+     * using <code>ISOChronology</code> in the default time zone.
+     * 
+     * @see #now()
+     */
+    public MutableDateTime() {
+        super();
+    }
+
+    /**
+     * Constructs an instance set to the current system millisecond time
+     * using <code>ISOChronology</code> in the specified time zone.
+     * <p>
+     * If the specified time zone is null, the default zone is used.
+     *
+     * @param zone  the time zone, null means default zone
+     * @see #now(DateTimeZone)
+     */
+    public MutableDateTime(DateTimeZone zone) {
+        super(zone);
+    }
+
+    /**
+     * Constructs an instance set to the current system millisecond time
+     * using the specified chronology.
+     * <p>
+     * If the chronology is null, <code>ISOChronology</code>
+     * in the default time zone is used.
+     *
+     * @param chronology  the chronology, null means ISOChronology in default zone
+     * @see #now(Chronology)
+     */
+    public MutableDateTime(Chronology chronology) {
+        super(chronology);
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Constructs an instance set to the milliseconds from 1970-01-01T00:00:00Z
+     * using <code>ISOChronology</code> in the default time zone.
+     *
+     * @param instant  the milliseconds from 1970-01-01T00:00:00Z
+     */
+    public MutableDateTime(long instant) {
+        super(instant);
+    }
+
+    /**
+     * Constructs an instance set to the milliseconds from 1970-01-01T00:00:00Z
+     * using <code>ISOChronology</code> in the specified time zone.
+     * <p>
+     * If the specified time zone is null, the default zone is used.
+     *
+     * @param instant  the milliseconds from 1970-01-01T00:00:00Z
+     * @param zone  the time zone, null means default zone
+     */
+    public MutableDateTime(long instant, DateTimeZone zone) {
+        super(instant, zone);
+    }
+
+    /**
+     * Constructs an instance set to the milliseconds from 1970-01-01T00:00:00Z
+     * using the specified chronology.
+     * <p>
+     * If the chronology is null, <code>ISOChronology</code>
+     * in the default time zone is used.
+     *
+     * @param instant  the milliseconds from 1970-01-01T00:00:00Z
+     * @param chronology  the chronology, null means ISOChronology in default zone
+     */
+    public MutableDateTime(long instant, Chronology chronology) {
+        super(instant, chronology);
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Constructs an instance from an Object that represents a datetime.
+     * <p>
+     * If the object implies a chronology (such as GregorianCalendar does),
+     * then that chronology will be used. Otherwise, ISO default is used.
+     * Thus if a GregorianCalendar is passed in, the chronology used will
+     * be GJ, but if a Date is passed in the chronology will be ISO.
+     * <p>
+     * The recognised object types are defined in
+     * {@link org.joda.time.convert.ConverterManager ConverterManager} and
+     * include ReadableInstant, String, Calendar and Date.
+     *
+     * @param instant  the datetime object, null means now
+     * @throws IllegalArgumentException if the instant is invalid
+     */
+    public MutableDateTime(Object instant) {
+        super(instant, (Chronology) null);
+    }
+
+    /**
+     * Constructs an instance from an Object that represents a datetime,
+     * forcing the time zone to that specified.
+     * <p>
+     * If the object implies a chronology (such as GregorianCalendar does),
+     * then that chronology will be used, but with the time zone adjusted.
+     * Otherwise, ISO is used in the specified time zone.
+     * If the specified time zone is null, the default zone is used.
+     * Thus if a GregorianCalendar is passed in, the chronology used will
+     * be GJ, but if a Date is passed in the chronology will be ISO.
+     * <p>
+     * The recognised object types are defined in
+     * {@link org.joda.time.convert.ConverterManager ConverterManager} and
+     * include ReadableInstant, String, Calendar and Date.
+     *
+     * @param instant  the datetime object, null means now
+     * @param zone  the time zone, null means default time zone
+     * @throws IllegalArgumentException if the instant is invalid
+     */
+    public MutableDateTime(Object instant, DateTimeZone zone) {
+        super(instant, zone);
+    }
+
+    /**
+     * Constructs an instance from an Object that represents a datetime,
+     * using the specified chronology.
+     * <p>
+     * If the chronology is null, ISO in the default time zone is used.
+     * Any chronology implied by the object (such as GregorianCalendar does)
+     * is ignored.
+     * <p>
+     * The recognised object types are defined in
+     * {@link org.joda.time.convert.ConverterManager ConverterManager} and
+     * include ReadableInstant, String, Calendar and Date.
+     *
+     * @param instant  the datetime object, null means now
+     * @param chronology  the chronology, null means ISOChronology in default zone
+     * @throws IllegalArgumentException if the instant is invalid
+     */
+    public MutableDateTime(Object instant, Chronology chronology) {
+        super(instant, DateTimeUtils.getChronology(chronology));
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Constructs an instance from datetime field values
+     * using <code>ISOChronology</code> in the default time zone.
+     *
+     * @param year  the year
+     * @param monthOfYear  the month of the year
+     * @param dayOfMonth  the day of the month
+     * @param hourOfDay  the hour of the day
+     * @param minuteOfHour  the minute of the hour
+     * @param secondOfMinute  the second of the minute
+     * @param millisOfSecond  the millisecond of the second
+     */
+    public MutableDateTime(
+            int year,
+            int monthOfYear,
+            int dayOfMonth,
+            int hourOfDay,
+            int minuteOfHour,
+            int secondOfMinute,
+            int millisOfSecond) {
+        super(year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond);
+    }
+
+    /**
+     *
+```
+
+
+Original generated source:
+```java
+package org.joda.time;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class MutableDateTimeTest {
+
+    @Test
+    public void testDefaultConstructorAndNow() {
+        MutableDateTime mdt1 = new MutableDateTime();
+        MutableDateTime mdt2 = MutableDateTime.now();
+        assertNotNull(mdt1);
+        assertNotNull(mdt2);
+        assertTrue(mdt1.getMillis() <= System.currentTimeMillis());
+    }
+
+    @Test
+    public void testZoneAndChronologyConstructors() {
+        DateTimeZone zone = DateTimeZone.forID("UTC");
+        Chronology chrono = ISOChronology.getInstance(zone);
+        
+        MutableDateTime mdt = new MutableDateTime(2023, 6, 15, 12, 30, 0, 0, chrono);
+        assertEquals(zone, mdt.getZone());
+        assertEquals(chrono, mdt.getChronology());
+        assertEquals(2023, mdt.getYear());
+        assertEquals(6, mdt.getMonthOfYear());
+        assertEquals(15, mdt.getDayOfMonth());
+    }
+
+    @Test
+    public void testParseMethods() {
+        MutableDateTime mdt = MutableDateTime.parse("2020-02-29T15:45:30.000Z");
+        assertEquals(2020, mdt.getYear());
+        assertEquals(2, mdt.getMonthOfYear());
+        assertEquals(29, mdt.getDayOfMonth());
+        assertEquals(15, mdt.getHourOfDay());
+        assertEquals(45, mdt.getMinuteOfHour());
+        assertEquals(30, mdt.getSecondOfMinute());
+    }
+
+    @Test
+    public void testSettersAndAdders() {
+        MutableDateTime mdt = new MutableDateTime(2023, 1, 15, 10, 0, 0, 0);
+        mdt.setYear(2024);
+        mdt.addMonths(2);
+        mdt.addDays(5);
+        mdt.addHours(3);
+        mdt.addMinutes(15);
+        mdt.addSeconds(10);
+        mdt.addMillis(500);
+
+        assertEquals(2024, mdt.getYear());
+        assertEquals(3, mdt.getMonthOfYear());
+        assertEquals(20, mdt.getDayOfMonth());
+        assertEquals(13, mdt.getHourOfDay());
+        assertEquals(15, mdt.getMinuteOfHour());
+        assertEquals(10, mdt.getSecondOfMinute());
+        assertEquals(500, mdt.getMillisOfSecond());
+    }
+
+    @Test
+    public void testSetDateAndTimeBulk() {
+        MutableDateTime mdt = new MutableDateTime(0L);
+        mdt.setDate(2015, 10, 5);
+        mdt.setTime(14, 20, 35, 123);
+
+        assertEquals(2015, mdt.getYear());
+        assertEquals(10, mdt.getMonthOfYear());
+        assertEquals(5, mdt.getDayOfMonth());
+        assertEquals(14, mdt.getHourOfDay());
+        assertEquals(20, mdt.getMinuteOfHour());
+        assertEquals(35, mdt.getSecondOfMinute());
+        assertEquals(123, mdt.getMillisOfSecond());
+    }
+
+    @Test
+    public void testRoundingConfiguration() {
+        MutableDateTime mdt = new MutableDateTime(2023, 6, 15, 12, 34, 56, 789);
+        DateTimeField field = mdt.getChronology().minuteOfHour();
+        mdt.setRounding(field, MutableDateTime.ROUND_FLOOR);
+
+        assertEquals(field, mdt.getRoundingField());
+        assertEquals(MutableDateTime.ROUND_FLOOR, mdt.getRoundingMode());
+    }
+
+    @Test
+    public void testZoneRetainFields() {
+        MutableDateTime mdt = new MutableDateTime(2023, 6, 15, 12, 0, 0, 0, DateTimeZone.forID("UTC"));
+        mdt.setZoneRetainFields(DateTimeZone.forID("America/New_York"));
+        assertEquals(DateTimeZone.forID("America/New_York"), mdt.getZone());
+        assertEquals(12, mdt.getHourOfDay());
+    }
+
+    @Test
+    public void testPropertiesAndCloning() {
+        MutableDateTime mdt = new MutableDateTime(2023, 5, 10, 8, 0, 0, 0);
+        MutableDateTime clone = (MutableDateTime) mdt.clone();
+        assertEquals(mdt, clone);
+
+        mdt.property(DateTimeFieldType.dayOfMonth()).add(5);
+        assertEquals(15, mdt.getDayOfMonth());
+        assertEquals(10, clone.getDayOfMonth());
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+.................................. FAIL
+Executed command:  cd /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f && ant -f /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml -Dd4j.home=/home/team/sqa-round2/defects4j -Dd4j.dir.projects=/home/team/sqa-round2/defects4j/framework/projects -Dbasedir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f -Dd4j.test.dir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f/.test_suite compile.gen.tests 2>&1
+Buildfile: /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml
+
+test-offline:
+
+get-deps:
+
+joda-time-from-maven.compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f/maven-build.xml:77: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+joda-time.compile:
+
+compile:
+     [java] Writing zoneinfo files
+     [java] Writing ZoneInfoMap
+
+compile.gen.tests:
+     [echo] classes.dir: target/classes
+     [echo] build.home: target/classes/..
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Time-3/f/.test_suite/org/joda/time/MutableDateTimeTest.java:20: error: cannot find symbol
+    [javac]         Chronology chrono = ISOChronology.getInstance(zone);
+    [javac]                             ^
+    [javac]   symbol:   variable ISOChronology
+    [javac]   location: class MutableDateTimeTest
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 1 second
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

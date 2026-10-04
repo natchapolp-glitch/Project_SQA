@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:33:59.307889+00:00",
+  "ended_at_utc": "2026-10-04T08:34:03.070497+00:00",
+  "raw_body_sha256": "5df90f8b5dade0a3e08e5cccce2e2896fa33cad6d79ec82d89f891037f4925f0",
+  "body": {
+    "id": "genai-01a1060c-85ae-7a5d-a388-b1d6213459f0",
+    "object": "chat.completion",
+    "created": 1791102846,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.codec.binary;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.math.BigInteger;\n\nimport org.apache.commons.codec.DecoderException;\nimport org.apache.commons.codec.EncoderException;\nimport org.junit.Test;\n\npublic class Base64Test {\n\n    @Test\n    public void testDefaultConstructorAndBasicEncodeDecode() {\n        Base64 base64 = new Base64();\n        assertFalse(base64.isUrlSafe());\n        \n        byte[] input = \"Hello World!\".getBytes();\n        byte[] encoded = base64.encode(input);\n        assertNotNull(encoded);\n        \n        byte[] decoded = base64.decode(encoded);\n        assertArrayEquals(input, decoded);\n    }\n\n    @Test\n    public void testUrlSafeConstructorAndMethods() {\n        Base64 base64 = new Base64(true);\n        assertTrue(base64.isUrlSafe());\n\n        byte[] input = new byte[] { (byte) 0xfd, (byte) 0xff, (byte) 0xff };\n        byte[] encoded = base64.encode(input);\n        \n        byte[] decoded = base64.decode(encoded);\n        assertArrayEquals(input, decoded);\n    }\n\n    @Test\n    public void testStaticEncodeBase64Variants() {\n        byte[] input = \"Test String 123\".getBytes();\n        \n        byte[] standard = Base64.encodeBase64(input);\n        assertNotNull(standard);\n\n        byte[] chunked = Base64.encodeBase64(input, true);\n        assertNotNull(chunked);\n\n        byte[] urlSafeChunked = Base64.encodeBase64(input, true, true);\n        assertNotNull(urlSafeChunked);\n\n        String strEncoded = Base64.encodeBase64String(input);\n        assertNotNull(strEncoded);\n        \n        byte[] urlSafe = Base64.encodeBase64URLSafe(input);\n        assertNotNull(urlSafe);\n        \n        String urlSafeStr = Base64.encodeBase64URLSafeString(input);\n        assertNotNull(urlSafeStr);\n    }\n\n    @Test\n    public void testStaticDecodeBase64Variants() {\n        byte[] input = \"SGVsbG8gV29ybGQ=\".getBytes();\n        \n        byte[] decodedBytes = Base64.decodeBase64(input);\n        assertArrayEquals(\"Hello World\".getBytes(), decodedBytes);\n\n        byte[] decodedString = Base64.decodeBase64(\"SGVsbG8gV29ybGQ=\");\n        assertArrayEquals(\"Hello World\".getBytes(), decodedString);\n    }\n\n    @Test\n    public void testIsBase64AndIsArrayByteBase64() {\n        assertTrue(Base64.isBase64((byte) 'A'));\n        assertTrue(Base64.isBase64((byte) 'z'));\n        assertTrue(Base64.isBase64((byte) '0'));\n        assertTrue(Base64.isBase64((byte) '+'));\n        assertTrue(Base64.isBase64((byte) '/'));\n        assertFalse(Base64.isBase64((byte) ' '));\n        assertFalse(Base64.isBase64((byte) '#'));\n\n        assertTrue(Base64.isArrayByteBase64(\"SGVsbG8=\".getBytes()));\n        assertFalse(Base64.isArrayByteBase64(\"SGVsbG8 !\".getBytes()));\n    }\n\n    @Test\n    public void testIntegerEncodingAndDecoding() {\n        BigInteger original = BigInteger.valueOf(123456789L);\n        byte[] encodedInt = Base64.encodeInteger(original);\n        assertNotNull(encodedInt);\n\n        BigInteger decodedInt = Base64.decodeInteger(encodedInt);\n        assertEquals(original, decodedInt);\n    }\n\n    @Test\n    public void testObjectEncodeAndDecode() throws EncoderException, DecoderException {\n        Base64 base64 = new Base64();\n        \n        Object encodedObj = base64.encode(\"Hello\".getBytes());\n        assertTrue(encodedObj instanceof byte[]);\n\n        Object decodedObj = base64.decode(encodedObj);\n        assertTrue(decodedObj instanceof byte[]);\n        assertArrayEquals(\"Hello\".getBytes(), (byte[]) decodedObj);\n    }\n\n    @Test\n    public void testEmptyAndNullInputs() {\n        Base64 base64 = new Base64();\n        \n        assertNull(base64.encode(null));\n        assertNull(base64.decode((byte[]) null));\n        assertNull(base64.decode((String) null));\n\n        assertArrayEquals(new byte[0], base64.encode(new byte[0]));\n        assertArrayEquals(new byte[0], base64.decode(new byte[0]));\n        assertArrayEquals(new byte[0], base64.decode(\"\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5038,
+      "completion_tokens": 1214,
+      "total_tokens": 6252
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 85739,
+      "daily_remaining_tokens": 264261
+    }
+  },
+  "headers": {
+    "x-request-id": "oc2ii0cpfty3yhxk44fqc3xi",
+    "date": "Sun, 04 Oct 2026 08:34:06 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,22 @@
+Compiled from "ChainableReverseAbstractInterpreter.java"
+public abstract class com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter implements com.google.javascript.jscomp.type.ReverseAbstractInterpreter {
+  protected final com.google.javascript.jscomp.CodingConvention convention;
+  final com.google.javascript.rhino.jstype.JSTypeRegistry typeRegistry;
+  private com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter firstLink;
+  private com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter nextLink;
+  private final com.google.javascript.rhino.jstype.Visitor<com.google.javascript.rhino.jstype.JSType> restrictUndefinedVisitor;
+  private final com.google.javascript.rhino.jstype.Visitor<com.google.javascript.rhino.jstype.JSType> restrictNullVisitor;
+  public com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter(com.google.javascript.jscomp.CodingConvention, com.google.javascript.rhino.jstype.JSTypeRegistry);
+  public com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter append(com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter);
+  public com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter getFirst();
+  protected com.google.javascript.jscomp.type.FlowScope firstPreciserScopeKnowingConditionOutcome(com.google.javascript.rhino.Node, com.google.javascript.jscomp.type.FlowScope, boolean);
+  protected com.google.javascript.jscomp.type.FlowScope nextPreciserScopeKnowingConditionOutcome(com.google.javascript.rhino.Node, com.google.javascript.jscomp.type.FlowScope, boolean);
+  protected com.google.javascript.rhino.jstype.JSType getTypeIfRefinable(com.google.javascript.rhino.Node, com.google.javascript.jscomp.type.FlowScope);
+  protected void declareNameInScope(com.google.javascript.jscomp.type.FlowScope, com.google.javascript.rhino.Node, com.google.javascript.rhino.jstype.JSType);
+  protected final com.google.javascript.rhino.jstype.JSType getRestrictedWithoutUndefined(com.google.javascript.rhino.jstype.JSType);
+  protected final com.google.javascript.rhino.jstype.JSType getRestrictedWithoutNull(com.google.javascript.rhino.jstype.JSType);
+  com.google.javascript.rhino.jstype.JSType getRestrictedByTypeOfResult(com.google.javascript.rhino.jstype.JSType, java.lang.String, boolean);
+  com.google.javascript.rhino.jstype.JSType getNativeType(com.google.javascript.rhino.jstype.JSTypeNative);
+  private com.google.javascript.rhino.jstype.JSType getNativeTypeForTypeOf(java.lang.String);
+  static com.google.javascript.rhino.jstype.JSType access$000(com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter, java.lang.String);
+}

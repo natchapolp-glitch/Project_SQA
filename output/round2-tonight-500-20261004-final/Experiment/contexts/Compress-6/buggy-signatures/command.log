@@ -1,0 +1,48 @@
+Compiled from "ZipArchiveEntry.java"
+public class org.apache.commons.compress.archivers.zip.ZipArchiveEntry extends java.util.zip.ZipEntry implements org.apache.commons.compress.archivers.ArchiveEntry,java.lang.Cloneable {
+  public static final int PLATFORM_UNIX;
+  public static final int PLATFORM_FAT;
+  private static final int SHORT_MASK;
+  private static final int SHORT_SHIFT;
+  private int method;
+  private int internalAttributes;
+  private int platform;
+  private long externalAttributes;
+  private java.util.LinkedHashMap extraFields;
+  private java.lang.String name;
+  public org.apache.commons.compress.archivers.zip.ZipArchiveEntry(java.lang.String);
+  public org.apache.commons.compress.archivers.zip.ZipArchiveEntry(java.util.zip.ZipEntry) throws java.util.zip.ZipException;
+  public org.apache.commons.compress.archivers.zip.ZipArchiveEntry(org.apache.commons.compress.archivers.zip.ZipArchiveEntry) throws java.util.zip.ZipException;
+  protected org.apache.commons.compress.archivers.zip.ZipArchiveEntry();
+  public org.apache.commons.compress.archivers.zip.ZipArchiveEntry(java.io.File, java.lang.String);
+  public java.lang.Object clone();
+  public boolean isSupportedCompressionMethod();
+  public int getMethod();
+  public void setMethod(int);
+  public int getInternalAttributes();
+  public void setInternalAttributes(int);
+  public long getExternalAttributes();
+  public void setExternalAttributes(long);
+  public void setUnixMode(int);
+  public int getUnixMode();
+  public int getPlatform();
+  protected void setPlatform(int);
+  public void setExtraFields(org.apache.commons.compress.archivers.zip.ZipExtraField[]);
+  public org.apache.commons.compress.archivers.zip.ZipExtraField[] getExtraFields();
+  public void addExtraField(org.apache.commons.compress.archivers.zip.ZipExtraField);
+  public void addAsFirstExtraField(org.apache.commons.compress.archivers.zip.ZipExtraField);
+  public void removeExtraField(org.apache.commons.compress.archivers.zip.ZipShort);
+  public org.apache.commons.compress.archivers.zip.ZipExtraField getExtraField(org.apache.commons.compress.archivers.zip.ZipShort);
+  public void setExtra(byte[]) throws java.lang.RuntimeException;
+  protected void setExtra();
+  public void setCentralDirectoryExtra(byte[]);
+  public byte[] getLocalFileDataExtra();
+  public byte[] getCentralDirectoryExtra();
+  public java.lang.String getName();
+  public boolean isDirectory();
+  protected void setName(java.lang.String);
+  public int hashCode();
+  private void mergeExtraFields(org.apache.commons.compress.archivers.zip.ZipExtraField[], boolean) throws java.util.zip.ZipException;
+  public java.util.Date getLastModifiedDate();
+  public boolean equals(java.lang.Object);
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:01:04.919755+00:00",
+  "ended_at_utc": "2026-10-04T09:01:07.331598+00:00",
+  "raw_body_sha256": "850609ded508917aa2e0f39db497652485950be72475052dad1b5c1f3548dbec",
+  "body": {
+    "id": "genai-01a10625-4542-79dd-8f61-f57ccd3c5515",
+    "object": "chat.completion",
+    "created": 1791104468,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.databind.deser.std;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.databind.DeserializationContext;\nimport com.fasterxml.jackson.databind.DeserializationFeature;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class StringArrayDeserializerTest {\n\n    @Test\n    public void testInstanceNotNull() {\n        assertNotNull(StringArrayDeserializer.instance);\n    }\n\n    @Test\n    public void testDeserializeEmptyArray() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        JsonFactory f = new JsonFactory();\n        JsonParser jp = f.createParser(\"[]\");\n        DeserializationContext ctxt = mapper.getDeserializationContext();\n        \n        jp.nextToken();\n        String[] result = StringArrayDeserializer.instance.deserialize(jp, ctxt);\n        assertNotNull(result);\n        assertEquals(0, result.length);\n    }\n\n    @Test\n    public void testDeserializeStringArray() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        JsonFactory f = new JsonFactory();\n        JsonParser jp = f.createParser(\"[\\\"hello\\\", \\\"world\\\", null]\");\n        DeserializationContext ctxt = mapper.getDeserializationContext();\n\n        jp.nextToken();\n        String[] result = StringArrayDeserializer.instance.deserialize(jp, ctxt);\n        assertArrayEquals(new String[] { \"hello\", \"world\", null }, result);\n    }\n\n    @Test\n    public void testDeserializeCustomDeserializerConstructor() {\n        StringArrayDeserializer customDeser = new StringArrayDeserializer(null);\n        assertNotNull(customDeser);\n    }\n\n    @Test(expected = Exception.class)\n    public void testHandleNonArrayFailsByDefault() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        JsonFactory f = new JsonFactory();\n        JsonParser jp = f.createParser(\"\\\"not-an-array\\\"\");\n        DeserializationContext ctxt = mapper.getDeserializationContext();\n\n        jp.nextToken();\n        StringArrayDeserializer.instance.deserialize(jp, ctxt);\n    }\n\n    @Test\n    public void testAcceptSingleValueAsArray() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);\n        JsonFactory f = new JsonFactory();\n        JsonParser jp = f.createParser(\"\\\"single\\\"\");\n        DeserializationContext ctxt = mapper.getDeserializationContext();\n\n        jp.nextToken();\n        StringArrayDeserializer deserializer = StringArrayDeserializer.instance;\n        String[] result = deserializer.deserialize(jp, ctxt);\n        assertArrayEquals(new String[] { \"single\" }, result);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3871,
+      "completion_tokens": 684,
+      "total_tokens": 4555
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 107468,
+      "daily_remaining_tokens": 242532
+    }
+  },
+  "headers": {
+    "x-request-id": "bflknbtu7a45j6ef4wth219l",
+    "date": "Sun, 04 Oct 2026 09:01:08 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

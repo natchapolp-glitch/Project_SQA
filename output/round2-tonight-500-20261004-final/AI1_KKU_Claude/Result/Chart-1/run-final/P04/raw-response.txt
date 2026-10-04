@@ -1,0 +1,41 @@
+```java
+package org.jfree.chart.renderer.category;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.junit.Test;
+
+public class AbstractCategoryItemRendererExtraTest {
+
+    private AbstractCategoryItemRenderer createRenderer() {
+        return new LineAndShapeRenderer();
+    }
+
+    @Test
+    public void getPassCount_defaultIsOne() {
+        AbstractCategoryItemRenderer renderer = createRenderer();
+        assertEquals(1, renderer.getPassCount());
+    }
+
+    @Test
+    public void getPlot_defaultIsNull() {
+        AbstractCategoryItemRenderer renderer = createRenderer();
+        assertNull(renderer.getPlot());
+    }
+
+    @Test
+    public void getBaseItemLabelGenerator_defaultIsNull() {
+        AbstractCategoryItemRenderer renderer = createRenderer();
+        assertNull(renderer.getBaseItemLabelGenerator());
+    }
+
+    @Test
+    public void legendItemLabelGenerator_defaultIsNotNull() {
+        AbstractCategoryItemRenderer renderer = createRenderer();
+        assertNotNull(renderer.getLegendItemLabelGenerator());
+    }
+}
+```

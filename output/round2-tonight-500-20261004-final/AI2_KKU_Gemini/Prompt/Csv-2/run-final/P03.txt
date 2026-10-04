@@ -1,0 +1,346 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Csv-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.csv.CSVRecord
+
+BUGGY API signatures (may include private members):
+Compiled from "CSVRecord.java"
+public class org.apache.commons.csv.CSVRecord implements java.io.Serializable, java.lang.Iterable<java.lang.String> {
+  private static final long serialVersionUID;
+  private static final java.lang.String[] EMPTY_STRING_ARRAY;
+  private final java.lang.String[] values;
+  private final java.util.Map<java.lang.String, java.lang.Integer> mapping;
+  private final java.lang.String comment;
+  private final long recordNumber;
+  org.apache.commons.csv.CSVRecord(java.lang.String[], java.util.Map<java.lang.String, java.lang.Integer>, java.lang.String, long);
+  public java.lang.String get(int);
+  public java.lang.String get(java.lang.String);
+  public boolean isConsistent();
+  public boolean isMapped(java.lang.String);
+  public boolean isSet(java.lang.String);
+  public java.util.Iterator<java.lang.String> iterator();
+  java.lang.String[] values();
+  public java.lang.String getComment();
+  public long getRecordNumber();
+  public int size();
+  public java.lang.String toString();
+  static {};
+}
+
+
+BUGGY source excerpt: org.apache.commons.csv.CSVRecord (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.csv;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * A CSV record parsed from a CSV file.
+ *
+ * @version $Id$
+ */
+public class CSVRecord implements Serializable, Iterable<String> {
+
+    private static final long serialVersionUID = 1L;
+
+    private static final String[] EMPTY_STRING_ARRAY = new String[0];
+
+    /** The values of the record */
+    private final String[] values;
+
+    /** The column name to index mapping. */
+    private final Map<String, Integer> mapping;
+
+    /** The accumulated comments (if any) */
+    private final String comment;
+
+    /** The record number. */
+    private final long recordNumber;
+
+    CSVRecord(final String[] values, final Map<String, Integer> mapping,
+            final String comment, final long recordNumber) {
+        this.recordNumber = recordNumber;
+        this.values = values != null ? values : EMPTY_STRING_ARRAY;
+        this.mapping = mapping;
+        this.comment = comment;
+    }
+
+    /**
+     * Returns a value by index.
+     *
+     * @param i
+     *            a column index (0-based)
+     * @return the String at the given index
+     */
+    public String get(final int i) {
+        return values[i];
+    }
+
+    /**
+     * Returns a value by name.
+     *
+     * @param name
+     *            the name of the column to be retrieved.
+     * @return the column value, or {@code null} if the column name is not found
+     * @throws IllegalStateException
+     *             if no header mapping was provided
+     * @throws IllegalArgumentException
+     *             if the record is inconsistent
+     * @see #isConsistent()
+     */
+    public String get(final String name) {
+        if (mapping == null) {
+            throw new IllegalStateException(
+                    "No header mapping was specified, the record values can't be accessed by name");
+        }
+        final Integer index = mapping.get(name);
+            return index != null ? values[index.intValue()] : null;
+    }
+
+    /**
+     * Returns true if this record is consistent, false if not. Currently, the only check is matching the record size to
+     * the header size. Some programs can export files that fails this test but still produce parsable files.
+     *
+     * @return true of this record is valid, false if not
+     * @see CSVParserTest#org.apache.commons.csv.CSVParserTest.testMappedButNotSetAsOutlook2007ContactExport()
+     */
+    public boolean isConsistent() {
+        return mapping == null ? true : mapping.size() == values.length;
+    }
+
+    /**
+     * Checks whether a given column is mapped.
+     *
+     * @param name
+     *            the name of the column to be retrieved.
+     * @return whether a given columns is mapped.
+     */
+    public boolean isMapped(final String name) {
+        return mapping != null ? mapping.containsKey(name) : false;
+    }
+
+    /**
+     * Checks whether a given columns is mapped and has a value.
+     *
+     * @param name
+     *            the name of the column to be retrieved.
+     * @return whether a given columns is mapped.
+     */
+    public boolean isSet(final String name) {
+        return isMapped(name) && mapping.get(name).intValue() < values.length;
+    }
+
+    /**
+     * Returns an iterator over the values of this record.
+     *
+     * @return an iterator over the values of this record.
+     */
+    public Iterator<String> iterator() {
+        return Arrays.asList(values).iterator();
+    }
+
+    String[] values() {
+        return values;
+    }
+
+    /**
+     * Returns the comment for this record, if any.
+     *
+     * @return the comment for this record, or null if no comment for this
+     *         record is available.
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    /**
+     * Returns the number of this record in the parsed CSV file.
+     *
+     * @return the number of this record.
+     */
+    public long getRecordNumber() {
+        return recordNumber;
+    }
+
+    /**
+     * Returns the number of values in this record.
+     *
+     * @return the number of values.
+     */
+    public int size() {
+        return values.length;
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(values);
+    }
+
+}
+
+```
+
+
+Original generated source:
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class CSVRecordTest {
+
+    @Test
+    public void testGetByIndex() {
+        String[] values = new String[] { "A", "B", "C" };
+        CSVRecord record = new CSVRecord(values, null, "comment", 1L);
+
+        assertEquals("A", record.get(0));
+        assertEquals("B", record.get(1));
+        assertEquals("C", record.get(2));
+        assertEquals("comment", record.getComment());
+        assertEquals(1L, record.getRecordNumber());
+        assertEquals(3, record.size());
+    }
+
+    @Test
+    public void testGetByName() {
+        String[] values = new String[] { "Val1", "Val2" };
+        Map<String, Integer> mapping = new HashMap<String, Integer>();
+        mapping.put("First", 0);
+        mapping.put("Second", 1);
+
+        CSVRecord record = new CSVRecord(values, mapping, null, 2L);
+
+        assertEquals("Val1", record.get("First"));
+        assertEquals("Val2", record.get("Second"));
+        assertNull(record.get("NonExistent"));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testGetByNameWithoutMapping() {
+        String[] values = new String[] { "Val1" };
+        CSVRecord record = new CSVRecord(values, null, null, 1L);
+        record.get("First");
+    }
+
+    @Test
+    public void testIsConsistent() {
+        String[] values = new String[] { "A", "B" };
+        Map<String, Integer> mapping = new HashMap<String, Integer>();
+        mapping.put("Col1", 0);
+        mapping.put("Col2", 1);
+
+        CSVRecord consistentRecord = new CSVRecord(values, mapping, null, 1L);
+        assertTrue(consistentRecord.isConsistent());
+
+        Map<String, Integer> inconsistentMapping = new HashMap<String, Integer>(mapping);
+        inconsistentMapping.put("Col3", 2);
+        CSVRecord inconsistentRecord = new CSVRecord(values, inconsistentMapping, null, 2L);
+        assertFalse(inconsistentRecord.isConsistent());
+
+        CSVRecord noMappingRecord = new CSVRecord(values, null, null, 3L);
+        assertTrue(noMappingRecord.isConsistent());
+    }
+
+    @Test
+    public void testIsMappedAndIsSet() {
+        String[] values = new String[] { "Val1" };
+        Map<String, Integer> mapping = new HashMap<String, Integer>();
+        mapping.put("Present", 0);
+        mapping.put("OutOfBounds", 5);
+
+        CSVRecord record = new CSVRecord(values, mapping, null, 1L);
+
+        assertTrue(record.isMapped("Present"));
+        assertTrue(record.isMapped("OutOfBounds"));
+        assertFalse(record.isMapped("Missing"));
+
+        assertTrue(record.isSet("Present"));
+        assertFalse(record.isSet("OutOfBounds"));
+        assertFalse(record.isSet("Missing"));
+    }
+
+    @Test
+    public void testIteratorAndToString() {
+        String[] values = new String[] { "X", "Y" };
+        CSVRecord record = new CSVRecord(values, null, null, 1L);
+
+        Iterator<String> iterator = record.iterator();
+        assertTrue(iterator.hasNext());
+        assertEquals("X", iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals("Y", iterator.next());
+        assertFalse(iterator.hasNext());
+
+        assertEquals(Arrays.toString(values), record.toString());
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+ite......................................................... OK
+Running ant (compile.gen.tests)............................................ FAIL
+Executed command:  cd /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f && ant -f /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml -Dd4j.home=/home/team/sqa-round2/defects4j -Dd4j.dir.projects=/home/team/sqa-round2/defects4j/framework/projects -Dbasedir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f -Dd4j.test.dir=/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f/.test_suite compile.gen.tests 2>&1
+Buildfile: /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml
+
+test-offline:
+
+get-deps:
+
+commons-csv-from-maven.compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f/maven-build.xml:79: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+compile:
+
+compile.gen.tests:
+     [echo] classes.dir: target/classes
+     [echo] build.home: target/classes/..
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Csv-2/f/.test_suite/org/apache/commons/csv/CSVRecordTest.java:99: error: cannot find symbol
+    [javac]         assertEquals(Arrays.toString(values), record.toString());
+    [javac]                      ^
+    [javac]   symbol:   variable Arrays
+    [javac]   location: class CSVRecordTest
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 1 second
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

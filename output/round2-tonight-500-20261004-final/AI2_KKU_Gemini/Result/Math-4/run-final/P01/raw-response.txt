@@ -1,0 +1,5 @@
+- Valid receiver setup: instantiate `SubLine` using two distinct `Vector3D` or `Vector2D` points, or a `Segment`.
+- Boundary behavior: constructing a `SubLine` with coincident start and end points throws `MathIllegalArgumentException`.
+- Intersection behavior: `intersection(SubLine, boolean)` returns the intersection point if lines intersect (and within segments if `includeBoundary` is true).
+- Coplanar/parallel boundary: checking intersections between parallel or non-intersecting sub-lines must correctly return `null`.
+- `getSegments()` should return a non-empty list of `Segment` objects representing the remaining region.

@@ -1,0 +1,144 @@
+package com.fasterxml.jackson.databind.util;
+
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.ObjectCodec;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.TokenBuffer;
+
+public class TokenBufferTest {
+
+    @Test
+    public void testLifecycleAndVersion() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        TokenBuffer buf = new TokenBuffer(mapper);
+        assertFalse(buf.isClosed());
+        Version version = buf.version();
+        assertNotNull(version);
+
+        buf.close();
+        assertTrue(buf.isClosed());
+    }
+
+    @Test
+    public void testBasicWritingAndParsing() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        TokenBuffer buf = new TokenBuffer(mapper, false);
+
+        buf.writeStartObject();
+        buf.writeFieldName("testField");
+        buf.writeString("testValue");
+        buf.writeNumber(123);
+        buf.writeEndObject();
+        buf.close();
+
+        assertEquals(JsonToken.START_OBJECT, buf.firstToken());
+
+        JsonParser parser = buf.asParser(mapper);
+        assertEquals(JsonToken.START_OBJECT, parser.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, parser.nextToken());
+        assertEquals("testField", parser.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, parser.nextToken());
+        assertEquals("testValue", parser.getText());
+        assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
+        assertEquals(123, parser.getIntValue());
+        assertEquals(JsonToken.END_OBJECT, parser.nextToken());
+        assertNull(parser.nextToken());
+        parser.close();
+    }
+
+    @Test
+    public void testArrayWritingAndFirstToken() throws IOException {
+        TokenBuffer buf = new TokenBuffer((ObjectCodec) null, true);
+        assertNull(buf.firstToken());
+
+        buf.writeStartArray();
+        buf.writeBoolean(true);
+        buf.writeNull();
+        buf.writeEndArray();
+
+        assertEquals(JsonToken.START_ARRAY, buf.firstToken());
+
+        JsonParser parser = buf.asParser();
+        assertEquals(JsonToken.START_ARRAY, parser.nextToken());
+        assertEquals(JsonToken.VALUE_TRUE, parser.nextToken());
+        assertEquals(JsonToken.VALUE_NULL, parser.nextToken());
+        assertEquals(JsonToken.END_ARRAY, parser.nextToken());
+        parser.close();
+    }
+
+    @Test
+    public void testAppendBuffer() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        TokenBuffer buf1 = new TokenBuffer(mapper);
+        buf1.writeNumber(42);
+
+        TokenBuffer buf2 = new TokenBuffer(mapper);
+        buf2.writeString("hello");
+
+        buf1.append(buf2);
+
+        JsonParser parser = buf1.asParser();
+        assertEquals(JsonToken.VALUE_NUMBER_INT, parser.nextToken());
+        assertEquals(42, parser.getIntValue());
+        assertEquals(JsonToken.VALUE_STRING, parser.nextToken());
+        assertEquals("hello", parser.getText());
+        assertNull(parser.nextToken());
+        parser.close();
+    }
+
+    @Test
+    public void testSerializeToGenerator() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        TokenBuffer buf = new TokenBuffer(mapper);
+        buf.writeStartObject();
+        buf.writeFieldName("key");
+        buf.writeString("val");
+        buf.writeEndObject();
+
+        TokenBuffer buf2 = new TokenBuffer(mapper);
+        buf.serialize(buf2);
+
+        JsonParser parser = buf2.asParser();
+        assertEquals(JsonToken.START_OBJECT, parser.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, parser.nextToken());
+        assertEquals("key", parser.getCurrentName());
+        assertEquals(JsonToken.VALUE_STRING, parser.nextToken());
+        assertEquals("val", parser.getText());
+        assertEquals(JsonToken.END_OBJECT, parser.nextToken());
+        parser.close();
+    }
+
+    @Test
+    public void testCodecAndFeatureManagement() {
+        ObjectMapper mapper = new ObjectMapper();
+        TokenBuffer buf = new TokenBuffer(mapper);
+        assertSame(mapper, buf.getCodec());
+
+        ObjectCodec newCodec = new ObjectMapper();
+        buf.setCodec(newCodec);
+        assertSame(newCodec, buf.getCodec());
+
+        assertFalse(buf.isEnabled(JsonGenerator.Feature.AUTO_CLOSE_TARGET));
+        buf.enable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        assertTrue(buf.isEnabled(JsonGenerator.Feature.AUTO_CLOSE_TARGET));
+        buf.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        assertFalse(buf.isEnabled(JsonGenerator.Feature.AUTO_CLOSE_TARGET));
+
+        int mask = buf.getFeatureMask();
+        buf.setFeatureMask(mask);
+        assertEquals(mask, buf.getFeatureMask());
+
+        assertNotNull(buf.useDefaultPrettyPrinter());
+        assertNotNull(buf.getOutputContext());
+        assertFalse(buf.canWriteBinaryNatively());
+    }
+}

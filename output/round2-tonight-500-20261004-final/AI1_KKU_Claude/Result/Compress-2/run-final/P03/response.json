@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:40:35.496531+00:00",
+  "ended_at_utc": "2026-10-04T05:40:49.124660+00:00",
+  "raw_body_sha256": "9fc64046e0c0bc54f8b569f8a22c4d3e196ac13900b6ce7fc6706439b0bde52a",
+  "body": {
+    "id": "gen-1791092436-SC3i2zDpuEVX1ujxVEnw",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.compress.archivers.ar;\n\nimport static org.junit.Assert.*;\nimport org.junit.Test;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\n\npublic class ArArchiveInputStreamTest {\n\n    private static byte[] buildArWithOneEntry(String name, byte[] content) throws IOException {\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n        out.write(\"!<arch>\\n\".getBytes(\"ASCII\"));\n        String nameField = pad(name, 16);\n        String lastmod = pad(\"0\", 12);\n        String userid = pad(\"0\", 6);\n        String groupid = pad(\"0\", 6);\n        String filemode = pad(\"100644\", 8);\n        String length = pad(String.valueOf(content.length), 10);\n        out.write(nameField.getBytes(\"ASCII\"));\n        out.write(lastmod.getBytes(\"ASCII\"));\n        out.write(userid.getBytes(\"ASCII\"));\n        out.write(groupid.getBytes(\"ASCII\"));\n        out.write(filemode.getBytes(\"ASCII\"));\n        out.write(length.getBytes(\"ASCII\"));\n        out.write(\"`\\n\".getBytes(\"ASCII\"));\n        out.write(content);\n        if (content.length % 2 != 0) {\n            out.write('\\n');\n        }\n        return out.toByteArray();\n    }\n\n    private static String pad(String s, int len) {\n        StringBuilder sb = new StringBuilder(s);\n        while (sb.length() < len) {\n            sb.append(' ');\n        }\n        return sb.substring(0, len);\n    }\n\n    @Test\n    public void readsSingleEntryNameAndSize() throws IOException {\n        byte[] content = \"hello\".getBytes(\"ASCII\");\n        byte[] archive = buildArWithOneEntry(\"test.txt\", content);\n        ArArchiveInputStream in = new ArArchiveInputStream(new ByteArrayInputStream(archive));\n        ArArchiveEntry entry = in.getNextArEntry();\n        assertNotNull(entry);\n        assertEquals(\"test.txt\", entry.getName());\n        assertEquals(content.length, entry.getSize());\n        in.close();\n    }\n\n    @Test\n    public void getNextEntryReturnsNullAtEof() throws IOException {\n        byte[] content = \"hi\".getBytes(\"ASCII\");\n        byte[] archive = buildArWithOneEntry(\"a.txt\", content);\n        ArArchiveInputStream in = new ArArchiveInputStream(new ByteArrayInputStream(archive));\n        assertNotNull(in.getNextEntry());\n        assertNull(in.getNextEntry());\n        in.close();\n    }\n\n    @Test\n    public void readZeroLengthReturnsMinusOneAtEndOfStream() throws IOException {\n        // Underlying ByteArrayInputStream.read(b, off, 0) returns 0 only if\n        // not at EOF; once the content has already been fully consumed by\n        // getNextArEntry(), the stream is exhausted and read(...,0) returns -1.\n        byte[] content = \"data\".getBytes(\"ASCII\");\n        byte[] archive = buildArWithOneEntry(\"f.txt\", content);\n        ArArchiveInputStream in = new ArArchiveInputStream(new ByteArrayInputStream(archive));\n        in.getNextArEntry();\n        byte[] buf = new byte[10];\n        int result = in.read(buf, 0, 0);\n        assertEquals(-1, result);\n        in.close();\n    }\n\n    @Test\n    public void readZeroLengthMidStreamReturnsZero() throws IOException {\n        // When there is still data available, reading zero bytes should\n        // return 0, not -1.\n        byte[] content = \"data\".getBytes(\"ASCII\");\n        byte[] archive = buildArWithOneEntry(\"f.txt\", content);\n        ArArchiveInputStream in = new ArArchiveInputStream(new ByteArrayInputStream(archive));\n        in.getNextArEntry();\n        byte[] buf = new byte[10];\n        int firstByte = in.read();\n        assertNotEquals(-1, firstByte);\n        int result = in.read(buf, 0, 0);\n        assertEquals(0, result);\n        in.close();\n    }\n\n    @Test\n    public void closeClosesUnderlyingStream() throws IOException {\n        byte[] content = \"x\".getBytes(\"ASCII\");\n        byte[] archive = buildArWithOneEntry(\"x.txt\", content);\n        ArArchiveInputStream in = new ArArchiveInputStream(new ByteArrayInputStream(archive));\n        in.getNextArEntry();\n        in.close();\n        in.close();\n    }\n\n    @Test\n    public void matchesValidSignature() {\n        byte[] sig = new byte[] {0x21, 0x3c, 0x61, 0x72, 0x63, 0x68, 0x3e, 0x0a};\n        assertTrue(ArArchiveInputStream.matches(sig, sig.length));\n    }\n\n    @Test\n    public void matchesRejectsShortOrWrongSignature() {\n        byte[] shortSig = new byte[] {0x21, 0x3c, 0x61, 0x72};\n        assertFalse(ArArchiveInputStream.matches(shortSig, shortSig.length));\n\n        byte[] wrongSig = new byte[] {0x00, 0x3c, 0x61, 0x72, 0x63, 0x68, 0x3e, 0x0a};\n        assertFalse(ArArchiveInputStream.matches(wrongSig, wrongSig.length));\n    }\n\n    @Test(expected = IOException.class)\n    public void invalidHeaderThrows() throws IOException {\n        byte[] bogus = \"notanarchive....\".getBytes(\"ASCII\");\n        ArArchiveInputStream in = new ArArchiveInputStream(new ByteArrayInputStream(bogus));\n        try {\n            in.getNextArEntry();\n        } finally {\n            in.close();\n        }\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5489,
+      "output_tokens": 2063,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.031608,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.031608,
+        "upstream_inference_prompt_cost": 0.010978,
+        "upstream_inference_completions_cost": 0.02063
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 60511,
+      "daily_remaining_tokens": 139489
+    }
+  },
+  "headers": {
+    "x-request-id": "vp3wensu2o1a9oalsavyz00i",
+    "date": "Sun, 04 Oct 2026 05:40:50 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

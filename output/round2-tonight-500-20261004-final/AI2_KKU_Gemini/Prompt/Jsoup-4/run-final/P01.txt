@@ -1,0 +1,21 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Jsoup-4
+Java 11, JUnit 4
+Modified classes: org.jsoup.nodes.Entities
+BUGGY API signatures:
+Compiled from "Entities.java"
+public class org.jsoup.nodes.Entities {
+  private static final java.util.Map<java.lang.String, java.lang.Character> full;
+  private static final java.util.Map<java.lang.Character, java.lang.String> baseByVal;
+  private static final java.util.Map<java.lang.Character, java.lang.String> fullByVal;
+  private static final java.util.regex.Pattern unescapePattern;
+  private static final java.lang.Object[][] baseArray;
+  private static final java.lang.Object[][] fullArray;
+  public org.jsoup.nodes.Entities();
+  static java.lang.String escape(java.lang.String, org.jsoup.nodes.Document$OutputSettings);
+  static java.lang.String escape(java.lang.String, java.nio.charset.CharsetEncoder, org.jsoup.nodes.Entities$EscapeMode);
+  static java.lang.String unescape(java.lang.String);
+  static {};
+}
+

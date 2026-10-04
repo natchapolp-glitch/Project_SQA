@@ -1,0 +1,109 @@
+package org.jfree.chart.plot;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.junit.Test;
+
+public class XYPlotTest {
+
+    private XYDataset createDataset() {
+        XYSeries series = new XYSeries("Series 1");
+        series.add(1.0, 1.0);
+        series.add(2.0, 2.0);
+        return new XYSeriesCollection(series);
+    }
+
+    @Test
+    public void testConstructorAssignsDomainAxis() {
+        ValueAxis domainAxis = new NumberAxis("X");
+        ValueAxis rangeAxis = new NumberAxis("Y");
+        XYItemRenderer renderer = new StandardXYItemRenderer();
+        XYPlot plot = new XYPlot(createDataset(), domainAxis, rangeAxis, renderer);
+        assertSame(domainAxis, plot.getDomainAxis(0));
+        assertSame(domainAxis, plot.getDomainAxis());
+        assertSame(rangeAxis, plot.getRangeAxis(0));
+        assertSame(rangeAxis, plot.getRangeAxis());
+    }
+
+    @Test
+    public void testSetDomainAxisExtendsAxisCount() {
+        XYPlot plot = new XYPlot();
+        ValueAxis axis0 = new NumberAxis("X0");
+        ValueAxis axis2 = new NumberAxis("X2");
+        plot.setDomainAxis(0, axis0);
+        plot.setDomainAxis(2, axis2);
+        assertSame(axis0, plot.getDomainAxis(0));
+        assertNull(plot.getDomainAxis(1));
+        assertSame(axis2, plot.getDomainAxis(2));
+        assertTrue(plot.getDomainAxisCount() >= 3);
+    }
+
+    @Test
+    public void testGetDomainAxisForUnsetIndexReturnsNull() {
+        XYPlot plot = new XYPlot();
+        assertNull(plot.getDomainAxis(5));
+    }
+
+    @Test
+    public void testReplacePrimaryDomainAxis() {
+        XYPlot plot = new XYPlot();
+        ValueAxis original = new NumberAxis("Original");
+        ValueAxis replacement = new NumberAxis("Replacement");
+        plot.setDomainAxis(0, original);
+        assertSame(original, plot.getDomainAxis());
+        plot.setDomainAxis(0, replacement);
+        assertSame(replacement, plot.getDomainAxis());
+    }
+
+    @Test
+    public void testClearDomainAxesResetsAxes() {
+        XYPlot plot = new XYPlot();
+        ValueAxis axis = new NumberAxis("X");
+        plot.setDomainAxis(0, axis);
+        assertNotNull(plot.getDomainAxis(0));
+        plot.clearDomainAxes();
+        assertNull(plot.getDomainAxis(0));
+    }
+
+    @Test
+    public void testSetRangeAxisExtendsAxisCount() {
+        XYPlot plot = new XYPlot();
+        ValueAxis axis0 = new NumberAxis("Y0");
+        ValueAxis axis3 = new NumberAxis("Y3");
+        plot.setRangeAxis(0, axis0);
+        plot.setRangeAxis(3, axis3);
+        assertSame(axis0, plot.getRangeAxis(0));
+        assertNull(plot.getRangeAxis(1));
+        assertNull(plot.getRangeAxis(2));
+        assertSame(axis3, plot.getRangeAxis(3));
+        assertTrue(plot.getRangeAxisCount() >= 4);
+    }
+
+    @Test
+    public void testClearRangeAxesResetsAxes() {
+        XYPlot plot = new XYPlot();
+        ValueAxis axis = new NumberAxis("Y");
+        plot.setRangeAxis(0, axis);
+        assertNotNull(plot.getRangeAxis(0));
+        plot.clearRangeAxes();
+        assertNull(plot.getRangeAxis(0));
+    }
+
+    @Test
+    public void testDefaultAxisCounts() {
+        XYPlot plot = new XYPlot();
+        assertEquals(0, plot.getDomainAxisCount());
+        assertEquals(0, plot.getRangeAxisCount());
+    }
+}

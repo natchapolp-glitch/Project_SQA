@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:20:00.834054+00:00",
+  "ended_at_utc": "2026-10-04T05:20:03.122936+00:00",
+  "raw_body_sha256": "860bfe062ea7398595943889d48067bb4f8357f7d7410ca1396e0570ad1ad200",
+  "body": {
+    "id": "genai-01a1055a-e17c-70e9-ac74-1dd4795fe5f9",
+    "object": "chat.completion",
+    "created": 1791091204,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.data.general;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\n\nimport org.jfree.data.category.DefaultCategoryDataset;\nimport org.jfree.data.pie.PieDataset;\nimport org.junit.Test;\n\npublic class DatasetUtilitiesAdditionalTest {\n\n    @Test\n    public void testCreatePieDatasetForRowByIndex() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(5.0, \"Row0\", \"ColA\");\n        dataset.addValue(15.0, \"Row0\", \"ColB\");\n        dataset.addValue(25.0, \"Row1\", \"ColA\");\n\n        PieDataset pieDataset = DatasetUtilities.createPieDatasetForRow(dataset, 0);\n        assertNotNull(pieDataset);\n        assertEquals(2, pieDataset.getItemCount());\n        assertEquals(5.0, pieDataset.getValue(\"ColA\").doubleValue(), 0.0001);\n        assertEquals(15.0, pieDataset.getValue(\"ColB\").doubleValue(), 0.0001);\n    }\n\n    @Test\n    public void testCreatePieDatasetForColumnByIndex() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(7.0, \"RowA\", \"Col0\");\n        dataset.addValue(14.0, \"RowB\", \"Col0\");\n        dataset.addValue(21.0, \"RowA\", \"Col1\");\n\n        PieDataset pieDataset = DatasetUtilities.createPieDatasetForColumn(dataset, 0);\n        assertNotNull(pieDataset);\n        assertEquals(2, pieDataset.getItemCount());\n        assertEquals(7.0, pieDataset.getValue(\"RowA\").doubleValue(), 0.0001);\n        assertEquals(14.0, pieDataset.getValue(\"RowB\").doubleValue(), 0.0001);\n    }\n\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6830,
+      "completion_tokens": 457,
+      "total_tokens": 7287
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 31989,
+      "daily_remaining_tokens": 318011
+    }
+  },
+  "headers": {
+    "x-request-id": "a8km3qjibkieqonu0gs238ag",
+    "date": "Sun, 04 Oct 2026 05:20:04 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

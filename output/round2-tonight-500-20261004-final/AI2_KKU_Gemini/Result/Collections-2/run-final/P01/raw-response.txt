@@ -1,0 +1,10 @@
+1. Receiver setup: Instantiate `ExtendedProperties` using the default zero-argument constructor or string path constructors.
+2. Property addition: Verify `addProperty` and `setProperty` correctly update internal hashtable storage and key listing order (`keysAsListed`).
+3. Property removal: Verify `clearProperty` properly removes keys from both the hashtable and `keysAsListed`.
+4. Subsetting: Verify `subset(String prefix)` returns a new `ExtendedProperties` instance containing only keys matching the prefix, with prefixes stripped.
+5. Combining: Verify `combine(ExtendedProperties)` correctly merges properties from another instance into the receiver.
+6. Type-safe getters: Test retrieval methods (`getInt`, `getBoolean`, `getString`, etc.) with and without default values for existing and missing keys.
+7. Interpolation: Test `interpolate` behavior for property values containing variable tokens (e.g., `${key}`).
+8. Persistence: Test `load` and `save` operations via `InputStream` and `OutputStream` streams.
+9. Defaults handling: Verify chained fallback behavior when a default `ExtendedProperties` instance is set.
+10. Boundary conditions: Test behavior with null keys, empty property files, non-existent keys, and malformed types.

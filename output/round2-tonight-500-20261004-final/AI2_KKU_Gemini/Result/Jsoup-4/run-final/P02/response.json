@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:08:58.946536+00:00",
+  "ended_at_utc": "2026-10-04T09:09:01.357118+00:00",
+  "raw_body_sha256": "1d119334858a6ba529b8ce5529062f06a8ee20f08916698668c8e776cdd54e56",
+  "body": {
+    "id": "genai-01a1062c-847d-742c-8a94-dca620c993b9",
+    "object": "chat.completion",
+    "created": 1791104943,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jsoup.nodes;\n\nimport org.junit.Test;\n\nimport java.nio.charset.Charset;\nimport java.nio.charset.CharsetEncoder;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class EntitiesTest {\n\n    @Test\n    public void testEscapeBasic() {\n        Document.OutputSettings out = new Document.OutputSettings();\n        out.escapeMode(Entities.EscapeMode.base);\n        String input = \"<div>&</div>\";\n        String escaped = Entities.escape(input, out);\n        assertEquals(\"&lt;div&gt;&amp;&lt;/div&gt;\", escaped);\n    }\n\n    @Test\n    public void testEscapeExtended() {\n        Document.OutputSettings out = new Document.OutputSettings();\n        out.escapeMode(Entities.EscapeMode.extended);\n        String input = \"\\u00A9\"; // Copyright symbol\n        String escaped = Entities.escape(input, out);\n        assertEquals(\"&COPY;\", escaped);\n    }\n\n    @Test\n    public void testEscapeWithEncoderFallback() {\n        CharsetEncoder asciiEncoder = Charset.forName(\"US-ASCII\").newEncoder();\n        String input = \"H\\u00E9llo\"; // accented e\n        String escaped = Entities.escape(input, asciiEncoder, Entities.EscapeMode.base);\n        assertEquals(\"H&#233;llo\", escaped);\n    }\n\n    @Test\n    public void testUnescapeNamedEntities() {\n        String input = \"&lt;div&gt;&amp; &quot;test&quot;&lt;/div&gt;\";\n        String unescaped = Entities.unescape(input);\n        assertEquals(\"<div>& \\\"test\\\"</div>\", unescaped);\n    }\n\n    @Test\n    public void testUnescapeNumericEntities() {\n        String input = \"&#38;&#x26;\";\n        String unescaped = Entities.unescape(input);\n        assertEquals(\"&&\", unescaped);\n    }\n\n    @Test\n    public void testUnescapeNoEntities() {\n        String input = \"Hello World\";\n        String unescaped = Entities.unescape(input);\n        assertEquals(\"Hello World\", unescaped);\n    }\n\n    @Test\n    public void testUnescapeMalformedEntities() {\n        String input = \"&invalidEntity; &\";\n        String unescaped = Entities.unescape(input);\n        assertEquals(\"&invalidEntity; &\", unescaped);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5368,
+      "completion_tokens": 554,
+      "total_tokens": 5922
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 102600,
+      "daily_remaining_tokens": 247400
+    }
+  },
+  "headers": {
+    "x-request-id": "w68h4jcj8re4ap81t8ozgzd6",
+    "date": "Sun, 04 Oct 2026 09:09:03 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

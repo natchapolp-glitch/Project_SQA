@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:07:27.394720+00:00",
+  "ended_at_utc": "2026-10-04T06:07:30.077721+00:00",
+  "raw_body_sha256": "5619e2dd04a14489804ec1d05251bb465553050bc403eb5a06d9f3782693c212",
+  "body": {
+    "id": "genai-01a10586-52ea-7a2f-8044-c92be8cb241c",
+    "object": "chat.completion",
+    "created": 1791094051,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jsoup.parser;\n\nimport org.junit.Test;\nimport org.jsoup.nodes.Document;\nimport org.jsoup.nodes.Element;\n\nimport static org.junit.Assert.*;\n\npublic class ParserTest {\n\n    @Test\n    public void testParseBasicHtml() {\n        String html = \"<html><head><title>Test</title></head><body><p>Hello World</p></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com\");\n        assertNotNull(doc);\n        assertEquals(\"Test\", doc.title());\n        assertNotNull(doc.body());\n        assertEquals(\"Hello World\", doc.body().text());\n    }\n\n    @Test\n    public void testParseBodyFragment() {\n        String fragment = \"<div><p>Fragment text</p></div>\";\n        Document doc = Parser.parseBodyFragment(fragment, \"http://example.com\");\n        assertNotNull(doc);\n        assertNotNull(doc.body());\n        assertEquals(\"Fragment text\", doc.body().text());\n    }\n\n    @Test\n    public void testParseAttributes() {\n        String html = \"<div id='myId' class=\\\"myClass\\\" attr=unquoted>Text</div>\";\n        Document doc = Parser.parseBodyFragment(html, \"http://example.com\");\n        Element div = doc.select(\"div\").first();\n        assertNotNull(div);\n        assertEquals(\"myId\", div.id());\n        assertEquals(\"myClass\", div.className());\n        assertEquals(\"unquoted\", div.attr(\"attr\"));\n    }\n\n    @Test\n    public void testParseCommentsAndCdata() {\n        String html = \"<div><!-- Comment text --><![CDATA[CDATA text]]></div>\";\n        Document doc = Parser.parseBodyFragment(html, \"http://example.com\");\n        assertNotNull(doc);\n        assertTrue(doc.body().text().contains(\"CDATA text\"));\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testParseNullHtmlThrowsException() {\n        Parser.parse(null, \"http://example.com\");\n    }\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testParseNullBaseUriThrowsException() {\n        Parser.parse(\"<html></html>\", null);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3429,
+      "completion_tokens": 523,
+      "total_tokens": 3952
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 48809,
+      "daily_remaining_tokens": 301191
+    }
+  },
+  "headers": {
+    "x-request-id": "l8ipx1ngtkwf8mpsqwnzo9j0",
+    "date": "Sun, 04 Oct 2026 06:07:31 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,16 @@
+## Key behaviors, boundaries, and setup for testing `TypeInfoFactory`
+
+**`getTypeInfoForArray(Type)`**
+- Given a plain array class (e.g., `int[].class`, `String[].class`), returns a `TypeInfoArray` whose component type matches `getComponentType()`.
+- Given a `GenericArrayType` (e.g., field typed `List<String>[]`), resolves component type correctly, including generic component types.
+- Non-array `Type` input (e.g., `String.class`) should throw an informative exception (likely `IllegalArgumentException` per contract).
+
+**`getTypeInfoForField(Field, Type)`**
+- For a field with a concrete (non-generic) type declared in a non-generic class, returns a `TypeInfo` reflecting the declared field type and raw class directly.
+- For a field whose type is a `TypeVariable` (e.g., `T field` in generic class `Holder<T>`), when given `Type` is a `ParameterizedType` instantiating `T` (e.g., `Holder<String>`), should resolve to `String`.
+- For a field typed as a `ParameterizedType` itself (e.g., `List<T> field`), should substitute the actual type argument properly producing `List<String>` resolution.
+- Must handle fields declared in superclasses with generic parameters passed down from subclass's parameterized type (inheritance chain resolution).
+- Boundary: field's generic type variable not found in the declaring class's type parameters — should not throw ArrayIndexOutOfBounds silently; expect either correct fallback to raw type or clear exception.
+
+**Receiver/setup**
+- Use real `Field` objects obtained via reflection (`getClass().getDeclaredField(...)`) from small generic test classes/subclasses, paired with their generic `Type` (via `ParameterizedType` from method return types or `TypeToken`-like helper) — no mocking needed since it's a static utility.

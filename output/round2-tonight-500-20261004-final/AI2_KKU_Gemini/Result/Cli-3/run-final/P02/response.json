@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:51:32.050687+00:00",
+  "ended_at_utc": "2026-10-04T06:51:34.684497+00:00",
+  "raw_body_sha256": "c41d29153cf63b706510c23383d25fd46773cd4906205316b8d7ad4833fd119e",
+  "body": {
+    "id": "genai-01a105ae-b150-7196-95a6-caafcb458478",
+    "object": "chat.completion",
+    "created": 1791096697,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.cli;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.File;\nimport java.net.URL;\n\nimport org.junit.Test;\n\npublic class TypeHandlerTest {\n\n    @Test\n    public void testCreateValueWithString() {\n        Object result = TypeHandler.createValue(\"hello\", PatternOptionBuilder.STRING_VALUE);\n        assertEquals(\"hello\", result);\n    }\n\n    @Test\n    public void testCreateValueWithClass() {\n        Object result = TypeHandler.createValue(\"java.util.Date\", PatternOptionBuilder.CLASS_VALUE);\n        assertEquals(java.util.Date.class, result);\n    }\n\n    @Test\n    public void testCreateValueWithUnknownType() {\n        Object result = TypeHandler.createValue(\"test\", Object.class);\n        assertNull(result);\n    }\n\n    @Test\n    public void testCreateObjectSuccess() {\n        Object result = TypeHandler.createObject(\"java.lang.String\");\n        assertNotNull(result);\n        assertTrue(result instanceof String);\n    }\n\n    @Test\n    public void testCreateObjectNotFound() {\n        Object result = TypeHandler.createObject(\"non.existent.ClassName\");\n        assertNull(result);\n    }\n\n    @Test\n    public void testCreateNumberLong() {\n        Number result = TypeHandler.createNumber(\"12345\");\n        assertNotNull(result);\n        assertTrue(result instanceof Long);\n        assertEquals(12345L, result.longValue());\n    }\n\n    @Test\n    public void testCreateNumberDouble() {\n        Number result = TypeHandler.createNumber(\"123.45\");\n        assertNotNull(result);\n        assertTrue(result instanceof Double);\n        assertEquals(123.45, result.doubleValue(), 0.0001);\n    }\n\n    @Test\n    public void testCreateClassSuccess() {\n        Class<?> clazz = TypeHandler.createClass(\"java.util.ArrayList\");\n        assertEquals(java.util.ArrayList.class, clazz);\n    }\n\n    @Test\n    public void testCreateClassFailure() {\n        Class<?> clazz = TypeHandler.createClass(\"non.existent.Class\");\n        assertNull(clazz);\n    }\n\n    @Test\n    public void testCreateURLSuccess() throws Exception {\n        URL url = TypeHandler.createURL(\"http://localhost/\");\n        assertNotNull(url);\n        assertEquals(\"http\", url.getProtocol());\n    }\n\n    @Test\n    public void testCreateURLFailure() {\n        URL url = TypeHandler.createURL(\"invalid-url\");\n        assertNull(url);\n    }\n\n    @Test\n    public void testCreateFile() {\n        File file = TypeHandler.createFile(\"test-file.txt\");\n        assertNotNull(file);\n        assertEquals(\"test-file.txt\", file.getName());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2450,
+      "completion_tokens": 704,
+      "total_tokens": 3154
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 77397,
+      "daily_remaining_tokens": 272603
+    }
+  },
+  "headers": {
+    "x-request-id": "bjvwjtl32o0p3s1615bi7na2",
+    "date": "Sun, 04 Oct 2026 06:51:37 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

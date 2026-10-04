@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:54:33.845598+00:00",
+  "ended_at_utc": "2026-10-04T07:54:38.004458+00:00",
+  "raw_body_sha256": "9cb8d30f261586451e1106b11f801b091d4386503880fb19560dba3a282fb540",
+  "body": {
+    "id": "genai-01a105e8-6e05-79d7-840c-37c9b878070f",
+    "object": "chat.completion",
+    "created": 1791100481,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.math3.util;\n\nimport org.apache.commons.math3.exception.DimensionMismatchException;\nimport org.apache.commons.math3.exception.MathArithmeticException;\nimport org.apache.commons.math3.exception.MathIllegalArgumentException;\nimport org.apache.commons.math3.exception.NoDataException;\nimport org.apache.commons.math3.exception.NonMonotonicSequenceException;\nimport org.apache.commons.math3.exception.NullArgumentException;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class MathArraysTest {\n\n    private static final double EPS = 1e-14;\n\n    @Test\n    public void testScaleAndScaleInPlace() {\n        double[] arr = {1.0, 2.0, 3.0};\n        double[] scaled = MathArrays.scale(2.5, arr);\n        assertArrayEquals(new double[]{2.5, 5.0, 7.5}, scaled, EPS);\n\n        MathArrays.scaleInPlace(2.0, arr);\n        assertArrayEquals(new double[]{2.0, 4.0, 6.0}, arr, EPS);\n    }\n\n    @Test\n    public void testEbeOperations() {\n        double[] a = {1.0, 4.0, 9.0};\n        double[] b = {1.0, 2.0, 3.0};\n\n        assertArrayEquals(new double[]{2.0, 6.0, 12.0}, MathArrays.ebeAdd(a, b), EPS);\n        assertArrayEquals(new double[]{0.0, 2.0, 6.0}, MathArrays.ebeSubtract(a, b), EPS);\n        assertArrayEquals(new double[]{1.0, 8.0, 27.0}, MathArrays.ebeMultiply(a, b), EPS);\n        assertArrayEquals(new double[]{1.0, 2.0, 3.0}, MathArrays.ebeDivide(a, b), EPS);\n    }\n\n    @Test(expected = DimensionMismatchException.class)\n    public void testEbeAddDimensionMismatch() {\n        double[] a = {1.0, 2.0};\n        double[] b = {1.0, 2.0, 3.0};\n        MathArrays.ebeAdd(a, b);\n    }\n\n    @Test\n    public void testDistances() {\n        double[] p1 = {1.0, 2.0};\n        double[] p2 = {4.0, 6.0};\n\n        assertEquals(7.0, MathArrays.distance1(p1, p2), EPS);\n        assertEquals(5.0, MathArrays.distance(p1, p2), EPS);\n        assertEquals(4.0, MathArrays.distanceInf(p1, p2), EPS);\n\n        int[] ip1 = {1, 2};\n        int[] ip2 = {4, 6};\n        assertEquals(7, MathArrays.distance1(ip1, ip2));\n        assertEquals(5.0, MathArrays.distance(ip1, ip2), EPS);\n        assertEquals(4, MathArrays.distanceInf(ip1, ip2));\n    }\n\n    @Test\n    public void testIsMonotonic() {\n        Double[] increasing = {1.0, 2.0, 2.0, 3.0};\n        assertTrue(MathArrays.isMonotonic(increasing, MathArrays.OrderDirection.INCREASING, false));\n        assertFalse(MathArrays.isMonotonic(increasing, MathArrays.OrderDirection.INCREASING, true));\n\n        double[] decreasing = {5.0, 3.0, 1.0};\n        assertTrue(MathArrays.isMonotonic(decreasing, MathArrays.OrderDirection.DECREASING, true));\n    }\n\n    @Test(expected = NonMonotonicSequenceException.class)\n    public void testCheckOrderViolation() {\n        double[] values = {1.0, 3.0, 2.0};\n        MathArrays.checkOrder(values, MathArrays.OrderDirection.INCREASING, true);\n    }\n\n    @Test\n    public void testLinearCombination() {\n        double[] a = {1.0, 2.0, 3.0};\n        double[] b = {4.0, 5.0, 6.0};\n        double result = MathArrays.linearCombination(a, b);\n        assertEquals(32.0, result, EPS);\n\n        assertEquals(14.0, MathArrays.linearCombination(1.0, 2.0, 3.0, 4.0), EPS);\n        assertEquals(32.0, MathArrays.linearCombination(1.0, 2.0, 3.0, 4.0, 5.0, 6.0), EPS);\n        assertEquals(56.0, MathArrays.linearCombination(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0), EPS);\n    }\n\n    @Test\n    public void testNormalizeArray() throws MathIllegalArgumentException, MathArithmeticException {\n        double[] values = {1.0, 2.0, 3.0};\n        double[] normalized = MathArrays.normalizeArray(values, 12.0);\n        assertArrayEquals(new double[]{2.0, 4.0, 6.0}, normalized, EPS);\n    }\n\n    @Test\n    public void testConvolve() {\n        double[] u = {1.0, 2.0, 3.0};\n        double[] v = {1.0, 1.0};\n        double[] expected = {1.0, 3.0, 5.0, 3.0};\n        assertArrayEquals(expected, MathArrays.convolve(u, v), EPS);\n    }\n\n    @Test(expected = NullArgumentException.class)\n    public void testConvolveNull() {\n        MathArrays.convolve(null, new double[]{1.0});\n    }\n\n    @Test(expected = NoDataException.class)\n    public void testConvolveEmpty() {\n        MathArrays.convolve(new double[0], new double[]{1.0});\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4896,
+      "completion_tokens": 1515,
+      "total_tokens": 6411
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 86994,
+      "daily_remaining_tokens": 263006
+    }
+  },
+  "headers": {
+    "x-request-id": "pp4ihsmxytwvykrtr04pl7tn",
+    "date": "Sun, 04 Oct 2026 07:54:41 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

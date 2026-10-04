@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:34:56.457178+00:00",
+  "ended_at_utc": "2026-10-04T07:34:59.766255+00:00",
+  "raw_body_sha256": "fcec8ccdcd1b06ab3e0d9a11cd3d44356e045b3395b489b3b8cb84489e347e10",
+  "body": {
+    "id": "genai-01a105d6-7430-7ecd-9dfe-4fde98ec3ca4",
+    "object": "chat.completion",
+    "created": 1791099302,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.dataformat.xml.deser;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.StringReader;\nimport java.util.Collections;\nimport java.util.HashSet;\nimport java.util.Set;\n\nimport javax.xml.stream.XMLInputFactory;\nimport javax.xml.stream.XMLStreamReader;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonToken;\nimport com.fasterxml.jackson.core.io.IOContext;\nimport com.fasterxml.jackson.core.util.BufferRecycler;\nimport com.fasterxml.jackson.dataformat.xml.XmlMapper;\n\npublic class FromXmlParserTest {\n\n    private FromXmlParser createParser(String xml) throws Exception {\n        XMLInputFactory f = XMLInputFactory.newInstance();\n        XMLStreamReader sr = f.createXMLStreamReader(new StringReader(xml));\n        IOContext ctxt = new IOContext(new BufferRecycler(), sr, false);\n        XmlMapper mapper = new XmlMapper();\n        return new FromXmlParser(ctxt, 0, 0, mapper, sr);\n    }\n\n    @Test\n    public void testVersionAndCodec() throws Exception {\n        FromXmlParser parser = createParser(\"<root/>\");\n        assertNotNull(parser.version());\n        assertNotNull(parser.getCodec());\n        assertTrue(parser.requiresCustomCodec());\n        parser.close();\n    }\n\n    @Test\n    public void testLifecycleAndClose() throws Exception {\n        FromXmlParser parser = createParser(\"<root/>\");\n        assertFalse(parser.isClosed());\n        parser.close();\n        assertTrue(parser.isClosed());\n        parser.close(); // idempotent\n        assertTrue(parser.isClosed());\n    }\n\n    @Test\n    public void testFeatureConfiguration() throws Exception {\n        FromXmlParser parser = createParser(\"<root/>\");\n        FromXmlParser.Feature feature = null;\n        for (FromXmlParser.Feature f : FromXmlParser.Feature.values()) {\n            feature = f;\n            break;\n        }\n        if (feature != null) {\n            parser.enable(feature);\n            assertTrue(parser.isEnabled(feature));\n            parser.disable(feature);\n            assertFalse(parser.isEnabled(feature));\n            parser.configure(feature, true);\n            assertTrue(parser.isEnabled(feature));\n        }\n        assertEquals(parser.getFormatFeatures(), parser.overrideFormatFeatures(15, 15).getFormatFeatures());\n        parser.close();\n    }\n\n    @Test\n    public void testXmlTextElementNameAndConstants() throws Exception {\n        FromXmlParser parser = createParser(\"<root/>\");\n        assertEquals(\"\", FromXmlParser.DEFAULT_UNNAMED_TEXT_PROPERTY);\n        parser.setXMLTextElementName(\"customValue\");\n        assertEquals(\"customValue\", parser._cfgNameForTextElement);\n        parser.close();\n    }\n\n    @Test\n    public void testStaxReaderAccess() throws Exception {\n        FromXmlParser parser = createParser(\"<root>text</root>\");\n        assertNotNull(parser.getStaxReader());\n        parser.close();\n    }\n\n    @Test\n    public void testAddVirtualWrapping() throws Exception {\n        FromXmlParser parser = createParser(\"<root><item>1</item></root>\");\n        Set<String> names = new HashSet<String>();\n        names.add(\"item\");\n        parser.addVirtualWrapping(names);\n        assertNotNull(parser.getParsingContext());\n        parser.close();\n    }\n\n    @Test\n    public void testOverrideCurrentName() throws Exception {\n        FromXmlParser parser = createParser(\"<root><child>text</child></root>\");\n        parser.nextToken(); // START_OBJECT\n        parser.overrideCurrentName(\"newRoot\");\n        assertEquals(\"newRoot\", parser.getParsingContext().getCurrentName());\n        parser.close();\n    }\n\n    @Test\n    public void testEmptyCheck() throws Exception {\n        FromXmlParser parser = createParser(\"<root/>\");\n        assertTrue(parser._isEmpty(\"\"));\n        assertTrue(parser._isEmpty(null));\n        assertTrue(parser._isEmpty(\"   \"));\n        assertFalse(parser._isEmpty(\"abc\"));\n        parser.close();\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4516,
+      "completion_tokens": 1019,
+      "total_tokens": 5535
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 71005,
+      "daily_remaining_tokens": 278995
+    }
+  },
+  "headers": {
+    "x-request-id": "l4wq3fgsr3igovz9y7a6scl1",
+    "date": "Sun, 04 Oct 2026 07:35:02 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

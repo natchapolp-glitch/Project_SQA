@@ -1,0 +1,12 @@
+Key behaviors/boundaries to test for `CommandLine`:
+
+1. `hasOption(String)`/`hasOption(char)` return true only for options actually added via `addOption`; false for absent/unknown options, and consistent between char/String forms for same option.
+2. `getOptionValue(String/char)` returns first value for an option with args, `null` if option has no value or option absent.
+3. `getOptionValue(..., String default)` returns default only when option absent or has no value, not when option present with empty/blank value.
+4. `getOptionValues(String/char)` returns all values in insertion order as String[]; returns `null` (not empty array) when option absent or has no values.
+5. `getOptionObject(String/char)` returns type-converted value based on Option's type; returns `null` on absent option or conversion failure.
+6. `getArgs()` returns array reflecting all args added via `addArg`, preserving order; empty array (not null) when none added.
+7. `getArgList()` returns live/backing List equivalent to `getArgs()` content, same ordering.
+8. `getOptions()` returns array of all distinct added Options, size matching number of `addOption` calls (no duplicates for repeated same-option addition semantics per contract).
+9. `iterator()` returns Iterator over Options array equivalent to `getOptions()` content.
+10. Setup: build CommandLine via reflection or package-private methods (`addOption`, `addArg`) since these are only package-visible — tests must reside in `org.apache.commons.cli` package to call them directly.

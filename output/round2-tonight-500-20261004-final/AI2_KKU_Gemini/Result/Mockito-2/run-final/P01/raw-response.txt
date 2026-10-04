@@ -1,0 +1,9 @@
+- `Timer` setup: instantiate with a valid duration (e.g., positive `long`, zero, or negative).
+- Boundary setup: duration of `0L` milliseconds for instant expiration.
+- Boundary setup: negative duration values to test edge-case behavior.
+- State check before `start()`: `isCounting()` should return `false` initially.
+- State check after `start()`: `isCounting()` should return `true` right away.
+- Time expiration boundary: `isCounting()` transitions to `false` once elapsed time reaches or exceeds `durationMillis`.
+- Re-entrancy: calling `start()` multiple times correctly resets `startTime`.
+- Monotonicity: ensure behavior relies on elapsed time rather than system clock adjustments (if applicable via contract).
+- Null or invalid state: constructor accepts any `long` without throwing immediate exceptions.

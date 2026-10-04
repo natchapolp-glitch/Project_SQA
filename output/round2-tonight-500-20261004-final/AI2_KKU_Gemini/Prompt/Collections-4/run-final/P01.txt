@@ -1,0 +1,30 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Collections-4
+Java 11, JUnit 4
+Modified classes: org.apache.commons.collections.map.MultiValueMap
+BUGGY API signatures:
+Compiled from "MultiValueMap.java"
+public class org.apache.commons.collections.map.MultiValueMap extends org.apache.commons.collections.map.AbstractMapDecorator implements org.apache.commons.collections.MultiMap {
+  private final org.apache.commons.collections.Factory collectionFactory;
+  private transient java.util.Collection values;
+  public static org.apache.commons.collections.map.MultiValueMap decorate(java.util.Map);
+  public static org.apache.commons.collections.map.MultiValueMap decorate(java.util.Map, java.lang.Class);
+  public static org.apache.commons.collections.map.MultiValueMap decorate(java.util.Map, org.apache.commons.collections.Factory);
+  public org.apache.commons.collections.map.MultiValueMap();
+  protected org.apache.commons.collections.map.MultiValueMap(java.util.Map, org.apache.commons.collections.Factory);
+  public void clear();
+  public java.lang.Object removeMapping(java.lang.Object, java.lang.Object);
+  public boolean containsValue(java.lang.Object);
+  public java.lang.Object put(java.lang.Object, java.lang.Object);
+  public void putAll(java.util.Map);
+  public java.util.Collection values();
+  public boolean containsValue(java.lang.Object, java.lang.Object);
+  public java.util.Collection getCollection(java.lang.Object);
+  public int size(java.lang.Object);
+  public boolean putAll(java.lang.Object, java.util.Collection);
+  public java.util.Iterator iterator(java.lang.Object);
+  public int totalSize();
+  protected java.util.Collection createCollection(int);
+}
+

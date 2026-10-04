@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:42:54.832715+00:00",
+  "ended_at_utc": "2026-10-04T07:42:59.769813+00:00",
+  "raw_body_sha256": "c92bbe64df222bed6c00bffab579ce586d1d40fc3e456c9fda8f48afb0f4fd8d",
+  "body": {
+    "id": "gen-1791099775-EcYflj66uEdJswqyV4Bw",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- getName(): verify QName reflects propertyName set via setPropertyName or setNameAttributeValue before access; default (no name set) behavior.\n- getLength(): should return 1 regardless of node state (contract: length of null pointer is always 1, even though it's \"null\").\n- getBaseValue()/getImmediateNode(): both should return null since underlying node is absent.\n- isLeaf(): should return true for a null pointer (no node means leaf).\n- isActual(): should return false (null pointers are never actual) — test via isActual() directly, not isActualProperty (protected).\n- isCollection(): should return false when no index set / property not a collection.\n- getPropertyCount(): should be 0 when there's no actual property.\n- getPropertyNames(): verify returns zero-length or expected array, not null, with no property set.\n- asPath(): verify correct XPath string construction including escaping of property name with special characters (quotes) via escape(), and correct format when byNameAttribute is true vs false.\n- setPropertyIndex(int): boundary values (negative, zero, large) — check no exception and reflected in asPath()/getName() where index included.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 951,
+      "output_tokens": 370,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.005602,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.005602,
+        "upstream_inference_prompt_cost": 0.001902,
+        "upstream_inference_completions_cost": 0.0037
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 125159,
+      "daily_remaining_tokens": 74841
+    }
+  },
+  "headers": {
+    "x-request-id": "oemjq83yfd4fvrk5w1pypx6g",
+    "date": "Sun, 04 Oct 2026 07:43:00 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

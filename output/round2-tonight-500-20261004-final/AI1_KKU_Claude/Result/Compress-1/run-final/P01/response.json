@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:48:59.104090+00:00",
+  "ended_at_utc": "2026-10-04T03:49:05.267765+00:00",
+  "raw_body_sha256": "736a688f299b99868f7d15b4f3dfb545298acb286237c758496d75661997597f",
+  "body": {
+    "id": "gen-1791085739-Kt46n9kb7haCPxagxGpl",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- putNextEntry should throw IOException if entry size does not match actual bytes written when closeArchiveEntry is called (mismatch detection).\n- closeArchiveEntry() called with bytes written count less than entry's declared size must throw IOException (\"size mismatch\"); equal size should succeed silently.\n- write(byte[], int, int) should throw if written bytes exceed entry's declared size (overflow detection).\n- putNextEntry/write after close() or finish() should throw IOException (ensureOpen checks \"closed\"/\"finished\" stream state).\n- write with negative len, offset, or offset+len > array length should throw IndexOutOfBoundsException (per OutputStream.write contract); len==0 should be no-op even on closed/finished stream per convention (check actual behavior vs contract—verify).\n- putNextEntry called twice without closeArchiveEntry in between should either auto-close previous entry or throw—verify expected contract (likely closes previous entry implicitly).\n- finish() without any entries should succeed and write trailer record (\"TRAILER!!!\") properly.\n- Duplicate entry names across putNextEntry calls may be checked/rejected (uses HashMap names) — verify duplicate-name handling behavior.\n- close() should call finish() if not already finished, then close underlying stream; double close() should be safe (no exception).\n- Need CpioArchiveEntry fixtures with varying size/name to set up receiver state for each test (small content, zero-length entry, name with special chars).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1083,
+      "output_tokens": 490,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007066,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007066,
+        "upstream_inference_prompt_cost": 0.002166,
+        "upstream_inference_completions_cost": 0.0049
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 1573,
+      "daily_remaining_tokens": 198427
+    }
+  },
+  "headers": {
+    "x-request-id": "eg580u4ozimc25ngwjt1kvgp",
+    "date": "Sun, 04 Oct 2026 03:49:06 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

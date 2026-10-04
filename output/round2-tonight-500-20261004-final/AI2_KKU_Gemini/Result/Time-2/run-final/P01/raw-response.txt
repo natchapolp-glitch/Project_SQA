@@ -1,0 +1,6 @@
+1. Setup a valid `Partial` receiver containing overlapping or adjacent time fields (e.g., MonthDay or YearMonth-like combinations, or specific fields like `DateTimeFieldType.year()` and `DateTimeFieldType.monthOfYear()`).
+2. Test `Partial.with()` and `Partial.without()` method behaviors when adding, replacing, or removing datetime field types, ensuring field order and chronology are preserved.
+3. Verify `Partial.withFieldAdded()` and period addition methods correctly handle addition across fields when some duration fields are unsupported or interact with `UnsupportedDurationField`.
+4. Check boundary conditions where a `Partial` contains a field whose duration or range field is unsupported (returning `UnsupportedDurationField`).
+5. Validate `UnsupportedDurationField` operations (like `add`, `getDifference`, and `getValue`) consistently throw `UnsupportedOperationException` per contract.
+6. Test `Partial` construction and property modification with mixed supported and unsupported duration fields to prevent ClassCastException or NullPointerException.

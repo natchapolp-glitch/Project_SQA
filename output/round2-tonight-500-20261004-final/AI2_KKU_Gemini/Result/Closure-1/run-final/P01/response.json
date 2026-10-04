@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:38:02.136747+00:00",
+  "ended_at_utc": "2026-10-04T03:38:04.011960+00:00",
+  "raw_body_sha256": "df32a8448e590576d4986ecac37b911b5e4cbd1976bc2992ff77a6b5d4ff3b3e",
+  "body": {
+    "id": "genai-01a104fd-80dd-7743-b663-d56859f94af2",
+    "object": "chat.completion",
+    "created": 1791085084,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- Receiver setup requires an initialized `AbstractCompiler`, coding convention, and boolean flags for `removeGlobals`, `modifyCallSites`, and `preserveFunctionExpressionNames`.\n- Valid setup involves constructing `RemoveUnusedVars` via its constructor passing `(compiler, removeGlobals, modifyCallSites, preserveFunctionExpressionNames)`.\n- Behavior boundary: `process(Node externs, Node root)` should execute the compiler pass to clean up unreferenced variables and function arguments.\n- Behavior boundary: `process(Node externs, Node root, SimpleDefinitionFinder definitionFinder)` should correctly handle call-graph optimization passes when provided.\n- Verify removal behavior on local variables vs. global variables based on the `removeGlobals` boolean flag.\n- Verify that unreferenced function arguments are properly stripped when function scopes are traversed and optimized.\n- Test behavior boundaries when variables have side-effect-laden assignments (`assignsByVar` and `assignsByNode`) that must not be incorrectly stripped.\n- Test preservation of function expression names when `preserveFunctionExpressionNames` is set to true.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1000,
+      "completion_tokens": 223,
+      "total_tokens": 1223
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 43881,
+      "daily_remaining_tokens": 306119
+    }
+  },
+  "headers": {
+    "x-request-id": "kzfrbjq9jg3z5c607ymwb4gw",
+    "date": "Sun, 04 Oct 2026 03:38:04 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

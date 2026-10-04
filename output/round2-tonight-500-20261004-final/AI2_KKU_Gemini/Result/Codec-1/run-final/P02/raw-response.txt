@@ -1,0 +1,89 @@
+```java
+package org.apache.commons.codec.language;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.codec.EncoderException;
+import org.junit.Test;
+
+public class Codec1LanguageTest {
+
+    @Test
+    public void testCaverphoneEncodingAndEquality() {
+        Caverphone caverphone = new Caverphone();
+        assertEquals("1111111111", caverphone.caverphone(null));
+        assertEquals("1111111111", caverphone.caverphone(""));
+        
+        String code1 = caverphone.caverphone("David");
+        String code2 = caverphone.caverphone("Tavit");
+        assertNotNull(code1);
+        assertTrue(caverphone.isCaverphoneEqual("David", "Tavit"));
+    }
+
+    @Test(expected = EncoderException.class)
+    public void testCaverphoneObjectEncoderException() throws EncoderException {
+        Caverphone caverphone = new Caverphone();
+        caverphone.encode(Integer.valueOf(123));
+    }
+
+    @Test
+    public void testCaverphoneObjectEncoderValid() throws EncoderException {
+        Caverphone caverphone = new Caverphone();
+        Object encoded = caverphone.encode("Test");
+        assertNotNull(encoded);
+    }
+
+    @Test
+    public void testMetaphoneEncodingAndOptions() {
+        Metaphone metaphone = new Metaphone();
+        assertEquals("", metaphone.metaphone(null));
+        assertEquals("", metaphone.metaphone(""));
+        assertEquals("A", metaphone.metaphone("A"));
+
+        String code = metaphone.metaphone("programming");
+        assertNotNull(code);
+
+        metaphone.setMaxCodeLen(6);
+        assertEquals(6, metaphone.getMaxCodeLen());
+    }
+
+    @Test(expected = EncoderException.class)
+    public void testMetaphoneObjectEncoderException() throws EncoderException {
+        Metaphone metaphone = new Metaphone();
+        metaphone.encode(Boolean.TRUE);
+    }
+
+    @Test
+    public void testMetaphoneEquality() {
+        Metaphone metaphone = new Metaphone();
+        assertTrue(metaphone.isMetaphoneEqual("Smith", "Smyth"));
+        assertFalse(metaphone.isMetaphoneEqual("Smith", "Jones"));
+    }
+
+    @Test
+    public void testSoundexUtilsClean() {
+        assertEquals("ABC", SoundexUtils.clean("a-b_c123"));
+        assertEquals("", SoundexUtils.clean(""));
+        assertEquals(null, SoundexUtils.clean(null));
+        assertEquals("XYZ", SoundexUtils.clean("XYZ"));
+    }
+
+    @Test
+    public void testSoundexUtilsDifferenceEncoded() {
+        assertEquals(4, SoundexUtils.differenceEncoded("AB12", "AB12"));
+        assertEquals(0, SoundexUtils.differenceEncoded(null, "AB12"));
+        assertEquals(0, SoundexUtils.differenceEncoded("AB12", null));
+        assertTrue(SoundexUtils.differenceEncoded("A123", "A124") >= 0);
+    }
+
+    @Test
+    public void testSoundexUtilsDifference() throws EncoderException {
+        Caverphone caverphone = new Caverphone();
+        int diff = SoundexUtils.difference(caverphone, "Testing", "Tasting");
+        assertTrue(diff >= 0);
+    }
+}
+```

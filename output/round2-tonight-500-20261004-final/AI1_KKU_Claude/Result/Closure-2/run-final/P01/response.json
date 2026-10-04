@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:26:32.520033+00:00",
+  "ended_at_utc": "2026-10-04T05:26:43.100522+00:00",
+  "raw_body_sha256": "1cbd6f34af773731a99e0c7d2ae5d19af05ffe15f0a5a48923e61c4a2d4ccd59",
+  "body": {
+    "id": "gen-1791091595-03CTKCUoj8EDyQLfh26t",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Based on known Closure Compiler Bug Closure-2 (TypeCheck interface property inheritance check):\n\n- Focus: interface-extends-interface property compatibility checks (HIDDEN_INTERFACE_PROPERTY / INCOMPATIBLE_EXTENDED_PROPERTY_TYPE / CONFLICTING_EXTENDED_TYPE), specifically when an interface extends another interface and both declare a same-named property with incompatible types—should report a type mismatch warning, not silently pass.\n- Valid setup: use standard CompilerTestCase/TypeCheckTestCase harness, compile a JS snippet declaring two `@interface` types where one `@extends` the other, each with a conflicting `@type` property.\n- Test both positive case (type mismatch should produce warning) and negative/boundary case (same or compatible property types across interface extension should NOT warn).\n- Verify behavior for multiple-interface extension (`@extends` chains or multiple `@extends` tags) is handled independently per-parent.\n- Ensure empty-body interface methods remain exempt from INTERFACE_FUNCTION_NOT_EMPTY check while property type checks still trigger appropriately.\n- Confirm no regression: normal (non-interface) class property overriding still correctly reports HIDDEN_SUPERCLASS_PROPERTY_MISMATCH when applicable.\n- Boundary: property defined only in child interface (no conflict) should not warn; property defined identically in both should not warn.\n- Determinism: typecheck pass requires fully resolved types (no UNRESOLVED_TYPE warnings) for reliable mismatch detection—ensure externs/types are fully defined in test fixtures.\n- Use `testTypes` or equivalent assertion helpers from existing TypeCheck test infrastructure, expecting specific DiagnosticType and message content.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 3066,
+      "output_tokens": 627,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.012402,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.012402,
+        "upstream_inference_prompt_cost": 0.006132,
+        "upstream_inference_completions_cost": 0.00627
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 27365,
+      "daily_remaining_tokens": 172635
+    }
+  },
+  "headers": {
+    "x-request-id": "uhubbt77xellp1s35574tazx",
+    "date": "Sun, 04 Oct 2026 05:26:43 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

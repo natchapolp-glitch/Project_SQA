@@ -1,0 +1,156 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Mockito-2
+Java 11, JUnit 4
+Modified classes: org.mockito.internal.util.Timer
+
+BUGGY API signatures (may include private members):
+Compiled from "Timer.java"
+public class org.mockito.internal.util.Timer {
+  private final long durationMillis;
+  private long startTime;
+  static final boolean $assertionsDisabled;
+  public org.mockito.internal.util.Timer(long);
+  public boolean isCounting();
+  public void start();
+  static {};
+}
+
+
+BUGGY source excerpt: org.mockito.internal.util.Timer (truncated=False)
+```java
+package org.mockito.internal.util;
+
+
+public class Timer {
+
+    private final long durationMillis;
+    private long startTime = -1;
+
+    public Timer(long durationMillis) {
+        this.durationMillis = durationMillis;
+    }
+
+    /**
+     * Informs whether the timer is still counting down.
+     */
+    public boolean isCounting() {
+        assert startTime != -1;
+        return System.currentTimeMillis() - startTime <= durationMillis;
+    }
+
+    /**
+     * Starts the timer count down.
+     */
+    public void start() {
+        startTime = System.currentTimeMillis();
+    }
+
+}
+
+```
+
+
+Original generated source:
+```java
+package org.mockito.internal.util;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TimerTest {
+
+    @Test
+    public void shouldBeCountingImmediatelyAfterStartWithPositiveDuration() {
+        Timer timer = new Timer(10000);
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void shouldNotBeCountingWhenDurationIsZero() throws InterruptedException {
+        Timer timer = new Timer(0);
+        timer.start();
+        Thread.sleep(5);
+        assertFalse(timer.isCounting());
+    }
+
+    @Test
+    public void shouldNotBeCountingWhenDurationIsNegative() {
+        Timer timer = new Timer(-1);
+        timer.start();
+        assertFalse(timer.isCounting());
+    }
+
+    @Test
+    public void shouldRestartCountingWhenStartCalledAgain() {
+        Timer timer = new Timer(10000);
+        timer.start();
+        assertTrue(timer.isCounting());
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void shouldHandleLargeDurationWithoutOverflow() {
+        Timer timer = new Timer(Long.MAX_VALUE);
+        timer.start();
+        assertTrue(timer.isCounting());
+    }
+
+    @Test
+    public void shouldEventuallyStopCountingAfterDurationElapses() throws InterruptedException {
+        Timer timer = new Timer(20);
+        timer.start();
+        assertTrue(timer.isCounting());
+        Thread.sleep(50);
+        assertFalse(timer.isCounting());
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+Extract test suite......................................................... OK
+Running ant (compile.gen.tests)............................................ OK
+Running ant (run.gen.tests)................................................ OK
+Failing tests: 1
+  - org.mockito.internal.util.TimerTest::shouldNotBeCountingWhenDurationIsNegative
+
+fixed-1/failing_tests:
+--- org.mockito.internal.util.TimerTest::shouldNotBeCountingWhenDurationIsNegative
+org.mockito.exceptions.misusing.FriendlyReminderException: 
+
+Don't panic! I'm just a friendly reminder!
+It is impossible for time to go backward, therefore...
+You cannot put negative value of duration: (-1)
+as argument of timer methods (after(), timeout())
+
+	at org.mockito.exceptions.Reporter.cannotCreateTimerWithNegativeDurationTime(Reporter.java:820)
+	at org.mockito.internal.util.Timer.validateInput(Timer.java:32)
+	at org.mockito.internal.util.Timer.<init>(Timer.java:11)
+	at org.mockito.internal.util.TimerTest.shouldNotBeCountingWhenDurationIsNegative(TimerTest.java:27)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:520)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1060)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:911)
+

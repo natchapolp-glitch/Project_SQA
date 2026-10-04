@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:47:39.768217+00:00",
+  "ended_at_utc": "2026-10-04T06:47:44.903944+00:00",
+  "raw_body_sha256": "146a7918cac7b9b2755bdb2950c2dcf91f9efa9f268c9e880f3ff52cb2aa6bf8",
+  "body": {
+    "id": "genai-01a105ab-2919-72d1-8948-847550804cc6",
+    "object": "chat.completion",
+    "created": 1791096465,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.data.time;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.junit.Test;\n\npublic class TimeSeriesTest {\n\n    @Test\n    public void testInitialMinMaxY() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        assertEquals(Double.NaN, series.getMinY(), 0.0000001);\n        assertEquals(Double.NaN, series.getMaxY(), 0.0000001);\n    }\n\n    @Test\n    public void testMinMaxYWithPositiveAndNegativeValues() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        RegularTimePeriod p2 = new Day(2, 1, 2020);\n        RegularTimePeriod p3 = new Day(3, 1, 2020);\n\n        series.add(p1, -5.5);\n        series.add(p2, 10.0);\n        series.add(p3, 2.5);\n\n        assertEquals(-5.5, series.getMinY(), 0.0000001);\n        assertEquals(10.0, series.getMaxY(), 0.0000001);\n    }\n\n    @Test\n    public void testMinMaxYWithNaNValues() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        RegularTimePeriod p2 = new Day(2, 1, 2020);\n        RegularTimePeriod p3 = new Day(3, 1, 2020);\n\n        series.add(p1, Double.NaN);\n        series.add(p2, 3.0);\n        series.add(p3, Double.NaN);\n\n        assertEquals(3.0, series.getMinY(), 0.0000001);\n        assertEquals(3.0, series.getMaxY(), 0.0000001);\n    }\n\n    @Test\n    public void testUpdateRecalculatesBounds() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        series.add(p1, 5.0);\n\n        assertEquals(5.0, series.getMinY(), 0.0000001);\n        assertEquals(5.0, series.getMaxY(), 0.0000001);\n\n        series.update(p1, -10.0);\n\n        assertEquals(-10.0, series.getMinY(), 0.0000001);\n        assertEquals(-10.0, series.getMaxY(), 0.0000001);\n    }\n\n    @Test\n    public void testClearResetsBounds() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        series.add(p1, 42.0);\n\n        assertEquals(42.0, series.getMinY(), 0.0000001);\n        assertEquals(42.0, series.getMaxY(), 0.0000001);\n\n        series.clear();\n\n        assertEquals(Double.NaN, series.getMinY(), 0.0000001);\n        assertEquals(Double.NaN, series.getMaxY(), 0.0000001);\n        assertEquals(0, series.getItemCount());\n    }\n\n    @Test\n    public void testDeleteRecalculatesBounds() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        RegularTimePeriod p2 = new Day(2, 1, 2020);\n        series.add(p1, -10.0);\n        series.add(p2, 20.0);\n\n        assertEquals(-10.0, series.getMinY(), 0.0000001);\n        assertEquals(20.0, series.getMaxY(), 0.0000001);\n\n        series.delete(p1);\n\n        assertEquals(20.0, series.getMinY(), 0.0000001);\n        assertEquals(20.0, series.getMaxY(), 0.0000001);\n    }\n\n    @Test\n    public void testCreateCopyPreservesDataAndBounds() throws CloneNotSupportedException {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        RegularTimePeriod p2 = new Day(2, 1, 2020);\n        series.add(p1, 1.0);\n        series.add(p2, 5.0);\n\n        TimeSeries copy = series.createCopy(p1, p2);\n        assertNotNull(copy);\n        assertEquals(2, copy.getItemCount());\n        assertEquals(1.0, copy.getMinY(), 0.0000001);\n        assertEquals(5.0, copy.getMaxY(), 0.0000001);\n    }\n\n    @Test\n    public void testMaximumItemCountRemovesOldest() {\n        TimeSeries series = new TimeSeries(\"TestSeries\");\n        series.setMaximumItemCount(2);\n        RegularTimePeriod p1 = new Day(1, 1, 2020);\n        RegularTimePeriod p2 = new Day(2, 1, 2020);\n        RegularTimePeriod p3 = new Day(3, 1, 2020);\n\n        series.add(p1, 10.0);\n        series.add(p2, 20.0);\n        series.add(p3, 30.0);\n\n        assertEquals(2, series.getItemCount());\n        assertEquals(p2, series.getTimePeriod(0));\n        assertEquals(p3, series.getTimePeriod(1));\n        assertEquals(20.0, series.getMinY(), 0.0000001);\n        assertEquals(30.0, series.getMaxY(), 0.0000001);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4973,
+      "completion_tokens": 1546,
+      "total_tokens": 6519
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 56649,
+      "daily_remaining_tokens": 293351
+    }
+  },
+  "headers": {
+    "x-request-id": "ggxbcal1rmcwp3tku0lw0rah",
+    "date": "Sun, 04 Oct 2026 06:47:45 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

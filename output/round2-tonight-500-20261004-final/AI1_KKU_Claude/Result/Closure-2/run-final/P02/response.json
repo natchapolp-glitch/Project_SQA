@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:26:43.326472+00:00",
+  "ended_at_utc": "2026-10-04T05:26:53.469035+00:00",
+  "raw_body_sha256": "38ee057dcd62cc5a408df1674c045b818aba1c6bb82c3bd30c87a70dffc6d0a4",
+  "body": {
+    "id": "gen-1791091603-dx26MryhmS5lJlOCfLxy",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class TypeCheckTest extends CompilerTestCase {\n\n  public TypeCheckTest() {\n    super();\n    this.parseTypeInfo = true;\n  }\n\n  @Override\n  protected CompilerPass getProcessor(Compiler compiler) {\n    return createTypeCheck(compiler);\n  }\n\n  private TypeCheck createTypeCheck(Compiler compiler) {\n    return new TypeCheck(\n        compiler,\n        new SemanticReverseAbstractInterpreter(\n            compiler.getCodingConvention(), compiler.getTypeRegistry()),\n        compiler.getTypeRegistry(),\n        CheckLevel.WARNING,\n        CheckLevel.OFF);\n  }\n\n  @Override\n  protected int getNumRepetitions() {\n    return 1;\n  }\n\n  @Test\n  public void testInterfaceExtendsWithIncompatiblePropertyType() {\n    testTypes(\n        \"/** @interface */ function I1() {}\\n\" +\n        \"/** @type {string} */ I1.prototype.prop;\\n\" +\n        \"/** @interface\\n @extends {I1} */ function I2() {}\\n\" +\n        \"/** @type {number} */ I2.prototype.prop;\",\n        TypeCheck.INCOMPATIBLE_EXTENDED_PROPERTY_TYPE.key);\n  }\n\n  @Test\n  public void testInterfaceExtendsWithCompatiblePropertyType() {\n    testTypes(\n        \"/** @interface */ function I1() {}\\n\" +\n        \"/** @type {string} */ I1.prototype.prop;\\n\" +\n        \"/** @interface\\n @extends {I1} */ function I2() {}\\n\" +\n        \"/** @type {string} */ I2.prototype.prop;\");\n  }\n\n  @Test\n  public void testInterfaceExtendsWithUniquePropertyNoWarning() {\n    testTypes(\n        \"/** @interface */ function I1() {}\\n\" +\n        \"/** @type {string} */ I1.prototype.prop1;\\n\" +\n        \"/** @interface\\n @extends {I1} */ function I2() {}\\n\" +\n        \"/** @type {number} */ I2.prototype.prop2;\");\n  }\n\n  @Test\n  public void testInterfaceMethodEmptyBodyAllowed() {\n    testTypes(\n        \"/** @interface */ function I() {}\\n\" +\n        \"I.prototype.method = function() {};\");\n  }\n\n  @Test\n  public void testInterfaceMethodNonEmptyBodyWarns() {\n    testTypes(\n        \"/** @interface */ function I() {}\\n\" +\n        \"I.prototype.method = function() { return 1; };\",\n        TypeCheck.INTERFACE_FUNCTION_NOT_EMPTY.key);\n  }\n\n  @Test\n  public void testClassHidesSuperclassPropertyWithMismatchedType() {\n    testTypes(\n        \"/** @constructor */ function Super() {}\\n\" +\n        \"/** @type {string} */ Super.prototype.prop = 'x';\\n\" +\n        \"/** @constructor\\n @extends {Super} */ function Sub() {}\\n\" +\n        \"Sub.prototype = new Super();\\n\" +\n        \"/** @type {number} */ Sub.prototype.prop = 1;\",\n        TypeCheck.HIDDEN_SUPERCLASS_PROPERTY_MISMATCH.key);\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 9517,
+      "output_tokens": 1250,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.031534,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.031534,
+        "upstream_inference_prompt_cost": 0.019034,
+        "upstream_inference_completions_cost": 0.0125
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 38132,
+      "daily_remaining_tokens": 161868
+    }
+  },
+  "headers": {
+    "x-request-id": "hgjx2mxk1lvtvt36nc6s6pn6",
+    "date": "Sun, 04 Oct 2026 05:26:54 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

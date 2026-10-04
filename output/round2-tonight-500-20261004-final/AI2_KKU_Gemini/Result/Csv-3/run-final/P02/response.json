@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:13:52.750981+00:00",
+  "ended_at_utc": "2026-10-04T07:13:55.739259+00:00",
+  "raw_body_sha256": "da52aae345be0106ea60c5250d43314b32de113b9d2f2353fed2662e98bc42bd",
+  "body": {
+    "id": "genai-01a105c3-2387-76ac-acc7-249b44b38423",
+    "object": "chat.completion",
+    "created": 1791098037,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport org.junit.Test;\n\npublic class LexerTest {\n\n    private static final class ConcreteLexer extends Lexer {\n        ConcreteLexer(CSVFormat format, ExtendedBufferedReader in) {\n            super(format, in);\n        }\n\n        @Override\n        Token nextToken(Token reusableToken) throws IOException {\n            return reusableToken;\n        }\n    }\n\n    private Lexer createLexer(CSVFormat format, String input) {\n        return new ConcreteLexer(format, new ExtendedBufferedReader(new StringReader(input)));\n    }\n\n    @Test\n    public void testIsWhitespace() {\n        CSVFormat format = CSVFormat.DEFAULT.withDelimiter(',');\n        Lexer lexer = createLexer(format, \"\");\n        assertTrue(lexer.isWhitespace(' '));\n        assertTrue(lexer.isWhitespace('\\t'));\n        assertFalse(lexer.isWhitespace(','));\n        assertFalse(lexer.isWhitespace('a'));\n    }\n\n    @Test\n    public void testIsStartOfLine() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(format, \"\");\n        assertTrue(lexer.isStartOfLine('\\n'));\n        assertTrue(lexer.isStartOfLine('\\r'));\n        assertTrue(lexer.isStartOfLine(Constants.UNDEFINED));\n        assertFalse(lexer.isStartOfLine('a'));\n    }\n\n    @Test\n    public void testIsEndOfFile() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(format, \"\");\n        assertTrue(lexer.isEndOfFile(Constants.END_OF_STREAM));\n        assertFalse(lexer.isEndOfFile(0));\n    }\n\n    @Test\n    public void testReadEscapeValid() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(format, \"n\");\n        assertEquals(Constants.LF, lexer.readEscape());\n    }\n\n    @Test(expected = IOException.class)\n    public void testReadEscapeEof() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(format, \"\");\n        lexer.readEscape();\n    }\n\n    @Test\n    public void testTrimTrailingSpaces() {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(format, \"\");\n        StringBuilder sb = new StringBuilder(\"abc   \");\n        lexer.trimTrailingSpaces(sb);\n        assertEquals(\"abc\", sb.toString());\n    }\n\n    @Test\n    public void testReadEndOfLine() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(format, \"\\n\");\n        assertTrue(lexer.readEndOfLine('\\n'));\n        assertTrue(lexer.readEndOfLine('\\r'));\n        assertFalse(lexer.readEndOfLine('a'));\n    }\n\n    @Test\n    public void testCharacterChecks() {\n        CSVFormat format = CSVFormat.DEFAULT\n                .withDelimiter(',')\n                .withEscape('\\\\')\n                .withQuoteChar('\"')\n                .withCommentStart('#');\n        Lexer lexer = createLexer(format, \"\");\n\n        assertTrue(lexer.isDelimiter(','));\n        assertTrue(lexer.isEscape('\\\\'));\n        assertTrue(lexer.isQuoteChar('\"'));\n        assertTrue(lexer.isCommentStart('#'));\n\n        assertFalse(lexer.isDelimiter('a'));\n        assertFalse(lexer.isEscape('a'));\n        assertFalse(lexer.isQuoteChar('a'));\n        assertFalse(lexer.isCommentStart('a'));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2300,
+      "completion_tokens": 887,
+      "total_tokens": 3187
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 81202,
+      "daily_remaining_tokens": 268798
+    }
+  },
+  "headers": {
+    "x-request-id": "uonvrc33mlsimw80nw11163m",
+    "date": "Sun, 04 Oct 2026 07:13:57 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

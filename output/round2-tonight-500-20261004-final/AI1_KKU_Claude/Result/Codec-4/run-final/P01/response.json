@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:33:03.071113+00:00",
+  "ended_at_utc": "2026-10-04T08:33:10.476871+00:00",
+  "raw_body_sha256": "96a77fe26c3cd9f01e5e7cedcb34e558f9e63cd668b7ccc92f3d2110ac6f6146",
+  "body": {
+    "id": "gen-1791102784-Wzo2AngtZC7xMlEZMhvn",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Round-trip property: decodeBase64(encodeBase64(x)) equals x for empty array, single byte, two bytes, three bytes (no padding), and lengths requiring 1 or 2 '=' padding chars.\n- encodeBase64(null) and decodeBase64(null) should return null (documented contract), not throw.\n- encodeBase64(new byte[0]) returns empty byte array, not null.\n- isArrayByteBase64 / isBase64(byte) boundaries: valid chars (A-Z,a-z,0-9,+,/,=), whitespace handling, invalid byte values (e.g. negative, control chars) return false.\n- Chunking: encodeBase64Chunked and encodeBase64(bytes, true) insert CRLF every CHUNK_SIZE (76) encoded chars, with trailing CRLF; encodeBase64(bytes, false) has no line separator.\n- URL-safe encoding: encodeBase64URLSafe produces '-' and '_' instead of '+','/' and omits padding; decode should still succeed.\n- discardWhitespace removes space/tab/CR/LF only, leaves other bytes untouched.\n- decodeInteger/encodeInteger: round-trip BigInteger values including negative, zero, and large values; verify sign handling via toIntegerBytes.\n- Streaming API (encode(byte[],int,int)/decode) with multiple chunked calls feeding partial input across call boundaries, verifying avail()/hasData()/readResults() accumulate correctly for a freshly constructed Base64 instance.\n- Constructor validation: Base64(int lineLength, byte[] lineSeparator) must reject a lineSeparator that itself contains base64 characters (per documented contract) — check expected exception type.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1436,
+      "output_tokens": 587,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008742,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008742,
+        "upstream_inference_prompt_cost": 0.002872,
+        "upstream_inference_completions_cost": 0.00587
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 141074,
+      "daily_remaining_tokens": 58926
+    }
+  },
+  "headers": {
+    "x-request-id": "x65vzyfiy51yw7x9nr4hd9t0",
+    "date": "Sun, 04 Oct 2026 08:33:11 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

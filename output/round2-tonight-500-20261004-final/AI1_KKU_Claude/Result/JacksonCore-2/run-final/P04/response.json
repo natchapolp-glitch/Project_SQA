@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:53:29.407202+00:00",
+  "ended_at_utc": "2026-10-04T05:53:39.020709+00:00",
+  "raw_body_sha256": "210834dec4bf8401653132b47d2d8831927bfd0984add3d963f9c179cd0c8e6b",
+  "body": {
+    "id": "gen-1791093210-Jp6VXQAQjjLNPGJKdXFO",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.core.json;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.io.ByteArrayInputStream;\nimport java.nio.charset.StandardCharsets;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonParseException;\nimport com.fasterxml.jackson.core.JsonToken;\n\npublic class InvalidTokenHandlingExtraTest {\n\n    private JsonParser createReaderParser(String content) throws IOException {\n        JsonFactory f = new JsonFactory();\n        return f.createParser(new StringReader(content));\n    }\n\n    private JsonParser createStreamParser(String content) throws IOException {\n        JsonFactory f = new JsonFactory();\n        return f.createParser(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));\n    }\n\n    @Test\n    public void testInvalidTrueLiteralVariantStream() throws IOException {\n        JsonParser p = createStreamParser(\"trux\");\n        try {\n            p.nextToken();\n            fail(\"Expected JsonParseException\");\n        } catch (JsonParseException e) {\n            assertNotNull(e.getMessage());\n            assertTrue(e.getMessage().contains(\"tru\"));\n        } finally {\n            p.close();\n        }\n    }\n\n    @Test\n    public void testInvalidFalseLiteralReaderBased() throws IOException {\n        JsonParser p = createReaderParser(\"fals3\");\n        try {\n            p.nextToken();\n            fail(\"Expected JsonParseException\");\n        } catch (JsonParseException e) {\n            assertNotNull(e.getMessage());\n            assertTrue(e.getMessage().contains(\"fals\"));\n        } finally {\n            p.close();\n        }\n    }\n\n    @Test\n    public void testInvalidNullLiteralVariantStream() throws IOException {\n        JsonParser p = createStreamParser(\"nulx\");\n        try {\n            p.nextToken();\n            fail(\"Expected JsonParseException\");\n        } catch (JsonParseException e) {\n            assertNotNull(e.getMessage());\n            assertTrue(e.getMessage().contains(\"nul\"));\n        } finally {\n            p.close();\n        }\n    }\n\n    @Test\n    public void testValidLiteralsInNestedStructureReaderAndStream() throws IOException {\n        String content = \"{\\\"a\\\":true,\\\"b\\\":[false,null]}\";\n\n        JsonParser rp = createReaderParser(content);\n        assertEquals(JsonToken.START_OBJECT, rp.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, rp.nextToken());\n        assertEquals(JsonToken.VALUE_TRUE, rp.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, rp.nextToken());\n        assertEquals(JsonToken.START_ARRAY, rp.nextToken());\n        assertEquals(JsonToken.VALUE_FALSE, rp.nextToken());\n        assertEquals(JsonToken.VALUE_NULL, rp.nextToken());\n        assertEquals(JsonToken.END_ARRAY, rp.nextToken());\n        assertEquals(JsonToken.END_OBJECT, rp.nextToken());\n        rp.close();\n\n        JsonParser sp = createStreamParser(content);\n        assertEquals(JsonToken.START_OBJECT, sp.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, sp.nextToken());\n        assertEquals(JsonToken.VALUE_TRUE, sp.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, sp.nextToken());\n        assertEquals(JsonToken.START_ARRAY, sp.nextToken());\n        assertEquals(JsonToken.VALUE_FALSE, sp.nextToken());\n        assertEquals(JsonToken.VALUE_NULL, sp.nextToken());\n        assertEquals(JsonToken.END_ARRAY, sp.nextToken());\n        assertEquals(JsonToken.END_OBJECT, sp.nextToken());\n        sp.close();\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8996,
+      "output_tokens": 1493,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.032922,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.032922,
+        "upstream_inference_prompt_cost": 0.017992,
+        "upstream_inference_completions_cost": 0.01493
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 77800,
+      "daily_remaining_tokens": 122200
+    }
+  },
+  "headers": {
+    "x-request-id": "xl37htd81dijv548z9wiom0y",
+    "date": "Sun, 04 Oct 2026 05:53:41 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

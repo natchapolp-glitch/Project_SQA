@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:05:02.948127+00:00",
+  "ended_at_utc": "2026-10-04T07:05:14.614883+00:00",
+  "raw_body_sha256": "ad0131ab4fa83ac2f963570c7e9083dc1d3ab43435d57bc365b0f3358e915a5a",
+  "body": {
+    "id": "gen-1791097504-d4xrK5G8WnDOymKslNu9",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.collections;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Collection;\nimport java.util.List;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CollectionUtilsTest {\n\n    @Test\n    public void testGetCardinalityMapWithDuplicatesAndNull() {\n        List<Object> list = new ArrayList<Object>();\n        list.add(\"a\");\n        list.add(\"a\");\n        list.add(\"b\");\n        list.add(null);\n        Map map = CollectionUtils.getCardinalityMap(list);\n        assertEquals(new Integer(2), map.get(\"a\"));\n        assertEquals(new Integer(1), map.get(\"b\"));\n        assertEquals(new Integer(1), map.get(null));\n        assertEquals(3, map.size());\n    }\n\n    @Test\n    public void testCardinality() {\n        List<Object> list = new ArrayList<Object>();\n        list.add(\"x\");\n        list.add(\"x\");\n        list.add(null);\n        list.add(null);\n        list.add(null);\n        assertEquals(2, CollectionUtils.cardinality(\"x\", list));\n        assertEquals(3, CollectionUtils.cardinality(null, list));\n        assertEquals(0, CollectionUtils.cardinality(\"y\", list));\n    }\n\n    @Test\n    public void testIsSubCollectionAndProper() {\n        List<String> a = Arrays.asList(\"a\", \"a\");\n        List<String> b = Arrays.asList(\"a\", \"a\", \"a\");\n        assertTrue(CollectionUtils.isSubCollection(a, b));\n        assertTrue(CollectionUtils.isProperSubCollection(a, b));\n\n        List<String> c = Arrays.asList(\"a\", \"a\");\n        assertTrue(CollectionUtils.isSubCollection(a, c));\n        assertFalse(CollectionUtils.isProperSubCollection(a, c));\n\n        List<String> d = Arrays.asList(\"a\");\n        assertFalse(CollectionUtils.isSubCollection(a, d));\n        assertFalse(CollectionUtils.isProperSubCollection(a, d));\n    }\n\n    @Test\n    public void testIsEqualCollection() {\n        List<String> a = Arrays.asList(\"a\", \"a\", \"b\");\n        List<String> b = Arrays.asList(\"b\", \"a\", \"a\");\n        assertTrue(CollectionUtils.isEqualCollection(a, b));\n\n        List<String> c = Arrays.asList(\"a\", \"b\", \"b\");\n        assertFalse(CollectionUtils.isEqualCollection(a, c));\n\n        List<String> d = Arrays.asList(\"a\", \"b\");\n        assertFalse(CollectionUtils.isEqualCollection(a, d));\n    }\n\n    @Test\n    public void testUnionIntersectionDisjunctionSubtract() {\n        List<String> a = Arrays.asList(\"a\", \"a\", \"b\");\n        List<String> b = Arrays.asList(\"a\", \"b\", \"b\");\n\n        Collection union = CollectionUtils.union(a, b);\n        assertEquals(2, CollectionUtils.cardinality(\"a\", union));\n        assertEquals(2, CollectionUtils.cardinality(\"b\", union));\n        assertEquals(4, union.size());\n\n        Collection intersection = CollectionUtils.intersection(a, b);\n        assertEquals(1, CollectionUtils.cardinality(\"a\", intersection));\n        assertEquals(1, CollectionUtils.cardinality(\"b\", intersection));\n        assertEquals(2, intersection.size());\n\n        Collection disjunction = CollectionUtils.disjunction(a, b);\n        assertEquals(1, CollectionUtils.cardinality(\"a\", disjunction));\n        assertEquals(1, CollectionUtils.cardinality(\"b\", disjunction));\n        assertEquals(2, disjunction.size());\n\n        Collection subtract = CollectionUtils.subtract(a, b);\n        assertEquals(1, CollectionUtils.cardinality(\"a\", subtract));\n        assertEquals(0, CollectionUtils.cardinality(\"b\", subtract));\n        assertEquals(1, subtract.size());\n\n        assertEquals(3, a.size());\n        assertEquals(3, b.size());\n    }\n\n    @Test\n    public void testEmptyCollectionsOperations() {\n        List<String> empty = new ArrayList<String>();\n        List<String> nonEmpty = Arrays.asList(\"a\", \"b\");\n\n        assertTrue(CollectionUtils.union(empty, nonEmpty).size() == 2);\n        assertTrue(CollectionUtils.intersection(empty, nonEmpty).isEmpty());\n        assertTrue(CollectionUtils.subtract(empty, nonEmpty).isEmpty());\n        assertTrue(CollectionUtils.isSubCollection(empty, nonEmpty));\n        assertFalse(CollectionUtils.containsAny(empty, nonEmpty));\n        assertTrue(CollectionUtils.isEqualCollection(empty, new ArrayList<String>()));\n    }\n\n    @Test\n    public void testContainsAny() {\n        List<String> a = Arrays.asList(\"a\", \"b\");\n        List<String> b = Arrays.asList(\"c\", \"d\");\n        List<String> c = Arrays.asList(\"b\", \"e\");\n        assertFalse(CollectionUtils.containsAny(a, b));\n        assertTrue(CollectionUtils.containsAny(a, c));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7074,
+      "output_tokens": 1893,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.033078,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.033078,
+        "upstream_inference_prompt_cost": 0.014148,
+        "upstream_inference_completions_cost": 0.01893
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 117519,
+      "daily_remaining_tokens": 82481
+    }
+  },
+  "headers": {
+    "x-request-id": "vzudmekqh2j32yzqrtzb4icl",
+    "date": "Sun, 04 Oct 2026 07:05:17 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

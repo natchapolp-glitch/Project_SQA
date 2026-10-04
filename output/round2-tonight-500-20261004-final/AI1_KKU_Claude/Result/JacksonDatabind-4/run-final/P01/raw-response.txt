@@ -1,0 +1,10 @@
+- Standard case: deserialize a JSON array of strings (`["a","b","c"]`) into `String[]`, verifying order/content preserved, including empty array `[]`.
+- Null handling: JSON `null` token should deserialize to Java `null`, not an empty/throwing result.
+- Null elements inside array (`["a", null, "b"]`) must map to `null` entries in the resulting array, not to the literal string "null" or an exception.
+- Single-value coercion: when `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` (or equivalent) is enabled, a scalar JSON string value (not wrapped in array) should become a one-element `String[]`.
+- Without single-value unwrapping enabled, a scalar string input should trigger `handleNonArray` behavior—likely throwing a `MismatchedInputException`/`JsonMappingException`, verify via oracle contract rather than buggy output.
+- Non-string scalar array elements (numbers, booleans) should go through `_elementDeserializer`/coercion rules (e.g., number-to-string coercion) producing expected string representations, per `DeserializationFeature`/coercion config.
+- Custom element deserializer (via `createContextual`) must be exercised: verify contextual configuration changes behavior, e.g., custom deserializer substituting values or using `_deserializeCustom` path when `_elementDeserializer` is non-default.
+- Polymorphic path: `deserializeWithType` called with a `TypeDeserializer` should delegate correctly and produce same array result as standard `deserialize`.
+- Nested/deeply nested arrays or wrong token types (e.g., object `{}` as array element) should propagate expected exceptions rather than silently corrupting data.
+- Boundary sizes: verify large arrays (e.g. >12 elements, to cross internal buffer-growth threshold) are deserialized completely and correctly, checking array growth logic.

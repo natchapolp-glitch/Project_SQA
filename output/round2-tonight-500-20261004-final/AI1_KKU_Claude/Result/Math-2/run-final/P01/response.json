@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:22:35.936455+00:00",
+  "ended_at_utc": "2026-10-04T06:22:43.305690+00:00",
+  "raw_body_sha256": "039759b2cc8a580872198d7b78132bd3a50913d0ed1c1b3d3d3a2c4beea358f6",
+  "body": {
+    "id": "gen-1791094957-2Nz0hXtsEzODpUSm2PTG",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Valid constructor setup: populationSize > 0, sampleSize in [0, populationSize], numberOfSuccesses in [0, populationSize]; verify getters return constructor args unchanged.\n- Constructor must throw NotPositiveException for negative sampleSize/numberOfSuccesses, NotStrictlyPositiveException for populationSize<=0, NumberIsTooLargeException when sampleSize>populationSize or numberOfSuccesses>populationSize.\n- getSupportLowerBound() = max(0, sampleSize+numberOfSuccesses-populationSize); getSupportUpperBound() = min(sampleSize, numberOfSuccesses); isSupportConnected() always true.\n- probability(x) must be 0 outside [lowerBound, upperBound], and match hypergeometric PMF formula C(numberOfSuccesses,x)*C(populationSize-numberOfSuccesses, sampleSize-x)/C(populationSize,sampleSize) at valid x including both bounds.\n- cumulativeProbability(x) should be 0 for x < lowerBound, 1 for x >= upperBound, monotonically nondecreasing, and sum of probability() over domain equals cumulativeProbability(upperBound)=1.\n- upperCumulativeProbability(x) = 1 - cumulativeProbability(x-1) semantics: check consistency upperCumulativeProbability(lowerBound)=1, upperCumulativeProbability(upperBound+1)=0.\n- getNumericalMean() = sampleSize*numberOfSuccesses/populationSize (exact known formula) — test against closed-form.\n- getNumericalVariance() = known closed-form variance; test with small hand-computed example (e.g., populationSize=10, numberOfSuccesses=5, sampleSize=5) against exact rational value.\n- Boundary case where support is a single point (lowerBound==upperBound): probability at that point should be 1.0, cumulativeProbability should be 1.0 for that x.\n- Test with extreme but valid small values (populationSize=1, sampleSize=1, numberOfSuccesses=1 or 0) to check no divide-by-zero/off-by-one errors in domain computation.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 849,
+      "output_tokens": 742,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.009118,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.009118,
+        "upstream_inference_prompt_cost": 0.001698,
+        "upstream_inference_completions_cost": 0.00742
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 90572,
+      "daily_remaining_tokens": 109428
+    }
+  },
+  "headers": {
+    "x-request-id": "jpfxpu9l5gnvfu9zlkg0a4kq",
+    "date": "Sun, 04 Oct 2026 06:22:45 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

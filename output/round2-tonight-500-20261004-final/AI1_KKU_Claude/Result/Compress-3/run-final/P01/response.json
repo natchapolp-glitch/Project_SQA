@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:08:39.229120+00:00",
+  "ended_at_utc": "2026-10-04T07:08:46.714665+00:00",
+  "raw_body_sha256": "279794606fd1feacaa836d5092b8eddd2e2aee83fda1e9f8d361936d78bf035a",
+  "body": {
+    "id": "gen-1791097721-THXRQGdpNxJN9tgKyZmy",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Valid receiver: construct with a `ByteArrayOutputStream`/`OutputStream` wrapped in `TarArchiveOutputStream`, optionally with custom blockSize/recordSize.\n- `putArchiveEntry`/`write`/`closeArchiveEntry` for a normal small file: verify written bytes match entry size and content round-trips when re-read via `TarArchiveInputStream`.\n- Writing more bytes than declared entry size via `write` should throw `IOException` (\"request to write...bytes exceeds size...\").\n- Closing an entry (`closeArchiveEntry`) before writing all declared bytes should throw `IOException` (size mismatch detection).\n- Entry name length boundary: name <=100 chars writes fine; name >100 chars with `LONGFILE_ERROR` (default) throws `RuntimeException`; with `LONGFILE_TRUNCATE` truncates to 100 chars; with `LONGFILE_GNU` writes extra GNU long-name header entry correctly.\n- `finish()` must write two EOF records and be callable only once; calling `write`/`putArchiveEntry` after `finish()` or `close()` should fail appropriately.\n- `close()` without prior `finish()` should implicitly call `finish()`, flush and close underlying stream without exception.\n- Multiple entries in sequence: verify correct padding to record size boundaries between entries.\n- Zero-byte entry: `putArchiveEntry` then immediately `closeArchiveEntry` with no `write` calls should succeed without exception.\n- `getRecordSize()` should return the record size matching constructor argument (e.g., default 512 or custom value).",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 871,
+      "output_tokens": 556,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007302,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007302,
+        "upstream_inference_prompt_cost": 0.001742,
+        "upstream_inference_completions_cost": 0.00556
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 109605,
+      "daily_remaining_tokens": 90395
+    }
+  },
+  "headers": {
+    "x-request-id": "b79w72c5um5alfu88bjn7c4b",
+    "date": "Sun, 04 Oct 2026 07:08:49 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

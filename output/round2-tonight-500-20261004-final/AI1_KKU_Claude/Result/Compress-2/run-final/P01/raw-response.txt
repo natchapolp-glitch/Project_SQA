@@ -1,0 +1,10 @@
+- Valid AR archive: starts with global "!<arch>\n" header; getNextArEntry() should skip it once and parse first entry name/size/metadata correctly.
+- Multiple entries: sequential getNextArEntry() calls should advance offset past padding byte when entry size is odd, and correctly read entry data without corruption.
+- read(byte[], int, int) should return -1 at EOF of current entry (when offset reaches entry's declared length), not read into next entry's header bytes.
+- read() should also respect entry boundary, returning -1 when current entry fully consumed.
+- getNextEntry() after last entry should return null (EOF), not throw.
+- Reading with length 0 should return 0 without advancing stream.
+- Reading from a stream not positioned on any entry (before first getNextArEntry call) should behave per contract (likely IOException or -1).
+- close() must close underlying input and subsequent read/getNextArEntry calls should throw IOException ("Stream closed") per ArchiveInputStream base contract.
+- matches(byte[], int) should correctly detect valid AR magic header with sufficient length, and return false for too-short arrays or wrong magic bytes.
+- Entry with GNU long filename ("#1/" prefix) or BSD extended name format should be parsed into correct entry name (if applicable in this version).

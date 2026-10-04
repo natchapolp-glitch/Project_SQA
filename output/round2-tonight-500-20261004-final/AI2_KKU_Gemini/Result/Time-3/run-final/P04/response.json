@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:14:06.331160+00:00",
+  "ended_at_utc": "2026-10-04T08:14:08.582717+00:00",
+  "raw_body_sha256": "f9f01a80c25c227346aacd3779b96207e7e58ba4a0274bd118ee39bbc283c8bd",
+  "body": {
+    "id": "genai-01a105fa-45f6-7b63-8552-b89d65c551eb",
+    "object": "chat.completion",
+    "created": 1791101650,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.joda.time;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class MutableDateTimeExtraTest {\n\n    @Test(expected = NullPointerException.class)\n    public void testNowZoneNull() {\n        MutableDateTime.now((DateTimeZone) null);\n    }\n\n    @Test(expected = NullPointerException.class)\n    public void testNowChronologyNull() {\n        MutableDateTime.now((Chronology) null);\n    }\n\n    @Test\n    public void testStaticParseWithFormatter() {\n        DateTimeFormatter formatter = org.joda.time.format.DateTimeFormat.forPattern(\"yyyy-MM-dd\");\n        MutableDateTime mdt = MutableDateTime.parse(\"2021-07-20\", formatter);\n        assertEquals(2021, mdt.getYear());\n        assertEquals(7, mdt.getMonthOfYear());\n        assertEquals(20, mdt.getDayOfMonth());\n    }\n\n    @Test\n    public void testObjectAndZoneConstructors() {\n        java.util.Date date = new java.util.Date(1600000000000L);\n        DateTimeZone zone = DateTimeZone.forID(\"UTC\");\n        MutableDateTime mdt = new MutableDateTime(date, zone);\n        assertEquals(zone, mdt.getZone());\n        assertEquals(1600000000000L, mdt.getMillis());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6282,
+      "completion_tokens": 341,
+      "total_tokens": 6623
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 103368,
+      "daily_remaining_tokens": 246632
+    }
+  },
+  "headers": {
+    "x-request-id": "b8q16wxyuxsmq7kukojbdvqc",
+    "date": "Sun, 04 Oct 2026 08:14:10 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

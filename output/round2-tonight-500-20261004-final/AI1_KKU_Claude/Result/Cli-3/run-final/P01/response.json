@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:51:08.855430+00:00",
+  "ended_at_utc": "2026-10-04T06:51:15.437955+00:00",
+  "raw_body_sha256": "3dc18328d49bacf957de0964daa0b9ead256be6a9f15a936111de0e543d6c107",
+  "body": {
+    "id": "gen-1791096669-2ptpkloT0GRJ09PPDppQ",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- createNumber: valid integer string → Long; valid decimal string → Double; malformed numeric string (e.g. \"not a number\") → should throw ParseException, not NumberFormatException; boundary values like Long.MAX_VALUE/MIN_VALUE and overflow beyond long range (should fall back to Double or BigInteger per contract).\n- createValue(String, Class): dispatch correctness for each supported type token (Number.class, String.class, Object.class, Class.class, File.class, Boolean.class if supported) and unsupported class type → ParseException.\n- createValue(String, Object): behaves identically to createValue(String, Class) when Object is actually a Class instance; passing non-Class Object should throw ParseException per contract (not ClassCastException).\n- createClass: valid fully-qualified class name succeeds; invalid/nonexistent class name → ParseException (not ClassNotFoundException leaking out).\n- createURL: valid URL string succeeds; malformed URL string → ParseException (not MalformedURLException leaking).\n- createObject: valid no-arg-constructible class name succeeds; invalid/non-instantiable class name → ParseException.\n- createDate: currently unsupported/always throws UnsupportedOperationException — verify this documented behavior remains.\n- createFile/createFiles: basic valid path string returns File/File[] without throwing; no strict existence check expected.\n- Ensure no undeclared runtime exceptions (NumberFormatException, ClassCastException, MalformedURLException) escape public API — all must be wrapped as ParseException where documented.\n- Empty string and null input handling for createNumber/createClass/createURL should be checked against ParseException expectations rather than throwing unchecked exceptions.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 473,
+      "output_tokens": 574,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.006686,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.006686,
+        "upstream_inference_prompt_cost": 0.000946,
+        "upstream_inference_completions_cost": 0.00574
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 103699,
+      "daily_remaining_tokens": 96301
+    }
+  },
+  "headers": {
+    "x-request-id": "ug42grza26rypirbjfm7tvsw",
+    "date": "Sun, 04 Oct 2026 06:51:16 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

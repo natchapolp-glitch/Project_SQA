@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:18:41.682785+00:00",
+  "ended_at_utc": "2026-10-04T08:18:52.620502+00:00",
+  "raw_body_sha256": "ffc4209d2158d058f78d20d825e89ff3c4d0bf7410f148c54eaafe238be2167a",
+  "body": {
+    "id": "gen-1791101922-BSv0yfUHyTSBFtxsVYo3",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jfree.chart.plot;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertSame;\nimport static org.junit.Assert.assertTrue;\n\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.axis.ValueAxis;\nimport org.jfree.chart.renderer.xy.StandardXYItemRenderer;\nimport org.jfree.chart.renderer.xy.XYItemRenderer;\nimport org.jfree.data.xy.XYDataset;\nimport org.jfree.data.xy.XYSeries;\nimport org.jfree.data.xy.XYSeriesCollection;\nimport org.junit.Test;\n\npublic class XYPlotTest {\n\n    private XYDataset createDataset() {\n        XYSeries series = new XYSeries(\"Series 1\");\n        series.add(1.0, 1.0);\n        series.add(2.0, 2.0);\n        return new XYSeriesCollection(series);\n    }\n\n    @Test\n    public void testConstructorAssignsDomainAxis() {\n        ValueAxis domainAxis = new NumberAxis(\"X\");\n        ValueAxis rangeAxis = new NumberAxis(\"Y\");\n        XYItemRenderer renderer = new StandardXYItemRenderer();\n        XYPlot plot = new XYPlot(createDataset(), domainAxis, rangeAxis, renderer);\n        assertSame(domainAxis, plot.getDomainAxis(0));\n        assertSame(domainAxis, plot.getDomainAxis());\n        assertSame(rangeAxis, plot.getRangeAxis(0));\n        assertSame(rangeAxis, plot.getRangeAxis());\n    }\n\n    @Test\n    public void testSetDomainAxisExtendsAxisCount() {\n        XYPlot plot = new XYPlot();\n        ValueAxis axis0 = new NumberAxis(\"X0\");\n        ValueAxis axis2 = new NumberAxis(\"X2\");\n        plot.setDomainAxis(0, axis0);\n        plot.setDomainAxis(2, axis2);\n        assertSame(axis0, plot.getDomainAxis(0));\n        assertNull(plot.getDomainAxis(1));\n        assertSame(axis2, plot.getDomainAxis(2));\n        assertTrue(plot.getDomainAxisCount() >= 3);\n    }\n\n    @Test\n    public void testGetDomainAxisForUnsetIndexReturnsNull() {\n        XYPlot plot = new XYPlot();\n        assertNull(plot.getDomainAxis(5));\n    }\n\n    @Test\n    public void testReplacePrimaryDomainAxis() {\n        XYPlot plot = new XYPlot();\n        ValueAxis original = new NumberAxis(\"Original\");\n        ValueAxis replacement = new NumberAxis(\"Replacement\");\n        plot.setDomainAxis(0, original);\n        assertSame(original, plot.getDomainAxis());\n        plot.setDomainAxis(0, replacement);\n        assertSame(replacement, plot.getDomainAxis());\n    }\n\n    @Test\n    public void testClearDomainAxesResetsAxes() {\n        XYPlot plot = new XYPlot();\n        ValueAxis axis = new NumberAxis(\"X\");\n        plot.setDomainAxis(0, axis);\n        assertNotNull(plot.getDomainAxis(0));\n        plot.clearDomainAxes();\n        assertNull(plot.getDomainAxis(0));\n    }\n\n    @Test\n    public void testSetRangeAxisExtendsAxisCount() {\n        XYPlot plot = new XYPlot();\n        ValueAxis axis0 = new NumberAxis(\"Y0\");\n        ValueAxis axis3 = new NumberAxis(\"Y3\");\n        plot.setRangeAxis(0, axis0);\n        plot.setRangeAxis(3, axis3);\n        assertSame(axis0, plot.getRangeAxis(0));\n        assertNull(plot.getRangeAxis(1));\n        assertNull(plot.getRangeAxis(2));\n        assertSame(axis3, plot.getRangeAxis(3));\n        assertTrue(plot.getRangeAxisCount() >= 4);\n    }\n\n    @Test\n    public void testClearRangeAxesResetsAxes() {\n        XYPlot plot = new XYPlot();\n        ValueAxis axis = new NumberAxis(\"Y\");\n        plot.setRangeAxis(0, axis);\n        assertNotNull(plot.getRangeAxis(0));\n        plot.clearRangeAxes();\n        assertNull(plot.getRangeAxis(0));\n    }\n\n    @Test\n    public void testDefaultAxisCounts() {\n        XYPlot plot = new XYPlot();\n        assertEquals(0, plot.getDomainAxisCount());\n        assertEquals(0, plot.getRangeAxisCount());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 9103,
+      "output_tokens": 1719,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.035396,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.035396,
+        "upstream_inference_prompt_cost": 0.018206,
+        "upstream_inference_completions_cost": 0.01719
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 145628,
+      "daily_remaining_tokens": 54372
+    }
+  },
+  "headers": {
+    "x-request-id": "h7a9epogii32m7he1t917own",
+    "date": "Sun, 04 Oct 2026 08:18:54 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

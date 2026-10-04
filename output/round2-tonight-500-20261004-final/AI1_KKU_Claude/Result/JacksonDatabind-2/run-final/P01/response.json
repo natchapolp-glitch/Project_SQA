@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:57:11.710847+00:00",
+  "ended_at_utc": "2026-10-04T05:57:20.547799+00:00",
+  "raw_body_sha256": "113cd3a0f1e9934a9df5b524d70081fac6bee7def047f15a8dff2015ba10a60c",
+  "body": {
+    "id": "gen-1791093433-1iAFRKZkSMyM3VhuvWUk",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `writeNumber(BigInteger)` and `writeNumber(BigDecimal)` must accept `null` without throwing NPE, consistent with Jackson's contract of serializing null numeric arguments as JSON null (writeNull()).\n- Setup: construct `TokenBuffer(ObjectCodec)` (e.g., `new TokenBuffer(null, false)`), then call `writeStartArray()`/`writeStartObject()` or write at root before invoking writeNumber with null BigInteger/BigDecimal.\n- Verify resulting token stream (via `asParser()`) yields `JsonToken.VALUE_NULL` at that position, not a numeric token or an exception.\n- Boundary: test both standalone root-level null number write and null number write as object field value / array element.\n- Also verify non-null BigInteger/BigDecimal still produce `VALUE_NUMBER_INT`/`VALUE_NUMBER_FLOAT` correctly (regression contrast).\n- Confirm no corruption of `_hasNativeTypeIds`/`_appendAt` state after writing null numeric value.\n- Check `getBigIntegerValue()`/`getDecimalValue()` via resulting JsonParser throw appropriately or return null consistent with underlying JsonToken.VALUE_NULL semantics (per JsonParser contract, likely returns null or throws if value accessed on null token—confirm against JsonParser doc, not buggy code).\n- Test `toString()` doesn't throw on buffer containing a null-value entry.\n- Use JUnit `assertEquals` for token type and `assertNull`/`assertNotNull` for value content, avoiding reliance on internal Segment layout.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2786,
+      "output_tokens": 566,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.011232,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.011232,
+        "upstream_inference_prompt_cost": 0.005572,
+        "upstream_inference_completions_cost": 0.00566
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 62208,
+      "daily_remaining_tokens": 137792
+    }
+  },
+  "headers": {
+    "x-request-id": "fge88dehg2kay4ni6yqsl7xe",
+    "date": "Sun, 04 Oct 2026 05:57:20 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

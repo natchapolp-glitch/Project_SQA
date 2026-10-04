@@ -1,0 +1,8 @@
+1. Receiver setup: Instantiate `org.mockito.exceptions.Reporter` using its default public constructor (`new Reporter()`).
+2. Verify exception reporting methods correctly construct and throw descriptive Mockito framework exceptions (e.g., `MockitoException`).
+3. Test boundary behavior for methods taking collections/lists (e.g., `invalidUseOfMatchers`) with empty, populated, and null parameters where applicable.
+4. Test reporting behavior for null parameters passed to validation methods (e.g., `cannotStubWithNullThrowable`, `nullPassedToVerify`).
+5. Test integer range boundaries in methods like `invalidArgumentPositionRangeAtInvocationTime` and `wantedAtMostX` (negative, zero, positive values).
+6. Verify type-checking reporting methods (e.g., `cannotMockFinalClass`, `extraInterfacesAcceptsOnlyInterfaces`) handle invalid classes correctly.
+7. Test invocation reporting methods with mock locations, descriptors, and discrepancy objects.
+8. Validate exception message formatting and cause extraction in helper/reporting routines like `exceptionCauseMessageIfAvailable`.

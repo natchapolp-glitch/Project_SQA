@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:13:12.525544+00:00",
+  "ended_at_utc": "2026-10-04T09:13:34.638897+00:00",
+  "raw_body_sha256": "586b1d8ec1c7a9d594aa05e5d9da7c824aba26eeb1cc894520e04f57861e0b7b",
+  "body": {
+    "id": "gen-1791105194-FVkjkaudGZj8BQFsg7t5",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.jxpath.ri.model.dom;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.assertFalse;\n\nimport java.util.Locale;\n\nimport javax.xml.parsers.DocumentBuilder;\nimport javax.xml.parsers.DocumentBuilderFactory;\n\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.compiler.NodeNameTest;\nimport org.apache.commons.jxpath.ri.compiler.NodeTypeTest;\nimport org.apache.commons.jxpath.ri.Compiler;\nimport org.junit.Test;\nimport org.w3c.dom.Document;\nimport org.w3c.dom.Element;\nimport org.w3c.dom.Node;\n\nimport java.io.ByteArrayInputStream;\nimport org.xml.sax.InputSource;\n\npublic class DOMNodePointerTest {\n\n    private Document parse(String xml) throws Exception {\n        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();\n        dbf.setNamespaceAware(true);\n        DocumentBuilder db = dbf.newDocumentBuilder();\n        return db.parse(new InputSource(new ByteArrayInputStream(xml.getBytes(\"UTF-8\"))));\n    }\n\n    @Test\n    public void testGetNamespaceURIExplicit() throws Exception {\n        Document doc = parse(\"<root xmlns:a='urn:a'><a:child/></root>\");\n        Element root = doc.getDocumentElement();\n        Node child = root.getFirstChild();\n        DOMNodePointer pointer = new DOMNodePointer(child, Locale.getDefault());\n        assertEquals(\"urn:a\", pointer.getNamespaceURI());\n    }\n\n    @Test\n    public void testGetNamespaceURINoNamespace() throws Exception {\n        Document doc = parse(\"<root><child/></root>\");\n        Element root = doc.getDocumentElement();\n        Node child = root.getFirstChild();\n        DOMNodePointer pointer = new DOMNodePointer(child, Locale.getDefault());\n        assertNull(pointer.getNamespaceURI());\n    }\n\n    @Test\n    public void testGetPrefixAndLocalName() throws Exception {\n        Document doc = parse(\"<root xmlns:a='urn:a'><a:child/></root>\");\n        Element root = doc.getDocumentElement();\n        Node child = root.getFirstChild();\n        assertEquals(\"a\", DOMNodePointer.getPrefix(child));\n        assertEquals(\"child\", DOMNodePointer.getLocalName(child));\n    }\n\n    @Test\n    public void testTestNodeWithWildcardName() throws Exception {\n        Document doc = parse(\"<root><child/></root>\");\n        Element root = doc.getDocumentElement();\n        Node child = root.getFirstChild();\n        NodeNameTest wildcard = new NodeNameTest(new QName(null, \"*\"));\n        assertTrue(DOMNodePointer.testNode(child, wildcard));\n    }\n\n    @Test\n    public void testTestNodeTypeText() throws Exception {\n        Document doc = parse(\"<root>text</root>\");\n        Element root = doc.getDocumentElement();\n        Node textNode = root.getFirstChild();\n        NodeTypeTest textTest = new NodeTypeTest(Compiler.NODE_TYPE_TEXT);\n        assertTrue(DOMNodePointer.testNode(textNode, textTest));\n        NodeTypeTest commentTest = new NodeTypeTest(Compiler.NODE_TYPE_COMMENT);\n        assertFalse(DOMNodePointer.testNode(textNode, commentTest));\n    }\n\n    @Test\n    public void testIsLeafAndLength() throws Exception {\n        Document doc = parse(\"<root><child/><child/></root>\");\n        Element root = doc.getDocumentElement();\n        DOMNodePointer rootPointer = new DOMNodePointer(root, Locale.getDefault());\n        assertFalse(rootPointer.isLeaf());\n        assertEquals(1, rootPointer.getLength());\n\n        Node leafChild = root.getFirstChild();\n        DOMNodePointer leafPointer = new DOMNodePointer(leafChild, Locale.getDefault());\n        assertTrue(leafPointer.isLeaf());\n    }\n\n    @Test\n    public void testIsCollectionAlwaysFalse() throws Exception {\n        Document doc = parse(\"<root/>\");\n        Element root = doc.getDocumentElement();\n        DOMNodePointer pointer = new DOMNodePointer(root, Locale.getDefault());\n        assertFalse(pointer.isCollection());\n    }\n}\n```\n\n```java\npackage org.apache.commons.jxpath.ri.model.jdom;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.assertFalse;\n\nimport java.io.ByteArrayInputStream;\nimport java.util.Locale;\n\nimport org.apache.commons.jxpath.ri.QName;\nimport org.apache.commons.jxpath.ri.compiler.NodeNameTest;\nimport org.jdom.Document;\nimport org.jdom.Element;\nimport org.jdom.Namespace;\nimport org.jdom.Text;\nimport org.jdom.input.SAXBuilder;\nimport org.junit.Test;\n\npublic class JDOMNodePointerTest {\n\n    private Document parse(String xml) throws Exception {\n        SAXBuilder builder = new SAXBuilder();\n        return builder.build(new ByteArrayInputStream(xml.getBytes(\"UTF-8\")));\n    }\n\n    @Test\n    public void testGetNamespaceURIExplicit() throws Exception {\n        Document doc = parse(\"<root xmlns:a='urn:a'><a:child/></root>\");\n        Element root = doc.getRootElement();\n        Element child = (Element) root.getContent().get(0);\n        JDOMNodePointer pointer = new JDOMNodePointer(child, Locale.getDefault());\n        assertEquals(\"urn:a\", pointer.getNamespaceURI());\n    }\n\n    @Test\n    public void testGetNamespaceURINoNamespace() throws Exception {\n        Document doc = parse(\"<root><child/></root>\");\n        Element root = doc.getRootElement();\n        Element child = (Element) root.getContent().get(0);\n        JDOMNodePointer pointer = new JDOMNodePointer(child, Locale.getDefault());\n        assertNull(pointer.getNamespaceURI());\n    }\n\n    @Test\n    public void testGetNamespaceURIByPrefixOnElement() throws Exception {\n        Document doc = parse(\"<root xmlns:a='urn:a'><a:child/></root>\");\n        Element root = doc.getRootElement();\n        JDOMNodePointer pointer = new JDOMNodePointer(root, Locale.getDefault());\n        assertEquals(\"urn:a\", pointer.getNamespaceURI(\"a\"));\n    }\n\n    @Test\n    public void testGetPrefixAndLocalName() throws Exception {\n        Document doc = parse(\"<root xmlns:a='urn:a'><a:child/></root>\");\n        Element root = doc.getRootElement();\n        Element child = (Element) root.getContent().get(0);\n        assertEquals(\"a\", JDOMNodePointer.getPrefix(child));\n        assertEquals(\"child\", JDOMNodePointer.getLocalName(child));\n    }\n\n    @Test\n    public void testIsLeafAndLength() throws Exception {\n        Document doc = parse(\"<root><child/><child/></root>\");\n        Element root = doc.getRootElement();\n        JDOMNodePointer rootPointer = new JDOMNodePointer(root, Locale.getDefault());\n        assertFalse(rootPointer.isLeaf());\n\n        Element child = (Element) root.getContent().get(0);\n        JDOMNodePointer childPointer = new JDOMNodePointer(child, Locale.getDefault());\n        assertTrue(childPointer.isLeaf());\n    }\n\n    @Test\n    public void testIsCollectionAlwaysFalse() throws Exception {\n        Document doc = parse(\"<root/>\");\n        Element root = doc.getRootElement();\n        JDOMNodePointer pointer = new JDOMNodePointer(root, Locale.getDefault());\n        assertFalse(pointer.isCollection());\n    }\n\n    @Test\n    public void testTestNodeWithWildcardName() throws Exception {\n        Document doc = parse(\"<root><child/></root>\");\n        Element root = doc.getRootElement();\n        Element child = (Element) root.getContent().get(0);\n        JDOMNodePointer pointer = new JDOMNodePointer(child, Locale.getDefault());\n        NodeNameTest wildcard = new NodeNameTest(new QName(null, \"*\"));\n        assertTrue(pointer.testNode(wildcard));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8283,
+      "output_tokens": 3123,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.047796,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.047796,
+        "upstream_inference_prompt_cost": 0.016566,
+        "upstream_inference_completions_cost": 0.03123
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 173405,
+      "daily_remaining_tokens": 26595
+    }
+  },
+  "headers": {
+    "x-request-id": "k8g2qh1dpgutf2ti3pr9poja",
+    "date": "Sun, 04 Oct 2026 09:13:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,91 @@
+```java
+package com.fasterxml.jackson.dataformat.xml.ser;
+
+import java.util.*;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+import static org.junit.Assert.*;
+
+public class XmlSerializerProviderTest
+{
+    static class SimplePojo {
+        public String name = "value";
+    }
+
+    @JacksonXmlRootElement(localName = "customRoot")
+    static class NamedRootPojo {
+        public String field = "data";
+    }
+
+    static class NullFieldPojo {
+        public String present = "ok";
+        public String missing = null;
+    }
+
+    @Test
+    public void testSerializeNullRootProducesWrapperElement() throws Exception {
+        XmlMapper mapper = new XmlMapper();
+        String xml = mapper.writeValueAsString(null);
+        assertNotNull(xml);
+        assertTrue(xml.contains("<null"));
+        assertTrue(xml.contains("</null>") || xml.endsWith("/>"));
+    }
+
+    @Test
+    public void testSerializeNullWithConfiguredRootNameUsesThatName() throws Exception {
+        XmlMapper mapper = new XmlMapper();
+        mapper.setConfig(mapper.getSerializationConfig().withRootName("myRoot"));
+        String xml = mapper.writerWithRootName("myRoot").writeValueAsString(null);
+        assertNotNull(xml);
+        assertTrue(xml.contains("myRoot"));
+    }
+
+    @Test
+    public void testSerializePlainPojoProducesRootElementWithFields() throws Exception {
+        XmlMapper mapper = new XmlMapper();
+        SimplePojo pojo = new SimplePojo();
+        String xml = mapper.writeValueAsString(pojo);
+        assertTrue(xml.contains("<SimplePojo>"));
+        assertTrue(xml.contains("<name>value</name>"));
+        assertTrue(xml.contains("</SimplePojo>"));
+    }
+
+    @Test
+    public void testSerializeNamedRootPojoUsesAnnotatedRootName() throws Exception {
+        XmlMapper mapper = new XmlMapper();
+        NamedRootPojo pojo = new NamedRootPojo();
+        String xml = mapper.writeValueAsString(pojo);
+        assertTrue(xml.contains("<customRoot>"));
+        assertTrue(xml.contains("<field>data</field>"));
+        assertTrue(xml.contains("</customRoot>"));
+    }
+
+    @Test
+    public void testSerializeListProducesRepeatedItemElements() throws Exception {
+        XmlMapper mapper = new XmlMapper();
+        List<String> values = new ArrayList<String>();
+        values.add("a");
+        values.add("b");
+        String xml = mapper.writeValueAsString(values);
+        assertNotNull(xml);
+        int firstIdx = xml.indexOf("<item>a</item>");
+        int secondIdx = xml.indexOf("<item>b</item>");
+        assertTrue(firstIdx >= 0);
+        assertTrue(secondIdx > firstIdx);
+    }
+
+    @Test
+    public void testNestedNullFieldDoesNotAffectRootHandling() throws Exception {
+        XmlMapper mapper = new XmlMapper();
+        NullFieldPojo pojo = new NullFieldPojo();
+        String xml = mapper.writeValueAsString(pojo);
+        assertTrue(xml.contains("<NullFieldPojo>"));
+        assertTrue(xml.contains("<present>ok</present>"));
+        assertTrue(xml.contains("</NullFieldPojo>"));
+    }
+}
+```

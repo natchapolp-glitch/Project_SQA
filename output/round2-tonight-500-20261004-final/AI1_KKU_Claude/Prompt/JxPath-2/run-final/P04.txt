@@ -1,0 +1,316 @@
+Extend a valid base suite using ONLY new test classes; do not repeat, modify, replace or redefine any base file. Return new COMPLETE Java test files in java fences with at most 4 additional @Test methods total, or exactly NO_CHANGE. Use Java 7-compatible JUnit 4 and meaningful assertions based on documented contracts. Fixed coverage counters/uncovered line numbers are hints; line numbers may differ in buggy source. Use only the supplied buggy context and APIs. No added dependencies, production/build changes, random/time/network/process/file access, assumptions or ignored tests.
+
+Case: JxPath-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.jxpath.ri.compiler.Expression
+
+BUGGY API signatures (may include private members):
+Compiled from "Expression.java"
+public abstract class org.apache.commons.jxpath.ri.compiler.Expression {
+  protected static final java.lang.Double ZERO;
+  protected static final java.lang.Double ONE;
+  protected static final java.lang.Double NOT_A_NUMBER;
+  private boolean contextDependencyKnown;
+  private boolean contextDependent;
+  public org.apache.commons.jxpath.ri.compiler.Expression();
+  public boolean isContextDependent();
+  public abstract boolean computeContextDependent();
+  public abstract java.lang.Object computeValue(org.apache.commons.jxpath.ri.EvalContext);
+  public abstract java.lang.Object compute(org.apache.commons.jxpath.ri.EvalContext);
+  public java.util.Iterator iterate(org.apache.commons.jxpath.ri.EvalContext);
+  public java.util.Iterator iteratePointers(org.apache.commons.jxpath.ri.EvalContext);
+  static {};
+}
+
+
+BUGGY source excerpt: org.apache.commons.jxpath.ri.compiler.Expression (truncated=False)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.compiler;
+
+import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.ri.EvalContext;
+import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.apache.commons.jxpath.ri.QName;
+import org.apache.commons.jxpath.util.ValueUtils;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Locale;
+
+/**
+ * Common superclass for several types of nodes in the parse tree. Provides
+ * APIs for optimization of evaluation of expressions.  Specifically, an
+ * expression only needs to executed once during the evaluation of an xpath
+ * if that expression is context-independent.  Expression.isContextDependent()
+ * provides that hint.
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+public abstract class Expression {
+
+    protected static final Double ZERO = new Double(0);
+    protected static final Double ONE = new Double(1);
+    protected static final Double NOT_A_NUMBER = new Double(Double.NaN);
+
+    private boolean contextDependencyKnown = false;
+    private boolean contextDependent;
+
+    /**
+     * Returns true if this expression should be re-evaluated
+     * each time the current position in the context changes.
+     */
+    public boolean isContextDependent() {
+        if (!contextDependencyKnown) {
+            contextDependent = computeContextDependent();
+            contextDependencyKnown = true;
+        }
+        return contextDependent;
+    }
+
+    /**
+     * Implemented by subclasses and result is cached by isContextDependent()
+     */
+    public abstract boolean computeContextDependent();
+
+    /**
+     * Evaluates the expression. If the result is a node set, returns
+     * the first element of the node set.
+     */
+    public abstract Object computeValue(EvalContext context);
+    public abstract Object compute(EvalContext context);
+
+    public Iterator iterate(EvalContext context) {
+        Object result = compute(context);
+        if (result instanceof EvalContext) {
+            return new ValueIterator((EvalContext) result);
+        }
+        return ValueUtils.iterate(result);
+    }
+
+    public Iterator iteratePointers(EvalContext context) {
+        Object result = compute(context);
+        if (result == null) {
+            return Collections.EMPTY_LIST.iterator();
+        }
+        if (result instanceof EvalContext) {
+            return (EvalContext) result;
+        }
+        return new PointerIterator(ValueUtils.iterate(result),
+                new QName(null, "value"),
+                context.getRootContext().getCurrentNodePointer().getLocale());
+    }
+
+    public static class PointerIterator implements Iterator {
+        private Iterator iterator;
+        private QName qname;
+        private Locale locale;
+
+        //to what method does the following comment refer?
+        /**
+         * @deprecated Use the method that takes a NamespaceManager
+         */
+        public PointerIterator(Iterator it, QName qname, Locale locale) {
+            this.iterator = it;
+            this.qname = qname;
+            this.locale = locale;
+        }
+
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        public Object next() {
+            Object o = iterator.next();
+            return o instanceof Pointer ? o : NodePointer.newNodePointer(qname, o, locale);
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    public static class ValueIterator implements Iterator {
+        private Iterator iterator;
+
+        public ValueIterator(Iterator it) {
+            this.iterator = it;
+        }
+
+        public boolean hasNext() {
+            return iterator.hasNext();
+        }
+
+        public Object next() {
+            Object o = iterator.next();
+            if (o instanceof Pointer) {
+                return ((Pointer) o).getValue();
+            }
+            return o;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+}
+
+```
+
+
+Unchanged base files:
+FILE org/apache/commons/jxpath/ri/compiler/ExpressionTest.java
+```java
+package org.apache.commons.jxpath.ri.compiler;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Iterator;
+
+import org.apache.commons.jxpath.ri.EvalContext;
+import org.junit.Test;
+
+public class ExpressionTest {
+
+    private static class CountingExpression extends Expression {
+        int computeCount = 0;
+        boolean[] results;
+        int resultIndex = 0;
+        boolean throwOnCompute = false;
+
+        CountingExpression(boolean... results) {
+            this.results = results;
+        }
+
+        public boolean computeContextDependent() {
+            computeCount++;
+            if (throwOnCompute) {
+                throw new RuntimeException("boom");
+            }
+            boolean r = results[resultIndex];
+            if (resultIndex < results.length - 1) {
+                resultIndex++;
+            }
+            return r;
+        }
+
+        public Object computeValue(EvalContext context) {
+            return "value";
+        }
+
+        public Object compute(EvalContext context) {
+            return "computed";
+        }
+    }
+
+    @Test
+    public void testIsContextDependentCachesResultTrue() {
+        CountingExpression expr = new CountingExpression(true, false);
+        boolean first = expr.isContextDependent();
+        boolean second = expr.isContextDependent();
+        assertTrue(first);
+        assertTrue(second);
+        assertEquals(1, expr.computeCount);
+    }
+
+    @Test
+    public void testIsContextDependentCachesResultFalse() {
+        CountingExpression expr = new CountingExpression(false, true);
+        boolean first = expr.isContextDependent();
+        boolean second = expr.isContextDependent();
+        boolean third = expr.isContextDependent();
+        assertFalse(first);
+        assertFalse(second);
+        assertFalse(third);
+        assertEquals(1, expr.computeCount);
+    }
+
+    @Test
+    public void testLazyEvaluationBeforeFirstCall() {
+        CountingExpression expr = new CountingExpression(true);
+        assertEquals(0, expr.computeCount);
+        expr.isContextDependent();
+        assertEquals(1, expr.computeCount);
+    }
+
+    @Test
+    public void testIndependentInstancesCacheSeparately() {
+        CountingExpression expr1 = new CountingExpression(true);
+        CountingExpression expr2 = new CountingExpression(false);
+
+        boolean r1 = expr1.isContextDependent();
+        boolean r2 = expr2.isContextDependent();
+
+        assertTrue(r1);
+        assertFalse(r2);
+        assertEquals(1, expr1.computeCount);
+        assertEquals(1, expr2.computeCount);
+    }
+
+    @Test
+    public void testComputeAndComputeValueDelegation() {
+        CountingExpression expr = new CountingExpression(true);
+        assertEquals("computed", expr.compute(null));
+        assertEquals("value", expr.computeValue(null));
+    }
+
+    @Test
+    public void testStaticConstantsHaveExpectedValues() throws Exception {
+        Field zeroField = Expression.class.getDeclaredField("ZERO");
+        zeroField.setAccessible(true);
+        Double zero = (Double) zeroField.get(null);
+        assertEquals(0.0, zero.doubleValue(), 0.0);
+        assertTrue(Modifier.isStatic(zeroField.getModifiers()));
+
+        Field oneField = Expression.class.getDeclaredField("ONE");
+        oneField.setAccessible(true);
+        Double one = (Double) oneField.get(null);
+        assertEquals(1.0, one.doubleValue(), 0.0);
+
+        Field nanField = Expression.class.getDeclaredField("NOT_A_NUMBER");
+        nanField.setAccessible(true);
+        Double nan = (Double) nanField.get(null);
+        assertTrue(Double.isNaN(nan.doubleValue()));
+    }
+
+    @Test
+    public void testValueIteratorUnwrapsPointerAndRemoveThrows() {
+        java.util.List<Object> list = new java.util.ArrayList<Object>();
+        list.add("plain");
+        Iterator it = list.iterator();
+        Expression.ValueIterator valueIterator = new Expression.ValueIterator(it);
+        assertTrue(valueIterator.hasNext());
+        assertEquals("plain", valueIterator.next());
+        try {
+            valueIterator.remove();
+            org.junit.Assert.fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            // expected
+        }
+    }
+}
+
+```
+
+Fixed coverage:
+{"line_covered": 17, "line_total": 43, "branch_covered": 3, "branch_total": 16, "uncovered_fixed_lines": [74, 75, 76, 78, 79, 81, 85, 86, 87, 89, 90, 92, 93, 95, 97, 99, 111, 112, 113, 114, 115, 118, 122, 123, 127, 145]}

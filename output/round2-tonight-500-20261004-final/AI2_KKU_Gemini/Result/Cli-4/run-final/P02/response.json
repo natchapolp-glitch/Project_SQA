@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:24:11.777072+00:00",
+  "ended_at_utc": "2026-10-04T08:24:14.162555+00:00",
+  "raw_body_sha256": "82fecef1f73f52ca21ddc8bbb5e1331572d5780705b0e1bcb253435d3aaa7a3a",
+  "body": {
+    "id": "genai-01a10603-82c8-7785-a0f8-f48591edecef",
+    "object": "chat.completion",
+    "created": 1791102255,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.cli;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.util.Properties;\nimport org.junit.Test;\n\npublic class ParserTest {\n\n    private static class ConcreteParser extends Parser {\n        @Override\n        protected String[] flatten(Options opts, String[] arguments, boolean stopAtNonOption) {\n            return arguments;\n        }\n    }\n\n    @Test(expected = MissingOptionException.class)\n    public void testParseMissingRequiredOption() throws ParseException {\n        Options options = new Options();\n        options.addOption(OptionBuilder.isRequired().withLongOpt(\"required\").create(\"r\"));\n        Parser parser = new ConcreteParser();\n        parser.parse(options, new String[0]);\n    }\n\n    @Test\n    public void testParseWithSatisfiedRequiredOption() throws ParseException {\n        Options options = new Options();\n        options.addOption(OptionBuilder.isRequired().withLongOpt(\"required\").create(\"r\"));\n        Parser parser = new ConcreteParser();\n        CommandLine cl = parser.parse(options, new String[] { \"-r\" });\n        assertNotNull(cl);\n        assertTrue(cl.hasOption(\"r\"));\n    }\n\n    @Test\n    public void testParseWithProperties() throws ParseException {\n        Options options = new Options();\n        options.addOption(new Option(\"p\", \"prop\", false, \"property option\"));\n        Properties props = new Properties();\n        props.setProperty(\"p\", \"true\");\n\n        Parser parser = new ConcreteParser();\n        CommandLine cl = parser.parse(options, new String[0], props);\n        assertNotNull(cl);\n        assertTrue(cl.hasOption(\"p\"));\n    }\n\n    @Test\n    public void testParseNullArguments() throws ParseException {\n        Options options = new Options();\n        Parser parser = new ConcreteParser();\n        CommandLine cl = parser.parse(options, null);\n        assertNotNull(cl);\n        assertEquals(0, cl.getArgs().length);\n    }\n\n    @Test\n    public void testParseStopAtNonOption() throws ParseException {\n        Options options = new Options();\n        Parser parser = new ConcreteParser();\n        CommandLine cl = parser.parse(options, new String[] { \"non-option\" }, true);\n        assertNotNull(cl);\n        assertEquals(1, cl.getArgs().length);\n        assertEquals(\"non-option\", cl.getArgs()[0]);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3484,
+      "completion_tokens": 579,
+      "total_tokens": 4063
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 87188,
+      "daily_remaining_tokens": 262812
+    }
+  },
+  "headers": {
+    "x-request-id": "fcpam0spzhcb4572eo2d88i2",
+    "date": "Sun, 04 Oct 2026 08:24:15 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

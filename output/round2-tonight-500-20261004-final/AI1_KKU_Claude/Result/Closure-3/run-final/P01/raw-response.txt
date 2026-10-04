@@ -1,0 +1,12 @@
+Useful behaviors/boundaries to test via `CompilerTestCase` running this pass (as end-to-end AST transformations, since internals are private):
+
+1. **Basic inlining**: `var x = a; use(x);` → `use(a);` when x has single def and single use, no side effects between.
+2. **Non-inlining when side effects intervene**: `var x = foo(); bar(); use(x);` should NOT inline if `bar()` may have side effects affecting `foo()`'s result.
+3. **Multiple uses**: variable with more than one use should not be inlined (candidate requires single reaching use).
+4. **Multiple definitions reaching a use**: if two different defs can reach the same use (e.g. via branching control flow), inlining must be suppressed.
+5. **Self-referencing/circular dependency**: RHS expression referencing the variable being replaced (e.g. `x = x + 1`) must not cause infinite/incorrect inlining.
+6. **Order-of-evaluation preservation**: checkLeftOf/checkRightOf boundaries — expressions with function calls or increments on either side of the use must block inlining if reordering changes side-effect order (e.g. `x = foo(); bar(x, baz())`).
+7. **Loop safety**: definitions inside loops where "inlinedNewDependencies" tracking prevents introducing new variable dependencies that weren't previously present (avoiding invalid hoisting across iterations).
+8. **For-loop increment/condition boundaries**: do not inline when target variable used in loop increment/condition created new dependency cycle.
+9. **Scope correctness**: inlining a variable from an outer/different scope into an inner function should not be allowed if it crosses function boundaries incorrectly.
+10. **No-op/idempotence check**: code with no inlineable candidates should remain unchanged (AST equals input).

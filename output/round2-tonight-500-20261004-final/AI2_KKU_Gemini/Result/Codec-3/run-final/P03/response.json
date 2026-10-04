@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:01:38.712731+00:00",
+  "ended_at_utc": "2026-10-04T07:01:41.488093+00:00",
+  "raw_body_sha256": "b5cef0720a19be13beedbddade097359a71efb7b8c08f44ab72dc1508bc074ec",
+  "body": {
+    "id": "genai-01a105b7-f49c-7502-ae11-7732c9a902b7",
+    "object": "chat.completion",
+    "created": 1791097304,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.codec.language;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport org.apache.commons.codec.EncoderException;\nimport org.junit.Test;\n\npublic class DoubleMetaphoneTest {\n\n    @Test\n    public void testDoubleMetaphoneBasicAndNull() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertNull(dm.doubleMetaphone(null));\n        assertEquals(\"\", dm.doubleMetaphone(\"\"));\n        assertEquals(\"\", dm.doubleMetaphone(\"   \"));\n        \n        assertNotNull(dm.doubleMetaphone(\"Smith\"));\n        assertNotNull(dm.doubleMetaphone(\"Smith\", true));\n    }\n\n    @Test\n    public void testMaxCodeLen() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertEquals(4, dm.getMaxCodeLen());\n        \n        dm.setMaxCodeLen(2);\n        assertEquals(2, dm.getMaxCodeLen());\n        assertEquals(\"SM\", dm.doubleMetaphone(\"Smith\"));\n        \n        dm.setMaxCodeLen(6);\n        assertEquals(6, dm.getMaxCodeLen());\n        assertEquals(\"SM0\", dm.doubleMetaphone(\"Smith\"));\n    }\n\n    @Test\n    public void testIsDoubleMetaphoneEqual() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertTrue(dm.isDoubleMetaphoneEqual(\"Smith\", \"Smythe\"));\n        assertTrue(dm.isDoubleMetaphoneEqual(\"CIA\", \"CIA\", true));\n        assertFalse(dm.isDoubleMetaphoneEqual(\"Smith\", \"Jones\"));\n    }\n\n    @Test\n    public void testEncodeMethods() throws EncoderException {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        assertNotNull(dm.encode(\"Smith\"));\n        \n        Object encodedObj = dm.encode((Object) \"Washington\");\n        assertNotNull(encodedObj);\n        assertTrue(encodedObj instanceof String);\n    }\n\n    @Test(expected = EncoderException.class)\n    public void testEncodeInvalidObject() throws EncoderException {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        dm.encode(Integer.valueOf(123));\n    }\n\n    @Test\n    public void testSpecialCasesAndConsonants() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        \n        assertNotNull(dm.doubleMetaphone(\"caesar\"));\n        assertNotNull(dm.doubleMetaphone(\"focaccia\"));\n        assertNotNull(dm.doubleMetaphone(\"Czerny\"));\n        assertNotNull(dm.doubleMetaphone(\"\\u00D1et\"));\n        assertNotNull(dm.doubleMetaphone(\"\\u00C7ade\"));\n    }\n\n    @Test\n    public void testSilentStartsAndSlavoGermanic() {\n        DoubleMetaphone dm = new DoubleMetaphone();\n        \n        assertNotNull(dm.doubleMetaphone(\"gnat\"));\n        assertNotNull(dm.doubleMetaphone(\"knight\"));\n        assertNotNull(dm.doubleMetaphone(\"pneumatic\"));\n        assertNotNull(dm.doubleMetaphone(\"wrench\"));\n        assertNotNull(dm.doubleMetaphone(\"psalm\"));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6656,
+      "completion_tokens": 753,
+      "total_tokens": 7409
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 80121,
+      "daily_remaining_tokens": 269879
+    }
+  },
+  "headers": {
+    "x-request-id": "jh1oor5fzxhywsdnpcn4dxqb",
+    "date": "Sun, 04 Oct 2026 07:01:44 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

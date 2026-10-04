@@ -1,0 +1,598 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: JacksonCore-4
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.core.util.TextBuffer
+
+BUGGY API signatures (may include private members):
+Compiled from "TextBuffer.java"
+public final class com.fasterxml.jackson.core.util.TextBuffer {
+  static final char[] NO_CHARS;
+  static final int MIN_SEGMENT_LEN;
+  static final int MAX_SEGMENT_LEN;
+  private final com.fasterxml.jackson.core.util.BufferRecycler _allocator;
+  private char[] _inputBuffer;
+  private int _inputStart;
+  private int _inputLen;
+  private java.util.ArrayList<char[]> _segments;
+  private boolean _hasSegments;
+  private int _segmentSize;
+  private char[] _currentSegment;
+  private int _currentSize;
+  private java.lang.String _resultString;
+  private char[] _resultArray;
+  public com.fasterxml.jackson.core.util.TextBuffer(com.fasterxml.jackson.core.util.BufferRecycler);
+  public void releaseBuffers();
+  public void resetWithEmpty();
+  public void resetWithShared(char[], int, int);
+  public void resetWithCopy(char[], int, int);
+  public void resetWithString(java.lang.String);
+  private char[] buf(int);
+  private void clearSegments();
+  public int size();
+  public int getTextOffset();
+  public boolean hasTextAsCharacters();
+  public char[] getTextBuffer();
+  public java.lang.String contentsAsString();
+  public char[] contentsAsArray();
+  public java.math.BigDecimal contentsAsDecimal() throws java.lang.NumberFormatException;
+  public double contentsAsDouble() throws java.lang.NumberFormatException;
+  public void ensureNotShared();
+  public void append(char);
+  public void append(char[], int, int);
+  public void append(java.lang.String, int, int);
+  public char[] getCurrentSegment();
+  public char[] emptyAndGetCurrentSegment();
+  public int getCurrentSegmentSize();
+  public void setCurrentLength(int);
+  public char[] finishCurrentSegment();
+  public char[] expandCurrentSegment();
+  public char[] expandCurrentSegment(int);
+  public java.lang.String toString();
+  private void unshare(int);
+  private void expand(int);
+  private char[] resultArray();
+  private char[] carr(int);
+  static {};
+}
+
+
+BUGGY source excerpt: com.fasterxml.jackson.core.util.TextBuffer (truncated=True)
+```java
+package com.fasterxml.jackson.core.util;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import com.fasterxml.jackson.core.io.NumberInput;
+
+/**
+ * TextBuffer is a class similar to {@link StringBuffer}, with
+ * following differences:
+ *<ul>
+ *  <li>TextBuffer uses segments character arrays, to avoid having
+ *     to do additional array copies when array is not big enough.
+ *     This means that only reallocating that is necessary is done only once:
+ *     if and when caller
+ *     wants to access contents in a linear array (char[], String).
+ *    </li>
+*  <li>TextBuffer can also be initialized in "shared mode", in which
+*     it will just act as a wrapper to a single char array managed
+*     by another object (like parser that owns it)
+ *    </li>
+ *  <li>TextBuffer is not synchronized.
+ *    </li>
+ * </ul>
+ */
+public final class TextBuffer
+{
+    final static char[] NO_CHARS = new char[0];
+
+    /**
+     * Let's start with sizable but not huge buffer, will grow as necessary
+     */
+    final static int MIN_SEGMENT_LEN = 1000;
+    
+    /**
+     * Let's limit maximum segment length to something sensible
+     * like 256k
+     */
+    final static int MAX_SEGMENT_LEN = 0x40000;
+    
+    /*
+    /**********************************************************
+    /* Configuration:
+    /**********************************************************
+     */
+
+    private final BufferRecycler _allocator;
+
+    /*
+    /**********************************************************
+    /* Shared input buffers
+    /**********************************************************
+     */
+
+    /**
+     * Shared input buffer; stored here in case some input can be returned
+     * as is, without being copied to collector's own buffers. Note that
+     * this is read-only for this Object.
+     */
+    private char[] _inputBuffer;
+
+    /**
+     * Character offset of first char in input buffer; -1 to indicate
+     * that input buffer currently does not contain any useful char data
+     */
+    private int _inputStart;
+
+    private int _inputLen;
+
+    /*
+    /**********************************************************
+    /* Aggregation segments (when not using input buf)
+    /**********************************************************
+     */
+
+    /**
+     * List of segments prior to currently active segment.
+     */
+    private ArrayList<char[]> _segments;
+
+    /**
+     * Flag that indicates whether _seqments is non-empty
+     */
+    private boolean _hasSegments = false;
+
+    // // // Currently used segment; not (yet) contained in _seqments
+
+    /**
+     * Amount of characters in segments in {@link _segments}
+     */
+    private int _segmentSize;
+
+    private char[] _currentSegment;
+
+    /**
+     * Number of characters in currently active (last) segment
+     */
+    private int _currentSize;
+
+    /*
+    /**********************************************************
+    /* Caching of results
+    /**********************************************************
+     */
+
+    /**
+     * String that will be constructed when the whole contents are
+     * needed; will be temporarily stored in case asked for again.
+     */
+    private String _resultString;
+
+    private char[] _resultArray;
+
+    /*
+    /**********************************************************
+    /* Life-cycle
+    /**********************************************************
+     */
+
+    public TextBuffer(BufferRecycler allocator) {
+        _allocator = allocator;
+    }
+
+    /**
+     * Method called to indicate that the underlying buffers should now
+     * be recycled if they haven't yet been recycled. Although caller
+     * can still use this text buffer, it is not advisable to call this
+     * method if that is likely, since next time a buffer is needed,
+     * buffers need to reallocated.
+     * Note: calling this method automatically also clears contents
+     * of the buffer.
+     */
+    public void releaseBuffers()
+    {
+        if (_allocator == null) {
+            resetWithEmpty();
+        } else {
+            if (_currentSegment != null) {
+                // First, let's get rid of all but the largest char array
+                resetWithEmpty();
+                // And then return that array
+                char[] buf = _currentSegment;
+                _currentSegment = null;
+                _allocator.releaseCharBuffer(BufferRecycler.CHAR_TEXT_BUFFER, buf);
+            }
+        }
+    }
+
+    /**
+     * Method called to clear out any content text buffer may have, and
+     * initializes buffer to use non-shared data.
+     */
+    public void resetWithEmpty()
+    {
+        _inputStart = -1; // indicates shared buffer not used
+        _currentSize = 0;
+        _inputLen = 0;
+
+        _inputBuffer = null;
+        _resultString = null;
+        _resultArray = null;
+
+        // And then reset internal input buffers, if necessary:
+        if (_hasSegments) {
+            clearSegments();
+        }
+    }
+
+    /**
+     * Method called to initialize the buffer with a shared copy of data;
+     * this means that buffer will just have pointers to actual data. It
+     * also means that if anything is to be appended to the buffer, it
+     * will first have to unshare it (make a local copy).
+     */
+    public void resetWithShared(char[] buf, int start, int len)
+    {
+        // First, let's clear intermediate values, if any:
+        _resultString = null;
+        _resultArray = null;
+
+        // Then let's mark things we need about input buffer
+        _inputBuffer = buf;
+        _inputStart = start;
+        _inputLen = len;
+
+        // And then reset internal input buffers, if necessary:
+        if (_hasSegments) {
+            clearSegments();
+        }
+    }
+
+    public void resetWithCopy(char[] buf, int start, int len)
+    {
+        _inputBuffer = null;
+        _inputStart = -1; // indicates shared buffer not used
+        _inputLen = 0;
+
+        _resultString = null;
+        _resultArray = null;
+
+        // And then reset internal input buffers, if necessary:
+        if (_hasSegments) {
+            clearSegments();
+        } else if (_currentSegment == null) {
+            _currentSegment = buf(len);
+        }
+        _currentSize = _segmentSize = 0;
+        append(buf, start, len);
+    }
+
+    public void resetWithString(String value)
+    {
+        _inputBuffer = null;
+        _inputStart = -1;
+        _inputLen = 0;
+
+        _resultString = value;
+        _resultArray = null;
+
+        if (_hasSegments) {
+            clearSegments();
+        }
+        _currentSize = 0;
+        
+    }
+    
+    /**
+     * Helper method used to find a buffer to use, ideally one
+     * recycled earlier.
+     */
+    private char[] buf(int needed)
+    {
+        if (_allocator != null) {
+            return _allocator.allocCharBuffer(BufferRecycler.CHAR_TEXT_BUFFER, needed);
+        }
+        return new char[Math.max(needed, MIN_SEGMENT_LEN)];
+    }
+
+    private void clearSegments()
+    {
+        _hasSegments = false;
+        /* Let's start using _last_ segment from list; for one, it's
+         * the biggest one, and it's also most likely to be cached
+         */
+        /* 28-Aug-2009, tatu: Actually, the current segment should
+         *   be the biggest one, already
+         */
+        //_currentSegment = _segments.get(_segments.size() - 1);
+        _segments.clear();
+        _currentSize = _segmentSize = 0;
+    }
+
+    /*
+    /**********************************************************
+    /* Accessors for implementing public interface
+    /**********************************************************
+     */
+
+    /**
+     * @return Number of characters currently stored by this collector
+     */
+    public int size() {
+        if (_inputStart >= 0) { // shared copy from input buf
+            return _inputLen;
+        }
+        if (_resultArray != null) {
+            return _resultArray.length;
+        }
+        if (_resultString != null) {
+            return _resultString.length();
+        }
+        // local segmented buffers
+        return _segmentSize + _currentSize;
+    }
+
+    public int getTextOffset() {
+        /* Only shared input buffer can have non-zero offset; buffer
+         * segments start at 0, and if we have to create a combo buffer,
+         * that too will start from beginning of the buffer
+         */
+        return (_inputStart >= 0) ? _inputStart : 0;
+    }
+
+    /**
+     * Method that can be used to check whether textual contents can
+     * be efficiently accessed using {@link #getTextBuffer}.
+     */
+    public boolean hasTextAsCharacters()
+    {
+        // if we have array in some form, sure
+        if (_inputStart >= 0 || _resultArray != null)  return true;
+        // not if we have String as value
+        if (_resultString != null) return false;
+        return true;
+    }
+    
+    public char[] getTextBuffer()
+    {
+        // Are we just using shared input buffer?
+        if (_inputStart >= 0) return _inputBuffer;
+        if (_resultArray != null)  return _resultArray;
+        if (_resultString != null) {
+            return (_resultArray = _resultString.toCharArray());
+        }
+        // Nope; but does it fit in just one segment?
+        if (!_hasSegments)  return _currentSegment;
+        // Nope, need to have/create a non-segmented array and return it
+        return contentsAsArray();
+    }
+
+    /*
+    /**********************************************************
+    /* Other accessors:
+    /**********************************************************
+     */
+
+    public String contentsAsString()
+    {
+        if (_resultString == null) {
+            // Has array been requested? Can make a shortcut, if so:
+            if (_resultArray != null) {
+                _resultString = new String(_resultArray);
+            } else {
+                // Do we use shared array?
+                if (_inputStart >= 0) {
+                    if (_inputLen < 1) {
+                        return (_resultString = "");
+                    }
+                    _resultString = new String(_inputBuffer, _inputStart, _inputLen);
+                } else { // nope... need to copy
+                    // But first, let's see if we have just one buffer
+                    int segLen = _segmentSize;
+                    int currLen = _currentSize;
+                    
+                    if (segLen == 0) { // yup
+                        _resultString = (currLen == 0) ? "" : new String(_currentSegment, 0, currLen);
+                    } else { // no, need to combine
+                        StringBuilder sb = new StringBuilder(segLen + currLen);
+                        // First stored segments
+                        if (_segments != null) {
+                            for (int i = 0, len = _segments.size(); i < len; ++i) {
+                                char[] curr = _segments.get(i);
+                                sb.append(curr, 0, curr.length);
+                            }
+                        }
+                        // And finally, current segment:
+                        sb.append(_currentSegment, 0, _currentSize);
+                        _resultString = sb.toString();
+                    }
+                }
+            }
+        }
+        return _resultString;
+    }
+ 
+    public char[] contentsAsArray() {
+        char[] result = _resultArray;
+        if (result == null) {
+            _resultArray = result = resultArray();
+        }
+        return result;
+    }
+
+    /**
+     * Convenience method for converting contents of the buffer
+     * into a {@link BigDecimal}.
+     */
+    public BigDecimal contentsAsDecimal() throws NumberFormatException
+    {
+        // Already got a pre-cut array?
+        if (_resultArray != null) {
+            return NumberInput.parseBigDecimal(_resultArray);
+        }
+        // Or a shared buffer?
+        if ((_inputStart >= 0) && (_inputBuffer != null)) {
+            return NumberInput.parseBigDecimal(_inputBuffer, _inputStart, _inputLen);
+        }
+        // Or if not, just a single buffer (the usual case)
+        if ((_segmentSize == 0) 
+```
+
+
+Original generated source:
+```java
+package com.fasterxml.jackson.core.util;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import java.math.BigDecimal;
+
+public class TextBufferTest {
+
+    @Test
+    public void testResetWithEmpty() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        assertEquals(0, tb.size());
+        assertNotNull(tb.getTextBuffer());
+        assertEquals("", tb.contentsAsString());
+    }
+
+    @Test
+    public void testResetWithSharedBuffer() {
+        TextBuffer tb = new TextBuffer(null);
+        char[] src = "hello world".toCharArray();
+        tb.resetWithShared(src, 2, 5);
+        assertEquals(5, tb.size());
+        assertEquals(2, tb.getTextOffset());
+        assertTrue(tb.hasTextAsCharacters());
+        assertEquals("llo w", tb.contentsAsString());
+    }
+
+    @Test
+    public void testResetWithCopyIsIndependent() {
+        TextBuffer tb = new TextBuffer(null);
+        char[] src = "abcdef".toCharArray();
+        tb.resetWithCopy(src, 1, 4);
+        assertEquals("bcde", tb.contentsAsString());
+        src[1] = 'Z';
+        assertEquals("bcde", tb.contentsAsString());
+    }
+
+    @Test
+    public void testResetWithString() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithString("hello");
+        assertEquals(5, tb.size());
+        assertEquals("hello", tb.contentsAsString());
+    }
+
+    @Test
+    public void testAppendSingleCharsAcrossSegments() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        StringBuilder expected = new StringBuilder();
+        for (int i = 0; i < 5000; i++) {
+            char c = (char) ('a' + (i % 26));
+            tb.append(c);
+            expected.append(c);
+        }
+        assertEquals(expected.length(), tb.size());
+        assertEquals(expected.toString(), tb.contentsAsString());
+    }
+
+    @Test
+    public void testAppendCharArrayAndStringRanges() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        char[] data = "0123456789".toCharArray();
+        tb.append(data, 2, 5);
+        assertEquals("23456", tb.contentsAsString());
+
+        TextBuffer tb2 = new TextBuffer(null);
+        tb2.resetWithEmpty();
+        tb2.append("abcdefgh", 3, 4);
+        assertEquals("defg", tb2.contentsAsString());
+    }
+
+    @Test
+    public void testExpandCurrentSegmentAndFinish() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        tb.append('x');
+        tb.append('y');
+        char[] expanded = tb.expandCurrentSegment();
+        assertTrue(expanded.length > 2);
+        assertEquals('x', expanded[0]);
+        assertEquals('y', expanded[1]);
+
+        char[] finished = tb.finishCurrentSegment();
+        assertNotNull(finished);
+    }
+
+    @Test
+    public void testContentsAsDoubleAndDecimal() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithString("123.45");
+        assertEquals(123.45, tb.contentsAsDouble(), 0.0001);
+        assertEquals(new BigDecimal("123.45"), tb.contentsAsDecimal());
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testContentsAsDoubleInvalid() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithString("not-a-number");
+        tb.contentsAsDouble();
+    }
+
+    @Test
+    public void testSetCurrentLengthResetsSize() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        tb.append('a');
+        tb.append('b');
+        tb.append('c');
+        tb.setCurrentLength(1);
+        assertEquals(1, tb.size());
+        assertEquals("a", tb.contentsAsString());
+    }
+
+    @Test
+    public void testEmptyAndGetCurrentSegmentResetsSize() {
+        TextBuffer tb = new TextBuffer(null);
+        tb.resetWithEmpty();
+        tb.append('a');
+        tb.append('b');
+        char[] seg = tb.emptyAndGetCurrentSegment();
+        assertNotNull(seg);
+        assertEquals(0, tb.getCurrentSegmentSize());
+    }
+
+    @Test
+    public void testZeroLengthSharedBuffer() {
+        TextBuffer tb = new TextBuffer(null);
+        char[] src = "abc".toCharArray();
+        tb.resetWithShared(src, 0, 0);
+        assertEquals(0, tb.size());
+        assertEquals("", tb.contentsAsString());
+    }
+
+    @Test
+    public void testEnsureNotSharedAllowsAppendWithoutCorruptingSource() {
+        TextBuffer tb = new TextBuffer(null);
+        char[] src = "hello".toCharArray();
+        tb.resetWithShared(src, 0, 5);
+        tb.ensureNotShared();
+        tb.append('!');
+        assertEquals("hello!", tb.contentsAsString());
+        assertEquals('h', src[0]);
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+Source extraction/packaging error: JUnit method count missing or over cap; no trimming

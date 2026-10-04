@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:19:21.785235+00:00",
+  "ended_at_utc": "2026-10-04T05:19:25.830563+00:00",
+  "raw_body_sha256": "8cc09a4bb592bffe228d8471d9c01cd5cb5d02474a372cebf591ed0970c4f2f7",
+  "body": {
+    "id": "genai-01a1055a-502f-7725-b431-5791a094925d",
+    "object": "chat.completion",
+    "created": 1791091167,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.data.general;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.assertFalse;\n\nimport org.jfree.data.Range;\nimport org.jfree.data.category.DefaultCategoryDataset;\nimport org.jfree.data.pie.DefaultPieDataset;\nimport org.jfree.data.xy.XYSeries;\nimport org.jfree.data.xy.XYSeriesCollection;\nimport org.junit.Test;\n\npublic class DatasetUtilitiesTest {\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testCalculatePieDatasetTotalNull() {\n        DatasetUtilities.calculatePieDatasetTotal(null);\n    }\n\n    @Test\n    public void testCalculatePieDatasetTotalValid() {\n        DefaultPieDataset dataset = new DefaultPieDataset();\n        dataset.setValue(\"A\", 10.0);\n        dataset.setValue(\"B\", 20.0);\n        dataset.setValue(\"C\", -5.0);\n        dataset.setValue(\"D\", null);\n        \n        double total = DatasetUtilities.calculatePieDatasetTotal(dataset);\n        assertEquals(30.0, total, 0.0001);\n    }\n\n    @Test\n    public void testIsEmptyOrNullPieDataset() {\n        assertTrue(DatasetUtilities.isEmptyOrNull((PieDataset) null));\n        DefaultPieDataset dataset = new DefaultPieDataset();\n        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));\n        dataset.setValue(\"A\", 1.0);\n        assertFalse(DatasetUtilities.isEmptyOrNull(dataset));\n    }\n\n    @Test\n    public void testIsEmptyOrNullCategoryDataset() {\n        assertTrue(DatasetUtilities.isEmptyOrNull((CategoryDataset) null));\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));\n        dataset.addValue(1.0, \"R1\", \"C1\");\n        assertFalse(DatasetUtilities.isEmptyOrNull(dataset));\n    }\n\n    @Test\n    public void testIsEmptyOrNullXYDataset() {\n        assertTrue(DatasetUtilities.isEmptyOrNull((XYDataset) null));\n        XYSeriesCollection dataset = new XYSeriesCollection();\n        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));\n        XYSeries series = new XYSeries(\"S1\");\n        dataset.addSeries(series);\n        assertTrue(DatasetUtilities.isEmptyOrNull(dataset));\n        series.add(1.0, 2.0);\n        assertFalse(DatasetUtilities.isEmptyOrNull(dataset));\n    }\n\n    @Test\n    public void testFindRangeBoundsCategoryDataset() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        assertNull(DatasetUtilities.findRangeBounds(dataset));\n\n        dataset.addValue(10.0, \"Row1\", \"Col1\");\n        dataset.addValue(25.5, \"Row1\", \"Col2\");\n        dataset.addValue(-5.0, \"Row2\", \"Col1\");\n\n        Range range = DatasetUtilities.findRangeBounds(dataset);\n        assertNotNull(range);\n        assertEquals(-5.0, range.getLowerBound(), 0.0001);\n        assertEquals(25.5, range.getUpperBound(), 0.0001);\n    }\n\n    @Test\n    public void testFindRangeBoundsXYDataset() {\n        XYSeriesCollection dataset = new XYSeriesCollection();\n        assertNull(DatasetUtilities.findRangeBounds(dataset));\n\n        XYSeries series = new XYSeries(\"Series1\");\n        series.add(1.0, 2.0);\n        series.add(2.0, 15.0);\n        series.add(3.0, -3.0);\n        dataset.addSeries(series);\n\n        Range range = DatasetUtilities.findRangeBounds(dataset);\n        assertNotNull(range);\n        assertEquals(-3.0, range.getLowerBound(), 0.0001);\n        assertEquals(15.0, range.getUpperBound(), 0.0001);\n    }\n\n    @Test\n    public void testCreatePieDatasetForRow() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(10.0, \"Row1\", \"Col1\");\n        dataset.addValue(20.0, \"Row1\", \"Col2\");\n        dataset.addValue(30.0, \"Row2\", \"Col1\");\n\n        PieDataset pieDataset = DatasetUtilities.createPieDatasetForRow(dataset, \"Row1\");\n        assertNotNull(pieDataset);\n        assertEquals(2, pieDataset.getItemCount());\n        assertEquals(10.0, pieDataset.getValue(\"Col1\").doubleValue(), 0.0001);\n        assertEquals(20.0, pieDataset.getValue(\"Col2\").doubleValue(), 0.0001);\n    }\n\n    @Test\n    public void testCreatePieDatasetForColumn() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(10.0, \"Row1\", \"Col1\");\n        dataset.addValue(20.0, \"Row2\", \"Col1\");\n\n        PieDataset pieDataset = DatasetUtilities.createPieDatasetForColumn(dataset, \"Col1\");\n        assertNotNull(pieDataset);\n        assertEquals(2, pieDataset.getItemCount());\n        assertEquals(10.0, pieDataset.getValue(\"Row1\").doubleValue(), 0.0001);\n        assertEquals(20.0, pieDataset.getValue(\"Row2\").doubleValue(), 0.0001);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5517,
+      "completion_tokens": 1324,
+      "total_tokens": 6841
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 15923,
+      "daily_remaining_tokens": 334077
+    }
+  },
+  "headers": {
+    "x-request-id": "hfh8u165cw7a2ezyijo4u1x2",
+    "date": "Sun, 04 Oct 2026 05:19:27 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

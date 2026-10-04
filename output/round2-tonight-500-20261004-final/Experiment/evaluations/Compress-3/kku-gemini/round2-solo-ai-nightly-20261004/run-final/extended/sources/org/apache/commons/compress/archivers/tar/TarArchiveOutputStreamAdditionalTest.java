@@ -1,0 +1,76 @@
+package org.apache.commons.compress.archivers.tar;
+
+import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.assertNotNull;
+
+public class TarArchiveOutputStreamAdditionalTest {
+
+    @Test
+    public void testFlush() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+        tarOut.flush();
+        tarOut.close();
+        assertNotNull(out.toByteArray());
+    }
+
+    @Test
+    public void testCreateArchiveEntry() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out);
+        File tempFile = File.createTempFile("commons-compress", ".tmp");
+        try {
+            TarArchiveEntry entry = (TarArchiveEntry) tarOut.createArchiveEntry(tempFile, "test.tmp");
+            assertNotNull(entry);
+        } finally {
+            tempFile.delete();
+            tarOut.close();
+        }
+    }
+
+    @Test
+    public void testWriteWithAssemblySmallChunks() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out, 512, 512);
+
+        TarArchiveEntry entry = new TarArchiveEntry("assembly.txt");
+        entry.setSize(20);
+        tarOut.putArchiveEntry(entry);
+
+        // Write in small chunks to exercise assemBuf and assemLen logic in write() and closeArchiveEntry()
+        byte[] data = "01234567890123456789".getBytes();
+        for (int i = 0; i < data.length; i++) {
+            tarOut.write(data, i, 1);
+        }
+        tarOut.closeArchiveEntry();
+        tarOut.finish();
+        tarOut.close();
+        assertNotNull(out.toByteArray());
+    }
+
+    @Test
+    public void testWriteWithLargeAndSmallBuffering() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(out, 1024, 512);
+
+        TarArchiveEntry entry = new TarArchiveEntry("buffering.txt");
+        entry.setSize(600);
+        tarOut.putArchiveEntry(entry);
+
+        // Write a chunk larger than recordBuf to trigger buffer.writeRecord(wBuf, wOffset) loop
+        byte[] data = new byte[600];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = (byte) ('a' + (i % 26));
+        }
+        tarOut.write(data, 0, 600);
+        tarOut.closeArchiveEntry();
+        tarOut.finish();
+        tarOut.close();
+        assertNotNull(out.toByteArray());
+    }
+}

@@ -1,0 +1,72 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JacksonDatabind-2
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.databind.util.TokenBuffer
+BUGGY API signatures:
+Compiled from "TokenBuffer.java"
+public class com.fasterxml.jackson.databind.util.TokenBuffer extends com.fasterxml.jackson.core.JsonGenerator {
+  protected static final int DEFAULT_GENERATOR_FEATURES;
+  protected com.fasterxml.jackson.core.ObjectCodec _objectCodec;
+  protected int _generatorFeatures;
+  protected boolean _closed;
+  protected boolean _hasNativeTypeIds;
+  protected boolean _hasNativeObjectIds;
+  protected boolean _mayHaveNativeIds;
+  protected com.fasterxml.jackson.databind.util.TokenBuffer$Segment _first;
+  protected com.fasterxml.jackson.databind.util.TokenBuffer$Segment _last;
+  protected int _appendAt;
+  protected java.lang.Object _typeId;
+  protected java.lang.Object _objectId;
+  protected boolean _hasNativeId;
+  protected com.fasterxml.jackson.core.json.JsonWriteContext _writeContext;
+  public com.fasterxml.jackson.databind.util.TokenBuffer(com.fasterxml.jackson.core.ObjectCodec);
+  public com.fasterxml.jackson.databind.util.TokenBuffer(com.fasterxml.jackson.core.ObjectCodec, boolean);
+  public com.fasterxml.jackson.databind.util.TokenBuffer(com.fasterxml.jackson.core.JsonParser);
+  public com.fasterxml.jackson.core.Version version();
+  public com.fasterxml.jackson.core.JsonParser asParser();
+  public com.fasterxml.jackson.core.JsonParser asParser(com.fasterxml.jackson.core.ObjectCodec);
+  public com.fasterxml.jackson.core.JsonParser asParser(com.fasterxml.jackson.core.JsonParser);
+  public com.fasterxml.jackson.core.JsonToken firstToken();
+  public com.fasterxml.jackson.databind.util.TokenBuffer append(com.fasterxml.jackson.databind.util.TokenBuffer) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void serialize(com.fasterxml.jackson.core.JsonGenerator) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public com.fasterxml.jackson.databind.util.TokenBuffer deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException, com.fasterxml.jackson.core.JsonProcessingException;
+  public java.lang.String toString();
+  private final void _appendNativeIds(java.lang.StringBuilder);
+  public com.fasterxml.jackson.core.JsonGenerator enable(com.fasterxml.jackson.core.JsonGenerator$Feature);
+  public com.fasterxml.jackson.core.JsonGenerator disable(com.fasterxml.jackson.core.JsonGenerator$Feature);
+  public boolean isEnabled(com.fasterxml.jackson.core.JsonGenerator$Feature);
+  public int getFeatureMask();
+  public com.fasterxml.jackson.core.JsonGenerator setFeatureMask(int);
+  public com.fasterxml.jackson.core.JsonGenerator useDefaultPrettyPrinter();
+  public com.fasterxml.jackson.core.JsonGenerator setCodec(com.fasterxml.jackson.core.ObjectCodec);
+  public com.fasterxml.jackson.core.ObjectCodec getCodec();
+  public final com.fasterxml.jackson.core.json.JsonWriteContext getOutputContext();
+  public boolean canWriteBinaryNatively();
+  public void flush() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public boolean isClosed();
+  public final void writeStartArray() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeEndArray() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeStartObject() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeEndObject() throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public final void writeFieldName(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeFieldName(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeString(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeString(char[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeString(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawUTF8String(byte[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeUTF8String(byte[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(java.lang.String, int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(com.fasterxml.jackson.core.SerializableString) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(char[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRaw(char) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawValue(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawValue(java.lang.String, int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeRawValue(char[], int, int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(short) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(int) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(long) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(double) throws java.io.IOException, com.fasterxml.jackson.core.JsonGenerationException;
+  public void writeNumber(float) throws java.io.IOE

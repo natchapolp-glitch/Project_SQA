@@ -1,0 +1,12 @@
+Useful behaviors, boundaries, and setups to test:
+
+1. `SoundexUtils.clean(String)`: null input → null; empty string → empty; string with digits/whitespace/punctuation → stripped to uppercase letters only; already-clean string unchanged.
+2. `Caverphone.caverphone(String)` / `encode(String)`: null or empty input should not throw (likely returns empty-padded code or empty string); verify exact known caverphone codes for canonical names (e.g., "Thompson", "Smith") per documented algorithm.
+3. `Caverphone.isCaverphoneEqual`: two strings with same caverphone code → true; differing codes → false; case-insensitivity via clean().
+4. `Metaphone.metaphone(String)`: null/empty → empty string, not exception; verify known metaphone outputs for canonical test words (e.g., "Thompson"→"TMSN", "Knight"→"NT").
+5. `Metaphone.setMaxCodeLen`/`getMaxCodeLen`: default value (commonly 4); setting smaller/larger length truncates/extends output length accordingly.
+6. `Metaphone.isMetaphoneEqual`: same logic equality check, case-insensitive, whitespace-trimmed via clean.
+7. `SoundexUtils.difference` and `differenceEncoded`: identical encoded strings → max difference (length of shorter code); completely different → 0; null arguments handling (NPE or 0, per contract).
+8. Single-character and whitespace-only inputs across all encoders, to check no ArrayIndexOutOfBounds/StringIndexOutOfBounds.
+9. Encoder generic `encode(Object)` with non-String type should throw `EncoderException`; with String should delegate correctly to `encode(String)`.
+10. Idempotence: encoding already-encoded (uppercase, no spaces) string yields the same code (receiver setup: new instance each test, no shared state).

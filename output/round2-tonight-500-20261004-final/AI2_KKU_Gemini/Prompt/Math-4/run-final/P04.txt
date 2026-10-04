@@ -1,0 +1,462 @@
+Extend a valid base suite using ONLY new test classes; do not repeat, modify, replace or redefine any base file. Return new COMPLETE Java test files in java fences with at most 4 additional @Test methods total, or exactly NO_CHANGE. Use Java 7-compatible JUnit 4 and meaningful assertions based on documented contracts. Fixed coverage counters/uncovered line numbers are hints; line numbers may differ in buggy source. Use only the supplied buggy context and APIs. No added dependencies, production/build changes, random/time/network/process/file access, assumptions or ignored tests.
+
+Case: Math-4
+Java 11, JUnit 4
+Modified classes: org.apache.commons.math3.geometry.euclidean.threed.SubLine, org.apache.commons.math3.geometry.euclidean.twod.SubLine
+
+BUGGY API signatures (may include private members):
+Compiled from "SubLine.java"
+public class org.apache.commons.math3.geometry.euclidean.threed.SubLine {
+  private final org.apache.commons.math3.geometry.euclidean.threed.Line line;
+  private final org.apache.commons.math3.geometry.euclidean.oned.IntervalsSet remainingRegion;
+  public org.apache.commons.math3.geometry.euclidean.threed.SubLine(org.apache.commons.math3.geometry.euclidean.threed.Line, org.apache.commons.math3.geometry.euclidean.oned.IntervalsSet);
+  public org.apache.commons.math3.geometry.euclidean.threed.SubLine(org.apache.commons.math3.geometry.euclidean.threed.Vector3D, org.apache.commons.math3.geometry.euclidean.threed.Vector3D) throws org.apache.commons.math3.exception.MathIllegalArgumentException;
+  public org.apache.commons.math3.geometry.euclidean.threed.SubLine(org.apache.commons.math3.geometry.euclidean.threed.Segment) throws org.apache.commons.math3.exception.MathIllegalArgumentException;
+  public java.util.List<org.apache.commons.math3.geometry.euclidean.threed.Segment> getSegments();
+  public org.apache.commons.math3.geometry.euclidean.threed.Vector3D intersection(org.apache.commons.math3.geometry.euclidean.threed.SubLine, boolean);
+  private static org.apache.commons.math3.geometry.euclidean.oned.IntervalsSet buildIntervalSet(org.apache.commons.math3.geometry.euclidean.threed.Vector3D, org.apache.commons.math3.geometry.euclidean.threed.Vector3D) throws org.apache.commons.math3.exception.MathIllegalArgumentException;
+}
+Compiled from "SubLine.java"
+public class org.apache.commons.math3.geometry.euclidean.twod.SubLine extends org.apache.commons.math3.geometry.partitioning.AbstractSubHyperplane<org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D, org.apache.commons.math3.geometry.euclidean.oned.Euclidean1D> {
+  public org.apache.commons.math3.geometry.euclidean.twod.SubLine(org.apache.commons.math3.geometry.partitioning.Hyperplane<org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D>, org.apache.commons.math3.geometry.partitioning.Region<org.apache.commons.math3.geometry.euclidean.oned.Euclidean1D>);
+  public org.apache.commons.math3.geometry.euclidean.twod.SubLine(org.apache.commons.math3.geometry.euclidean.twod.Vector2D, org.apache.commons.math3.geometry.euclidean.twod.Vector2D);
+  public org.apache.commons.math3.geometry.euclidean.twod.SubLine(org.apache.commons.math3.geometry.euclidean.twod.Segment);
+  public java.util.List<org.apache.commons.math3.geometry.euclidean.twod.Segment> getSegments();
+  public org.apache.commons.math3.geometry.euclidean.twod.Vector2D intersection(org.apache.commons.math3.geometry.euclidean.twod.SubLine, boolean);
+  private static org.apache.commons.math3.geometry.euclidean.oned.IntervalsSet buildIntervalSet(org.apache.commons.math3.geometry.euclidean.twod.Vector2D, org.apache.commons.math3.geometry.euclidean.twod.Vector2D);
+  protected org.apache.commons.math3.geometry.partitioning.AbstractSubHyperplane<org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D, org.apache.commons.math3.geometry.euclidean.oned.Euclidean1D> buildNew(org.apache.commons.math3.geometry.partitioning.Hyperplane<org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D>, org.apache.commons.math3.geometry.partitioning.Region<org.apache.commons.math3.geometry.euclidean.oned.Euclidean1D>);
+  public org.apache.commons.math3.geometry.partitioning.Side side(org.apache.commons.math3.geometry.partitioning.Hyperplane<org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D>);
+  public org.apache.commons.math3.geometry.partitioning.SubHyperplane$SplitSubHyperplane<org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D> split(org.apache.commons.math3.geometry.partitioning.Hyperplane<org.apache.commons.math3.geometry.euclidean.twod.Euclidean2D>);
+}
+
+
+BUGGY source excerpt: org.apache.commons.math3.geometry.euclidean.threed.SubLine (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math3.geometry.euclidean.threed;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.apache.commons.math3.geometry.euclidean.oned.Interval;
+import org.apache.commons.math3.geometry.euclidean.oned.IntervalsSet;
+import org.apache.commons.math3.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.math3.geometry.partitioning.Region.Location;
+
+/** This class represents a subset of a {@link Line}.
+ * @version $Id$
+ * @since 3.0
+ */
+public class SubLine {
+
+    /** Underlying line. */
+    private final Line line;
+
+    /** Remaining region of the hyperplane. */
+    private final IntervalsSet remainingRegion;
+
+    /** Simple constructor.
+     * @param line underlying line
+     * @param remainingRegion remaining region of the line
+     */
+    public SubLine(final Line line, final IntervalsSet remainingRegion) {
+        this.line            = line;
+        this.remainingRegion = remainingRegion;
+    }
+
+    /** Create a sub-line from two endpoints.
+     * @param start start point
+     * @param end end point
+     * @exception MathIllegalArgumentException if the points are equal
+     */
+    public SubLine(final Vector3D start, final Vector3D end)
+        throws MathIllegalArgumentException {
+        this(new Line(start, end), buildIntervalSet(start, end));
+    }
+
+    /** Create a sub-line from a segment.
+     * @param segment single segment forming the sub-line
+     * @exception MathIllegalArgumentException if the segment endpoints are equal
+     */
+    public SubLine(final Segment segment) throws MathIllegalArgumentException {
+        this(segment.getLine(), buildIntervalSet(segment.getStart(), segment.getEnd()));
+    }
+
+    /** Get the endpoints of the sub-line.
+     * <p>
+     * A subline may be any arbitrary number of disjoints segments, so the endpoints
+     * are provided as a list of endpoint pairs. Each element of the list represents
+     * one segment, and each segment contains a start point at index 0 and an end point
+     * at index 1. If the sub-line is unbounded in the negative infinity direction,
+     * the start point of the first segment will have infinite coordinates. If the
+     * sub-line is unbounded in the positive infinity direction, the end point of the
+     * last segment will have infinite coordinates. So a sub-line covering the whole
+     * line will contain just one row and both elements of this row will have infinite
+     * coordinates. If the sub-line is empty, the returned list will contain 0 segments.
+     * </p>
+     * @return list of segments endpoints
+     */
+    public List<Segment> getSegments() {
+
+        final List<Interval> list = remainingRegion.asList();
+        final List<Segment> segments = new ArrayList<Segment>();
+
+        for (final Interval interval : list) {
+            final Vector3D start = line.toSpace(new Vector1D(interval.getInf()));
+            final Vector3D end   = line.toSpace(new Vector1D(interval.getSup()));
+            segments.add(new Segment(start, end, line));
+        }
+
+        return segments;
+
+    }
+
+    /** Get the intersection of the instance and another sub-line.
+     * <p>
+     * This method is related to the {@link Line#intersection(Line)
+     * intersection} method in the {@link Line Line} class, but in addition
+     * to compute the point along infinite lines, it also checks the point
+     * lies on both sub-line ranges.
+     * </p>
+     * @param subLine other sub-line which may intersect instance
+     * @param includeEndPoints if true, endpoints are considered to belong to
+     * instance (i.e. they are closed sets) and may be returned, otherwise endpoints
+     * are considered to not belong to instance (i.e. they are open sets) and intersection
+     * occurring on endpoints lead to null being returned
+     * @return the intersection point if there is one, null if the sub-lines don't intersect
+     */
+    public Vector3D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+        // compute the intersection on infinite line
+        Vector3D v1D = line.intersection(subLine.line);
+
+        // check location of point with respect to first sub-line
+        Location loc1 = remainingRegion.checkPoint(line.toSubSpace(v1D));
+
+        // check location of point with respect to second sub-line
+        Location loc2 = subLine.remainingRegion.checkPoint(subLine.line.toSubSpace(v1D));
+
+        if (includeEndPoints) {
+            return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v1D : null;
+        } else {
+            return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v1D : null;
+        }
+
+    }
+
+    /** Build an interval set from two points.
+     * @param start start point
+     * @param end end point
+     * @return an interval set
+     * @exception MathIllegalArgumentException if the points are equal
+     */
+    private static IntervalsSet buildIntervalSet(final Vector3D start, final Vector3D end)
+        throws MathIllegalArgumentException {
+        final Line line = new Line(start, end);
+        return new IntervalsSet(line.toSubSpace(start).getX(),
+                                lin
+```
+
+BUGGY source excerpt: org.apache.commons.math3.geometry.euclidean.twod.SubLine (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math3.geometry.euclidean.twod;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.math3.geometry.euclidean.oned.Euclidean1D;
+import org.apache.commons.math3.geometry.euclidean.oned.Interval;
+import org.apache.commons.math3.geometry.euclidean.oned.IntervalsSet;
+import org.apache.commons.math3.geometry.euclidean.oned.OrientedPoint;
+import org.apache.commons.math3.geometry.euclidean.oned.Vector1D;
+import org.apache.commons.math3.geometry.partitioning.AbstractSubHyperplane;
+import org.apache.commons.math3.geometry.partitioning.BSPTree;
+import org.apache.commons.math3.geometry.partitioning.Hyperplane;
+import org.apache.commons.math3.geometry.partitioning.Region;
+import org.apache.commons.math3.geometry.partitioning.Region.Location;
+import org.apache.commons.math3.geometry.partitioning.Side;
+import org.apache.commons.math3.geometry.partitioning.SubHyperplane;
+import org.apache.commons.math3.util.FastMath;
+
+/** This class represents a sub-hyperplane for {@link Line}.
+ * @version $Id$
+ * @since 3.0
+ */
+public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
+
+    /** Simple constructor.
+     * @param hyperplane underlying hyperplane
+     * @param remainingRegion remaining region of the hyperplane
+     */
+    public SubLine(final Hyperplane<Euclidean2D> hyperplane,
+                   final Region<Euclidean1D> remainingRegion) {
+        super(hyperplane, remainingRegion);
+    }
+
+    /** Create a sub-line from two endpoints.
+     * @param start start point
+     * @param end end point
+     */
+    public SubLine(final Vector2D start, final Vector2D end) {
+        super(new Line(start, end), buildIntervalSet(start, end));
+    }
+
+    /** Create a sub-line from a segment.
+     * @param segment single segment forming the sub-line
+     */
+    public SubLine(final Segment segment) {
+        super(segment.getLine(), buildIntervalSet(segment.getStart(), segment.getEnd()));
+    }
+
+    /** Get the endpoints of the sub-line.
+     * <p>
+     * A subline may be any arbitrary number of disjoints segments, so the endpoints
+     * are provided as a list of endpoint pairs. Each element of the list represents
+     * one segment, and each segment contains a start point at index 0 and an end point
+     * at index 1. If the sub-line is unbounded in the negative infinity direction,
+     * the start point of the first segment will have infinite coordinates. If the
+     * sub-line is unbounded in the positive infinity direction, the end point of the
+     * last segment will have infinite coordinates. So a sub-line covering the whole
+     * line will contain just one row and both elements of this row will have infinite
+     * coordinates. If the sub-line is empty, the returned list will contain 0 segments.
+     * </p>
+     * @return list of segments endpoints
+     */
+    public List<Segment> getSegments() {
+
+        final Line line = (Line) getHyperplane();
+        final List<Interval> list = ((IntervalsSet) getRemainingRegion()).asList();
+        final List<Segment> segments = new ArrayList<Segment>();
+
+        for (final Interval interval : list) {
+            final Vector2D start = line.toSpace(new Vector1D(interval.getInf()));
+            final Vector2D end   = line.toSpace(new Vector1D(interval.getSup()));
+            segments.add(new Segment(start, end, line));
+        }
+
+        return segments;
+
+    }
+
+    /** Get the intersection of the instance and another sub-line.
+     * <p>
+     * This method is related to the {@link Line#intersection(Line)
+     * intersection} method in the {@link Line Line} class, but in addition
+     * to compute the point along infinite lines, it also checks the point
+     * lies on both sub-line ranges.
+     * </p>
+     * @param subLine other sub-line which may intersect instance
+     * @param includeEndPoints if true, endpoints are considered to belong to
+     * instance (i.e. they are closed sets) and may be returned, otherwise endpoints
+     * are considered to not belong to instance (i.e. they are open sets) and intersection
+     * occurring on endpoints lead to null being returned
+     * @return the intersection point if there is one, null if the sub-lines don't intersect
+     */
+    public Vector2D intersection(final SubLine subLine, final boolean includeEndPoints) {
+
+        // retrieve the underlying lines
+        Line line1 = (Line) getHyperplane();
+        Line line2 = (Line) subLine.getHyperplane();
+
+        // compute the intersection on infinite line
+        Vector2D v2D = line1.intersection(line2);
+
+        // check location of point with respect to first sub-line
+        Location loc1 = getRemainingRegion().checkPoint(line1.toSubSpace(v2D));
+
+        // check location of point with respect to second sub-line
+        Location loc2 = subLine.getRemainingRegion().checkPoint(line2.toSubSpace(v2D));
+
+        if (includeEndPoints) {
+            return ((loc1 != Location.OUTSIDE) && (loc2 != Location.OUTSIDE)) ? v2D : null;
+        } else {
+            return ((loc1 == Location.INSIDE) && (loc2 == Location.INSIDE)) ? v2D : null;
+        }
+
+    }
+
+    /** Build an interval set from two points.
+     * @param start start p
+```
+
+
+Unchanged base files:
+FILE org/apache/commons/math3/geometry/euclidean/threed/SubLine3DTest.java
+```java
+package org.apache.commons.math3.geometry.euclidean.threed;
+
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+public class SubLine3DTest {
+
+    @Test
+    public void testCreationAndSegments() {
+        Vector3D p1 = new Vector3D(0.0, 0.0, 0.0);
+        Vector3D p2 = new Vector3D(1.0, 0.0, 0.0);
+        SubLine subLine = new SubLine(p1, p2);
+
+        List<Segment> segments = subLine.getSegments();
+        assertEquals(1, segments.size());
+        assertEquals(p1, segments.get(0).getStart());
+        assertEquals(p2, segments.get(0).getEnd());
+    }
+
+    @Test(expected = MathIllegalArgumentException.class)
+    public void testCoincidentPointsThrowsException() {
+        Vector3D p = new Vector3D(1.0, 2.0, 3.0);
+        new SubLine(p, p);
+    }
+
+    @Test
+    public void testIntersectionValid() {
+        SubLine subLine1 = new SubLine(new Vector3D(0.0, 0.0, 0.0), new Vector3D(2.0, 0.0, 0.0));
+        SubLine subLine2 = new SubLine(new Vector3D(1.0, -1.0, 0.0), new Vector3D(1.0, 1.0, 0.0));
+
+        Vector3D intersection = subLine1.intersection(subLine2, true);
+        assertNotNull(intersection);
+        assertEquals(1.0, intersection.getX(), 1e-10);
+        assertEquals(0.0, intersection.getY(), 1e-10);
+        assertEquals(0.0, intersection.getZ(), 1e-10);
+    }
+
+    @Test
+    public void testIntersectionNoIntersection() {
+        SubLine subLine1 = new SubLine(new Vector3D(0.0, 0.0, 0.0), new Vector3D(1.0, 0.0, 0.0));
+        SubLine subLine2 = new SubLine(new Vector3D(0.0, 1.0, 0.0), new Vector3D(1.0, 1.0, 0.0));
+
+        Vector3D intersection = subLine1.intersection(subLine2, true);
+        assertNull(intersection);
+    }
+
+    @Test
+    public void testIntersectionEndpointsHandling() {
+        SubLine subLine1 = new SubLine(new Vector3D(0.0, 0.0, 0.0), new Vector3D(1.0, 0.0, 0.0));
+        SubLine subLine2 = new SubLine(new Vector3D(1.0, -1.0, 0.0), new Vector3D(1.0, 1.0, 0.0));
+
+        Vector3D intersectionClosed = subLine1.intersection(subLine2, true);
+        assertNotNull(intersectionClosed);
+
+        Vector3D intersectionOpen = subLine1.intersection(subLine2, false);
+        assertNull(intersectionOpen);
+    }
+
+    @Test
+    public void testSegmentConstructor() {
+        Segment segment = new Segment(new Vector3D(1.0, 2.0, 3.0), new Vector3D(4.0, 5.0, 6.0), new Line(new Vector3D(1.0, 2.0, 3.0), new Vector3D(4.0, 5.0, 6.0)));
+        SubLine subLine = new SubLine(segment);
+        List<Segment> segments = subLine.getSegments();
+        assertEquals(1, segments.size());
+    }
+}
+
+```
+FILE org/apache/commons/math3/geometry/euclidean/twod/SubLine2DTest.java
+```java
+package org.apache.commons.math3.geometry.euclidean.twod;
+
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+public class SubLine2DTest {
+
+    @Test
+    public void testCreationAndSegments() {
+        Vector2D p1 = new Vector2D(0.0, 0.0);
+        Vector2D p2 = new Vector2D(2.0, 0.0);
+        SubLine subLine = new SubLine(p1, p2);
+
+        List<Segment> segments = subLine.getSegments();
+        assertEquals(1, segments.size());
+        assertEquals(p1, segments.get(0).getStart());
+        assertEquals(p2, segments.get(0).getEnd());
+    }
+
+    @Test
+    public void testIntersectionValid() {
+        SubLine subLine1 = new SubLine(new Vector2D(0.0, 0.0), new Vector2D(2.0, 0.0));
+        SubLine subLine2 = new SubLine(new Vector2D(1.0, -1.0), new Vector2D(1.0, 1.0));
+
+        Vector2D intersection = subLine1.intersection(subLine2, true);
+        assertNotNull(intersection);
+        assertEquals(1.0, intersection.getX(), 1e-10);
+        assertEquals(0.0, intersection.getY(), 1e-10);
+    }
+
+    @Test
+    public void testIntersectionNoIntersection() {
+        SubLine subLine1 = new SubLine(new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0));
+        SubLine subLine2 = new SubLine(new Vector2D(0.0, 1.0), new Vector2D(1.0, 1.0));
+
+        Vector2D intersection = subLine1.intersection(subLine2, true);
+        assertNull(intersection);
+    }
+
+    @Test
+    public void testIntersectionEndpointsHandling() {
+        SubLine subLine1 = new SubLine(new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0));
+        SubLine subLine2 = new SubLine(new Vector2D(1.0, -1.0), new Vector2D(1.0, 1.0));
+
+        Vector2D intersectionClosed = subLine1.intersection(subLine2, true);
+        assertNotNull(intersectionClosed);
+
+        Vector2D intersectionOpen = subLine1.intersection(subLine2, false);
+        assertNull(intersectionOpen);
+    }
+
+    @Test
+    public void testSegmentConstructor() {
+        Segment segment = new Segment(new Vector2D(0.0, 0.0), new Vector2D(1.0, 1.0), new Line(new Vector2D(0.0, 0.0), new Vector2D(1.0, 1.0)));
+        SubLine subLine = new SubLine(segment);
+        List<Segment> segments = subLine.getSegments();
+        assertEquals(1, segments.size());
+    }
+}
+
+```
+
+Fixed coverage:
+{"line_covered": 53, "line_total": 88, "branch_covered": 18, "branch_total": 48, "uncovered_fixed_lines": [48, 49, 151, 158, 159, 160, 162, 164, 165, 169, 170, 171, 179, 180, 181, 183, 185, 186, 187, 188, 192, 193, 194, 195, 197, 198, 199, 200, 201, 202, 203, 204, 205, 207, 208]}

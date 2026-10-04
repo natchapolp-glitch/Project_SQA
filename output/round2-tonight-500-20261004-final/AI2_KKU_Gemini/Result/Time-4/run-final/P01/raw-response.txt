@@ -1,0 +1,10 @@
+1. Setup valid `Partial` receiver instances using `DateTimeFieldType` arrays (e.g., year, monthDay) and corresponding int values with ISO chronology.
+2. Test `with(DateTimeFieldType, int)` boundary behavior when adding a field type that already exists vs. one that does not exist.
+3. Test `with(DateTimeFieldType, int)` when adding a new field to an empty `Partial` instance versus a populated one.
+4. Verify field ordering constraints and sorting semantics when constructing or modifying `Partial` via `with` or constructors.
+5. Test `without(DateTimeFieldType)` boundary behavior when removing an existing field versus a non-existent field.
+6. Test `withField(DateTimeFieldType, int)` when updating an existing field value within valid range limits.
+7. Verify `withFieldAdded` and `withPeriodAdded` correctly handle positive and negative offsets across field boundaries.
+8. Test immutability contracts: modification methods must return a new `Partial` instance leaving the receiver unchanged.
+9. Validate null argument handling (e.g., passing null `DateTimeFieldType` or `ReadablePeriod`) throws expected `IllegalArgumentException` or `NullPointerException`.
+10. Test matching behavior (`isMatch`) against `ReadablePartial` and `ReadableInstant` with partial field subsets.

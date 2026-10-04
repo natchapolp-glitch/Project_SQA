@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:31:29.237026+00:00",
+  "ended_at_utc": "2026-10-04T03:31:32.849932+00:00",
+  "raw_body_sha256": "477c297ed07e5302a58cf4429c2ac36a176c30ca088d48e8a737dd37ddfc2552",
+  "body": {
+    "id": "genai-01a104f7-8be9-7ab7-9496-04d7ef3e3e4c",
+    "object": "chat.completion",
+    "created": 1791084694,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.jfree.chart.renderer.category;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertSame;\n\nimport java.awt.Graphics2D;\nimport java.awt.geom.Rectangle2D;\n\nimport org.jfree.chart.axis.CategoryAxis;\nimport org.jfree.chart.axis.ValueAxis;\nimport org.jfree.chart.labels.CategoryItemLabelGenerator;\nimport org.jfree.chart.labels.CategorySeriesLabelGenerator;\nimport org.jfree.chart.labels.CategoryToolTipGenerator;\nimport org.jfree.chart.labels.StandardCategoryItemLabelGenerator;\nimport org.jfree.chart.labels.StandardCategorySeriesLabelGenerator;\nimport org.jfree.chart.labels.StandardCategoryToolTipGenerator;\nimport org.jfree.chart.plot.CategoryPlot;\nimport org.jfree.chart.urls.CategoryURLGenerator;\nimport org.jfree.chart.urls.StandardCategoryURLGenerator;\nimport org.jfree.data.category.CategoryDataset;\nimport org.junit.Test;\n\npublic class AbstractCategoryItemRendererTest {\n\n    private static class ConcreteCategoryItemRenderer extends AbstractCategoryItemRenderer {\n        private static final long serialVersionUID = 1L;\n\n        @Override\n        public void drawItem(Graphics2D g2, CategoryItemRendererState state,\n                Rectangle2D dataArea, CategoryPlot plot, CategoryAxis domainAxis,\n                ValueAxis rangeAxis, CategoryDataset dataset, int row, int column,\n                boolean selected, int pass) {\n            // Do nothing for testing\n        }\n    }\n\n    @Test\n    public void testInitialStateAndPassCount() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertEquals(1, renderer.getPassCount());\n        assertNull(renderer.getPlot());\n        assertNotNull(renderer.getLegendItemLabelGenerator());\n    }\n\n    @Test\n    public void testPlotAssociation() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        CategoryPlot plot = new CategoryPlot();\n        renderer.setPlot(plot);\n        assertSame(plot, renderer.getPlot());\n        \n        renderer.setPlot(null);\n        assertNull(renderer.getPlot());\n    }\n\n    @Test\n    public void testLegendItemLabelGenerator() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        CategorySeriesLabelGenerator generator = new StandardCategorySeriesLabelGenerator(\"Series: {0}\");\n        renderer.setLegendItemLabelGenerator(generator);\n        assertSame(generator, renderer.getLegendItemLabelGenerator());\n    }\n\n    @Test\n    public void testItemLabelGeneratorFallback() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertNull(renderer.getItemLabelGenerator(0, 0, true));\n        assertNull(renderer.getSeriesItemLabelGenerator(0));\n        assertNull(renderer.getBaseItemLabelGenerator());\n\n        CategoryItemLabelGenerator baseGen = new StandardCategoryItemLabelGenerator();\n        renderer.setBaseItemLabelGenerator(baseGen);\n        assertSame(baseGen, renderer.getBaseItemLabelGenerator());\n        assertSame(baseGen, renderer.getItemLabelGenerator(0, 0, true));\n\n        CategoryItemLabelGenerator seriesGen = new StandardCategoryItemLabelGenerator();\n        renderer.setSeriesItemLabelGenerator(0, seriesGen);\n        assertSame(seriesGen, renderer.getSeriesItemLabelGenerator(0));\n        assertSame(seriesGen, renderer.getItemLabelGenerator(0, 0, true));\n        assertSame(baseGen, renderer.getItemLabelGenerator(1, 0, true));\n    }\n\n    @Test\n    public void testToolTipGeneratorFallback() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertNull(renderer.getToolTipGenerator(0, 0, true));\n\n        CategoryToolTipGenerator baseGen = new StandardCategoryToolTipGenerator();\n        renderer.setBaseToolTipGenerator(baseGen);\n        assertSame(baseGen, renderer.getBaseToolTipGenerator());\n        assertSame(baseGen, renderer.getToolTipGenerator(0, 0, true));\n\n        CategoryToolTipGenerator seriesGen = new StandardCategoryToolTipGenerator();\n        renderer.setSeriesToolTipGenerator(0, seriesGen);\n        assertSame(seriesGen, renderer.getSeriesToolTipGenerator(0));\n        assertSame(seriesGen, renderer.getToolTipGenerator(0, 0, true));\n    }\n\n    @Test\n    public void testURLGeneratorFallback() {\n        AbstractCategoryItemRenderer renderer = new ConcreteCategoryItemRenderer();\n        assertNull(renderer.getURLGenerator(0, 0, true));\n\n        CategoryURLGenerator baseGen = new StandardCategoryURLGenerator();\n        renderer.setBaseURLGenerator(baseGen);\n        assertSame(baseGen, renderer.getBaseURLGenerator());\n        assertSame(baseGen, renderer.getURLGenerator(0, 0, true));\n\n        CategoryURLGenerator seriesGen = new StandardCategoryURLGenerator();\n        renderer.setSeriesURLGenerator(0, seriesGen);\n        assertSame(seriesGen, renderer.getSeriesURLGenerator(0));\n        assertSame(seriesGen, renderer.getURLGenerator(0, 0, true));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 7256,
+      "completion_tokens": 1194,
+      "total_tokens": 8450
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 63295,
+      "daily_remaining_tokens": 286705
+    }
+  },
+  "headers": {
+    "x-request-id": "bxb5u4jwismvd58qvmm32wjn",
+    "date": "Sun, 04 Oct 2026 03:31:34 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

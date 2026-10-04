@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:47:37.444745+00:00",
+  "ended_at_utc": "2026-10-04T06:47:39.576783+00:00",
+  "raw_body_sha256": "115178215ed7a0517c55312aeb1545f4b997136ab778599d064a1ffcf96be7ed",
+  "body": {
+    "id": "genai-01a105ab-124e-7791-a4e4-507ac74250a7",
+    "object": "chat.completion",
+    "created": 1791096459,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- Receiver setup: Initialize a `TimeSeries` with a valid `Comparable` key (e.g., `\"Series1\"`).\n- Behavior: Track and update running minimum (`minY`) and maximum (`maxY`) values correctly upon adding items.\n- Behavior: Recalculate or adjust bounds (`minY`, `maxY`) correctly when items are removed, deleted, or cleared.\n- Boundary: Handle `Double.NaN` values properly when computing `minY` and `maxY` via `minIgnoreNaN` and `maxIgnoreNaN`.\n- Behavior: `getMinY()` and `getMaxY()` should return correct extremes or default indicator values (like `Double.NaN`) for empty series.\n- Behavior: `createCopy(int, int)` and `createCopy(RegularTimePeriod, RegularTimePeriod)` must preserve correct bounds and item subsets.\n- Behavior: `update(RegularTimePeriod, Number)` and `update(int, Number)` should trigger recalculation of series min/max bounds if values change.\n- Boundary: Deleting item ranges via `delete(int, int)` or clearing the series via `clear()` must reset or update min/max tracking accurately.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1264,
+      "completion_tokens": 251,
+      "total_tokens": 1515
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 50130,
+      "daily_remaining_tokens": 299870
+    }
+  },
+  "headers": {
+    "x-request-id": "lfsmauygn1c19w1w61kl7ufp",
+    "date": "Sun, 04 Oct 2026 06:47:39 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

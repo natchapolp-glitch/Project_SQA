@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:27:28.643315+00:00",
+  "ended_at_utc": "2026-10-04T05:27:31.180589+00:00",
+  "raw_body_sha256": "b2a94cf5f63a454afdf65c83d12e397e27136fd0510db1f4bc2840035578b2a3",
+  "body": {
+    "id": "genai-01a10561-b701-7f30-b8e4-30070531090a",
+    "object": "chat.completion",
+    "created": 1791091652,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.javascript.jscomp;\n\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport com.google.javascript.jscomp.type.ReverseAbstractInterpreter;\nimport com.google.javascript.jscomp.type.SemanticReverseAbstractInterpreter;\nimport com.google.javascript.rhino.Node;\nimport com.google.javascript.rhino.Token;\nimport com.google.javascript.rhino.jstype.JSTypeRegistry;\nimport org.junit.Before;\nimport org.junit.Test;\n\npublic class TypeCheckTest {\n\n  private Compiler compiler;\n  private JSTypeRegistry typeRegistry;\n  private ReverseAbstractInterpreter reverseInterpreter;\n  private TypeCheck typeCheck;\n\n  @Before\n  public void setUp() {\n    compiler = new Compiler();\n    typeRegistry = compiler.getTypeRegistry();\n    reverseInterpreter = new SemanticReverseAbstractInterpreter(new GoogleCodingConvention(), typeRegistry);\n    typeCheck = new TypeCheck(\n        compiler,\n        reverseInterpreter,\n        typeRegistry,\n        CheckLevel.WARNING,\n        CheckLevel.OFF);\n  }\n\n  @Test\n  public void testProcessValidatesAST() {\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    typeCheck.process(externs, root);\n    assertNotNull(compiler.getErrorManager());\n  }\n\n  @Test\n  public void testProcessForTestingReturnsScope() {\n    Node externs = new Node(Token.BLOCK);\n    Node root = new Node(Token.BLOCK);\n    Scope scope = typeCheck.processForTesting(externs, root);\n    assertNotNull(scope);\n  }\n\n  @Test\n  public void testReportMissingPropertiesConfiguration() {\n    TypeCheck configured = typeCheck.reportMissingProperties(false);\n    assertNotNull(configured);\n  }\n\n  @Test\n  public void testShouldTraverseReturnsTrue() {\n    NodeTraversal traversal = new NodeTraversal(compiler, typeCheck);\n    Node n = new Node(Token.BLOCK);\n    boolean result = typeCheck.shouldTraverse(traversal, n, n);\n    assertTrue(result);\n  }\n\n  @Test\n  public void testVisitNodeDoesNotThrow() {\n    NodeTraversal traversal = new NodeTraversal(compiler, typeCheck);\n    Node n = new Node(Token.TRUE);\n    typeCheck.visit(traversal, n, n);\n    assertNotNull(compiler);\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 6550,
+      "completion_tokens": 574,
+      "total_tokens": 7124
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 29554,
+      "daily_remaining_tokens": 320446
+    }
+  },
+  "headers": {
+    "x-request-id": "nmvm8x044oilebovo2jmjcam",
+    "date": "Sun, 04 Oct 2026 05:27:32 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

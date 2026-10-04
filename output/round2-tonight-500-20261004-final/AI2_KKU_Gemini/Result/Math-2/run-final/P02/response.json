@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:23:39.547645+00:00",
+  "ended_at_utc": "2026-10-04T06:23:42.430154+00:00",
+  "raw_body_sha256": "7ef4d17a5eb03c754b9cf95f5f09103d50b47997d8e701edf53cde4de93d91e8",
+  "body": {
+    "id": "genai-01a10595-28a8-7712-98ec-829495c6fc63",
+    "object": "chat.completion",
+    "created": 1791095023,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.math3.distribution;\n\nimport org.apache.commons.math3.exception.NotPositiveException;\nimport org.apache.commons.math3.exception.NotStrictlyPositiveException;\nimport org.apache.commons.math3.exception.NumberIsTooLargeException;\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class HypergeometricDistributionTest {\n\n    @Test\n    public void testAccessors() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(100, 40, 20);\n        Assert.assertEquals(100, dist.getPopulationSize());\n        Assert.assertEquals(40, dist.getNumberOfSuccesses());\n        Assert.assertEquals(20, dist.getSampleSize());\n        Assert.assertTrue(dist.isSupportConnected());\n    }\n\n    @Test\n    public void testSupportBounds() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(100, 40, 20);\n        Assert.assertEquals(0, dist.getSupportLowerBound());\n        Assert.assertEquals(20, dist.getSupportUpperBound());\n    }\n\n    @Test\n    public void testMeanAndVariance() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(100, 40, 20);\n        Assert.assertEquals(8.0, dist.getNumericalMean(), 1e-12);\n        Assert.assertEquals(4.545454545454545, dist.getNumericalVariance(), 1e-12);\n        // Verify variance caching\n        Assert.assertEquals(4.545454545454545, dist.getNumericalVariance(), 1e-12);\n    }\n\n    @Test\n    public void testProbabilityAndCumulative() {\n        HypergeometricDistribution dist = new HypergeometricDistribution(10, 5, 5);\n        Assert.assertEquals(0.0, dist.probability(-1), 1e-12);\n        Assert.assertEquals(0.0, dist.probability(6), 1e-12);\n        Assert.assertTrue(dist.probability(2) > 0.0);\n\n        Assert.assertEquals(0.0, dist.cumulativeProbability(-1), 1e-12);\n        Assert.assertEquals(1.0, dist.cumulativeProbability(5), 1e-12);\n        Assert.assertEquals(1.0, dist.upperCumulativeProbability(-1), 1e-12);\n        Assert.assertEquals(0.0, dist.upperCumulativeProbability(6), 1e-12);\n    }\n\n    @Test(expected = NotStrictlyPositiveException.class)\n    public void testInvalidPopulationSize() {\n        new HypergeometricDistribution(0, 5, 2);\n    }\n\n    @Test(expected = NotPositiveException.class)\n    public void testInvalidNumberOfSuccesses() {\n        new HypergeometricDistribution(10, -1, 2);\n    }\n\n    @Test(expected = NumberIsTooLargeException.class)\n    public void testSuccessesExceedPopulation() {\n        new HypergeometricDistribution(10, 11, 2);\n    }\n\n    @Test(expected = NumberIsTooLargeException.class)\n    public void testSampleSizeExceedsPopulation() {\n        new HypergeometricDistribution(10, 5, 11);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3932,
+      "completion_tokens": 788,
+      "total_tokens": 4720
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 63798,
+      "daily_remaining_tokens": 286202
+    }
+  },
+  "headers": {
+    "x-request-id": "w995uvi5ety9wbo1mdjjhd7x",
+    "date": "Sun, 04 Oct 2026 06:23:43 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

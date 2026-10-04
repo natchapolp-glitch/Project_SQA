@@ -1,0 +1,352 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Mockito-3
+Java 11, JUnit 4
+Modified classes: org.mockito.internal.invocation.InvocationMatcher
+
+BUGGY API signatures (may include private members):
+Compiled from "InvocationMatcher.java"
+public class org.mockito.internal.invocation.InvocationMatcher implements org.mockito.invocation.DescribedInvocation,org.mockito.internal.invocation.CapturesArgumensFromInvocation,java.io.Serializable {
+  private static final long serialVersionUID;
+  private final org.mockito.invocation.Invocation invocation;
+  private final java.util.List<org.hamcrest.Matcher> matchers;
+  public org.mockito.internal.invocation.InvocationMatcher(org.mockito.invocation.Invocation, java.util.List<org.hamcrest.Matcher>);
+  public org.mockito.internal.invocation.InvocationMatcher(org.mockito.invocation.Invocation);
+  public java.lang.reflect.Method getMethod();
+  public org.mockito.invocation.Invocation getInvocation();
+  public java.util.List<org.hamcrest.Matcher> getMatchers();
+  public java.lang.String toString();
+  public boolean matches(org.mockito.invocation.Invocation);
+  private boolean safelyArgumentsMatch(java.lang.Object[]);
+  public boolean hasSimilarMethod(org.mockito.invocation.Invocation);
+  public boolean hasSameMethod(org.mockito.invocation.Invocation);
+  public org.mockito.invocation.Location getLocation();
+  public void captureArgumentsFrom(org.mockito.invocation.Invocation);
+  public static java.util.List<org.mockito.internal.invocation.InvocationMatcher> createFrom(java.util.List<org.mockito.invocation.Invocation>);
+}
+
+
+BUGGY source excerpt: org.mockito.internal.invocation.InvocationMatcher (truncated=False)
+```java
+/*
+ * Copyright (c) 2007 Mockito contributors
+ * This program is made available under the terms of the MIT License.
+ */
+
+package org.mockito.internal.invocation;
+
+import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.util.*;
+
+import org.hamcrest.Matcher;
+import org.mockito.internal.matchers.CapturesArguments;
+import org.mockito.internal.matchers.MatcherDecorator;
+import org.mockito.internal.reporting.PrintSettings;
+import org.mockito.invocation.DescribedInvocation;
+import org.mockito.invocation.Invocation;
+import org.mockito.invocation.Location;
+
+@SuppressWarnings("unchecked")
+public class InvocationMatcher implements DescribedInvocation, CapturesArgumensFromInvocation, Serializable {
+
+    private static final long serialVersionUID = -3047126096857467610L;
+    private final Invocation invocation;
+    private final List<Matcher> matchers;
+
+    public InvocationMatcher(Invocation invocation, List<Matcher> matchers) {
+        this.invocation = invocation;
+        if (matchers.isEmpty()) {
+            this.matchers = ArgumentsProcessor.argumentsToMatchers(invocation.getArguments());
+        } else {
+            this.matchers = matchers;
+        }
+    }
+    
+    public InvocationMatcher(Invocation invocation) {
+        this(invocation, Collections.<Matcher>emptyList());
+    }
+
+    public Method getMethod() {
+        return invocation.getMethod();
+    }
+    
+    public Invocation getInvocation() {
+        return this.invocation;
+    }
+    
+    public List<Matcher> getMatchers() {
+        return this.matchers;
+    }
+    
+    public String toString() {
+        return new PrintSettings().print(matchers, invocation);
+    }
+
+    public boolean matches(Invocation actual) {
+        return invocation.getMock().equals(actual.getMock())
+                && hasSameMethod(actual)
+                && new ArgumentsComparator().argumentsMatch(this, actual);
+    }
+
+    private boolean safelyArgumentsMatch(Object[] actualArgs) {
+        try {
+            return new ArgumentsComparator().argumentsMatch(this, actualArgs);
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
+     * similar means the same method name, same mock, unverified 
+     * and: if arguments are the same cannot be overloaded
+     */
+    public boolean hasSimilarMethod(Invocation candidate) {
+        String wantedMethodName = getMethod().getName();
+        String currentMethodName = candidate.getMethod().getName();
+        
+        final boolean methodNameEquals = wantedMethodName.equals(currentMethodName);
+        final boolean isUnverified = !candidate.isVerified();
+        final boolean mockIsTheSame = getInvocation().getMock() == candidate.getMock();
+        final boolean methodEquals = hasSameMethod(candidate);
+
+        if (!methodNameEquals || !isUnverified || !mockIsTheSame) {
+            return false;
+        }
+
+        final boolean overloadedButSameArgs = !methodEquals && safelyArgumentsMatch(candidate.getArguments());
+
+        return !overloadedButSameArgs;
+    }
+
+    public boolean hasSameMethod(Invocation candidate) {
+        //not using method.equals() for 1 good reason:
+        //sometimes java generates forwarding methods when generics are in play see JavaGenericsForwardingMethodsTest
+        Method m1 = invocation.getMethod();
+        Method m2 = candidate.getMethod();
+        
+        if (m1.getName() != null && m1.getName().equals(m2.getName())) {
+        	/* Avoid unnecessary cloning */
+        	Class[] params1 = m1.getParameterTypes();
+        	Class[] params2 = m2.getParameterTypes();
+        	if (params1.length == params2.length) {
+        	    for (int i = 0; i < params1.length; i++) {
+        		if (params1[i] != params2[i])
+        		    return false;
+        	    }
+        	    return true;
+        	}
+        }
+        return false;
+    }
+    
+    public Location getLocation() {
+        return invocation.getLocation();
+    }
+
+    public void captureArgumentsFrom(Invocation invocation) {
+        if (invocation.getMethod().isVarArgs()) {
+            int indexOfVararg = invocation.getRawArguments().length - 1;
+            for (int position = 0; position < indexOfVararg; position++) {
+                Matcher m = matchers.get(position);
+                if (m instanceof CapturesArguments) {
+                    ((CapturesArguments) m).captureFrom(invocation.getArgumentAt(position, Object.class));
+                }
+            }
+            for (int position = indexOfVararg; position < matchers.size(); position++) {
+                Matcher m = matchers.get(position);
+                if (m instanceof CapturesArguments) {
+                    ((CapturesArguments) m).captureFrom(invocation.getRawArguments()[position - indexOfVararg]);
+                }
+            }
+        } else {
+            for (int position = 0; position < matchers.size(); position++) {
+                Matcher m = matchers.get(position);
+                if (m instanceof CapturesArguments) {
+                    ((CapturesArguments) m).captureFrom(invocation.getArgumentAt(position, Object.class));
+                }
+            }
+        }
+    }
+
+
+    public static List<InvocationMatcher> createFrom(List<Invocation> invocations) {
+        LinkedList<InvocationMatcher> out = new LinkedList<InvocationMatcher>();
+        for (Invocation i : invocations) {
+            out.add(new InvocationMatcher(i));
+        }
+        return out;
+    }
+}
+
+```
+
+
+Original generated source:
+```java
+package org.mockito.internal.invocation;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.core.IsEqual;
+import org.mockito.invocation.Invocation;
+import org.mockito.invocation.Location;
+import org.mockito.internal.matchers.CapturesArguments;
+
+import org.junit.Test;
+
+public class InvocationMatcherTest {
+
+    public interface SampleService {
+        void simpleMethod(String arg);
+        void varargsMethod(String... args);
+    }
+
+    private Invocation mockInvocation(String methodName, Class<?>[] parameterTypes, Object[] arguments) {
+        Invocation invocation = mock(Invocation.class);
+        try {
+            Method method = SampleService.class.getMethod(methodName, parameterTypes);
+            org.mockito.Mockito.when(invocation.getMethod()).thenReturn(method);
+            org.mockito.Mockito.when(invocation.getArguments()).thenReturn(arguments);
+            org.mockito.Mockito.when(invocation.getRawArguments()).thenReturn(arguments);
+            org.mockito.Mockito.when(invocation.getMock()).thenReturn(new Object());
+            org.mockito.Mockito.when(invocation.getLocation()).thenReturn(mock(Location.class));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return invocation;
+    }
+
+    @Test
+    public void testGettersAndConstructors() {
+        Invocation invocation = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "test" });
+        List<Matcher> matchers = new ArrayList<Matcher>();
+        matchers.add(new IsEqual<Object>("test"));
+
+        InvocationMatcher invocationMatcher = new InvocationMatcher(invocation, matchers);
+
+        assertEquals(invocation, invocationMatcher.getInvocation());
+        assertEquals(invocation.getMethod(), invocationMatcher.getMethod());
+        assertEquals(matchers, invocationMatcher.getMatchers());
+        assertNotNull(invocationMatcher.getLocation());
+        assertNotNull(invocationMatcher.toString());
+    }
+
+    @Test
+    public void testDefaultMatcherCreation() {
+        Invocation invocation = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "test" });
+        InvocationMatcher invocationMatcher = new InvocationMatcher(invocation);
+
+        assertNotNull(invocationMatcher.getMatchers());
+        assertFalse(invocationMatcher.getMatchers().isEmpty());
+    }
+
+    @Test
+    public void testMatches() {
+        Invocation invocation1 = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "foo" });
+        Invocation invocation2 = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "foo" });
+        Object sharedMock = new Object();
+        try {
+            org.mockito.Mockito.when(invocation1.getMock()).thenReturn(sharedMock);
+            org.mockito.Mockito.when(invocation2.getMock()).thenReturn(sharedMock);
+        } catch (Exception e) {
+        }
+
+        InvocationMatcher matcher = new InvocationMatcher(invocation1);
+        assertTrue(matcher.matches(invocation2));
+    }
+
+    @Test
+    public void testHasSameMethod() {
+        Invocation invocation1 = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "foo" });
+        Invocation invocation2 = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "bar" });
+        Invocation invocation3 = mockInvocation("varargsMethod", new Class<?>[] { String[].class }, new Object[] { new String[] { "foo" } });
+
+        InvocationMatcher matcher = new InvocationMatcher(invocation1);
+
+        assertTrue(matcher.hasSameMethod(invocation2));
+        assertFalse(matcher.hasSameMethod(invocation3));
+    }
+
+    @Test
+    public void testCreateFromList() {
+        Invocation invocation1 = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "foo" });
+        Invocation invocation2 = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "bar" });
+        List<Invocation> list = new ArrayList<Invocation>();
+        list.add(invocation1);
+        list.add(invocation2);
+
+        List<InvocationMatcher> matchers = InvocationMatcher.createFrom(list);
+
+        assertEquals(2, matchers.size());
+        assertEquals(invocation1, matchers.get(0).getInvocation());
+        assertEquals(invocation2, matchers.get(1).getInvocation());
+    }
+
+    @Test
+    public void testCaptureArgumentsFrom() {
+        Invocation invocation = mockInvocation("simpleMethod", new Class<?>[] { String.class }, new Object[] { "capturedValue" });
+        
+        final List<Object> captured = new ArrayList<Object>();
+        Matcher capturingMatcher = new CapturesArguments() {
+            public void captureFrom(Object value) {
+                captured.add(value);
+            }
+            public boolean matches(Object item) {
+                return true;
+            }
+            public void describeTo(org.hamcrest.Description description) {
+            }
+        };
+
+        List<Matcher> matchers = new ArrayList<Matcher>();
+        matchers.add(capturingMatcher);
+
+        InvocationMatcher invocationMatcher = new InvocationMatcher(invocation, matchers);
+        invocationMatcher.captureArgumentsFrom(invocation);
+
+        assertEquals(1, captured.size());
+        assertEquals("capturedValue", captured.get(0));
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+ccess operation has occurred
+     [exec] WARNING: Illegal reflective access by org.gradle.internal.reflect.JavaMethod (file:/home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Mockito-3/f/.gradle_local_home/wrapper/dists/gradle-4.9-bin/3dj1jdukkovet08fhu9qaal87u/gradle-4.9/lib/gradle-base-services-4.9.jar) to method java.lang.ClassLoader.getPackages()
+     [exec] WARNING: Please consider reporting this to the maintainers of org.gradle.internal.reflect.JavaMethod
+     [exec] WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+     [exec] WARNING: All illegal access operations will be denied in a future release
+     [exec] POM relocation to an other version number is not fully supported in Gradle : xml-apis:xml-apis:2.0.2 relocated to xml-apis:xml-apis:1.0.b2.
+
+compile.gen.tests:
+     [echo] classes.dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Mockito-3/f/build/classes/java/main
+     [echo] build.home: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Mockito-3/f/build
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Mockito-3/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Mockito-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Mockito-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Mockito-3/f/.test_suite/org/mockito/internal/invocation/InvocationMatcherTest.java:115: error: incompatible types: <anonymous CapturesArguments> cannot be converted to Matcher
+    [javac]         Matcher capturingMatcher = new CapturesArguments() {
+    [javac]                                    ^
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 17 seconds
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

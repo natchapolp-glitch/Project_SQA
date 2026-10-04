@@ -1,0 +1,60 @@
+```java
+package org.jsoup.parser;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class ParserExtraTest {
+
+    @Test
+    public void cdataSectionParsedAsRawText() {
+        String html = "<html><body><![CDATA[Some <raw> & unescaped text]]></body></html>";
+        Document doc = Parser.parse(html, "http://example.com/");
+        Element body = doc.body();
+        boolean found = false;
+        for (org.jsoup.nodes.Node n : body.childNodes()) {
+            if (n instanceof org.jsoup.nodes.TextNode) {
+                String text = ((org.jsoup.nodes.TextNode) n).getWholeText();
+                if (text.contains("Some <raw> & unescaped text")) {
+                    found = true;
+                }
+            }
+        }
+        assertTrue(found);
+    }
+
+    @Test
+    public void baseTagUpdatesBaseUriForSubsequentRelativeLinks() {
+        String html = "<html><head><base href=\"http://other.com/sub/\"></head><body><a href=\"page.html\">link</a></body></html>";
+        Document doc = Parser.parse(html, "http://example.com/");
+        Element a = doc.select("a").first();
+        assertNotNull(a);
+        assertEquals("http://other.com/sub/page.html", a.absUrl("href"));
+    }
+
+    @Test
+    public void selfClosingTagDoesNotRemainOnStack() {
+        String html = "<html><body><img src=\"test.png\"/><p>After</p></body></html>";
+        Document doc = Parser.parse(html, "http://example.com/");
+        Element body = doc.body();
+        // img should not have swallowed the p as a child since it's self-closed
+        assertEquals(2, body.children().size());
+        assertEquals("img", body.children().get(0).tagName());
+        assertEquals("p", body.children().get(1).tagName());
+    }
+
+    @Test
+    public void unknownAttributeCharacterIsSkippedGracefully() {
+        String html = "<div =foo id=\"test\"></div>";
+        Document doc = Parser.parse(html, "http://example.com/");
+        Element div = doc.select("div").first();
+        assertNotNull(div);
+        assertEquals("test", div.attr("id"));
+    }
+}
+```

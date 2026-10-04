@@ -1,0 +1,527 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Closure-2
+Java 11, JUnit 4
+Modified classes: com.google.javascript.jscomp.TypeCheck
+
+BUGGY API signatures (may include private members):
+Compiled from "TypeCheck.java"
+public class com.google.javascript.jscomp.TypeCheck implements com.google.javascript.jscomp.NodeTraversal$Callback,com.google.javascript.jscomp.CompilerPass {
+  static final com.google.javascript.jscomp.DiagnosticType UNEXPECTED_TOKEN;
+  static final com.google.javascript.jscomp.DiagnosticType BAD_DELETE;
+  protected static final java.lang.String OVERRIDING_PROTOTYPE_WITH_NON_OBJECT;
+  static final com.google.javascript.jscomp.DiagnosticType DETERMINISTIC_TEST;
+  static final com.google.javascript.jscomp.DiagnosticType DETERMINISTIC_TEST_NO_RESULT;
+  static final com.google.javascript.jscomp.DiagnosticType INEXISTENT_ENUM_ELEMENT;
+  static final com.google.javascript.jscomp.DiagnosticType INEXISTENT_PROPERTY;
+  protected static final com.google.javascript.jscomp.DiagnosticType NOT_A_CONSTRUCTOR;
+  static final com.google.javascript.jscomp.DiagnosticType BIT_OPERATION;
+  static final com.google.javascript.jscomp.DiagnosticType NOT_CALLABLE;
+  static final com.google.javascript.jscomp.DiagnosticType CONSTRUCTOR_NOT_CALLABLE;
+  static final com.google.javascript.jscomp.DiagnosticType FUNCTION_MASKS_VARIABLE;
+  static final com.google.javascript.jscomp.DiagnosticType MULTIPLE_VAR_DEF;
+  static final com.google.javascript.jscomp.DiagnosticType ENUM_DUP;
+  static final com.google.javascript.jscomp.DiagnosticType ENUM_NOT_CONSTANT;
+  static final com.google.javascript.jscomp.DiagnosticType INVALID_INTERFACE_MEMBER_DECLARATION;
+  static final com.google.javascript.jscomp.DiagnosticType INTERFACE_FUNCTION_NOT_EMPTY;
+  static final com.google.javascript.jscomp.DiagnosticType CONFLICTING_EXTENDED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType CONFLICTING_IMPLEMENTED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType BAD_IMPLEMENTED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType HIDDEN_SUPERCLASS_PROPERTY;
+  static final com.google.javascript.jscomp.DiagnosticType HIDDEN_INTERFACE_PROPERTY;
+  static final com.google.javascript.jscomp.DiagnosticType HIDDEN_SUPERCLASS_PROPERTY_MISMATCH;
+  static final com.google.javascript.jscomp.DiagnosticType UNKNOWN_OVERRIDE;
+  static final com.google.javascript.jscomp.DiagnosticType INTERFACE_METHOD_OVERRIDE;
+  static final com.google.javascript.jscomp.DiagnosticType UNKNOWN_EXPR_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType UNRESOLVED_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType WRONG_ARGUMENT_COUNT;
+  static final com.google.javascript.jscomp.DiagnosticType ILLEGAL_IMPLICIT_CAST;
+  static final com.google.javascript.jscomp.DiagnosticType INCOMPATIBLE_EXTENDED_PROPERTY_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType EXPECTED_THIS_TYPE;
+  static final com.google.javascript.jscomp.DiagnosticType IN_USED_WITH_STRUCT;
+  static final com.google.javascript.jscomp.DiagnosticType ILLEGAL_PROPERTY_CREATION;
+  static final com.google.javascript.jscomp.DiagnosticType ILLEGAL_OBJLIT_KEY;
+  static final com.google.javascript.jscomp.DiagnosticGroup ALL_DIAGNOSTICS;
+  private final com.google.javascript.jscomp.AbstractCompiler compiler;
+  private final com.google.javascript.jscomp.TypeValidator validator;
+  private final com.google.javascript.jscomp.type.ReverseAbstractInterpreter reverseInterpreter;
+  private final com.google.javascript.rhino.jstype.JSTypeRegistry typeRegistry;
+  private com.google.javascript.jscomp.Scope topScope;
+  private com.google.javascript.jscomp.MemoizedScopeCreator scopeCreator;
+  private final com.google.javascript.jscomp.CheckLevel reportMissingOverride;
+  private final com.google.javascript.jscomp.CheckLevel reportUnknownTypes;
+  private boolean reportMissingProperties;
+  private com.google.javascript.jscomp.InferJSDocInfo inferJSDocInfo;
+  private int typedCount;
+  private int nullCount;
+  private int unknownCount;
+  private boolean inExterns;
+  private int noTypeCheckSection;
+  public com.google.javascript.jscomp.TypeCheck(com.google.javascript.jscomp.AbstractCompiler, com.google.javascript.jscomp.type.ReverseAbstractInterpreter, com.google.javascript.rhino.jstype.JSTypeRegistry, com.google.javascript.jscomp.Scope, com.google.javascript.jscomp.MemoizedScopeCreator, com.google.javascript.jscomp.CheckLevel, com.google.javascript.jscomp.CheckLevel);
+  public com.google.javascript.jscomp.TypeCheck(com.google.javascript.jscomp.AbstractCompiler, com.google.javascript.jscomp.type.ReverseAbstractInterpreter, com.google.javascript.rhino.jstype.JSTypeRegistry, com.google.javascript.jscomp.CheckLevel, com.google.javascript.jscomp.CheckLevel);
+  com.google.javascript.jscomp.TypeCheck(com.google.javascript.jscomp.AbstractCompiler, com.google.javascript.jscomp.type.ReverseAbstractInterpreter, com.google.javascript.rhino.jstype.JSTypeRegistry);
+  com.google.javascript.jscomp.TypeCheck reportMissingProperties(boolean);
+  public void process(com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  public com.google.javascript.jscomp.Scope processForTesting(com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  public void check(com.google.javascript.rhino.Node, boolean);
+  private void checkNoTypeCheckSection(com.google.javascript.rhino.Node, boolean);
+  private void report(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, com.google.javascript.jscomp.DiagnosticType, java.lang.String...);
+  public boolean shouldTraverse(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  public void visit(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, com.google.javascript.rhino.Node);
+  private void checkTypeofString(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node, java.lang.String);
+  private void doPercentTypedAccounting(com.google.javascript.jscomp.NodeTraversal, com.google.javascript.rhino.Node);
+  private void visitAssign(com.google.javascript.jscomp.NodeTravers
+
+BUGGY source excerpt: com.google.javascript.jscomp.TypeCheck (truncated=True)
+```java
+/*
+ * Copyright 2006 The Closure Compiler Authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.google.javascript.jscomp;
+
+import static com.google.javascript.rhino.jstype.JSTypeNative.ARRAY_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.BOOLEAN_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.NULL_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.NUMBER_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.OBJECT_FUNCTION_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.OBJECT_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.REGEXP_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.STRING_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.UNKNOWN_TYPE;
+import static com.google.javascript.rhino.jstype.JSTypeNative.VOID_TYPE;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.javascript.jscomp.CheckLevel;
+import com.google.javascript.jscomp.Scope.Var;
+import com.google.javascript.jscomp.type.ReverseAbstractInterpreter;
+import com.google.javascript.rhino.JSDocInfo;
+import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.Token;
+import com.google.javascript.rhino.jstype.EnumType;
+import com.google.javascript.rhino.jstype.FunctionType;
+import com.google.javascript.rhino.jstype.JSType;
+import com.google.javascript.rhino.jstype.JSTypeNative;
+import com.google.javascript.rhino.jstype.JSTypeRegistry;
+import com.google.javascript.rhino.jstype.ObjectType;
+import com.google.javascript.rhino.jstype.TernaryValue;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
+/**
+ * <p>Checks the types of JS expressions against any declared type
+ * information.</p>
+ *
+ */
+public class TypeCheck implements NodeTraversal.Callback, CompilerPass {
+
+  //
+  // Internal errors
+  //
+  static final DiagnosticType UNEXPECTED_TOKEN = DiagnosticType.error(
+      "JSC_INTERNAL_ERROR_UNEXPECTED_TOKEN",
+      "Internal Error: Don't know how to handle {0}");
+
+
+  //
+  // User errors
+  //
+  // TODO(nicksantos): delete this
+  static final DiagnosticType BAD_DELETE =
+      DiagnosticType.warning(
+          "JSC_BAD_DELETE_OPERAND",
+          "delete operator needs a reference operand");
+
+
+  //
+  // User warnings
+  //
+
+  protected static final String OVERRIDING_PROTOTYPE_WITH_NON_OBJECT =
+      "overriding prototype with non-object";
+
+  // TODO(user): make all the non private messages private once the
+  // TypedScopeCreator has been merged with the type checker.
+  static final DiagnosticType DETERMINISTIC_TEST =
+      DiagnosticType.warning(
+          "JSC_DETERMINISTIC_TEST",
+          "condition always evaluates to {2}\n" +
+          "left : {0}\n" +
+          "right: {1}");
+
+  static final DiagnosticType DETERMINISTIC_TEST_NO_RESULT =
+      DiagnosticType.warning(
+          "JSC_DETERMINISTIC_TEST_NO_RESULT",
+          "condition always evaluates to the same value\n" +
+          "left : {0}\n" +
+          "right: {1}");
+
+  static final DiagnosticType INEXISTENT_ENUM_ELEMENT =
+      DiagnosticType.warning(
+          "JSC_INEXISTENT_ENUM_ELEMENT",
+          "element {0} does not exist on this enum");
+
+  // disabled by default. This one only makes sense if you're using
+  // well-typed externs.
+  static final DiagnosticType INEXISTENT_PROPERTY =
+      DiagnosticType.disabled(
+          "JSC_INEXISTENT_PROPERTY",
+          "Property {0} never defined on {1}");
+
+  protected static final DiagnosticType NOT_A_CONSTRUCTOR =
+      DiagnosticType.warning(
+          "JSC_NOT_A_CONSTRUCTOR",
+          "cannot instantiate non-constructor");
+
+  static final DiagnosticType BIT_OPERATION =
+      DiagnosticType.warning(
+          "JSC_BAD_TYPE_FOR_BIT_OPERATION",
+          "operator {0} cannot be applied to {1}");
+
+  static final DiagnosticType NOT_CALLABLE =
+      DiagnosticType.warning(
+          "JSC_NOT_FUNCTION_TYPE",
+          "{0} expressions are not callable");
+
+  static final DiagnosticType CONSTRUCTOR_NOT_CALLABLE =
+      DiagnosticType.warning(
+          "JSC_CONSTRUCTOR_NOT_CALLABLE",
+          "Constructor {0} should be called with the \"new\" keyword");
+
+  static final DiagnosticType FUNCTION_MASKS_VARIABLE =
+      DiagnosticType.warning(
+          "JSC_FUNCTION_MASKS_VARIABLE",
+          "function {0} masks variable (IE bug)");
+
+  static final DiagnosticType MULTIPLE_VAR_DEF = DiagnosticType.warning(
+      "JSC_MULTIPLE_VAR_DEF",
+      "declaration of multiple variables with shared type information");
+
+  static final DiagnosticType ENUM_DUP = DiagnosticType.error("JSC_ENUM_DUP",
+      "enum element {0} already defined");
+
+  static final DiagnosticType ENUM_NOT_CONSTANT =
+      DiagnosticType.warning("JSC_ENUM_NOT_CONSTANT",
+          "enum key {0} must be a syntactic constant");
+
+  static final DiagnosticType INVALID_INTERFACE_MEMBER_DECLARATION =
+      DiagnosticType.warning(
+          "JSC_INVALID_INTERFACE_MEMBER_DECLARATION",
+          "interface members can only be empty property declarations,"
+          + " empty functions{0}");
+
+  static final DiagnosticType INTERFACE_FUNCTION_NOT_EMPTY =
+      DiagnosticType.warning(
+          "JSC_INTERFACE_FUNCTION_NOT_EMPTY",
+          "interface member functions must have an empty body");
+
+  static final DiagnosticType CONFLICTING_EXTENDED_TYPE =
+      DiagnosticType.warning(
+          "JSC_CONFLICTING_EXTENDED_TYPE",
+          "{1} cannot extend this type; {0}s can only extend {0}s");
+
+  static final DiagnosticType CONFLICTING_IMPLEMENTED_TYPE =
+    DiagnosticType.warning(
+        "JSC_CONFLICTING_IMPLEMENTED_TYPE",
+        "{0} cannot implement this type; " +
+        "an interface can only extend, but not implement interfaces");
+
+  static final DiagnosticType BAD_IMPLEMENTED_TYPE =
+      DiagnosticType.warning(
+          "JSC_IMPLEMENTS_NON_INTERFACE",
+          "can only implement interfaces");
+
+  static final DiagnosticType HIDDEN_SUPERCLASS_PROPERTY =
+      DiagnosticType.warning(
+          "JSC_HIDDEN_SUPERCLASS_PROPERTY",
+          "property {0} already defined on superclass {1}; " +
+          "use @override to override it");
+
+  static final DiagnosticType HIDDEN_INTERFACE_PROPERTY =
+      DiagnosticType.warning(
+          "JSC_HIDDEN_INTERFACE_PROPERTY",
+          "property {0} already defined on interface {1}; " +
+          "use @override to override it");
+
+  static final DiagnosticType HIDDEN_SUPERCLASS_PROPERTY_MISMATCH =
+      DiagnosticType.warning("JSC_HIDDEN_SUPERCLASS_PROPERTY_MISMATCH",
+          "mismatch of the {0} property type and the type " +
+          "of the property it overrides from superclass {1}\n" +
+          "original: {2}\n" +
+          "override: {3}");
+
+  static final DiagnosticType UNKNOWN_OVERRIDE =
+      DiagnosticType.warning(
+          "JSC_UNKNOWN_OVERRIDE",
+          "property {0} not defined on any superclass of {1}");
+
+  static final DiagnosticType INTERFACE_METHOD_OVERRIDE =
+      DiagnosticType.warning(
+          "JSC_INTERFACE_METHOD_OVERRIDE",
+          "property {0} is already defined by the {1} extended interface");
+
+  static final DiagnosticType UNKNOWN_EXPR_TYPE =
+      DiagnosticType.warning("JSC_UNKNOWN_EXPR_TYPE",
+          "could not determine the type of this expression");
+
+  static final DiagnosticType UNRESOLVED_TYPE =
+      DiagnosticType.warning("JSC_UNRESOLVED_TYPE",
+          "could not resolve the name {0} to a type");
+
+  static final DiagnosticType WRONG_ARGUMENT_COUNT =
+      DiagnosticType.warning(
+          "JSC_WRONG_ARGUMENT_COUNT",
+          "Function {0}: called with {1} argument(s). " +
+          "Function requires at least {2} argument(s){3}.");
+
+  static final DiagnosticType ILLEGAL_IMPLICIT_CAST =
+      DiagnosticType.warning(
+          "JSC_ILLEGAL_IMPLICIT_CAST",
+          "Illegal annotation on {0}. @implicitCast may only be used in " +
+          "externs.");
+
+  static final DiagnosticType INCOMPATIBLE_EXTENDED_PROPERTY_TYPE =
+      DiagnosticType.warning(
+          "JSC_INCOMPATIBLE_EXTENDED_PROPERTY_TYPE",
+          "Interface {0} has a property {1} with incompatible types in " +
+          "its super interfaces {2} and {3}");
+
+  static final DiagnosticType EXPECTED_THIS_TYPE =
+      DiagnosticType.warning(
+          "JSC_EXPECTED_THIS_TYPE",
+          "\"{0}\" must be called with a \"this\" type");
+
+  static final DiagnosticType IN_USED_WITH_STRUCT =
+      DiagnosticType.warning("JSC_IN_USED_WITH_STRUCT",
+                             "Cannot use the IN operator with structs");
+
+  static final DiagnosticType ILLEGAL_PROPERTY_CREATION =
+      DiagnosticType.warning("JSC_ILLEGAL_PROPERTY_CREATION",
+                             "Cannot add a property to a struct instance " +
+                             "after it is constructed.");
+
+  static final DiagnosticType ILLEGAL_OBJLIT_KEY =
+      DiagnosticType.warning(
+          "ILLEGAL_OBJLIT_KEY",
+          "Illegal key, the object literal is a {0}");
+
+  static final DiagnosticGroup ALL_DIAGNOSTICS = new DiagnosticGroup(
+      DETERMINISTIC_TEST,
+      DETERMINISTIC_TEST_NO_RESULT,
+      INEXISTENT_ENUM_ELEMENT,
+      INEXISTENT_PROPERTY,
+      NOT_A_CONSTRUCTOR,
+      BIT_OPERATION,
+      NOT_CALLABLE,
+      CONSTRUCTOR_NOT_CALLABLE,
+      FUNCTION_MASKS_VARIABLE,
+      MULTIPLE_VAR_DEF,
+      ENUM_DUP,
+      ENUM_NOT_CONSTANT,
+      INVALID_INTERFACE_MEMBER_DECLARATION,
+      INTERFACE_FUNCTION_NOT_EMPTY,
+      CONFLICTING_EXTENDED_TYPE,
+      CONFLICTING_IMPLEMENTED_TYPE,
+      BAD_IMPLEMENTED_TYPE,
+      HIDDEN_SUPERCLASS_PROPERTY,
+      HIDDEN_INTERFACE_PROPERTY,
+      HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,
+      UNKNOWN_OVERRIDE,
+      INTERFACE_METHOD_OVERRIDE,
+      UNKNOWN_EXPR_TYPE,
+      UNRESOLVED_TYPE,
+      WRONG_ARGUMENT_COUNT,
+      ILLEGAL_IMPLICIT_CAST,
+      INCOMPATIBLE_EXTENDED_PROPERTY_TYPE,
+      EXPECTED_THIS_TYPE,
+      IN_USED_WITH_STRUCT,
+      ILLEGAL_PROPERTY_CREATION,
+      ILLEGAL_OBJLIT_KEY,
+      RhinoErrorReporter.TYPE_PARSE_ERROR,
+      TypedScopeCreator.UNKNOWN_LENDS,
+      TypedScopeCreator.LENDS_ON_NON_OBJECT,
+      TypedScopeCreator.CTOR_INITIALIZER,
+      TypedScopeCreator.IFACE_INITIALIZER,
+      FunctionTypeBuilder.THIS_TYPE_NON_OBJECT);
+
+  private final AbstractCompiler compiler;
+  private final TypeValidator validator;
+
+  private final ReverseAbstractInterpreter reverseInterpreter;
+
+  private final JSTypeRegistry typeRegistry;
+  private Scope topScope;
+
+  private MemoizedScopeCreator scopeCreator;
+
+  private final CheckLevel reportMissingOverride;
+  private final CheckLevel reportUnknownTypes;
+
+  // This may be expensive, so don't emit these warnings if they're
+  // explicitly turned off.
+  private boolean reportMissingProperties = true;
+
+  private InferJSDocInfo inferJSDocInfo = null;
+
+  // These fields are used to calculate the percentage of expressions typed.
+  private int typedCount = 0;
+  private int nullCount = 0;
+  private int unknownCount = 0;
+  private boolean inExterns;
+
+  // A state boolean to see we are currently in @notypecheck section of the
+  // code.
+  private int noTypeCheckSection = 0;
+
+  public TypeCheck(AbstractCompiler compiler,
+      ReverseAbstractInterpreter reverseInterpreter,
+      JSTypeRegistry typeRegistry,
+      Scope topScope,
+      MemoizedScopeCreator scopeCreator,
+      CheckLevel reportMissingOverride,
+      CheckLevel reportUnknownTypes) {
+    this.compiler = compiler;
+    this.validator = compiler.getTypeValid
+```
+
+
+Original generated source:
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TypeCheckTest extends CompilerTestCase {
+
+  public TypeCheckTest() {
+    super();
+    this.parseTypeInfo = true;
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return createTypeCheck(compiler);
+  }
+
+  private TypeCheck createTypeCheck(Compiler compiler) {
+    return new TypeCheck(
+        compiler,
+        new SemanticReverseAbstractInterpreter(
+            compiler.getCodingConvention(), compiler.getTypeRegistry()),
+        compiler.getTypeRegistry(),
+        CheckLevel.WARNING,
+        CheckLevel.OFF);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  @Test
+  public void testInterfaceExtendsWithIncompatiblePropertyType() {
+    testTypes(
+        "/** @interface */ function I1() {}\n" +
+        "/** @type {string} */ I1.prototype.prop;\n" +
+        "/** @interface\n @extends {I1} */ function I2() {}\n" +
+        "/** @type {number} */ I2.prototype.prop;",
+        TypeCheck.INCOMPATIBLE_EXTENDED_PROPERTY_TYPE.key);
+  }
+
+  @Test
+  public void testInterfaceExtendsWithCompatiblePropertyType() {
+    testTypes(
+        "/** @interface */ function I1() {}\n" +
+        "/** @type {string} */ I1.prototype.prop;\n" +
+        "/** @interface\n @extends {I1} */ function I2() {}\n" +
+        "/** @type {string} */ I2.prototype.prop;");
+  }
+
+  @Test
+  public void testInterfaceExtendsWithUniquePropertyNoWarning() {
+    testTypes(
+        "/** @interface */ function I1() {}\n" +
+        "/** @type {string} */ I1.prototype.prop1;\n" +
+        "/** @interface\n @extends {I1} */ function I2() {}\n" +
+        "/** @type {number} */ I2.prototype.prop2;");
+  }
+
+  @Test
+  public void testInterfaceMethodEmptyBodyAllowed() {
+    testTypes(
+        "/** @interface */ function I() {}\n" +
+        "I.prototype.method = function() {};");
+  }
+
+  @Test
+  public void testInterfaceMethodNonEmptyBodyWarns() {
+    testTypes(
+        "/** @interface */ function I() {}\n" +
+        "I.prototype.method = function() { return 1; };",
+        TypeCheck.INTERFACE_FUNCTION_NOT_EMPTY.key);
+  }
+
+  @Test
+  public void testClassHidesSuperclassPropertyWithMismatchedType() {
+    testTypes(
+        "/** @constructor */ function Super() {}\n" +
+        "/** @type {string} */ Super.prototype.prop = 'x';\n" +
+        "/** @constructor\n @extends {Super} */ function Sub() {}\n" +
+        "Sub.prototype = new Super();\n" +
+        "/** @type {number} */ Sub.prototype.prop = 1;",
+        TypeCheck.HIDDEN_SUPERCLASS_PROPERTY_MISMATCH.key);
+  }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+261004/Closure-2/f/build.xml:256: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Closure-2/f/build.xml:262: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+[propertyfile] Updating property file: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Closure-2/f/build/classes/com/google/javascript/jscomp/parsing/ParserConfig.properties
+
+compile.gen.tests:
+     [echo] classes.dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Closure-2/f/build/classes
+     [echo] build.home: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Closure-2/f/build
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Closure-2/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Closure-2/f/.classes_testgen
+    [javac] warning: [options] bootstrap class path not set in conjunction with -source 6
+    [javac] warning: [options] source value 6 is obsolete and will be removed in a future release
+    [javac] warning: [options] target value 1.6 is obsolete and will be removed in a future release
+    [javac] warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Closure-2/f/.test_suite/com/google/javascript/jscomp/TypeCheckTest.java:25: error: cannot find symbol
+    [javac]         new SemanticReverseAbstractInterpreter(
+    [javac]             ^
+    [javac]   symbol:   class SemanticReverseAbstractInterpreter
+    [javac]   location: class TypeCheckTest
+    [javac] 1 error
+    [javac] 4 warnings
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 2 seconds
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

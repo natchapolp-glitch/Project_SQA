@@ -1,0 +1,10 @@
+- `with(DateTimeFieldType, int)`: verify value within field's min/max for the given type; adding a new type should insert it in correct sorted order (by duration), existing type should just replace value; verify index-ordering consistency after insertion so field order matches duration-based comparator rules (e.g., year before month before day).
+- `withField`/`withFieldAdded`/`withFieldAddWrapped`/`withPeriodAdded`: check boundary wrap behavior (e.g., month 12 + 1 wraps to 1 with wrapped variant, non-wrapped should overflow upward or throw depending on field) and that unsupported duration field types throw `IllegalArgumentException`.
+- `without(DateTimeFieldType)`: removing nonexistent type is no-op (returns equal Partial); removing existing type reduces size by 1 and preserves relative order of remaining types/values.
+- `isMatch(ReadableInstant)` / `isMatch(ReadablePartial)`: must return true only if all field types/values in Partial match the target; mismatched/missing field types should return false, not throw.
+- Constructors: verify duplicate field types throw `IllegalArgumentException`; null type/array arguments throw `IllegalArgumentException`/`NullPointerException` as documented; mismatched array lengths throw `IllegalArgumentException`.
+- `getValue(int)`/`getFieldType(int)`: boundary check index 0 and size-1 valid, index == size() or negative throws `IndexOutOfBoundsException`.
+- `property(DateTimeFieldType)`: unsupported field type throws `IllegalArgumentException`; valid type returns Property wrapping correct value.
+- `toString(String)`/`toString(String, Locale)`: verify pattern formatting correctness for simple multi-field Partial (e.g., year-month).
+- `plus`/`minus` with `ReadablePeriod`: confirm only supported fields are modified; unsupported ones in period but absent in Partial are ignored silently, not throwing.
+- Chronology preservation: `withChronologyRetainFields` keeps field values unchanged, only changes chronology; verify with non-ISO chronology (e.g., Buddhist) that field rules differ but values preserved.

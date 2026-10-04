@@ -1,0 +1,10 @@
+- Verify `defineProperty` before resolution queues a `PropertyContinuation` and returns true; after resolution it should delegate to the referenced (resolved) type's `defineProperty` instead of queuing.
+- Verify resolving a `NamedType` whose name refers to a self-referential/cyclic type triggers `handleTypeCycle` and results in the type resolving to a safe fallback (e.g., Unknown) rather than infinite recursion/StackOverflow.
+- Verify `resolveInternal` with a valid scope resolves the reference via registry lookup first, and falls back to property-based lookup (`resolveViaProperties`) when registry lookup fails.
+- Verify unresolved type (never resolved, reference name unknown to registry/scope) triggers `handleUnresolvedType`, producing an appropriate warning/error via the provided `ErrorReporter`.
+- Verify `getReferencedType()` returns null before resolution and the actual resolved `JSType` after resolution completes.
+- Verify `hasReferenceName()` returns true for non-null/non-empty reference strings, false otherwise (boundary: empty string reference).
+- Verify `isNominalType()` and `isNamedType()` reflect expected boolean contracts pre- and post-resolution.
+- Verify `setValidator` installs a predicate that is invoked on resolution and causes resolution failure/warning if predicate returns false.
+- Verify `getTypedefType` correctly unwraps a typedef's `StaticSlot` into its `JSType`, handling null slot as unresolved/error case.
+- Setup: construct via package-private constructor with a real `JSTypeRegistry`, non-null reference name, sourceName, line/col; use real `ErrorReporter` test double to capture warnings and a `StaticScope` stub/mock for scope-based lookups.

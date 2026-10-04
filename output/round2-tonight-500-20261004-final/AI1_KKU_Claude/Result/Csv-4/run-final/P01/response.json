@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:46:17.496230+00:00",
+  "ended_at_utc": "2026-10-04T08:46:24.569132+00:00",
+  "raw_body_sha256": "d4b93dda75955ec323d6af78bb2fcf11e4975d9a7d34cc0955af8c73a5a0a33e",
+  "body": {
+    "id": "gen-1791103579-vj980j5HH7LYXrKFrWIx",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Based on CSVParser's documented contract, here are useful test behaviors/boundaries:\n\n1. **Header mapping**: When format has header defined (explicit or `withHeader()` auto-detect from first line), `getHeaderMap()` returns correct name→index mapping; verify with simple and multi-column headers.\n2. **Empty/blank line handling**: Parsing with `withIgnoreEmptyLines(true/false)` should include or skip blank lines, affecting record count and `getRecordNumber()`.\n3. **Record count and content**: `getRecords()` on simple CSV (\"a,b,c\\n1,2,3\\n\") returns correct number of CSVRecord objects with correct field values.\n4. **Record/line number tracking**: `getRecordNumber()` increments per record; `getCurrentLineNumber()` tracks physical lines, diverging from record number when records span multiple lines (quoted multi-line fields).\n5. **Iterator behavior**: `iterator()` allows forward-only iteration consistent with `getRecords()`; calling both shouldn't double-consume or corrupt state.\n6. **Trailing newline / no trailing newline**: Input with and without trailing line terminator should not produce a spurious empty trailing record.\n7. **Quoted and escaped fields**: Correct handling of quoted fields containing delimiters, newlines, and escaped quotes — single record spanning multiple physical lines.\n8. **Comment lines**: With `withCommentMarker(char)` set, lines starting with marker are skipped and not counted as records.\n9. **Closing behavior**: `isClosed()` false initially, true after `close()`; `close()` should be idempotent and not throw.\n10. **Empty input**: Parsing an empty string/reader yields zero records without exceptions.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 901,
+      "output_tokens": 590,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007702,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007702,
+        "upstream_inference_prompt_cost": 0.001802,
+        "upstream_inference_completions_cost": 0.0059
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 147938,
+      "daily_remaining_tokens": 52062
+    }
+  },
+  "headers": {
+    "x-request-id": "qame4871hct8h4ol4r4sl3wy",
+    "date": "Sun, 04 Oct 2026 08:46:26 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

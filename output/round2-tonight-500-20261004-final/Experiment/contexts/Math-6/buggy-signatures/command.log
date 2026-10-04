@@ -1,0 +1,196 @@
+Compiled from "BaseOptimizer.java"
+public abstract class org.apache.commons.math3.optim.BaseOptimizer<PAIR> {
+  protected final org.apache.commons.math3.util.Incrementor evaluations;
+  protected final org.apache.commons.math3.util.Incrementor iterations;
+  private org.apache.commons.math3.optim.ConvergenceChecker<PAIR> checker;
+  protected org.apache.commons.math3.optim.BaseOptimizer(org.apache.commons.math3.optim.ConvergenceChecker<PAIR>);
+  public int getMaxEvaluations();
+  public int getEvaluations();
+  public int getMaxIterations();
+  public int getIterations();
+  public org.apache.commons.math3.optim.ConvergenceChecker<PAIR> getConvergenceChecker();
+  public PAIR optimize(org.apache.commons.math3.optim.OptimizationData...) throws org.apache.commons.math3.exception.TooManyEvaluationsException, org.apache.commons.math3.exception.TooManyIterationsException;
+  protected abstract PAIR doOptimize();
+  protected void incrementEvaluationCount() throws org.apache.commons.math3.exception.TooManyEvaluationsException;
+  protected void incrementIterationCount() throws org.apache.commons.math3.exception.TooManyIterationsException;
+  protected void parseOptimizationData(org.apache.commons.math3.optim.OptimizationData...);
+}
+Compiled from "NonLinearConjugateGradientOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer extends org.apache.commons.math3.optim.nonlinear.scalar.GradientMultivariateOptimizer {
+  private final org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula updateFormula;
+  private final org.apache.commons.math3.optim.nonlinear.scalar.gradient.Preconditioner preconditioner;
+  private final org.apache.commons.math3.analysis.solvers.UnivariateSolver solver;
+  private double initialStep;
+  public org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>);
+  public org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>, org.apache.commons.math3.analysis.solvers.UnivariateSolver);
+  public org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>, org.apache.commons.math3.analysis.solvers.UnivariateSolver, org.apache.commons.math3.optim.nonlinear.scalar.gradient.Preconditioner);
+  public org.apache.commons.math3.optim.PointValuePair optimize(org.apache.commons.math3.optim.OptimizationData...) throws org.apache.commons.math3.exception.TooManyEvaluationsException;
+  protected org.apache.commons.math3.optim.PointValuePair doOptimize();
+  protected void parseOptimizationData(org.apache.commons.math3.optim.OptimizationData...);
+  private double findUpperBound(org.apache.commons.math3.analysis.UnivariateFunction, double, double);
+  private void checkParameters();
+  public java.lang.Object optimize(org.apache.commons.math3.optim.OptimizationData[]);
+  protected java.lang.Object doOptimize();
+  static double[] access$000(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer, double[]);
+}
+Compiled from "CMAESOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer extends org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer {
+  private int lambda;
+  private final boolean isActiveCMA;
+  private final int checkFeasableCount;
+  private double[] inputSigma;
+  private int dimension;
+  private int diagonalOnly;
+  private boolean isMinimize;
+  private final boolean generateStatistics;
+  private final int maxIterations;
+  private final double stopFitness;
+  private double stopTolUpX;
+  private double stopTolX;
+  private double stopTolFun;
+  private double stopTolHistFun;
+  private int mu;
+  private double logMu2;
+  private org.apache.commons.math3.linear.RealMatrix weights;
+  private double mueff;
+  private double sigma;
+  private double cc;
+  private double cs;
+  private double damps;
+  private double ccov1;
+  private double ccovmu;
+  private double chiN;
+  private double ccov1Sep;
+  private double ccovmuSep;
+  private org.apache.commons.math3.linear.RealMatrix xmean;
+  private org.apache.commons.math3.linear.RealMatrix pc;
+  private org.apache.commons.math3.linear.RealMatrix ps;
+  private double normps;
+  private org.apache.commons.math3.linear.RealMatrix B;
+  private org.apache.commons.math3.linear.RealMatrix D;
+  private org.apache.commons.math3.linear.RealMatrix BD;
+  private org.apache.commons.math3.linear.RealMatrix diagD;
+  private org.apache.commons.math3.linear.RealMatrix C;
+  private org.apache.commons.math3.linear.RealMatrix diagC;
+  private int iterations;
+  private double[] fitnessHistory;
+  private int historySize;
+  private final org.apache.commons.math3.random.RandomGenerator random;
+  private final java.util.List<java.lang.Double> statisticsSigmaHistory;
+  private final java.util.List<org.apache.commons.math3.linear.RealMatrix> statisticsMeanHistory;
+  private final java.util.List<java.lang.Double> statisticsFitnessHistory;
+  private final java.util.List<org.apache.commons.math3.linear.RealMatrix> statisticsDHistory;
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer(int, double, boolean, int, int, org.apache.commons.math3.random.RandomGenerator, boolean, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>);
+  public java.util.List<java.lang.Double> getStatisticsSigmaHistory();
+  public java.util.List<org.apache.commons.math3.linear.RealMatrix> getStatisticsMeanHistory();
+  public java.util.List<java.lang.Double> getStatisticsFitnessHistory();
+  public java.util.List<org.apache.commons.math3.linear.RealMatrix> getStatisticsDHistory();
+  public org.apache.commons.math3.optim.PointValuePair optimize(org.apache.commons.math3.optim.OptimizationData...) throws org.apache.commons.math3.exception.TooManyEvaluationsException, org.apache.commons.math3.exception.DimensionMismatchException;
+  protected org.apache.commons.math3.optim.PointValuePair doOptimize();
+  protected void parseOptimizationData(org.apache.commons.math3.optim.OptimizationData...);
+  private void checkParameters();
+  private void initializeCMA(double[]);
+  private boolean updateEvolutionPaths(org.apache.commons.math3.linear.RealMatrix, org.apache.commons.math3.linear.RealMatrix);
+  private void updateCovarianceDiagonalOnly(boolean, org.apache.commons.math3.linear.RealMatrix);
+  private void updateCovariance(boolean, org.apache.commons.math3.linear.RealMatrix, org.apache.commons.math3.linear.RealMatrix, int[], org.apache.commons.math3.linear.RealMatrix);
+  private void updateBD(double);
+  private static void push(double[], double);
+  private int[] sortedIndices(double[]);
+  private static org.apache.commons.math3.linear.RealMatrix log(org.apache.commons.math3.linear.RealMatrix);
+  private static org.apache.commons.math3.linear.RealMatrix sqrt(org.apache.commons.math3.linear.RealMatrix);
+  private static org.apache.commons.math3.linear.RealMatrix square(org.apache.commons.math3.linear.RealMatrix);
+  private static org.apache.commons.math3.linear.RealMatrix times(org.apache.commons.math3.linear.RealMatrix, org.apache.commons.math3.linear.RealMatrix);
+  private static org.apache.commons.math3.linear.RealMatrix divide(org.apache.commons.math3.linear.RealMatrix, org.apache.commons.math3.linear.RealMatrix);
+  private static org.apache.commons.math3.linear.RealMatrix selectColumns(org.apache.commons.math3.linear.RealMatrix, int[]);
+  private static org.apache.commons.math3.linear.RealMatrix triu(org.apache.commons.math3.linear.RealMatrix, int);
+  private static org.apache.commons.math3.linear.RealMatrix sumRows(org.apache.commons.math3.linear.RealMatrix);
+  private static org.apache.commons.math3.linear.RealMatrix diag(org.apache.commons.math3.linear.RealMatrix);
+  private static void copyColumn(org.apache.commons.math3.linear.RealMatrix, int, org.apache.commons.math3.linear.RealMatrix, int);
+  private static org.apache.commons.math3.linear.RealMatrix ones(int, int);
+  private static org.apache.commons.math3.linear.RealMatrix eye(int, int);
+  private static org.apache.commons.math3.linear.RealMatrix zeros(int, int);
+  private static org.apache.commons.math3.linear.RealMatrix repmat(org.apache.commons.math3.linear.RealMatrix, int, int);
+  private static org.apache.commons.math3.linear.RealMatrix sequence(double, double, double);
+  private static double max(org.apache.commons.math3.linear.RealMatrix);
+  private static double min(org.apache.commons.math3.linear.RealMatrix);
+  private static double max(double[]);
+  private static double min(double[]);
+  private static int[] inverse(int[]);
+  private static int[] reverse(int[]);
+  private double[] randn(int);
+  private org.apache.commons.math3.linear.RealMatrix randn1(int, int);
+  public java.lang.Object optimize(org.apache.commons.math3.optim.OptimizationData[]);
+  protected java.lang.Object doOptimize();
+  static double access$200(org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer, double[]);
+  static double access$300(org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer, double[]);
+  static boolean access$400(org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer);
+}
+Compiled from "PowellOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer extends org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer {
+  private static final double MIN_RELATIVE_TOLERANCE;
+  private final double relativeThreshold;
+  private final double absoluteThreshold;
+  private final org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer$LineSearch line;
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer(double, double, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>);
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer(double, double, double, double, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>);
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer(double, double);
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer(double, double, double, double);
+  protected org.apache.commons.math3.optim.PointValuePair doOptimize();
+  private double[][] newPointAndDirection(double[], double[], double);
+  private void checkParameters();
+  protected java.lang.Object doOptimize();
+  static double access$000(org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer, double[]);
+  static {};
+}
+Compiled from "SimplexOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer extends org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer {
+  private org.apache.commons.math3.optim.nonlinear.scalar.noderiv.AbstractSimplex simplex;
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer(org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>);
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer(double, double);
+  public org.apache.commons.math3.optim.PointValuePair optimize(org.apache.commons.math3.optim.OptimizationData...);
+  protected org.apache.commons.math3.optim.PointValuePair doOptimize();
+  protected void parseOptimizationData(org.apache.commons.math3.optim.OptimizationData...);
+  private void checkParameters();
+  public java.lang.Object optimize(org.apache.commons.math3.optim.OptimizationData[]);
+  protected java.lang.Object doOptimize();
+  static double access$000(org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer, double[]);
+}
+Compiled from "GaussNewtonOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizer extends org.apache.commons.math3.optim.nonlinear.vector.jacobian.AbstractLeastSquaresOptimizer {
+  private final boolean useLU;
+  public org.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizer(org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointVectorValuePair>);
+  public org.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizer(boolean, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointVectorValuePair>);
+  public org.apache.commons.math3.optim.PointVectorValuePair doOptimize();
+  private void checkParameters();
+  public java.lang.Object doOptimize();
+}
+Compiled from "LevenbergMarquardtOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer extends org.apache.commons.math3.optim.nonlinear.vector.jacobian.AbstractLeastSquaresOptimizer {
+  private int solvedCols;
+  private double[] diagR;
+  private double[] jacNorm;
+  private double[] beta;
+  private int[] permutation;
+  private int rank;
+  private double lmPar;
+  private double[] lmDir;
+  private final double initialStepBoundFactor;
+  private final double costRelativeTolerance;
+  private final double parRelativeTolerance;
+  private final double orthoTolerance;
+  private final double qrRankingThreshold;
+  private double[] weightedResidual;
+  private double[][] weightedJacobian;
+  public org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer();
+  public org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer(org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointVectorValuePair>);
+  public org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer(double, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointVectorValuePair>, double, double, double, double);
+  public org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer(double, double, double);
+  public org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer(double, double, double, double, double);
+  protected org.apache.commons.math3.optim.PointVectorValuePair doOptimize();
+  private void determineLMParameter(double[], double, double[], double[], double[], double[]);
+  private void determineLMDirection(double[], double[], double[], double[]);
+  private void qrDecomposition(org.apache.commons.math3.linear.RealMatrix) throws org.apache.commons.math3.exception.ConvergenceException;
+  private void qTy(double[]);
+  private void checkParameters();
+  protected java.lang.Object doOptimize();
+}

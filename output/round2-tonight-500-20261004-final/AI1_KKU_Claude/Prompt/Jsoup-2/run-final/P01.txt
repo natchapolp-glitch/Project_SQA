@@ -1,0 +1,38 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Jsoup-2
+Java 11, JUnit 4
+Modified classes: org.jsoup.parser.Parser
+BUGGY API signatures:
+Compiled from "Parser.java"
+public class org.jsoup.parser.Parser {
+  private static final java.lang.String SQ;
+  private static final java.lang.String DQ;
+  private static final org.jsoup.parser.Tag htmlTag;
+  private static final org.jsoup.parser.Tag headTag;
+  private static final org.jsoup.parser.Tag bodyTag;
+  private static final org.jsoup.parser.Tag titleTag;
+  private static final org.jsoup.parser.Tag textareaTag;
+  private final java.util.LinkedList<org.jsoup.nodes.Element> stack;
+  private final org.jsoup.parser.TokenQueue tq;
+  private final org.jsoup.nodes.Document doc;
+  private java.lang.String baseUri;
+  private org.jsoup.parser.Parser(java.lang.String, java.lang.String, boolean);
+  public static org.jsoup.nodes.Document parse(java.lang.String, java.lang.String);
+  public static org.jsoup.nodes.Document parseBodyFragment(java.lang.String, java.lang.String);
+  private org.jsoup.nodes.Document parse();
+  private void parseComment();
+  private void parseXmlDecl();
+  private void parseEndTag();
+  private void parseStartTag();
+  private org.jsoup.nodes.Attribute parseAttribute();
+  private void parseTextNode();
+  private void parseCdata();
+  private org.jsoup.nodes.Element addChildToParent(org.jsoup.nodes.Element, boolean);
+  private boolean stackHasValidParent(org.jsoup.parser.Tag);
+  private org.jsoup.nodes.Element popStackToSuitableContainer(org.jsoup.parser.Tag);
+  private org.jsoup.nodes.Element popStackToClose(org.jsoup.parser.Tag);
+  private org.jsoup.nodes.Element last();
+  static {};
+}
+

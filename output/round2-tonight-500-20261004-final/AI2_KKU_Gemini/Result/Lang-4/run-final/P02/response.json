@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:48:25.962397+00:00",
+  "ended_at_utc": "2026-10-04T07:48:28.304137+00:00",
+  "raw_body_sha256": "3b5c7d661710c81304ebcb5e0104f3bd405c614e4d6414c6acd7415db2852f9d",
+  "body": {
+    "id": "genai-01a105e2-c46d-7a45-8bde-799c247c025b",
+    "object": "chat.completion",
+    "created": 1791100109,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.lang3.text.translate;\n\nimport static org.junit.Assert.assertEquals;\n\nimport java.io.IOException;\nimport java.io.StringWriter;\n\nimport org.junit.Test;\n\npublic class LookupTranslatorTest {\n\n    @Test\n    public void testTranslateValidMatch() throws IOException {\n        final LookupTranslator translator = new LookupTranslator(\n            new CharSequence[][] { { \"cat\", \"dog\" }, { \"fish\", \"bird\" } }\n        );\n        final StringWriter writer = new StringWriter();\n        final int consumed = translator.translate(\"cat\", 0, writer);\n\n        assertEquals(3, consumed);\n        assertEquals(\"dog\", writer.toString());\n    }\n\n    @Test\n    public void testTranslateNoMatch() throws IOException {\n        final LookupTranslator translator = new LookupTranslator(\n            new CharSequence[][] { { \"cat\", \"dog\" } }\n        );\n        final StringWriter writer = new StringWriter();\n        final int consumed = translator.translate(\"dog\", 0, writer);\n\n        assertEquals(0, consumed);\n        assertEquals(\"\", writer.toString());\n    }\n\n    @Test\n    public void testTranslateGreedyLongestMatch() throws IOException {\n        final LookupTranslator translator = new LookupTranslator(\n            new CharSequence[][] { { \"a\", \"first\" }, { \"ab\", \"second\" } }\n        );\n        final StringWriter writer = new StringWriter();\n        final int consumed = translator.translate(\"abc\", 0, writer);\n\n        assertEquals(2, consumed);\n        assertEquals(\"second\", writer.toString());\n    }\n\n    @Test\n    public void testTranslateInputShorterThanShortestKey() throws IOException {\n        final LookupTranslator translator = new LookupTranslator(\n            new CharSequence[][] { { \"hello\", \"world\" } }\n        );\n        final StringWriter writer = new StringWriter();\n        final int consumed = translator.translate(\"hi\", 0, writer);\n\n        assertEquals(0, consumed);\n        assertEquals(\"\", writer.toString());\n    }\n\n    @Test\n    public void testTranslateIndexOutOfBoundsHandling() throws IOException {\n        final LookupTranslator translator = new LookupTranslator(\n            new CharSequence[][] { { \"a\", \"b\" } }\n        );\n        final StringWriter writer = new StringWriter();\n        final int consumed = translator.translate(\"a\", 5, writer);\n\n        assertEquals(0, consumed);\n        assertEquals(\"\", writer.toString());\n    }\n\n    @Test\n    public void testNullLookupInitialization() throws IOException {\n        final LookupTranslator translator = new LookupTranslator((CharSequence[][]) null);\n        final StringWriter writer = new StringWriter();\n        final int consumed = translator.translate(\"test\", 0, writer);\n\n        assertEquals(0, consumed);\n        assertEquals(\"\", writer.toString());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1428,
+      "completion_tokens": 638,
+      "total_tokens": 2066
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 100754,
+      "daily_remaining_tokens": 249246
+    }
+  },
+  "headers": {
+    "x-request-id": "t2oz2z1wgdcoqs9mgctpg85w",
+    "date": "Sun, 04 Oct 2026 07:48:29 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

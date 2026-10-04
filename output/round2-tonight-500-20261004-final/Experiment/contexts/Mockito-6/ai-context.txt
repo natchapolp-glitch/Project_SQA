@@ -1,0 +1,403 @@
+Case: Mockito-6
+Java 11, JUnit 4
+Modified classes: org.mockito.Matchers
+
+BUGGY API signatures (may include private members):
+Compiled from "Matchers.java"
+public class org.mockito.Matchers {
+  private static final org.mockito.internal.progress.MockingProgress MOCKING_PROGRESS;
+  public org.mockito.Matchers();
+  public static boolean anyBoolean();
+  public static byte anyByte();
+  public static char anyChar();
+  public static int anyInt();
+  public static long anyLong();
+  public static float anyFloat();
+  public static double anyDouble();
+  public static short anyShort();
+  public static <T> T anyObject();
+  public static <T> T anyVararg();
+  public static <T> T any(java.lang.Class<T>);
+  public static <T> T any();
+  public static java.lang.String anyString();
+  public static java.util.List anyList();
+  public static <T> java.util.List<T> anyListOf(java.lang.Class<T>);
+  public static java.util.Set anySet();
+  public static <T> java.util.Set<T> anySetOf(java.lang.Class<T>);
+  public static java.util.Map anyMap();
+  public static <K, V> java.util.Map<K, V> anyMapOf(java.lang.Class<K>, java.lang.Class<V>);
+  public static java.util.Collection anyCollection();
+  public static <T> java.util.Collection<T> anyCollectionOf(java.lang.Class<T>);
+  public static <T> T isA(java.lang.Class<T>);
+  public static boolean eq(boolean);
+  public static byte eq(byte);
+  public static char eq(char);
+  public static double eq(double);
+  public static float eq(float);
+  public static int eq(int);
+  public static long eq(long);
+  public static short eq(short);
+  public static <T> T eq(T);
+  public static <T> T refEq(T, java.lang.String...);
+  public static <T> T same(T);
+  public static java.lang.Object isNull();
+  public static <T> T isNull(java.lang.Class<T>);
+  public static java.lang.Object notNull();
+  public static <T> T notNull(java.lang.Class<T>);
+  public static java.lang.Object isNotNull();
+  public static <T> T isNotNull(java.lang.Class<T>);
+  public static java.lang.String contains(java.lang.String);
+  public static java.lang.String matches(java.lang.String);
+  public static java.lang.String endsWith(java.lang.String);
+  public static java.lang.String startsWith(java.lang.String);
+  public static <T> T argThat(org.hamcrest.Matcher<T>);
+  public static char charThat(org.hamcrest.Matcher<java.lang.Character>);
+  public static boolean booleanThat(org.hamcrest.Matcher<java.lang.Boolean>);
+  public static byte byteThat(org.hamcrest.Matcher<java.lang.Byte>);
+  public static short shortThat(org.hamcrest.Matcher<java.lang.Short>);
+  public static int intThat(org.hamcrest.Matcher<java.lang.Integer>);
+  public static long longThat(org.hamcrest.Matcher<java.lang.Long>);
+  public static float floatThat(org.hamcrest.Matcher<java.lang.Float>);
+  public static double doubleThat(org.hamcrest.Matcher<java.lang.Double>);
+  private static org.mockito.internal.progress.HandyReturnValues reportMatcher(org.hamcrest.Matcher<?>);
+  static {};
+}
+
+
+BUGGY source excerpt: org.mockito.Matchers (truncated=True)
+```java
+/*
+ * Copyright (c) 2007 Mockito contributors
+ * This program is made available under the terms of the MIT License.
+ */
+package org.mockito;
+
+import org.hamcrest.Matcher;
+import org.hamcrest.core.IsNull;
+import org.mockito.internal.matchers.*;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
+import org.mockito.internal.progress.HandyReturnValues;
+import org.mockito.internal.progress.MockingProgress;
+import org.mockito.internal.progress.ThreadSafeMockingProgress;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Allow flexible verification or stubbing. See also {@link AdditionalMatchers}.
+ * <p>
+ * {@link Mockito} extends Matchers so to get access to all matchers just import Mockito class statically.
+ * <pre class="code"><code class="java">
+ *  //stubbing using anyInt() argument matcher
+ *  when(mockedList.get(anyInt())).thenReturn("element");
+ *  
+ *  //following prints "element"
+ *  System.out.println(mockedList.get(999));
+ *  
+ *  //you can also verify using argument matcher
+ *  verify(mockedList).get(anyInt());
+ * </code></pre>
+ * Scroll down to see all methods - full list of matchers.
+ * <p>
+ * <b>Warning:</b>
+ * <p>
+ * If you are using argument matchers, <b>all arguments</b> have to be provided by matchers.
+ * <p>
+ * E.g: (example shows verification but the same applies to stubbing):
+ * <pre class="code"><code class="java">
+ *   verify(mock).someMethod(anyInt(), anyString(), <b>eq("third argument")</b>);
+ *   //above is correct - eq() is also an argument matcher
+ *   
+ *   verify(mock).someMethod(anyInt(), anyString(), <b>"third argument"</b>);
+ *   //above is incorrect - exception will be thrown because third argument is given without argument matcher.
+ * </code></pre>
+ * <p>
+ * Matcher methods like <code>anyObject()</code>, <code>eq()</code> <b>do not</b> return matchers.
+ * Internally, they record a matcher on a stack and return a dummy value (usually null).
+ * This implementation is due static type safety imposed by java compiler.
+ * The consequence is that you cannot use <code>anyObject()</code>, <code>eq()</code> methods outside of verified/stubbed method.
+ *
+ * <p>
+ * <b>Warning 2:</b>
+ * <p>
+ * The any family methods <b>*doesn't do any type checks*</b>, those are only here to avoid casting
+ * in your code. If you want to perform type checks use the {@link #isA(Class)} method.
+ * This <b>might</b> however change (type checks could be added) in a future major release.
+ *
+ * <h1>Custom Argument Matchers</h1>
+ * 
+ * Use {@link Matchers#argThat} method and pass an instance of hamcrest {@link Matcher}.
+ * <p>
+ * Before you start implementing your own custom argument matcher, make sure you check out {@link ArgumentCaptor} api.
+ * <p>
+ * So, how to implement your own argument matcher?
+ * First, you might want to subclass {@link ArgumentMatcher} which is an hamcrest matcher with predefined describeTo() method.
+ * Default description generated by describeTo() uses <b>decamelized class name</b> - to promote meaningful class names.
+ * <p>
+ * Example:
+ * 
+ * <pre class="code"><code class="java">
+ *   class IsListOfTwoElements extends ArgumentMatcher&lt;List&gt; {
+ *      public boolean matches(Object list) {
+ *          return ((List) list).size() == 2;
+ *      }
+ *   }
+ *   
+ *   List mock = mock(List.class);
+ *   
+ *   when(mock.addAll(argThat(new IsListOfTwoElements()))).thenReturn(true);
+ *   
+ *   mock.addAll(Arrays.asList("one", "two"));
+ *   
+ *   verify(mock).addAll(argThat(new IsListOfTwoElements()));
+ * </code></pre>
+ * 
+ * To keep it readable you may want to extract method, e.g:
+ * <pre class="code"><code class="java">
+ *   verify(mock).addAll(<b>argThat(new IsListOfTwoElements())</b>);
+ *   //becomes
+ *   verify(mock).addAll(<b>listOfTwoElements()</b>);
+ * </code></pre>
+ *
+ * <b>Warning:</b> Be reasonable with using complicated argument matching, especially custom argument matchers, as it can make the test less readable. 
+ * Sometimes it's better to implement equals() for arguments that are passed to mocks 
+ * (Mockito naturally uses equals() for argument matching). 
+ * This can make the test cleaner. 
+ * <p>
+ * Also, <b>sometimes {@link ArgumentCaptor} may be a better fit</b> than custom matcher. 
+ * For example, if custom argument matcher is not likely to be reused
+ * or you just need it to assert on argument values to complete verification of behavior.
+ */
+@SuppressWarnings("unchecked")
+public class Matchers {
+    
+    private static final MockingProgress MOCKING_PROGRESS = new ThreadSafeMockingProgress();
+
+    /**
+     * Any <code>boolean</code>, <code>Boolean</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>false</code>.
+     */
+    public static boolean anyBoolean() {
+        return reportMatcher(Any.ANY).returnFalse();
+    }
+
+    /**
+     * Any <code>byte</code>, <code>Byte</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static byte anyByte() {
+        return reportMatcher(Any.ANY).returnZero();
+    }
+
+    /**
+     * Any <code>char</code>, <code>Character</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static char anyChar() {
+        return reportMatcher(Any.ANY).returnChar();
+    }
+
+    /**
+     * Any int, Integer or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static int anyInt() {
+        return reportMatcher(Any.ANY).returnZero();
+    }
+
+    /**
+     * Any <code>long</code>, <code>Long</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static long anyLong() {
+        return reportMatcher(Any.ANY).returnZero();
+    }
+
+    /**
+     * Any <code>float</code>, <code>Float</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static float anyFloat() {
+        return reportMatcher(Any.ANY).returnZero();
+    }
+
+    /**
+     * Any <code>double</code>, <code>Double</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static double anyDouble() {
+        return reportMatcher(Any.ANY).returnZero();
+    }
+
+    /**
+     * Any <code>short</code>, <code>Short</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>0</code>.
+     */
+    public static short anyShort() {
+        return reportMatcher(Any.ANY).returnZero();
+    }
+
+    /**
+     * Any <code>Object</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * Has aliases: {@link #any()} and {@link #any(Class clazz)}
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>null</code>.
+     */
+    public static <T> T anyObject() {
+        return (T) reportMatcher(Any.ANY).returnNull();
+    }
+
+    /**
+     * Any vararg, meaning any number and values of arguments.
+     * <p>
+     * Example:
+     * <pre class="code"><code class="java">
+     *   //verification:
+     *   mock.foo(1, 2);
+     *   mock.foo(1, 2, 3, 4);
+     *
+     *   verify(mock, times(2)).foo(anyVararg());
+     *
+     *   //stubbing:
+     *   when(mock.foo(anyVararg()).thenReturn(100);
+     *
+     *   //prints 100
+     *   System.out.println(mock.foo(1, 2));
+     *   //also prints 100
+     *   System.out.println(mock.foo(1, 2, 3, 4));
+     * </code></pre>
+     * See examples in javadoc for {@link Matchers} class
+     *
+     * @return <code>null</code>.
+     */
+    public static <T> T anyVararg() {
+        return (T) reportMatcher(AnyVararg.ANY_VARARG).returnNull();
+    }
+    
+    /**
+     * Any kind object, not necessary of the given class.
+     * The class argument is provided only to avoid casting.
+     * <p>
+     * Sometimes looks better than <code>anyObject()</code> - especially when explicit casting is required
+     * <p>
+     * Alias to {@link Matchers#anyObject()}
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @param clazz The type to avoid casting
+     * @return <code>null</code>.
+     */
+    public static <T> T any(Class<T> clazz) {
+        return (T) reportMatcher(Any.ANY).returnFor(clazz);
+    }
+    
+    /**
+     * Any object or <code>null</code>.
+     * <p>
+     * Shorter alias to {@link Matchers#anyObject()}
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return <code>null</code>.
+     */
+    public static <T> T any() {
+        return (T) anyObject();
+    }
+
+    /**
+     * Any <code>String</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     * See examples in javadoc for {@link Matchers} class
+     * 
+     * @return empty String ("")
+     */
+    public static String anyString() {
+        return reportMatcher(Any.ANY).returnString();
+    }
+    
+    /**
+     * Any <code>List</code> or <code>null</code>.
+     * <p>
+     * This method <b>*doesn't do any type checks*</b>, it is only there to avoid casting
+     * in your code. This might however change (type checks could be added) in a
+     * future major release.
+     * <p>
+     
+```

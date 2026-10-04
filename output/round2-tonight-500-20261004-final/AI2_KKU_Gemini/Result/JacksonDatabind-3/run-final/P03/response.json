@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:30:14.012929+00:00",
+  "ended_at_utc": "2026-10-04T07:30:16.767318+00:00",
+  "raw_body_sha256": "cdea6230f1397c994c264bac8dc73c456cca7531239b838738273e48e8fcbd36",
+  "body": {
+    "id": "genai-01a105d2-21a7-7491-86bc-ef7a5acc7283",
+    "object": "chat.completion",
+    "created": 1791099019,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.databind.deser.std;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertSame;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.databind.DeserializationContext;\nimport com.fasterxml.jackson.databind.DeserializationFeature;\nimport com.fasterxml.jackson.databind.JsonDeserializer;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class StringArrayDeserializerTest {\n\n    @Test\n    public void testInstanceNotNull() {\n        assertNotNull(StringArrayDeserializer.instance);\n    }\n\n    @Test\n    public void testDeserializeEmptyArray() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        JsonParser jp = mapper.getFactory().createParser(\"[]\");\n        jp.nextToken();\n        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());\n        assertNotNull(result);\n        assertEquals(0, result.length);\n    }\n\n    @Test\n    public void testDeserializeStringArray() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        JsonParser jp = mapper.getFactory().createParser(\"[\\\"a\\\", \\\"b\\\", null, \\\"c\\\"]\");\n        jp.nextToken();\n        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());\n        assertArrayEquals(new String[] { \"a\", \"b\", null, \"c\" }, result);\n    }\n\n    @Test\n    public void testDeserializeNonArrayAsSingleValue() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);\n        JsonParser jp = mapper.getFactory().createParser(\"\\\"singleValue\\\"\");\n        jp.nextToken();\n        DeserializationContext ctxt = mapper.getDeserializationContext();\n        String[] result = StringArrayDeserializer.instance.deserialize(jp, ctxt);\n        assertArrayEquals(new String[] { \"singleValue\" }, result);\n    }\n\n    @Test\n    public void testCreateContextualWithDefaultStringDeserializer() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        DeserializationContext ctxt = mapper.getDeserializationContext();\n        JsonDeserializer<?> contextual = StringArrayDeserializer.instance.createContextual(ctxt, null);\n        assertSame(StringArrayDeserializer.instance, contextual);\n    }\n\n    @Test\n    public void testCustomDeserializerExecution() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        StringArrayDeserializer customDeser = new StringArrayDeserializer(\n            new JsonDeserializer<String>() {\n                @Override\n                public String deserialize(JsonParser p, com.fasterxml.jackson.databind.DeserializationContext ctxt) throws java.io.IOException {\n                    return p.getText() + \"-custom\";\n                }\n            }\n        );\n        JsonParser jp = mapper.getFactory().createParser(\"[\\\"x\\\", \\\"y\\\"]\");\n        jp.nextToken();\n        String[] result = customDeser.deserialize(jp, mapper.getDeserializationContext());\n        assertArrayEquals(new String[] { \"x-custom\", \"y-custom\" }, result);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3830,
+      "completion_tokens": 767,
+      "total_tokens": 4597
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 80547,
+      "daily_remaining_tokens": 269453
+    }
+  },
+  "headers": {
+    "x-request-id": "ckc5dfnu1tp1ldkfryi6n8kw",
+    "date": "Sun, 04 Oct 2026 07:30:19 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

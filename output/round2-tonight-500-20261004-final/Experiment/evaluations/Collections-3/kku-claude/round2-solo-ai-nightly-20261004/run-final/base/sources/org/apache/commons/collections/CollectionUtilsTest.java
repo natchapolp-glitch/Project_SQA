@@ -1,0 +1,123 @@
+package org.apache.commons.collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class CollectionUtilsTest {
+
+    @Test
+    public void testGetCardinalityMapWithDuplicatesAndNull() {
+        List<Object> list = new ArrayList<Object>();
+        list.add("a");
+        list.add("a");
+        list.add("b");
+        list.add(null);
+        Map map = CollectionUtils.getCardinalityMap(list);
+        assertEquals(new Integer(2), map.get("a"));
+        assertEquals(new Integer(1), map.get("b"));
+        assertEquals(new Integer(1), map.get(null));
+        assertEquals(3, map.size());
+    }
+
+    @Test
+    public void testCardinality() {
+        List<Object> list = new ArrayList<Object>();
+        list.add("x");
+        list.add("x");
+        list.add(null);
+        list.add(null);
+        list.add(null);
+        assertEquals(2, CollectionUtils.cardinality("x", list));
+        assertEquals(3, CollectionUtils.cardinality(null, list));
+        assertEquals(0, CollectionUtils.cardinality("y", list));
+    }
+
+    @Test
+    public void testIsSubCollectionAndProper() {
+        List<String> a = Arrays.asList("a", "a");
+        List<String> b = Arrays.asList("a", "a", "a");
+        assertTrue(CollectionUtils.isSubCollection(a, b));
+        assertTrue(CollectionUtils.isProperSubCollection(a, b));
+
+        List<String> c = Arrays.asList("a", "a");
+        assertTrue(CollectionUtils.isSubCollection(a, c));
+        assertFalse(CollectionUtils.isProperSubCollection(a, c));
+
+        List<String> d = Arrays.asList("a");
+        assertFalse(CollectionUtils.isSubCollection(a, d));
+        assertFalse(CollectionUtils.isProperSubCollection(a, d));
+    }
+
+    @Test
+    public void testIsEqualCollection() {
+        List<String> a = Arrays.asList("a", "a", "b");
+        List<String> b = Arrays.asList("b", "a", "a");
+        assertTrue(CollectionUtils.isEqualCollection(a, b));
+
+        List<String> c = Arrays.asList("a", "b", "b");
+        assertFalse(CollectionUtils.isEqualCollection(a, c));
+
+        List<String> d = Arrays.asList("a", "b");
+        assertFalse(CollectionUtils.isEqualCollection(a, d));
+    }
+
+    @Test
+    public void testUnionIntersectionDisjunctionSubtract() {
+        List<String> a = Arrays.asList("a", "a", "b");
+        List<String> b = Arrays.asList("a", "b", "b");
+
+        Collection union = CollectionUtils.union(a, b);
+        assertEquals(2, CollectionUtils.cardinality("a", union));
+        assertEquals(2, CollectionUtils.cardinality("b", union));
+        assertEquals(4, union.size());
+
+        Collection intersection = CollectionUtils.intersection(a, b);
+        assertEquals(1, CollectionUtils.cardinality("a", intersection));
+        assertEquals(1, CollectionUtils.cardinality("b", intersection));
+        assertEquals(2, intersection.size());
+
+        Collection disjunction = CollectionUtils.disjunction(a, b);
+        assertEquals(1, CollectionUtils.cardinality("a", disjunction));
+        assertEquals(1, CollectionUtils.cardinality("b", disjunction));
+        assertEquals(2, disjunction.size());
+
+        Collection subtract = CollectionUtils.subtract(a, b);
+        assertEquals(1, CollectionUtils.cardinality("a", subtract));
+        assertEquals(0, CollectionUtils.cardinality("b", subtract));
+        assertEquals(1, subtract.size());
+
+        assertEquals(3, a.size());
+        assertEquals(3, b.size());
+    }
+
+    @Test
+    public void testEmptyCollectionsOperations() {
+        List<String> empty = new ArrayList<String>();
+        List<String> nonEmpty = Arrays.asList("a", "b");
+
+        assertTrue(CollectionUtils.union(empty, nonEmpty).size() == 2);
+        assertTrue(CollectionUtils.intersection(empty, nonEmpty).isEmpty());
+        assertTrue(CollectionUtils.subtract(empty, nonEmpty).isEmpty());
+        assertTrue(CollectionUtils.isSubCollection(empty, nonEmpty));
+        assertFalse(CollectionUtils.containsAny(empty, nonEmpty));
+        assertTrue(CollectionUtils.isEqualCollection(empty, new ArrayList<String>()));
+    }
+
+    @Test
+    public void testContainsAny() {
+        List<String> a = Arrays.asList("a", "b");
+        List<String> b = Arrays.asList("c", "d");
+        List<String> c = Arrays.asList("b", "e");
+        assertFalse(CollectionUtils.containsAny(a, b));
+        assertTrue(CollectionUtils.containsAny(a, c));
+    }
+}

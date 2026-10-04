@@ -1,0 +1,85 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JacksonCore-2
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.core.json.ReaderBasedJsonParser, com.fasterxml.jackson.core.json.UTF8StreamJsonParser
+BUGGY API signatures:
+Compiled from "ReaderBasedJsonParser.java"
+public final class com.fasterxml.jackson.core.json.ReaderBasedJsonParser extends com.fasterxml.jackson.core.base.ParserBase {
+  protected static final int[] _icLatin1;
+  private static final int[] _icWS;
+  protected java.io.Reader _reader;
+  protected char[] _inputBuffer;
+  protected com.fasterxml.jackson.core.ObjectCodec _objectCodec;
+  protected final com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer _symbols;
+  protected final int _hashSeed;
+  protected boolean _tokenIncomplete;
+  public com.fasterxml.jackson.core.json.ReaderBasedJsonParser(com.fasterxml.jackson.core.io.IOContext, int, java.io.Reader, com.fasterxml.jackson.core.ObjectCodec, com.fasterxml.jackson.core.sym.CharsToNameCanonicalizer);
+  public com.fasterxml.jackson.core.ObjectCodec getCodec();
+  public void setCodec(com.fasterxml.jackson.core.ObjectCodec);
+  public int releaseBuffered(java.io.Writer) throws java.io.IOException;
+  public java.lang.Object getInputSource();
+  protected boolean loadMore() throws java.io.IOException;
+  protected char getNextChar(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  protected void _closeInput() throws java.io.IOException;
+  protected void _releaseBuffers() throws java.io.IOException;
+  public java.lang.String getText() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public java.lang.String getValueAsString() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public java.lang.String getValueAsString(java.lang.String) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  protected java.lang.String _getText2(com.fasterxml.jackson.core.JsonToken);
+  public char[] getTextCharacters() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int getTextLength() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int getTextOffset() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public byte[] getBinaryValue(com.fasterxml.jackson.core.Base64Variant) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int readBinaryValue(com.fasterxml.jackson.core.Base64Variant, java.io.OutputStream) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  protected int _readBinary(com.fasterxml.jackson.core.Base64Variant, java.io.OutputStream, byte[]) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public com.fasterxml.jackson.core.JsonToken nextToken() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  private com.fasterxml.jackson.core.JsonToken _nextAfterName();
+  public java.lang.String nextTextValue() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public int nextIntValue(int) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public long nextLongValue(long) throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public java.lang.Boolean nextBooleanValue() throws java.io.IOException, com.fasterxml.jackson.core.JsonParseException;
+  public void close() throws java.io.IOException;
+  protected com.fasterxml.jackson.core.JsonToken _parseNumber(int) throws java.io.IOException;
+  private com.fasterxml.jackson.core.JsonToken _parseNumber2(boolean) throws java.io.IOException;
+  private char _verifyNoLeadingZeroes() throws java.io.IOException;
+  protected com.fasterxml.jackson.core.JsonToken _handleInvalidNumberStart(int, boolean) throws java.io.IOException;
+  protected java.lang.String _parseName(int) throws java.io.IOException;
+  private java.lang.String _parseName2(int, int, int) throws java.io.IOException;
+  protected java.lang.String _handleOddName(int) throws java.io.IOException;
+  protected java.lang.String _parseAposName() throws java.io.IOException;
+  protected com.fasterxml.jackson.core.JsonToken _handleOddValue(int) throws java.io.IOException;
+  protected com.fasterxml.jackson.core.JsonToken _handleApos() throws java.io.IOException;
+  private java.lang.String _handleOddName2(int, int, int[]) throws java.io.IOException;
+  protected void _finishString() throws java.io.IOException;
+  protected void _finishString2() throws java.io.IOException;
+  protected void _skipString() throws java.io.IOException;
+  protected void _skipCR() throws java.io.IOException;
+  private int _skipWS() throws java.io.IOException;
+  private int _skipWSOrEnd() throws java.io.IOException;
+  private void _skipComment() throws java.io.IOException;
+  private void _skipCComment() throws java.io.IOException;
+  private boolean _skipYAMLComment() throws java.io.IOException;
+  private void _skipLine() throws java.io.IOException;
+  protected char _decodeEscaped() throws java.io.IOException;
+  protected void _matchToken(java.lang.String, int) throws java.io.IOException;
+  protected byte[] _decodeBase64(com.fasterxml.jackson.core.Base64Variant) throws java.io.IOException;
+  protected void _reportInvalidToken(java.lang.String) throws java.io.IOException;
+  protected void _reportInvalidToken(java.lang.String, java.lang.String) throws java.io.IOException;
+  static {};
+}
+Compiled from "UTF8StreamJsonParser.java"
+public final class com.fasterxml.jackson.core.json.UTF8StreamJsonParser extends com.fasterxml.jackson.core.base.ParserBase {
+  static final byte BYTE_LF;
+  private static final int[] _icUTF8;
+  protected static final int[] _icLatin1;
+  private static final int[] _icWS;
+  protected com.fasterxml.jackson.core.ObjectCodec _objectCodec;
+  protected final com.fasterxml.jackson.core.sym.BytesToNameCanonicalizer _symbols;
+  protected int[] _quadBuffer;
+  protected boolean _tokenIncomplete;
+  private int _quad1;
+  protected java.io.InputStream _inputStream;
+  protected byte[] _inputBuffer;
+  protected boolean _bufferRecyclable;
+  public com.fasterxml.jackson.core.json.UTF8StreamJsonParser(com.fasterxml.jackson

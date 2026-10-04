@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:00:18.750366+00:00",
+  "ended_at_utc": "2026-10-04T09:00:32.270892+00:00",
+  "raw_body_sha256": "14295344341ede86645fe64e5f6c0e60692c93e2e5585f27d29dfee2dafb5832",
+  "body": {
+    "id": "gen-1791104422-TftTdIklm88B5qOVFlR1",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.databind.deser.std;\n\nimport com.fasterxml.jackson.databind.DeserializationFeature;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.exc.MismatchedInputException;\nimport org.junit.Test;\n\nimport java.util.Arrays;\n\nimport static org.junit.Assert.*;\n\npublic class StringArrayDeserializerTest {\n\n    @Test\n    public void testBasicArrayDeserialization() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        String[] result = mapper.readValue(\"[\\\"a\\\",\\\"b\\\",\\\"c\\\"]\", String[].class);\n        assertArrayEquals(new String[] {\"a\", \"b\", \"c\"}, result);\n\n        String[] empty = mapper.readValue(\"[]\", String[].class);\n        assertEquals(0, empty.length);\n    }\n\n    @Test\n    public void testNullAndNullElements() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        String[] nullResult = mapper.readValue(\"null\", String[].class);\n        assertNull(nullResult);\n\n        String[] withNulls = mapper.readValue(\"[\\\"a\\\", null, \\\"b\\\"]\", String[].class);\n        assertArrayEquals(new String[] {\"a\", null, \"b\"}, withNulls);\n    }\n\n    @Test\n    public void testSingleValueUnwrapping() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.enable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);\n        String[] result = mapper.readValue(\"\\\"hello\\\"\", String[].class);\n        assertArrayEquals(new String[] {\"hello\"}, result);\n    }\n\n    @Test(expected = MismatchedInputException.class)\n    public void testScalarWithoutUnwrapThrows() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.disable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);\n        mapper.readValue(\"\\\"hello\\\"\", String[].class);\n    }\n\n    @Test\n    public void testNumberAndBooleanCoercion() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        String[] result = mapper.readValue(\"[1, true, 2.5]\", String[].class);\n        assertArrayEquals(new String[] {\"1\", \"true\", \"2.5\"}, result);\n    }\n\n    @Test\n    public void testLargeArrayBeyondBufferThreshold() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        int size = 50;\n        StringBuilder sb = new StringBuilder(\"[\");\n        String[] expected = new String[size];\n        for (int i = 0; i < size; i++) {\n            if (i > 0) sb.append(\",\");\n            String val = \"item\" + i;\n            sb.append(\"\\\"\").append(val).append(\"\\\"\");\n            expected[i] = val;\n        }\n        sb.append(\"]\");\n        String[] result = mapper.readValue(sb.toString(), String[].class);\n        assertEquals(size, result.length);\n        assertArrayEquals(expected, result);\n    }\n\n    @Test(expected = com.fasterxml.jackson.databind.exc.MismatchedInputException.class)\n    public void testObjectAsArrayElementThrows() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.readValue(\"[{}]\", String[].class);\n    }\n\n    @Test\n    public void testEmptyStringAsNullWhenScalarAndFeatureEnabled() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.disable(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS);\n        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);\n        String[] result = mapper.readValue(\"\\\"\\\"\", String[].class);\n        assertNull(result);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 4252,
+      "output_tokens": 1422,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.022724,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.022724,
+        "upstream_inference_prompt_cost": 0.008504,
+        "upstream_inference_completions_cost": 0.01422
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 164098,
+      "daily_remaining_tokens": 35902
+    }
+  },
+  "headers": {
+    "x-request-id": "d75r1sdxcewibyrtnp756cm4",
+    "date": "Sun, 04 Oct 2026 09:00:33 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

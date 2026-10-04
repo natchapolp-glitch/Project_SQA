@@ -1,0 +1,10 @@
+- getName(): verify QName reflects propertyName set via setPropertyName or setNameAttributeValue before access; default (no name set) behavior.
+- getLength(): should return 1 regardless of node state (contract: length of null pointer is always 1, even though it's "null").
+- getBaseValue()/getImmediateNode(): both should return null since underlying node is absent.
+- isLeaf(): should return true for a null pointer (no node means leaf).
+- isActual(): should return false (null pointers are never actual) — test via isActual() directly, not isActualProperty (protected).
+- isCollection(): should return false when no index set / property not a collection.
+- getPropertyCount(): should be 0 when there's no actual property.
+- getPropertyNames(): verify returns zero-length or expected array, not null, with no property set.
+- asPath(): verify correct XPath string construction including escaping of property name with special characters (quotes) via escape(), and correct format when byNameAttribute is true vs false.
+- setPropertyIndex(int): boundary values (negative, zero, large) — check no exception and reflected in asPath()/getName() where index included.

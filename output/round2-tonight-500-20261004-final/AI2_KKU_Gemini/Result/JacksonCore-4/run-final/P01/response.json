@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:56:28.362080+00:00",
+  "ended_at_utc": "2026-10-04T08:56:30.565650+00:00",
+  "raw_body_sha256": "b4e4572d95964167bcc9107b3a30db7010307651de1bd83dd391860a7bbdf06f",
+  "body": {
+    "id": "genai-01a10621-1047-7609-ac08-022f7dd2e959",
+    "object": "chat.completion",
+    "created": 1791104192,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- Valid receiver setup: Instantiate `TextBuffer` with a `BufferRecycler` (or null if supported) and initialize via `resetWithShared`, `resetWithCopy`, or `resetWithEmpty`.\n- Boundary condition: Expanding segments (`expandCurrentSegment()` or `expandCurrentSegment(int need)`) when approaching or exceeding `MAX_SEGMENT_LEN`.\n- Behavior: `expandCurrentSegment()` should correctly allocate a new segment of increased size (typically doubling, bounded by `MAX_SEGMENT_LEN`) while preserving existing content.\n- Boundary condition: Appending characters or arrays when `_currentSegment` is shared or uninitialized, triggering `unshare()` or new segment allocation.\n- Behavior: `contentsAsArray()` and `contentsAsString()` must accurately reflect the aggregated content across input buffers, shared segments, and current segments.\n- Boundary condition: Zero-length inputs or empty resets (`resetWithEmpty()`) ensuring state variables (`_size`, `_currentSize`, etc.) reset properly without throwing exceptions.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 640,
+      "completion_tokens": 215,
+      "total_tokens": 855
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 104223,
+      "daily_remaining_tokens": 245777
+    }
+  },
+  "headers": {
+    "x-request-id": "i3qqiu55krjyr8kvq0i9p2sb",
+    "date": "Sun, 04 Oct 2026 08:56:32 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

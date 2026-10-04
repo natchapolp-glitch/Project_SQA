@@ -1,0 +1,11 @@
+Based on known Closure Compiler Bug Closure-2 (TypeCheck interface property inheritance check):
+
+- Focus: interface-extends-interface property compatibility checks (HIDDEN_INTERFACE_PROPERTY / INCOMPATIBLE_EXTENDED_PROPERTY_TYPE / CONFLICTING_EXTENDED_TYPE), specifically when an interface extends another interface and both declare a same-named property with incompatible types—should report a type mismatch warning, not silently pass.
+- Valid setup: use standard CompilerTestCase/TypeCheckTestCase harness, compile a JS snippet declaring two `@interface` types where one `@extends` the other, each with a conflicting `@type` property.
+- Test both positive case (type mismatch should produce warning) and negative/boundary case (same or compatible property types across interface extension should NOT warn).
+- Verify behavior for multiple-interface extension (`@extends` chains or multiple `@extends` tags) is handled independently per-parent.
+- Ensure empty-body interface methods remain exempt from INTERFACE_FUNCTION_NOT_EMPTY check while property type checks still trigger appropriately.
+- Confirm no regression: normal (non-interface) class property overriding still correctly reports HIDDEN_SUPERCLASS_PROPERTY_MISMATCH when applicable.
+- Boundary: property defined only in child interface (no conflict) should not warn; property defined identically in both should not warn.
+- Determinism: typecheck pass requires fully resolved types (no UNRESOLVED_TYPE warnings) for reliable mismatch detection—ensure externs/types are fully defined in test fixtures.
+- Use `testTypes` or equivalent assertion helpers from existing TypeCheck test infrastructure, expecting specific DiagnosticType and message content.

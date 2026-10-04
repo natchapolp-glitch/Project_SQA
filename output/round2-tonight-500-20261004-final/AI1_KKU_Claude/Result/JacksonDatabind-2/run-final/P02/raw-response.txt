@@ -1,0 +1,106 @@
+```java
+package com.fasterxml.jackson.databind.util;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+public class TokenBufferNullNumberTest {
+
+    @Test
+    public void testWriteNullBigIntegerAtRoot() throws Exception {
+        TokenBuffer buf = new TokenBuffer(null, false);
+        buf.writeNumber((BigInteger) null);
+        buf.close();
+
+        JsonParser p = buf.asParser();
+        assertEquals(JsonToken.VALUE_NULL, p.nextToken());
+        assertNull(p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testWriteNullBigDecimalAtRoot() throws Exception {
+        TokenBuffer buf = new TokenBuffer(null, false);
+        buf.writeNumber((BigDecimal) null);
+        buf.close();
+
+        JsonParser p = buf.asParser();
+        assertEquals(JsonToken.VALUE_NULL, p.nextToken());
+        assertNull(p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testWriteNullBigIntegerInArray() throws Exception {
+        TokenBuffer buf = new TokenBuffer(null, false);
+        buf.writeStartArray();
+        buf.writeNumber((BigInteger) null);
+        buf.writeEndArray();
+        buf.close();
+
+        JsonParser p = buf.asParser();
+        assertEquals(JsonToken.START_ARRAY, p.nextToken());
+        assertEquals(JsonToken.VALUE_NULL, p.nextToken());
+        assertEquals(JsonToken.END_ARRAY, p.nextToken());
+        assertNull(p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testWriteNullBigDecimalAsObjectFieldValue() throws Exception {
+        TokenBuffer buf = new TokenBuffer(null, false);
+        buf.writeStartObject();
+        buf.writeFieldName("value");
+        buf.writeNumber((BigDecimal) null);
+        buf.writeEndObject();
+        buf.close();
+
+        JsonParser p = buf.asParser();
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("value", p.getCurrentName());
+        assertEquals(JsonToken.VALUE_NULL, p.nextToken());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+        assertNull(p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testNonNullBigIntegerAndBigDecimalStillNumeric() throws Exception {
+        TokenBuffer buf = new TokenBuffer(null, false);
+        buf.writeStartArray();
+        buf.writeNumber(BigInteger.valueOf(42L));
+        buf.writeNumber(BigDecimal.valueOf(3.5));
+        buf.writeEndArray();
+        buf.close();
+
+        JsonParser p = buf.asParser();
+        assertEquals(JsonToken.START_ARRAY, p.nextToken());
+        assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(BigInteger.valueOf(42L), p.getBigIntegerValue());
+        assertEquals(JsonToken.VALUE_NUMBER_FLOAT, p.nextToken());
+        assertEquals(BigDecimal.valueOf(3.5), p.getDecimalValue());
+        assertEquals(JsonToken.END_ARRAY, p.nextToken());
+        assertNull(p.nextToken());
+        p.close();
+    }
+
+    @Test
+    public void testToStringDoesNotThrowWithNullNumberEntry() throws Exception {
+        TokenBuffer buf = new TokenBuffer(null, false);
+        buf.writeStartArray();
+        buf.writeNumber((BigInteger) null);
+        buf.writeEndArray();
+        buf.close();
+
+        String s = buf.toString();
+        assertNotNull(s);
+    }
+}
+```

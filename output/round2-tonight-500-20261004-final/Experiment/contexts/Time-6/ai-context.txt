@@ -1,0 +1,363 @@
+Case: Time-6
+Java 11, JUnit 4
+Modified classes: org.joda.time.chrono.GJChronology
+
+BUGGY API signatures (may include private members):
+Compiled from "GJChronology.java"
+public final class org.joda.time.chrono.GJChronology extends org.joda.time.chrono.AssembledChronology {
+  private static final long serialVersionUID;
+  static final org.joda.time.Instant DEFAULT_CUTOVER;
+  private static final java.util.Map<org.joda.time.DateTimeZone, java.util.ArrayList<org.joda.time.chrono.GJChronology>> cCache;
+  private org.joda.time.chrono.JulianChronology iJulianChronology;
+  private org.joda.time.chrono.GregorianChronology iGregorianChronology;
+  private org.joda.time.Instant iCutoverInstant;
+  private long iCutoverMillis;
+  private long iGapDuration;
+  private static long convertByYear(long, org.joda.time.Chronology, org.joda.time.Chronology);
+  private static long convertByWeekyear(long, org.joda.time.Chronology, org.joda.time.Chronology);
+  public static org.joda.time.chrono.GJChronology getInstanceUTC();
+  public static org.joda.time.chrono.GJChronology getInstance();
+  public static org.joda.time.chrono.GJChronology getInstance(org.joda.time.DateTimeZone);
+  public static org.joda.time.chrono.GJChronology getInstance(org.joda.time.DateTimeZone, org.joda.time.ReadableInstant);
+  public static synchronized org.joda.time.chrono.GJChronology getInstance(org.joda.time.DateTimeZone, org.joda.time.ReadableInstant, int);
+  public static org.joda.time.chrono.GJChronology getInstance(org.joda.time.DateTimeZone, long, int);
+  private org.joda.time.chrono.GJChronology(org.joda.time.chrono.JulianChronology, org.joda.time.chrono.GregorianChronology, org.joda.time.Instant);
+  private org.joda.time.chrono.GJChronology(org.joda.time.Chronology, org.joda.time.chrono.JulianChronology, org.joda.time.chrono.GregorianChronology, org.joda.time.Instant);
+  private java.lang.Object readResolve();
+  public org.joda.time.DateTimeZone getZone();
+  public org.joda.time.Chronology withUTC();
+  public org.joda.time.Chronology withZone(org.joda.time.DateTimeZone);
+  public long getDateTimeMillis(int, int, int, int) throws java.lang.IllegalArgumentException;
+  public long getDateTimeMillis(int, int, int, int, int, int, int) throws java.lang.IllegalArgumentException;
+  public org.joda.time.Instant getGregorianCutover();
+  public int getMinimumDaysInFirstWeek();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+  protected void assemble(org.joda.time.chrono.AssembledChronology$Fields);
+  long julianToGregorianByYear(long);
+  long gregorianToJulianByYear(long);
+  long julianToGregorianByWeekyear(long);
+  long gregorianToJulianByWeekyear(long);
+  static long access$000(org.joda.time.chrono.GJChronology);
+  static {};
+}
+
+
+BUGGY source excerpt: org.joda.time.chrono.GJChronology (truncated=True)
+```java
+/*
+ *  Copyright 2001-2013 Stephen Colebourne
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.joda.time.chrono;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import org.joda.time.Chronology;
+import org.joda.time.DateTimeField;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.DateTimeZone;
+import org.joda.time.DurationField;
+import org.joda.time.IllegalFieldValueException;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
+import org.joda.time.ReadableInstant;
+import org.joda.time.ReadablePartial;
+import org.joda.time.field.BaseDateTimeField;
+import org.joda.time.field.DecoratedDurationField;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+/**
+ * Implements the Gregorian/Julian calendar system which is the calendar system
+ * used in most of the world. Wherever possible, it is recommended to use the
+ * {@link ISOChronology} instead.
+ * <p>
+ * The Gregorian calendar replaced the Julian calendar, and the point in time
+ * when this chronology switches can be controlled using the second parameter
+ * of the getInstance method. By default this cutover is set to the date the
+ * Gregorian calendar was first instituted, October 15, 1582.
+ * <p>
+ * Before this date, this chronology uses the proleptic Julian calendar
+ * (proleptic means extending indefinitely). The Julian calendar has leap years
+ * every four years, whereas the Gregorian has special rules for 100 and 400
+ * years. A meaningful result will thus be obtained for all input values.
+ * However before 8 CE, Julian leap years were irregular, and before 45 BCE
+ * there was no Julian calendar.
+ * <p>
+ * This chronology differs from
+ * {@link java.util.GregorianCalendar GregorianCalendar} in that years
+ * in BCE are returned correctly. Thus year 1 BCE is returned as -1 instead of 1.
+ * The yearOfEra field produces results compatible with GregorianCalendar.
+ * <p>
+ * The Julian calendar does not have a year zero, and so year -1 is followed by
+ * year 1. If the Gregorian cutover date is specified at or before year -1
+ * (Julian), year zero is defined. In other words, the proleptic Gregorian
+ * chronology used by this class has a year zero.
+ * <p>
+ * To create a pure proleptic Julian chronology, use {@link JulianChronology},
+ * and to create a pure proleptic Gregorian chronology, use
+ * {@link GregorianChronology}.
+ * <p>
+ * GJChronology is thread-safe and immutable.
+ * 
+ * @author Brian S O'Neill
+ * @author Stephen Colebourne
+ * @since 1.0
+ */
+public final class GJChronology extends AssembledChronology {
+
+    /** Serialization lock */
+    private static final long serialVersionUID = -2545574827706931671L;
+
+    /**
+     * Convert a datetime from one chronology to another.
+     */
+    private static long convertByYear(long instant, Chronology from, Chronology to) {
+        return to.getDateTimeMillis
+            (from.year().get(instant),
+             from.monthOfYear().get(instant),
+             from.dayOfMonth().get(instant),
+             from.millisOfDay().get(instant));
+    }
+
+    /**
+     * Convert a datetime from one chronology to another.
+     */
+    private static long convertByWeekyear(final long instant, Chronology from, Chronology to) {
+        long newInstant;
+        newInstant = to.weekyear().set(0, from.weekyear().get(instant));
+        newInstant = to.weekOfWeekyear().set(newInstant, from.weekOfWeekyear().get(instant));
+        newInstant = to.dayOfWeek().set(newInstant, from.dayOfWeek().get(instant));
+        newInstant = to.millisOfDay().set(newInstant, from.millisOfDay().get(instant));
+        return newInstant;
+    }
+
+    /**
+     * The default GregorianJulian cutover point.
+     */
+    static final Instant DEFAULT_CUTOVER = new Instant(-12219292800000L);
+
+    /** Cache of zone to chronology list */
+    private static final Map<DateTimeZone, ArrayList<GJChronology>> cCache = new HashMap<DateTimeZone, ArrayList<GJChronology>>();
+
+    /**
+     * Factory method returns instances of the default GJ cutover
+     * chronology. This uses a cutover date of October 15, 1582 (Gregorian)
+     * 00:00:00 UTC. For this value, October 4, 1582 (Julian) is followed by
+     * October 15, 1582 (Gregorian).
+     *
+     * <p>The first day of the week is designated to be
+     * {@link org.joda.time.DateTimeConstants#MONDAY Monday},
+     * and the minimum days in the first week of the year is 4.
+     *
+     * <p>The time zone of the returned instance is UTC.
+     */
+    public static GJChronology getInstanceUTC() {
+        return getInstance(DateTimeZone.UTC, DEFAULT_CUTOVER, 4);
+    }
+
+    /**
+     * Factory method returns instances of the default GJ cutover
+     * chronology. This uses a cutover date of October 15, 1582 (Gregorian)
+     * 00:00:00 UTC. For this value, October 4, 1582 (Julian) is followed by
+     * October 15, 1582 (Gregorian).
+     *
+     * <p>The first day of the week is designated to be
+     * {@link org.joda.time.DateTimeConstants#MONDAY Monday},
+     * and the minimum days in the first week of the year is 4.
+     *
+     * <p>The returned chronology is in the default time zone.
+     */
+    public static GJChronology getInstance() {
+        return getInstance(DateTimeZone.getDefault(), DEFAULT_CUTOVER, 4);
+    }
+
+    /**
+     * Factory method returns instances of the GJ cutover chronology. This uses
+     * a cutover date of October 15, 1582 (Gregorian) 00:00:00 UTC. For this
+     * value, October 4, 1582 (Julian) is followed by October 15, 1582
+     * (Gregorian).
+     *
+     * <p>The first day of the week is designated to be
+     * {@link org.joda.time.DateTimeConstants#MONDAY Monday},
+     * and the minimum days in the first week of the year is 4.
+     *
+     * @param zone  the time zone to use, null is default
+     */
+    public static GJChronology getInstance(DateTimeZone zone) {
+        return getInstance(zone, DEFAULT_CUTOVER, 4);
+    }
+
+    /**
+     * Factory method returns instances of the GJ cutover chronology. Any
+     * cutover date may be specified.
+     *
+     * <p>The first day of the week is designated to be
+     * {@link org.joda.time.DateTimeConstants#MONDAY Monday},
+     * and the minimum days in the first week of the year is 4.
+     *
+     * @param zone  the time zone to use, null is default
+     * @param gregorianCutover  the cutover to use, null means default
+     */
+    public static GJChronology getInstance(
+            DateTimeZone zone,
+            ReadableInstant gregorianCutover) {
+        
+        return getInstance(zone, gregorianCutover, 4);
+    }
+    
+    /**
+     * Factory method returns instances of the GJ cutover chronology. Any
+     * cutover date may be specified.
+     *
+     * @param zone  the time zone to use, null is default
+     * @param gregorianCutover  the cutover to use, null means default
+     * @param minDaysInFirstWeek  minimum number of days in first week of the year; default is 4
+     */
+    public static synchronized GJChronology getInstance(
+            DateTimeZone zone,
+            ReadableInstant gregorianCutover,
+            int minDaysInFirstWeek) {
+        
+        zone = DateTimeUtils.getZone(zone);
+        Instant cutoverInstant;
+        if (gregorianCutover == null) {
+            cutoverInstant = DEFAULT_CUTOVER;
+        } else {
+            cutoverInstant = gregorianCutover.toInstant();
+        }
+
+        GJChronology chrono;
+        synchronized (cCache) {
+            ArrayList<GJChronology> chronos = cCache.get(zone);
+            if (chronos == null) {
+                chronos = new ArrayList<GJChronology>(2);
+                cCache.put(zone, chronos);
+            } else {
+                for (int i = chronos.size(); --i >= 0;) {
+                    chrono = chronos.get(i);
+                    if (minDaysInFirstWeek == chrono.getMinimumDaysInFirstWeek() &&
+                        cutoverInstant.equals(chrono.getGregorianCutover())) {
+                        
+                        return chrono;
+                    }
+                }
+            }
+            if (zone == DateTimeZone.UTC) {
+                chrono = new GJChronology
+                    (JulianChronology.getInstance(zone, minDaysInFirstWeek),
+                     GregorianChronology.getInstance(zone, minDaysInFirstWeek),
+                     cutoverInstant);
+            } else {
+                chrono = getInstance(DateTimeZone.UTC, cutoverInstant, minDaysInFirstWeek);
+                chrono = new GJChronology
+                    (ZonedChronology.getInstance(chrono, zone),
+                     chrono.iJulianChronology,
+                     chrono.iGregorianChronology,
+                     chrono.iCutoverInstant);
+            }
+            chronos.add(chrono);
+        }
+        return chrono;
+    }
+
+    /**
+     * Factory method returns instances of the GJ cutover chronology. Any
+     * cutover date may be specified.
+     *
+     * @param zone  the time zone to use, null is default
+     * @param gregorianCutover  the cutover to use
+     * @param minDaysInFirstWeek  minimum number of days in first week of the year; default is 4
+     */
+    public static GJChronology getInstance(
+            DateTimeZone zone,
+            long gregorianCutover,
+            int minDaysInFirstWeek) {
+        
+        Instant cutoverInstant;
+        if (gregorianCutover == DEFAULT_CUTOVER.getMillis()) {
+            cutoverInstant = null;
+        } else {
+            cutoverInstant = new Instant(gregorianCutover);
+        }
+        return getInstance(zone, cutoverInstant, minDaysInFirstWeek);
+    }
+
+    //-----------------------------------------------------------------------
+    private JulianChronology iJulianChronology;
+    private GregorianChronology iGregorianChronology;
+    private Instant iCutoverInstant;
+
+    private long iCutoverMillis;
+    private long iGapDuration;
+
+    /**
+     * @param julian chronology used before the cutover instant
+     * @param gregorian chronology used at and after the cutover instant
+     * @param cutoverInstant instant when the gregorian chronology began
+     */
+    private GJChronology(JulianChronology julian,
+                         GregorianChronology gregorian,
+                         Instant cutoverInstant) {
+        super(null, new Object[] {julian, gregorian, cutoverInstant});
+    }
+
+    /**
+     * Called when applying a time zone.
+     */
+    private GJChronology(Chronology base,
+                         JulianChronology julian,
+                         GregorianChronology gregorian,
+                         Instant cutoverInstant) {
+        super(base, new Object[] {julian, gregorian, cutoverInstant});
+    }
+
+    /**
+     * Serialization singleton
+     */
+    private Object readResolve() {
+        return getInstance(getZone(), iCutoverInstant, getMinimumDaysInFirstWeek());
+    }
+
+    public DateTimeZone getZone() {
+        Chronology base;
+        if ((base = getBase()) != null) {
+            return base.getZone();
+        }
+        return DateTimeZone.UTC;
+    }
+
+    // Conversion
+    //-----------------------------------------------------------------------
+    /**
+     * Gets the Chronology in the UTC time zone.
+     * 
+     * @return the chronology in UTC
+     */
+    public Chronology withUTC() {
+        return withZone(DateTimeZone.UTC);
+    }
+
+    /**
+     * Gets the Chronology in a specific time zone.
+     * 
+     * @param zone  the zone to get the chronology in, null is default
+     * @return the chronology
+   
+```

@@ -1,0 +1,46 @@
+package org.apache.commons.math3.util;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.junit.Test;
+
+public class MathArraysExtraTest {
+
+    @Test
+    public void testScaleDoesNotModifyOriginal() {
+        double[] original = {1.0, 2.0, 3.0};
+        double[] scaled = MathArrays.scale(2.0, original);
+        assertArrayEquals(new double[] {2.0, 4.0, 6.0}, scaled, 1e-12);
+        assertArrayEquals(new double[] {1.0, 2.0, 3.0}, original, 1e-12);
+    }
+
+    @Test
+    public void testScaleInPlaceModifiesArray() {
+        double[] arr = {1.0, -2.0, 3.0};
+        MathArrays.scaleInPlace(-1.0, arr);
+        assertArrayEquals(new double[] {-1.0, 2.0, -3.0}, arr, 1e-12);
+    }
+
+    @Test
+    public void testEbeAddDimensionMismatch() {
+        double[] a = {1.0, 2.0};
+        double[] b = {1.0, 2.0, 3.0};
+        try {
+            MathArrays.ebeAdd(a, b);
+            org.junit.Assert.fail("Expected DimensionMismatchException");
+        } catch (DimensionMismatchException e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testDistanceFunctionsAgree() {
+        double[] p1 = {0.0, 0.0};
+        double[] p2 = {3.0, 4.0};
+        assertEquals(5.0, MathArrays.distance(p1, p2), 1e-12);
+        assertEquals(7.0, MathArrays.distance1(p1, p2), 1e-12);
+        assertEquals(4.0, MathArrays.distanceInf(p1, p2), 1e-12);
+    }
+}

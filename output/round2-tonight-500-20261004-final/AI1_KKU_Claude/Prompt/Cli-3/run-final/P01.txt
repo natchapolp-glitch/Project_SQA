@@ -1,0 +1,20 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Cli-3
+Java 11, JUnit 4
+Modified classes: org.apache.commons.cli.TypeHandler
+BUGGY API signatures:
+Compiled from "TypeHandler.java"
+public class org.apache.commons.cli.TypeHandler {
+  public org.apache.commons.cli.TypeHandler();
+  public static java.lang.Object createValue(java.lang.String, java.lang.Object);
+  public static java.lang.Object createValue(java.lang.String, java.lang.Class);
+  public static java.lang.Object createObject(java.lang.String);
+  public static java.lang.Number createNumber(java.lang.String);
+  public static java.lang.Class createClass(java.lang.String);
+  public static java.util.Date createDate(java.lang.String);
+  public static java.net.URL createURL(java.lang.String);
+  public static java.io.File createFile(java.lang.String);
+  public static java.io.File[] createFiles(java.lang.String);
+}
+

@@ -1,0 +1,642 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Time-2
+Java 11, JUnit 4
+Modified classes: org.joda.time.Partial, org.joda.time.field.UnsupportedDurationField
+
+BUGGY API signatures (may include private members):
+Compiled from "Partial.java"
+public final class org.joda.time.Partial extends org.joda.time.base.AbstractPartial implements org.joda.time.ReadablePartial,java.io.Serializable {
+  private static final long serialVersionUID;
+  private final org.joda.time.Chronology iChronology;
+  private final org.joda.time.DateTimeFieldType[] iTypes;
+  private final int[] iValues;
+  private transient org.joda.time.format.DateTimeFormatter[] iFormatter;
+  public org.joda.time.Partial();
+  public org.joda.time.Partial(org.joda.time.Chronology);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType, int);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType, int, org.joda.time.Chronology);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType[], int[]);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType[], int[], org.joda.time.Chronology);
+  public org.joda.time.Partial(org.joda.time.ReadablePartial);
+  org.joda.time.Partial(org.joda.time.Partial, int[]);
+  org.joda.time.Partial(org.joda.time.Chronology, org.joda.time.DateTimeFieldType[], int[]);
+  public int size();
+  public org.joda.time.Chronology getChronology();
+  protected org.joda.time.DateTimeField getField(int, org.joda.time.Chronology);
+  public org.joda.time.DateTimeFieldType getFieldType(int);
+  public org.joda.time.DateTimeFieldType[] getFieldTypes();
+  public int getValue(int);
+  public int[] getValues();
+  public org.joda.time.Partial withChronologyRetainFields(org.joda.time.Chronology);
+  public org.joda.time.Partial with(org.joda.time.DateTimeFieldType, int);
+  public org.joda.time.Partial without(org.joda.time.DateTimeFieldType);
+  public org.joda.time.Partial withField(org.joda.time.DateTimeFieldType, int);
+  public org.joda.time.Partial withFieldAdded(org.joda.time.DurationFieldType, int);
+  public org.joda.time.Partial withFieldAddWrapped(org.joda.time.DurationFieldType, int);
+  public org.joda.time.Partial withPeriodAdded(org.joda.time.ReadablePeriod, int);
+  public org.joda.time.Partial plus(org.joda.time.ReadablePeriod);
+  public org.joda.time.Partial minus(org.joda.time.ReadablePeriod);
+  public org.joda.time.Partial$Property property(org.joda.time.DateTimeFieldType);
+  public boolean isMatch(org.joda.time.ReadableInstant);
+  public boolean isMatch(org.joda.time.ReadablePartial);
+  public org.joda.time.format.DateTimeFormatter getFormatter();
+  public java.lang.String toString();
+  public java.lang.String toStringList();
+  public java.lang.String toString(java.lang.String);
+  public java.lang.String toString(java.lang.String, java.util.Locale);
+}
+Compiled from "UnsupportedDurationField.java"
+public final class org.joda.time.field.UnsupportedDurationField extends org.joda.time.DurationField implements java.io.Serializable {
+  private static final long serialVersionUID;
+  private static java.util.HashMap<org.joda.time.DurationFieldType, org.joda.time.field.UnsupportedDurationField> cCache;
+  private final org.joda.time.DurationFieldType iType;
+  public static synchronized org.joda.time.field.UnsupportedDurationField getInstance(org.joda.time.DurationFieldType);
+  private org.joda.time.field.UnsupportedDurationField(org.joda.time.DurationFieldType);
+  public final org.joda.time.DurationFieldType getType();
+  public java.lang.String getName();
+  public boolean isSupported();
+  public boolean isPrecise();
+  public int getValue(long);
+  public long getValueAsLong(long);
+  public int getValue(long, long);
+  public long getValueAsLong(long, long);
+  public long getMillis(int);
+  public long getMillis(long);
+  public long getMillis(int, long);
+  public long getMillis(long, long);
+  public long add(long, int);
+  public long add(long, long);
+  public int getDifference(long, long);
+  public long getDifferenceAsLong(long, long);
+  public long getUnitMillis();
+  public int compareTo(org.joda.time.DurationField);
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+  private java.lang.Object readResolve();
+  private java.lang.UnsupportedOperationException unsupported();
+  public int compareTo(java.lang.Object);
+}
+
+
+BUGGY source excerpt: org.joda.time.Partial (truncated=True)
+```java
+/*
+ *  Copyright 2001-2013 Stephen Colebourne
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.joda.time;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
+import org.joda.time.base.AbstractPartial;
+import org.joda.time.field.AbstractPartialFieldProperty;
+import org.joda.time.field.FieldUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+/**
+ * Partial is an immutable partial datetime supporting any set of datetime fields.
+ * <p>
+ * A Partial instance can be used to hold any combination of fields.
+ * The instance does not contain a time zone, so any datetime is local.
+ * <p>
+ * A Partial can be matched against an instant using {@link #isMatch(ReadableInstant)}.
+ * This method compares each field on this partial with those of the instant
+ * and determines if the partial matches the instant.
+ * Given this definition, an empty Partial instance represents any datetime
+ * and always matches.
+ * <p>
+ * Calculations on Partial are performed using a {@link Chronology}.
+ * This chronology is set to be in the UTC time zone for all calculations.
+ * <p>
+ * Each individual field can be queried in two ways:
+ * <ul>
+ * <li><code>get(DateTimeFieldType.monthOfYear())</code>
+ * <li><code>property(DateTimeFieldType.monthOfYear()).get()</code>
+ * </ul>
+ * The second technique also provides access to other useful methods on the
+ * field:
+ * <ul>
+ * <li>numeric value - <code>monthOfYear().get()</code>
+ * <li>text value - <code>monthOfYear().getAsText()</code>
+ * <li>short text value - <code>monthOfYear().getAsShortText()</code>
+ * <li>maximum/minimum values - <code>monthOfYear().getMaximumValue()</code>
+ * <li>add/subtract - <code>monthOfYear().addToCopy()</code>
+ * <li>set - <code>monthOfYear().setCopy()</code>
+ * </ul>
+ * <p>
+ * Partial is thread-safe and immutable, provided that the Chronology is as well.
+ * All standard Chronology classes supplied are thread-safe and immutable.
+ *
+ * @author Stephen Colebourne
+ * @since 1.1
+ */
+public final class Partial
+        extends AbstractPartial
+        implements ReadablePartial, Serializable {
+
+    /** Serialization version */
+    private static final long serialVersionUID = 12324121189002L;
+
+    /** The chronology in use. */
+    private final Chronology iChronology;
+    /** The set of field types. */
+    private final DateTimeFieldType[] iTypes;
+    /** The values of each field in this partial. */
+    private final int[] iValues;
+    /** The formatter to use, [0] may miss some fields, [1] doesn't miss any fields. */
+    private transient DateTimeFormatter[] iFormatter;
+
+    // Constructors
+    //-----------------------------------------------------------------------
+    /**
+     * Constructs a Partial with no fields or values, which can be considered
+     * to represent any date.
+     * <p>
+     * This is most useful when constructing partials, for example:
+     * <pre>
+     * Partial p = new Partial()
+     *     .with(DateTimeFieldType.dayOfWeek(), 5)
+     *     .with(DateTimeFieldType.hourOfDay(), 12)
+     *     .with(DateTimeFieldType.minuteOfHour(), 20);
+     * </pre>
+     * Note that, although this is a clean way to write code, it is fairly
+     * inefficient internally.
+     * <p>
+     * The constructor uses the default ISO chronology.
+     */
+    public Partial() {
+        this((Chronology) null);
+    }
+
+    /**
+     * Constructs a Partial with no fields or values, which can be considered
+     * to represent any date.
+     * <p>
+     * This is most useful when constructing partials, for example:
+     * <pre>
+     * Partial p = new Partial(chrono)
+     *     .with(DateTimeFieldType.dayOfWeek(), 5)
+     *     .with(DateTimeFieldType.hourOfDay(), 12)
+     *     .with(DateTimeFieldType.minuteOfHour(), 20);
+     * </pre>
+     * Note that, although this is a clean way to write code, it is fairly
+     * inefficient internally.
+     *
+     * @param chrono  the chronology, null means ISO
+     */
+    public Partial(Chronology chrono) {
+        super();
+        iChronology = DateTimeUtils.getChronology(chrono).withUTC();
+        iTypes = new DateTimeFieldType[0];
+        iValues = new int[0];
+    }
+
+    /**
+     * Constructs a Partial with the specified field and value.
+     * <p>
+     * The constructor uses the default ISO chronology.
+     * 
+     * @param type  the single type to create the partial from, not null
+     * @param value  the value to store
+     * @throws IllegalArgumentException if the type or value is invalid
+     */
+    public Partial(DateTimeFieldType type, int value) {
+        this(type, value, null);
+    }
+
+    /**
+     * Constructs a Partial with the specified field and value.
+     * <p>
+     * The constructor uses the specified chronology.
+     * 
+     * @param type  the single type to create the partial from, not null
+     * @param value  the value to store
+     * @param chronology  the chronology, null means ISO
+     * @throws IllegalArgumentException if the type or value is invalid
+     */
+    public Partial(DateTimeFieldType type, int value, Chronology chronology) {
+        super();
+        chronology = DateTimeUtils.getChronology(chronology).withUTC();
+        iChronology = chronology;
+        if (type == null) {
+            throw new IllegalArgumentException("The field type must not be null");
+        }
+        iTypes = new DateTimeFieldType[
+```
+
+BUGGY source excerpt: org.joda.time.field.UnsupportedDurationField (truncated=True)
+```java
+/*
+ *  Copyright 2001-2009 Stephen Colebourne
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.joda.time.field;
+
+import java.io.Serializable;
+import java.util.HashMap;
+
+import org.joda.time.DurationField;
+import org.joda.time.DurationFieldType;
+
+/**
+ * A placeholder implementation to use when a duration field is not supported.
+ * <p>
+ * UnsupportedDurationField is thread-safe and immutable.
+ *
+ * @author Brian S O'Neill
+ * @since 1.0
+ */
+public final class UnsupportedDurationField extends DurationField implements Serializable {
+
+    /** Serialization lock. */
+    private static final long serialVersionUID = -6390301302770925357L;
+
+    /** The cache of unsupported duration field instances */
+    private static HashMap<DurationFieldType, UnsupportedDurationField> cCache;
+
+    /**
+     * Gets an instance of UnsupportedDurationField for a specific named field.
+     * The returned instance is cached.
+     * 
+     * @param type  the type to obtain
+     * @return the instance
+     */
+    public static synchronized UnsupportedDurationField getInstance(DurationFieldType type) {
+        UnsupportedDurationField field;
+        if (cCache == null) {
+            cCache = new HashMap<DurationFieldType, UnsupportedDurationField>(7);
+            field = null;
+        } else {
+            field = cCache.get(type);
+        }
+        if (field == null) {
+            field = new UnsupportedDurationField(type);
+            cCache.put(type, field);
+        }
+        return field;
+    }
+
+    /** The name of the field */
+    private final DurationFieldType iType;
+
+    /**
+     * Constructor.
+     * 
+     * @param type  the type to use
+     */
+    private UnsupportedDurationField(DurationFieldType type) {
+        iType = type;
+    }
+
+    //-----------------------------------------------------------------------
+    // Design note: Simple Accessors return a suitable value, but methods
+    // intended to perform calculations throw an UnsupportedOperationException.
+
+    public final DurationFieldType getType() {
+        return iType;
+    }
+
+    public String getName() {
+        return iType.getName();
+    }
+
+    /**
+     * This field is not supported.
+     *
+     * @return false always
+     */
+    public boolean isSupported() {
+        return false;
+    }
+
+    /**
+     * This field is precise.
+     * 
+     * @return true always
+     */
+    public boolean isPrecise() {
+        return true;
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public int getValue(long duration) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long getValueAsLong(long duration) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public int getValue(long duration, long instant) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long getValueAsLong(long duration, long instant) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long getMillis(int value) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long getMillis(long value) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long getMillis(int value, long instant) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long getMillis(long value, long instant) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long add(long instant, int value) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long add(long instant, long value) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public int getDifference(long minuendInstant, long subtrahendInstant) {
+        throw unsupported();
+    }
+
+    /**
+     * Always throws UnsupportedOperationException
+     *
+     * @throws UnsupportedOperationException
+     */
+    public long getDifferenceAsLong(long minuendInstant, long subtrahendInstant) {
+        throw unsupported();
+    }
+
+    /**
+     * Always returns zero.
+     *
+     * @return zero always
+     */
+    public long getUnitMillis() {
+        return 0;
+    }
+
+    /**
+     * Always returns zero, indicating that sort order is not relevent.
+     *
+     * @return zero always
+     */
+    public int compareTo(DurationField durationField) {
+        return 0;
+    }
+
+    //------------------------------------------------------------------------
+    /**
+     * Compares this duration field to another.
+     * 
+     * @param obj  the object to compare to
+     * @return true if 
+```
+
+
+Original generated source:
+```java
+package org.joda.time;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+public class PartialTest {
+
+    @Test
+    public void testWithFieldAddWrapped_wrapsWithinField() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 11);
+        Partial result = p.withFieldAddWrapped(DurationFieldType.months(), 3);
+        assertEquals(2, result.getValue(0));
+        assertEquals(11, p.getValue(0));
+    }
+
+    @Test
+    public void testWithFieldAddWrapped_doesNotAffectOtherFields() {
+        Partial p = new Partial(new DateTimeFieldType[] {
+                DateTimeFieldType.year(), DateTimeFieldType.monthOfYear(), DateTimeFieldType.dayOfMonth() },
+                new int[] { 2004, 5, 15 });
+        Partial result = p.withFieldAddWrapped(DurationFieldType.months(), 20);
+        assertEquals(2004, result.getValue(0));
+        assertEquals(15, result.getValue(2));
+    }
+
+    @Test
+    public void testWithFieldAddWrapped_zeroAmountUnchangedValues() {
+        Partial p = new Partial(DateTimeFieldType.dayOfMonth(), 10);
+        Partial result = p.withFieldAddWrapped(DurationFieldType.days(), 0);
+        assertEquals(10, result.getValue(0));
+    }
+
+    @Test
+    public void testWithFieldAddWrapped_unsupportedFieldThrows() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 5);
+        try {
+            p.withFieldAddWrapped(DurationFieldType.hours(), 1);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testWithFieldAdded_zeroAmountReturnsSameInstance() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2000);
+        Partial result = p.withFieldAdded(DurationFieldType.years(), 0);
+        assertSame(p, result);
+    }
+
+    @Test
+    public void testWithFieldAdded_overflowThrows() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 11);
+        try {
+            p.withFieldAdded(DurationFieldType.months(), 5);
+            fail("Expected IllegalArgumentException on overflow");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testWithFieldAdded_normalAddition() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 5);
+        Partial result = p.withFieldAdded(DurationFieldType.months(), 2);
+        assertEquals(7, result.getValue(0));
+        assertNotSame(p, result);
+    }
+}
+```
+
+```java
+package org.joda.time.field;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.joda.time.DurationFieldType;
+import org.junit.Test;
+
+public class UnsupportedDurationFieldTest {
+
+    @Test
+    public void testGetInstance_cachesSameInstance() {
+        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());
+        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());
+        assertSame(f1, f2);
+    }
+
+    @Test
+    public void testIsSupportedAndIsPrecise() {
+        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.eras());
+        assertFalse(f.isSupported());
+        assertTrue(f.isPrecise());
+    }
+
+    @Test
+    public void testGetTypeAndName() {
+        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.weekyears());
+        assertEquals(DurationFieldType.weekyears(), f.getType());
+        assertEquals(DurationFieldType.weekyears().getName(), f.getName());
+    }
+
+    @Test
+    public void testArithmeticMethodsThrowUnsupported() {
+        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.months());
+        try {
+            f.getValue(100L);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+        try {
+            f.add(100L, 5);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+        try {
+            f.getDifference(100L, 50L);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+        try {
+            f.getMillis(5);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+    }
+
+    @Test
+    public void testGetUnitMillisAndCompareTo() {
+        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.days());
+        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.hours());
+        assertEquals(0L, f1.getUnitMillis());
+        assertEquals(0, f1.compareTo(f2));
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.minutes());
+        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.minutes());
+        assertTrue(f1.equals(f2));
+        assertEquals(f1.hashCode(), f2.hashCode());
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+Source extraction/packaging error: JUnit method count missing or over cap; no trimming

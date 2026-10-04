@@ -1,0 +1,364 @@
+Case: Math-6
+Java 11, JUnit 4
+Modified classes: org.apache.commons.math3.optim.BaseOptimizer, org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer, org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer, org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer, org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer, org.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizer, org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer
+
+BUGGY API signatures (may include private members):
+Compiled from "BaseOptimizer.java"
+public abstract class org.apache.commons.math3.optim.BaseOptimizer<PAIR> {
+  protected final org.apache.commons.math3.util.Incrementor evaluations;
+  protected final org.apache.commons.math3.util.Incrementor iterations;
+  private org.apache.commons.math3.optim.ConvergenceChecker<PAIR> checker;
+  protected org.apache.commons.math3.optim.BaseOptimizer(org.apache.commons.math3.optim.ConvergenceChecker<PAIR>);
+  public int getMaxEvaluations();
+  public int getEvaluations();
+  public int getMaxIterations();
+  public int getIterations();
+  public org.apache.commons.math3.optim.ConvergenceChecker<PAIR> getConvergenceChecker();
+  public PAIR optimize(org.apache.commons.math3.optim.OptimizationData...) throws org.apache.commons.math3.exception.TooManyEvaluationsException, org.apache.commons.math3.exception.TooManyIterationsException;
+  protected abstract PAIR doOptimize();
+  protected void incrementEvaluationCount() throws org.apache.commons.math3.exception.TooManyEvaluationsException;
+  protected void incrementIterationCount() throws org.apache.commons.math3.exception.TooManyIterationsException;
+  protected void parseOptimizationData(org.apache.commons.math3.optim.OptimizationData...);
+}
+Compiled from "NonLinearConjugateGradientOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer extends org.apache.commons.math3.optim.nonlinear.scalar.GradientMultivariateOptimizer {
+  private final org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula updateFormula;
+  private final org.apache.commons.math3.optim.nonlinear.scalar.gradient.Preconditioner preconditioner;
+  private final org.apache.commons.math3.analysis.solvers.UnivariateSolver solver;
+  private double initialStep;
+  public org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>);
+  public org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>, org.apache.commons.math3.analysis.solvers.UnivariateSolver);
+  public org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer$Formula, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>, org.apache.commons.math3.analysis.solvers.UnivariateSolver, org.apache.commons.math3.optim.nonlinear.scalar.gradient.Preconditioner);
+  public org.apache.commons.math3.optim.PointValuePair optimize(org.apache.commons.math3.optim.OptimizationData...) throws org.apache.commons.math3.exception.TooManyEvaluationsException;
+  protected org.apache.commons.math3.optim.PointValuePair doOptimize();
+  protected void parseOptimizationData(org.apache.commons.math3.optim.OptimizationData...);
+  private double findUpperBound(org.apache.commons.math3.analysis.UnivariateFunction, double, double);
+  private void checkParameters();
+  public java.lang.Object optimize(org.apache.commons.math3.optim.OptimizationData[]);
+  protected java.lang.Object doOptimize();
+  static double[] access$000(org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer, double[]);
+}
+Compiled from "CMAESOptimizer.java"
+public class org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer extends org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer {
+  private int lambda;
+  private final boolean isActiveCMA;
+  private final int checkFeasableCount;
+  private double[] inputSigma;
+  private int dimension;
+  private int diagonalOnly;
+  private boolean isMinimize;
+  private final boolean generateStatistics;
+  private final int maxIterations;
+  private final double stopFitness;
+  private double stopTolUpX;
+  private double stopTolX;
+  private double stopTolFun;
+  private double stopTolHistFun;
+  private int mu;
+  private double logMu2;
+  private org.apache.commons.math3.linear.RealMatrix weights;
+  private double mueff;
+  private double sigma;
+  private double cc;
+  private double cs;
+  private double damps;
+  private double ccov1;
+  private double ccovmu;
+  private double chiN;
+  private double ccov1Sep;
+  private double ccovmuSep;
+  private org.apache.commons.math3.linear.RealMatrix xmean;
+  private org.apache.commons.math3.linear.RealMatrix pc;
+  private org.apache.commons.math3.linear.RealMatrix ps;
+  private double normps;
+  private org.apache.commons.math3.linear.RealMatrix B;
+  private org.apache.commons.math3.linear.RealMatrix D;
+  private org.apache.commons.math3.linear.RealMatrix BD;
+  private org.apache.commons.math3.linear.RealMatrix diagD;
+  private org.apache.commons.math3.linear.RealMatrix C;
+  private org.apache.commons.math3.linear.RealMatrix diagC;
+  private int iterations;
+  private double[] fitnessHistory;
+  private int historySize;
+  private final org.apache.commons.math3.random.RandomGenerator random;
+  private final java.util.List<java.lang.Double> statisticsSigmaHistory;
+  private final java.util.List<org.apache.commons.math3.linear.RealMatrix> statisticsMeanHistory;
+  private final java.util.List<java.lang.Double> statisticsFitnessHistory;
+  private final java.util.List<org.apache.commons.math3.linear.RealMatrix> statisticsDHistory;
+  public org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer(int, double, boolean, int, int, org.apache.commons.math3.random.RandomGenerator, boolean, org.apache.commons.math3.optim.ConvergenceChecker<org.apache.commons.math3.optim.PointValuePair>);
+  pu
+
+BUGGY source excerpt: org.apache.commons.math3.optim.BaseOptimizer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math3.optim;
+
+import org.apache.commons.math3.util.Incrementor;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.exception.TooManyIterationsException;
+
+/**
+ * Base class for implementing optimizers.
+ * It contains the boiler-plate code for counting the number of evaluations
+ * of the objective function and the number of iterations of the algorithm,
+ * and storing the convergence checker.
+ * <em>It is not a "user" class.</em>
+ *
+ * @param <PAIR> Type of the point/value pair returned by the optimization
+ * algorithm.
+ *
+ * @version $Id$
+ * @since 3.1
+ */
+public abstract class BaseOptimizer<PAIR> {
+    /** Evaluations counter. */
+    protected final Incrementor evaluations;
+    /** Iterations counter. */
+    protected final Incrementor iterations;
+    /** Convergence checker. */
+    private ConvergenceChecker<PAIR> checker
+```
+
+BUGGY source excerpt: org.apache.commons.math3.optim.nonlinear.scalar.gradient.NonLinearConjugateGradientOptimizer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.math3.optim.nonlinear.scalar.gradient;
+
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.solvers.BrentSolver;
+import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
+import org.apache.commons.math3.exception.MathInternalError;
+import org.apache.commons.math3.exception.MathIllegalStateException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.exception.MathUnsupportedOperationException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.apache.commons.math3.optim.OptimizationData;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.GradientMultivariateOpt
+```
+
+BUGGY source excerpt: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.CMAESOptimizer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.math3.optim.nonlinear.scalar.noderiv;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.NotPositiveException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.OutOfRangeException;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.EigenDecomposition;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.optim.OptimizationData;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.
+```
+
+BUGGY source excerpt: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.PowellOptimizer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math3.optim.nonlinear.scalar.noderiv;
+
+import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.MathArrays;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
+import org.apache.commons.math3.exception.NotStrictlyPositiveException;
+import org.apache.commons.math3.exception.MathUnsupportedOperationException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
+import org.apache.commons.math3.optim.univariate.BracketFinder;
+import org.apache.commons.math3.optim.u
+```
+
+BUGGY source excerpt: org.apache.commons.math3.optim.nonlinear.scalar.noderiv.SimplexOptimizer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math3.optim.nonlinear.scalar.noderiv;
+
+import java.util.Comparator;
+import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.commons.math3.exception.MathUnsupportedOperationException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.SimpleValueChecker;
+import org.apache.commons.math3.optim.OptimizationData;
+import org.apache.commons.math3.optim.nonlinear.scalar.MultivariateOptimizer;
+
+/**
+ * This class implements simplex-based direct search optimization.
+ *
+ * <p>
+ *  Direct search methods only use objective function values, they do
+ *  not need derivatives 
+```
+
+BUGGY source excerpt: org.apache.commons.math3.optim.nonlinear.vector.jacobian.GaussNewtonOptimizer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math3.optim.nonlinear.vector.jacobian;
+
+import org.apache.commons.math3.exception.ConvergenceException;
+import org.apache.commons.math3.exception.NullArgumentException;
+import org.apache.commons.math3.exception.MathInternalError;
+import org.apache.commons.math3.exception.MathUnsupportedOperationException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.BlockRealMatrix;
+import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.QRDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.SingularMatrixException;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.optim.PointVectorValueP
+```
+
+BUGGY source excerpt: org.apache.commons.math3.optim.nonlinear.vector.jacobian.LevenbergMarquardtOptimizer (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math3.optim.nonlinear.vector.jacobian;
+
+import java.util.Arrays;
+import org.apache.commons.math3.exception.ConvergenceException;
+import org.apache.commons.math3.exception.MathUnsupportedOperationException;
+import org.apache.commons.math3.exception.util.LocalizedFormats;
+import org.apache.commons.math3.optim.PointVectorValuePair;
+import org.apache.commons.math3.optim.ConvergenceChecker;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.util.Precision;
+import org.apache.commons.math3.util.FastMath;
+
+
+/**
+ * This class solves a least-squares problem using the Levenberg-Marquardt
+ * algorithm.
+ * <br/>
+ * Constraints are not supported: the call to
+ * {@link #optimize(OptimizationData[]) optimize} will throw
+ * {@link MathUnsupportedOperationException} if bounds are passed to it.
+ *
+ * <p>This implementation <em>should</em> work even for over-d
+```

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:04:50.236594+00:00",
+  "ended_at_utc": "2026-10-04T09:04:52.717545+00:00",
+  "raw_body_sha256": "17309cb3222151de221d06c4457f968b265db503f586b1a58cc9000b467778ae",
+  "body": {
+    "id": "genai-01a10628-ba31-7837-a9cf-17110c0e893f",
+    "object": "chat.completion",
+    "created": 1791104694,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.fasterxml.jackson.dataformat.xml.ser;\n\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertSame;\nimport static org.junit.Assert.fail;\n\nimport javax.xml.namespace.QName;\n\nimport org.junit.Test;\n\nimport com.fasterxml.jackson.databind.JsonMappingException;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.SerializationConfig;\nimport com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;\nimport com.fasterxml.jackson.databind.ser.SerializerFactory;\nimport com.fasterxml.jackson.databind.util.TokenBuffer;\nimport com.fasterxml.jackson.dataformat.xml.util.XmlRootNameLookup;\n\npublic class XmlSerializerProviderTest {\n\n    @Test\n    public void testCreateInstance() {\n        XmlRootNameLookup lookup = new XmlRootNameLookup();\n        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);\n        SerializationConfig config = new ObjectMapper().getSerializationConfig();\n        SerializerFactory factory = provider.getSerializerFactory();\n\n        DefaultSerializerProvider newProvider = provider.createInstance(config, factory);\n        assertNotNull(newProvider);\n        assertSame(config, newProvider.getConfig());\n    }\n\n    @Test\n    public void testAsXmlGeneratorWithTokenBuffer() throws Exception {\n        XmlRootNameLookup lookup = new XmlRootNameLookup();\n        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);\n        ObjectMapper mapper = new ObjectMapper();\n        TokenBuffer tb = new TokenBuffer(mapper, false);\n\n        ToXmlGenerator xgen = provider._asXmlGenerator(tb);\n        assertNull(xgen);\n    }\n\n    @Test\n    public void testAsXmlGeneratorWithInvalidGenerator() {\n        XmlRootNameLookup lookup = new XmlRootNameLookup();\n        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);\n        ObjectMapper mapper = new ObjectMapper();\n        try {\n            mapper.getFactory().createGenerator(new java.io.StringWriter());\n            fail(\"Expected JsonMappingException\");\n        } catch (Exception e) {\n            // expected generator creation or invalid generator test flow\n        }\n    }\n\n    @Test\n    public void testRootNameForNullConstant() {\n        assertNotNull(XmlSerializerProvider.ROOT_NAME_FOR_NULL);\n    }\n\n    @Test\n    public void testRootNameFromConfigWithNull() {\n        XmlRootNameLookup lookup = new XmlRootNameLookup();\n        XmlSerializerProvider provider = new XmlSerializerProvider(lookup);\n        QName qname = provider._rootNameFromConfig();\n        assertNull(qname);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4685,
+      "completion_tokens": 616,
+      "total_tokens": 5301
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 105589,
+      "daily_remaining_tokens": 244411
+    }
+  },
+  "headers": {
+    "x-request-id": "tc08mn5k3fmk93ecltsy1354",
+    "date": "Sun, 04 Oct 2026 09:04:54 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

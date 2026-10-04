@@ -1,0 +1,195 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: JacksonDatabind-4
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer
+
+BUGGY API signatures (may include private members):
+Compiled from "StringArrayDeserializer.java"
+public final class com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer extends com.fasterxml.jackson.databind.deser.std.StdDeserializer<java.lang.String[]> implements com.fasterxml.jackson.databind.deser.ContextualDeserializer {
+  private static final long serialVersionUID;
+  public static final com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer instance;
+  protected com.fasterxml.jackson.databind.JsonDeserializer<java.lang.String> _elementDeserializer;
+  public com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer();
+  protected com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer(com.fasterxml.jackson.databind.JsonDeserializer<?>);
+  public java.lang.String[] deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  protected final java.lang.String[] _deserializeCustom(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  public java.lang.Object deserializeWithType(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext, com.fasterxml.jackson.databind.jsontype.TypeDeserializer) throws java.io.IOException;
+  private final java.lang.String[] handleNonArray(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  public com.fasterxml.jackson.databind.JsonDeserializer<?> createContextual(com.fasterxml.jackson.databind.DeserializationContext, com.fasterxml.jackson.databind.BeanProperty) throws com.fasterxml.jackson.databind.JsonMappingException;
+  public java.lang.Object deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException, com.fasterxml.jackson.core.JsonProcessingException;
+  static {};
+}
+
+
+BUGGY source excerpt: com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer (truncated=False)
+```java
+package com.fasterxml.jackson.databind.deser.std;
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
+import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.util.ObjectBuffer;
+
+/**
+ * Separate implementation for serializing String arrays (instead of
+ * using {@link ObjectArrayDeserializer}.
+ * Used if (and only if) no custom value deserializers are used.
+ */
+@JacksonStdImpl
+public final class StringArrayDeserializer
+    extends StdDeserializer<String[]>
+    implements ContextualDeserializer
+{
+    private static final long serialVersionUID = -7589512013334920693L;
+
+    public final static StringArrayDeserializer instance = new StringArrayDeserializer();
+    
+    /**
+     * Value serializer to use, if not the standard one (which is inlined)
+     */
+    protected JsonDeserializer<String> _elementDeserializer;
+
+    public StringArrayDeserializer() {
+        super(String[].class);
+        _elementDeserializer = null;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected StringArrayDeserializer(JsonDeserializer<?> deser) {
+        super(String[].class);
+        _elementDeserializer = (JsonDeserializer<String>) deser;
+    }
+   
+    @Override
+    public String[] deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException
+    {
+        // Ok: must point to START_ARRAY (or equivalent)
+        if (!jp.isExpectedStartArrayToken()) {
+            return handleNonArray(jp, ctxt);
+        }
+        if (_elementDeserializer != null) {
+            return _deserializeCustom(jp, ctxt);
+        }
+
+        final ObjectBuffer buffer = ctxt.leaseObjectBuffer();
+        Object[] chunk = buffer.resetAndStart();
+
+        int ix = 0;
+        JsonToken t;
+
+            while ((t = jp.nextToken()) != JsonToken.END_ARRAY) {
+                // Ok: no need to convert Strings, but must recognize nulls
+                String value;
+                if (t == JsonToken.VALUE_STRING) {
+                    value = jp.getText();
+                } else if (t == JsonToken.VALUE_NULL) {
+                    value = null; // since we have established that '_elementDeserializer == null' earlier
+                } else {
+                    value = _parseString(jp, ctxt);
+                }
+                if (ix >= chunk.length) {
+                    chunk = buffer.appendCompletedChunk(chunk);
+                    ix = 0;
+                }
+                chunk[ix++] = value;
+            }
+            // note: pass String.class, not String[].class, as we need element type for error info
+        String[] result = buffer.completeAndClearBuffer(chunk, ix, String.class);
+        ctxt.returnObjectBuffer(buffer);
+        return result;
+    }
+
+    /**
+     * Offlined version used when we do not use the default deserialization method.
+     */
+    protected final String[] _deserializeCustom(JsonParser jp, DeserializationContext ctxt) throws IOException
+    {
+        final ObjectBuffer buffer = ctxt.leaseObjectBuffer();
+        Object[] chunk = buffer.resetAndStart();
+        final JsonDeserializer<String> deser = _elementDeserializer;
+        
+        int ix = 0;
+        JsonToken t;
+
+            while ((t = jp.nextToken()) != JsonToken.END_ARRAY) {
+                // Ok: no need to convert Strings, but must recognize nulls
+                String value = (t == JsonToken.VALUE_NULL) ? deser.getNullValue() : deser.deserialize(jp, ctxt);
+                if (ix >= chunk.length) {
+                    chunk = buffer.appendCompletedChunk(chunk);
+                    ix = 0;
+                }
+                chunk[ix++] = value;
+            }
+            // note: pass String.class, not String[].class, as we need element type for error info
+        String[] result = buffer.completeAndClearBuffer(chunk, ix, String.class);
+        ctxt.returnObjectBuffer(buffer);
+        return result;
+    }
+    
+    @Override
+    public Object deserializeWithType(JsonParser jp, DeserializationContext ctxt, TypeDeserializer typeDeserializer) throws IOException {
+        return typeDeserializer.deserializeTypedFromArray(jp, ctxt);
+    }
+
+    private final String[] handleNonArray(JsonParser jp, DeserializationContext ctxt) throws IOException
+    {
+        // [JACKSON-526]: implicit arrays from single values?
+        if (!ctxt.isEnabled(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)) {
+            // [JACKSON-620] Empty String can become null...
+            if ((jp.getCurrentToken() == JsonToken.VALUE_STRING)
+                    && ctxt.isEnabled(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)) {
+                String str = jp.getText();
+                if (str.length() == 0) {
+                    return null;
+                }
+            }
+            throw ctxt.mappingException(_valueClass);
+        }
+        return new String[] { (jp.getCurrentToken() == JsonToken.VALUE_NULL) ? null : _parseString(jp, ctxt) };
+    }
+
+    /**
+     * Contextualization is needed to see whether we can "inline" deserialization
+     * of String values, or if we have to use separate value deserializer.
+     */
+    @Override
+    public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) throws JsonMappingException
+    {
+        JsonDeserializer<?> deser = _elementDeserializer;
+        // #125: May have a content converter
+        deser = findConvertingContentDeserializer(ctxt, property, deser);
+        if (deser == null) {
+            deser = ctxt.findContextualValueDeserializer(ctxt.constructType(String.class), property);
+        } else { // if directly assigned, probably not yet contextual, so:
+            deser = ctxt.handleSecondaryContextualization(deser, property);
+        }
+        // Ok ok: if all we got is the default String deserializer, can just forget about it
+        if (deser != null && this.isDefaultDeserializer(deser)) {
+            deser = null;
+        }
+        if (_elementDeserializer != deser) {
+            return new StringArrayDeserializer(deser);
+        }
+        return this;
+    }
+}
+
+```
+
+
+Planning response:
+- Standard case: deserialize a JSON array of strings (`["a","b","c"]`) into `String[]`, verifying order/content preserved, including empty array `[]`.
+- Null handling: JSON `null` token should deserialize to Java `null`, not an empty/throwing result.
+- Null elements inside array (`["a", null, "b"]`) must map to `null` entries in the resulting array, not to the literal string "null" or an exception.
+- Single-value coercion: when `DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS` (or equivalent) is enabled, a scalar JSON string value (not wrapped in array) should become a one-element `String[]`.
+- Without single-value unwrapping enabled, a scalar string input should trigger `handleNonArray` behavior—likely throwing a `MismatchedInputException`/`JsonMappingException`, verify via oracle contract rather than buggy output.
+- Non-string scalar array elements (numbers, booleans) should go through `_elementDeserializer`/coercion rules (e.g., number-to-string coercion) producing expected string representations, per `DeserializationFeature`/coercion config.
+- Custom element deserializer (via `createContextual`) must be exercised: verify contextual configuration changes behavior, e.g., custom deserializer substituting values or using `_deserializeCustom` path when `_elementDeserializer` is non-default.
+- Polymorphic path: `deserializeWithType` called with a `TypeDeserializer` should delegate correctly and produce same array result as standard `deserialize`.
+- Nested/deeply nested arrays or wrong token types (e.g., object `{}` as array element) should propagate expected exceptions rather than silently corrupting data.
+- Boundary sizes: verify large arrays (e.g. >12 elements, to cross internal buffer-growth threshold) are deserialized completely and correctly, checking array growth logic.

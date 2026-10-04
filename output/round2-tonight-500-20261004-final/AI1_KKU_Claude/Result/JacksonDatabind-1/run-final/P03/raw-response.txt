@@ -1,0 +1,163 @@
+```java
+package com.fasterxml.jackson.databind.ser;
+
+import static org.junit.Assert.*;
+
+import java.io.StringWriter;
+import java.util.Iterator;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdScalarSerializer;
+
+public class BeanPropertyWriterTest {
+
+    public static class Simple {
+        public String name = "foo";
+        public int age = 42;
+    }
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    private BeanPropertyWriter[] getWriters(Class<?> cls) throws Exception {
+        JsonSerializer<Object> ser = mapper.getSerializerProvider()
+                .findValueSerializer(cls, null);
+        if (!(ser instanceof BeanSerializerBase)) {
+            throw new IllegalStateException("Not a BeanSerializerBase: " + ser);
+        }
+        Iterator<com.fasterxml.jackson.databind.ser.PropertyWriter> it =
+                ((BeanSerializerBase) ser).properties();
+        java.util.List<BeanPropertyWriter> list = new java.util.ArrayList<BeanPropertyWriter>();
+        while (it.hasNext()) {
+            com.fasterxml.jackson.databind.ser.PropertyWriter pw = it.next();
+            list.add((BeanPropertyWriter) pw);
+        }
+        return list.toArray(new BeanPropertyWriter[0]);
+    }
+
+    private BeanPropertyWriter findWriter(Class<?> cls, String name) throws Exception {
+        for (BeanPropertyWriter w : getWriters(cls)) {
+            if (w.getName().equals(name)) {
+                return w;
+            }
+        }
+        throw new IllegalStateException("No writer named " + name);
+    }
+
+    @Test
+    public void testGetNameAndType() throws Exception {
+        BeanPropertyWriter nameWriter = findWriter(Simple.class, "name");
+        assertEquals("name", nameWriter.getName());
+        assertEquals(String.class, nameWriter.getPropertyType());
+
+        BeanPropertyWriter ageWriter = findWriter(Simple.class, "age");
+        assertEquals("age", ageWriter.getName());
+        assertEquals(int.class, ageWriter.getPropertyType());
+    }
+
+    @Test
+    public void testGetValueViaAccessor() throws Exception {
+        Simple bean = new Simple();
+        bean.name = "hello";
+        BeanPropertyWriter nameWriter = findWriter(Simple.class, "name");
+        Object val = nameWriter.get(bean);
+        assertEquals("hello", val);
+    }
+
+    @Test
+    public void testRenameProducesNewInstanceWithTransformedName() throws Exception {
+        BeanPropertyWriter orig = findWriter(Simple.class, "name");
+        com.fasterxml.jackson.databind.util.NameTransformer transformer =
+                new com.fasterxml.jackson.databind.util.NameTransformer() {
+                    @Override
+                    public String transform(String name) {
+                        return "prefix_" + name;
+                    }
+                    @Override
+                    public String reverse(String transformed) {
+                        return transformed;
+                    }
+                };
+        BeanPropertyWriter renamed = orig.rename(transformer);
+        assertNotSame(orig, renamed);
+        assertEquals("prefix_name", renamed.getName());
+        assertEquals("name", orig.getName());
+    }
+
+    @Test
+    public void testRenameNoOpReturnsSameInstance() throws Exception {
+        BeanPropertyWriter orig = findWriter(Simple.class, "name");
+        com.fasterxml.jackson.databind.util.NameTransformer identity =
+                com.fasterxml.jackson.databind.util.NameTransformer.NOP;
+        BeanPropertyWriter result = orig.rename(identity);
+        assertSame(orig, result);
+    }
+
+    @Test
+    public void testAssignSerializerUpdatesHasSerializer() throws Exception {
+        BeanPropertyWriter writer = findWriter(Simple.class, "name");
+        writer.assignSerializer(null);
+        assertFalse(writer.hasSerializer());
+
+        JsonSerializer<Object> ser = new StdScalarSerializer<Object>(Object.class, false) {
+            @Override
+            public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) {
+            }
+        };
+        writer.assignSerializer(ser);
+        assertTrue(writer.hasSerializer());
+        assertSame(ser, writer.getSerializer());
+    }
+
+    @Test
+    public void testInternalSettingsLifecycle() throws Exception {
+        BeanPropertyWriter writer = findWriter(Simple.class, "name");
+        assertNull(writer.getInternalSetting("key"));
+
+        Object prev = writer.setInternalSetting("key", "value1");
+        assertNull(prev);
+        assertEquals("value1", writer.getInternalSetting("key"));
+
+        Object old = writer.setInternalSetting("key", "value2");
+        assertEquals("value1", old);
+        assertEquals("value2", writer.getInternalSetting("key"));
+
+        Object removed = writer.removeInternalSetting("key");
+        assertEquals("value2", removed);
+        assertNull(writer.getInternalSetting("key"));
+    }
+
+    @Test
+    public void testSerializeAsFieldWritesValue() throws Exception {
+        ObjectMapper m = new ObjectMapper();
+        StringWriter sw = new StringWriter();
+        JsonGenerator gen = m.getFactory().createGenerator(sw);
+        SerializerProvider provider = m.getSerializerProvider();
+
+        Simple bean = new Simple();
+        bean.name = "bar";
+
+        BeanPropertyWriter writer = findWriter(Simple.class, "name");
+
+        gen.writeStartObject();
+        writer.serializeAsField(bean, gen, provider);
+        gen.writeEndObject();
+        gen.close();
+
+        String json = sw.toString();
+        assertTrue(json.contains("\"name\""));
+        assertTrue(json.contains("bar"));
+    }
+
+    @Test
+    public void testGetSerializedNameMatchesName() throws Exception {
+        BeanPropertyWriter writer = findWriter(Simple.class, "age");
+        assertEquals("age", writer.getSerializedName().getValue());
+        assertEquals(writer.getName(), writer.getSerializedName().getValue());
+    }
+}
+```

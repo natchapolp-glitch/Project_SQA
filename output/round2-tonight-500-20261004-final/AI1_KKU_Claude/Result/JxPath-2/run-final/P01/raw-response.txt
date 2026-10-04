@@ -1,0 +1,10 @@
+Based on the API contract analysis, here are the key testable behaviors:
+
+1. **Caching behavior**: `isContextDependent()` should cache result after first call—verify `computeContextDependent()` is only invoked once across multiple `isContextDependent()` calls (use a subclass that counts invocations).
+2. **Correctness of first computation**: `isContextDependent()` must return exactly the value produced by `computeContextDependent()` on first call, for both `true` and `false` cases.
+3. **Consistency across repeated calls**: Multiple calls to `isContextDependent()` must return the same cached value even if a subclass's `computeContextDependent()` would return a different value on subsequent invocation (proves caching, not recomputation).
+4. **Independent instances**: Two different `Expression` instances must cache independently—one instance's cached result must not affect another instance's result.
+5. **Lazy evaluation**: `computeContextDependent()` must not be called until `isContextDependent()` is invoked (verify zero invocations before first call).
+6. **Static constants**: `ZERO`, `ONE`, `NOT_A_NUMBER` should hold expected Double values (0.0, 1.0, Double.NaN) — verify via reflection since they're protected/static.
+7. **Boundary with exceptions**: If `computeContextDependent()` throws, caching state (`contextDependencyKnown`) should arguably remain unset, so a retry could recompute—test this edge case if accessible via subclass.
+8. **Abstract method delegation**: `compute`/`computeValue`/`iterate`/`iteratePointers` should properly delegate to a minimal stub subclass without interference from the cached boolean field.

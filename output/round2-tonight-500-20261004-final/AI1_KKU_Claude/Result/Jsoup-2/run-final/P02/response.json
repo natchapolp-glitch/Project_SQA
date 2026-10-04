@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:06:28.481580+00:00",
+  "ended_at_utc": "2026-10-04T06:06:43.241154+00:00",
+  "raw_body_sha256": "c86315561896380b7f53ccde60941426deba5a25a11074454eea8ea1bd3f5905",
+  "body": {
+    "id": "gen-1791093990-Ke0j5HAe6YmMgHD9YZrv",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jsoup.parser;\n\nimport org.jsoup.nodes.Comment;\nimport org.jsoup.nodes.Document;\nimport org.jsoup.nodes.Element;\nimport org.jsoup.nodes.Node;\nimport org.jsoup.nodes.TextNode;\nimport org.jsoup.nodes.XmlDeclaration;\nimport org.junit.Test;\n\nimport java.util.List;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\npublic class ParserTest {\n\n    @Test\n    public void parsesBasicHtmlStructure() {\n        String html = \"<html><head><title>Test</title></head><body><p>One</p></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n\n        assertEquals(\"Test\", doc.title());\n        Element body = doc.body();\n        assertNotNull(body);\n        Elements_assertFirstText(body, \"One\");\n    }\n\n    @Test\n    public void autoClosesUnclosedParagraphTags() {\n        String html = \"<body><p>1<p>2</body>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element body = doc.body();\n        List<Element> paragraphs = body.children();\n\n        int pCount = 0;\n        for (Element el : paragraphs) {\n            if (el.tagName().equals(\"p\"))\n                pCount++;\n        }\n        assertEquals(2, pCount);\n    }\n\n    @Test\n    public void ignoresStrayEndTagWithoutThrowing() {\n        String html = \"<body><div>Hello</div></div></body>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element body = doc.body();\n        assertEquals(1, body.children().size());\n        assertEquals(\"div\", body.children().get(0).tagName());\n    }\n\n    @Test\n    public void parsesCommentAsCommentNode() {\n        String html = \"<html><body><!-- a comment --></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element body = doc.body();\n        boolean foundComment = false;\n        for (Node n : body.childNodes()) {\n            if (n instanceof Comment) {\n                foundComment = true;\n                assertTrue(((Comment) n).getData().contains(\"a comment\"));\n            }\n        }\n        assertTrue(foundComment);\n    }\n\n    @Test\n    public void parsesXmlDeclaration() {\n        String html = \"<?xml version=\\\"1.0\\\"?><html><body>Text</body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        boolean foundXmlDecl = false;\n        for (Node n : doc.childNodes()) {\n            if (n instanceof XmlDeclaration) {\n                foundXmlDecl = true;\n            }\n        }\n        assertTrue(foundXmlDecl);\n    }\n\n    @Test\n    public void parsesAttributesWithDifferentQuoting() {\n        String html = \"<div id='single' class=\\\"double\\\" data-flag=unquoted></div>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        Element div = doc.select(\"div\").first();\n        assertNotNull(div);\n        assertEquals(\"single\", div.attr(\"id\"));\n        assertEquals(\"double\", div.attr(\"class\"));\n        assertEquals(\"unquoted\", div.attr(\"data-flag\"));\n    }\n\n    @Test\n    public void titleContentTreatedAsText() {\n        String html = \"<html><head><title>Hello <b>World</b></title></head><body></body></html>\";\n        Document doc = Parser.parse(html, \"http://example.com/\");\n        assertEquals(\"Hello <b>World</b>\", doc.title());\n    }\n\n    @Test\n    public void parseBodyFragmentWrapsContentInBody() {\n        String fragment = \"<p>Fragment content</p>\";\n        Document doc = Parser.parseBodyFragment(fragment, \"http://example.com/\");\n        Element body = doc.body();\n        assertNotNull(body);\n        assertEquals(1, body.children().size());\n        assertEquals(\"p\", body.children().get(0).tagName());\n        Elements_assertFirstText(body, \"Fragment content\");\n    }\n\n    @Test\n    public void parseBodyFragmentWithEmptyStringProducesEmptyBody() {\n        Document doc = Parser.parseBodyFragment(\"\", \"http://example.com/\");\n        Element body = doc.body();\n        assertNotNull(body);\n        assertEquals(0, body.children().size());\n    }\n\n    private void Elements_assertFirstText(Element parent, String expectedText) {\n        boolean found = false;\n        for (Node n : parent.childNodes()) {\n            if (containsText(n, expectedText)) {\n                found = true;\n                break;\n            }\n        }\n        assertTrue(found);\n    }\n\n    private boolean containsText(Node node, String expectedText) {\n        if (node instanceof TextNode) {\n            return ((TextNode) node).getWholeText().contains(expectedText);\n        }\n        if (node instanceof Element) {\n            for (Node child : node.childNodes()) {\n                if (containsText(child, expectedText))\n                    return true;\n            }\n        }\n        return false;\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5056,
+      "output_tokens": 1779,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.027902,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.027902,
+        "upstream_inference_prompt_cost": 0.010112,
+        "upstream_inference_completions_cost": 0.01779
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 84123,
+      "daily_remaining_tokens": 115877
+    }
+  },
+  "headers": {
+    "x-request-id": "niyk1fjqtkgm11t35eizkx4a",
+    "date": "Sun, 04 Oct 2026 06:06:43 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

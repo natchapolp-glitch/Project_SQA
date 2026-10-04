@@ -1,0 +1,8 @@
+1. Valid receiver setup: Instantiate `NullPropertyPointer` with a parent `NodePointer` (e.g., `BeanPointer` or another property pointer).
+2. Property name handling: Verify `getPropertyName()` and `setPropertyName()` correctly manage the target property name string.
+3. Path generation (`asPath()`): Ensure the generated XPath string correctly reflects null property pointers with or without name attributes.
+4. Value operations: Check `getBaseValue()`, `getImmediateNode()`, and `getValuePointer()` return expected null or container representations.
+5. Mutability boundaries: Test `setValue(Object)` and `createPath(...)` behaviors when creating underlying beans or properties from a null state.
+6. Collection boundaries: Verify `isCollection()`, `getLength()`, and `getPropertyCount()` return appropriate default values (e.g., 0 or false) for non-existent properties.
+7. Actual/Leaf status: Test `isActual()`, `isActualProperty()`, and `isLeaf()` adhere to contract (typically non-actual and leaf or container depending on context).
+8. Child creation: Verify `createChild(...)` correctly instantiates and returns new pointers for specified indices and qualified names.

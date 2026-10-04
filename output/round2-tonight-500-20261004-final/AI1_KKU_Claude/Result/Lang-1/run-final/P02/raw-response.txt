@@ -1,0 +1,209 @@
+```java
+package org.apache.commons.lang3.math;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import org.junit.Test;
+
+public class NumberUtilsTest {
+
+    @Test
+    public void testToIntLongFloatDoubleDefaults() {
+        assertEquals(0, NumberUtils.toInt(null));
+        assertEquals(0, NumberUtils.toInt(""));
+        assertEquals(1, NumberUtils.toInt("1"));
+        assertEquals(5, NumberUtils.toInt("abc", 5));
+        assertEquals(1L, NumberUtils.toLong("1"));
+        assertEquals(0L, NumberUtils.toLong(null));
+        assertEquals(2L, NumberUtils.toLong("xyz", 2L));
+        assertEquals(1.5f, NumberUtils.toFloat("1.5"), 0.0f);
+        assertEquals(0.0f, NumberUtils.toFloat(null), 0.0f);
+        assertEquals(1.1f, NumberUtils.toFloat("", 1.1f), 0.0f);
+        assertEquals(1.5d, NumberUtils.toDouble("1.5"), 0.0d);
+        assertEquals(0.0d, NumberUtils.toDouble(null), 0.0d);
+        assertEquals(1.1d, NumberUtils.toDouble("", 1.1d), 0.0d);
+        assertEquals((byte) 0, NumberUtils.toByte(null));
+        assertEquals((byte) 1, NumberUtils.toByte("1"));
+        assertEquals((byte) 9, NumberUtils.toByte("bad", (byte) 9));
+        assertEquals((short) 0, NumberUtils.toShort(null));
+        assertEquals((short) 1, NumberUtils.toShort("1"));
+        assertEquals((short) 9, NumberUtils.toShort("bad", (short) 9));
+    }
+
+    @Test
+    public void testCreateNumberNullAndEmpty() {
+        assertNull(NumberUtils.createNumber(null));
+        try {
+            NumberUtils.createNumber("");
+            fail("Expected NumberFormatException for empty string");
+        } catch (final NumberFormatException expected) {
+            // expected per contract
+        }
+    }
+
+    @Test
+    public void testCreateNumberHexAndTypeQualifiers() {
+        final Number hex = NumberUtils.createNumber("0xABCD");
+        assertEquals(0xABCD, hex.intValue());
+        assertTrue(hex instanceof Integer);
+
+        final Number hexLong = NumberUtils.createNumber("0xABCDL");
+        assertEquals(0xABCDL, hexLong.longValue());
+        assertTrue(hexLong instanceof Long);
+
+        final Number negHex = NumberUtils.createNumber("-0x1A");
+        assertEquals(-0x1A, negHex.intValue());
+
+        final Number floatVal = NumberUtils.createNumber("1.5F");
+        assertTrue(floatVal instanceof Float);
+        assertEquals(1.5f, floatVal.floatValue(), 0.0f);
+
+        final Number doubleVal = NumberUtils.createNumber("1.5D");
+        assertTrue(doubleVal instanceof Double);
+        assertEquals(1.5d, doubleVal.doubleValue(), 0.0d);
+
+        final Number longVal = NumberUtils.createNumber("123L");
+        assertTrue(longVal instanceof Long);
+        assertEquals(123L, longVal.longValue());
+    }
+
+    @Test
+    public void testCreateNumberOverflowToBigInteger() {
+        final String bigValue = "123456789012345678901234567890";
+        final Number number = NumberUtils.createNumber(bigValue);
+        assertTrue(number instanceof BigInteger);
+        assertEquals(new BigInteger(bigValue), number);
+    }
+
+    @Test
+    public void testCreateNumberMalformedStringsThrow() {
+        final String[] malformed = { "1.1.1", "--1.1", "--", "1.1L", "L", "." };
+        for (final String s : malformed) {
+            try {
+                NumberUtils.createNumber(s);
+                fail("Expected NumberFormatException for input: " + s);
+            } catch (final NumberFormatException expected) {
+                // expected
+            }
+        }
+    }
+
+    @Test
+    public void testCreateIntegerLongFloatDoubleNullHandling() {
+        assertNull(NumberUtils.createInteger(null));
+        assertNull(NumberUtils.createLong(null));
+        assertNull(NumberUtils.createFloat(null));
+        assertNull(NumberUtils.createDouble(null));
+        assertNull(NumberUtils.createBigInteger(null));
+        assertNull(NumberUtils.createBigDecimal(null));
+
+        assertEquals(Integer.valueOf(12), NumberUtils.createInteger("12"));
+        assertEquals(Long.valueOf(12L), NumberUtils.createLong("12"));
+        assertEquals(Float.valueOf(1.2f), NumberUtils.createFloat("1.2"));
+        assertEquals(Double.valueOf(1.2d), NumberUtils.createDouble("1.2"));
+        assertEquals(BigInteger.valueOf(12), NumberUtils.createBigInteger("12"));
+        assertEquals(new BigDecimal("1.2"), NumberUtils.createBigDecimal("1.2"));
+
+        try {
+            NumberUtils.createInteger("abc");
+            fail("Expected NumberFormatException");
+        } catch (final NumberFormatException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testIsDigitsAndIsNumber() {
+        assertFalse(NumberUtils.isDigits(null));
+        assertFalse(NumberUtils.isDigits(""));
+        assertTrue(NumberUtils.isDigits("12345"));
+        assertFalse(NumberUtils.isDigits("12.345"));
+        assertFalse(NumberUtils.isDigits("-12345"));
+        assertFalse(NumberUtils.isDigits("abc"));
+
+        assertFalse(NumberUtils.isNumber(null));
+        assertFalse(NumberUtils.isNumber(""));
+        assertTrue(NumberUtils.isNumber("12.3"));
+        assertTrue(NumberUtils.isNumber("-12.3"));
+        assertTrue(NumberUtils.isNumber("0x1A"));
+        assertFalse(NumberUtils.isNumber("."));
+        assertFalse(NumberUtils.isNumber("1.1.1"));
+        assertFalse(NumberUtils.isNumber("abc"));
+    }
+
+    @Test
+    public void testMinMaxArraysValidAndInvalid() {
+        assertEquals(1, NumberUtils.min(new int[] { 3, 1, 2 }));
+        assertEquals(3, NumberUtils.max(new int[] { 3, 1, 2 }));
+        assertEquals(1L, NumberUtils.min(new long[] { 3L, 1L, 2L }));
+        assertEquals(3L, NumberUtils.max(new long[] { 3L, 1L, 2L }));
+        assertEquals((short) 1, NumberUtils.min(new short[] { 3, 1, 2 }));
+        assertEquals((short) 3, NumberUtils.max(new short[] { 3, 1, 2 }));
+        assertEquals((byte) 1, NumberUtils.min(new byte[] { 3, 1, 2 }));
+        assertEquals((byte) 3, NumberUtils.max(new byte[] { 3, 1, 2 }));
+        assertEquals(1.0d, NumberUtils.min(new double[] { 3.0, 1.0, 2.0 }), 0.0d);
+        assertEquals(3.0d, NumberUtils.max(new double[] { 3.0, 1.0, 2.0 }), 0.0d);
+        assertEquals(1.0f, NumberUtils.min(new float[] { 3.0f, 1.0f, 2.0f }), 0.0f);
+        assertEquals(3.0f, NumberUtils.max(new float[] { 3.0f, 1.0f, 2.0f }), 0.0f);
+
+        // single element array
+        assertEquals(5, NumberUtils.min(new int[] { 5 }));
+        assertEquals(5, NumberUtils.max(new int[] { 5 }));
+
+        try {
+            NumberUtils.min((int[]) null);
+            fail("Expected IllegalArgumentException for null array");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            NumberUtils.max(new int[0]);
+            fail("Expected IllegalArgumentException for empty array");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testMinMaxThreeArgOverloads() {
+        assertEquals(1, NumberUtils.min(3, 1, 2));
+        assertEquals(3, NumberUtils.max(3, 1, 2));
+        assertEquals(1L, NumberUtils.min(3L, 1L, 2L));
+        assertEquals(3L, NumberUtils.max(3L, 1L, 2L));
+        assertEquals((short) 1, NumberUtils.min((short) 3, (short) 1, (short) 2));
+        assertEquals((short) 3, NumberUtils.max((short) 3, (short) 1, (short) 2));
+        assertEquals((byte) 1, NumberUtils.min((byte) 3, (byte) 1, (byte) 2));
+        assertEquals((byte) 3, NumberUtils.max((byte) 3, (byte) 1, (byte) 2));
+        assertEquals(1.0d, NumberUtils.min(3.0, 1.0, 2.0), 0.0d);
+        assertEquals(3.0d, NumberUtils.max(3.0, 1.0, 2.0), 0.0d);
+        assertEquals(1.0f, NumberUtils.min(3.0f, 1.0f, 2.0f), 0.0f);
+        assertEquals(3.0f, NumberUtils.max(3.0f, 1.0f, 2.0f), 0.0f);
+
+        // equal values
+        assertEquals(5, NumberUtils.min(5, 5, 5));
+        assertEquals(5, NumberUtils.max(5, 5, 5));
+
+        // negative/positive mixed
+        assertEquals(-10, NumberUtils.min(-10, 0, 10));
+        assertEquals(10, NumberUtils.max(-10, 0, 10));
+    }
+
+    @Test
+    public void testConstantsValues() {
+        assertEquals(Long.valueOf(0L), NumberUtils.LONG_ZERO);
+        assertEquals(Long.valueOf(1L), NumberUtils.LONG_ONE);
+        assertEquals(Long.valueOf(-1L), NumberUtils.LONG_MINUS_ONE);
+        assertEquals(Integer.valueOf(0), NumberUtils.INTEGER_ZERO);
+        assertEquals(Integer.valueOf(1), NumberUtils.INTEGER_ONE);
+        assertEquals(Integer.valueOf(-1), NumberUtils.INTEGER_MINUS_ONE);
+        assertEquals(Short.valueOf((short) 0), NumberUtils.SHORT_ZERO);
+        assertEquals(Byte.valueOf((byte) 1), NumberUtils.BYTE_ONE);
+        assertEquals(Double.valueOf(-1.0d), NumberUtils.DOUBLE

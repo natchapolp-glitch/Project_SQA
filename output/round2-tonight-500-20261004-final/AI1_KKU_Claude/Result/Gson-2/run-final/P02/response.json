@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:48:52.917347+00:00",
+  "ended_at_utc": "2026-10-04T05:49:05.903843+00:00",
+  "raw_body_sha256": "abd58840c16bf3bee9fda5387f13760d9425e714a989af56c4d62041b1c7462b",
+  "body": {
+    "id": "gen-1791092934-JqKriyVAvqT01Zy0OGhU",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.google.gson.internal.bind;\n\nimport static org.junit.Assert.*;\n\nimport com.google.gson.Gson;\nimport com.google.gson.TypeAdapter;\nimport com.google.gson.TypeAdapterFactory;\nimport com.google.gson.JsonSyntaxException;\nimport com.google.gson.reflect.TypeToken;\nimport com.google.gson.stream.JsonReader;\nimport com.google.gson.stream.JsonWriter;\nimport org.junit.Test;\n\nimport java.io.StringReader;\nimport java.io.StringWriter;\nimport java.util.BitSet;\n\npublic class TypeAdaptersTest {\n\n  private static String write(TypeAdapter<Object> adapter, Object value) throws Exception {\n    StringWriter sw = new StringWriter();\n    JsonWriter writer = new JsonWriter(sw);\n    adapter.write(writer, value);\n    writer.flush();\n    return sw.toString();\n  }\n\n  @SuppressWarnings(\"unchecked\")\n  private static <T> TypeAdapter<T> cast(TypeAdapter<?> adapter) {\n    return (TypeAdapter<T>) adapter;\n  }\n\n  @Test\n  public void bitSetWriteProducesBinaryArray() throws Exception {\n    BitSet bitSet = new BitSet();\n    bitSet.set(0);\n    bitSet.set(2);\n    TypeAdapter<BitSet> adapter = TypeAdapters.BIT_SET;\n    StringWriter sw = new StringWriter();\n    JsonWriter writer = new JsonWriter(sw);\n    adapter.write(writer, bitSet);\n    writer.flush();\n    assertEquals(\"[1,0,1]\", sw.toString());\n  }\n\n  @Test\n  public void bitSetReadParsesNumbersBooleansAndStrings() throws Exception {\n    TypeAdapter<BitSet> adapter = TypeAdapters.BIT_SET;\n    JsonReader reader = new JsonReader(new StringReader(\"[1,true,\\\"0\\\"]\"));\n    BitSet result = adapter.read(reader);\n    assertTrue(result.get(0));\n    assertTrue(result.get(1));\n    assertFalse(result.get(2));\n  }\n\n  @Test(expected = JsonSyntaxException.class)\n  public void bitSetReadInvalidStringThrows() throws Exception {\n    TypeAdapter<BitSet> adapter = TypeAdapters.BIT_SET;\n    JsonReader reader = new JsonReader(new StringReader(\"[\\\"notanumber\\\"]\"));\n    adapter.read(reader);\n  }\n\n  @Test\n  public void booleanReadSupportsStringAndNull() throws Exception {\n    TypeAdapter<Boolean> adapter = TypeAdapters.BOOLEAN;\n    JsonReader stringReader = new JsonReader(new StringReader(\"\\\"true\\\"\"));\n    assertEquals(Boolean.TRUE, adapter.read(stringReader));\n\n    JsonReader nullReader = new JsonReader(new StringReader(\"null\"));\n    assertNull(adapter.read(nullReader));\n  }\n\n  @Test\n  public void booleanAsStringWritesQuotedValue() throws Exception {\n    TypeAdapter<Boolean> adapter = TypeAdapters.BOOLEAN_AS_STRING;\n    StringWriter sw = new StringWriter();\n    JsonWriter writer = new JsonWriter(sw);\n    adapter.write(writer, Boolean.TRUE);\n    writer.flush();\n    assertEquals(\"\\\"true\\\"\", sw.toString());\n  }\n\n  @Test\n  public void stringAdapterCoercesBooleanAndHandlesNull() throws Exception {\n    TypeAdapter<String> adapter = TypeAdapters.STRING;\n\n    JsonReader boolReader = new JsonReader(new StringReader(\"true\"));\n    assertEquals(\"true\", adapter.read(boolReader));\n\n    JsonReader nullReader = new JsonReader(new StringReader(\"null\"));\n    assertNull(adapter.read(nullReader));\n\n    StringWriter sw = new StringWriter();\n    JsonWriter writer = new JsonWriter(sw);\n    adapter.write(writer, null);\n    writer.flush();\n    assertEquals(\"null\", sw.toString());\n  }\n\n  @Test(expected = UnsupportedOperationException.class)\n  public void classAdapterWriteNonNullThrows() throws Exception {\n    StringWriter sw = new StringWriter();\n    JsonWriter writer = new JsonWriter(sw);\n    TypeAdapters.CLASS.write(writer, String.class);\n  }\n\n  @Test\n  public void factoriesReturnNullForNonMatchingType() {\n    Gson gson = new Gson();\n    TypeAdapter<?> adapter = TypeAdapters.INTEGER_FACTORY.create(gson, TypeToken.get(String.class));\n    assertNull(adapter);\n\n    TypeAdapter<?> matching = TypeAdapters.INTEGER_FACTORY.create(gson, TypeToken.get(Integer.class));\n    assertNotNull(matching);\n    assertSame(TypeAdapters.INTEGER, matching);\n  }\n\n  @Test\n  public void newFactoryForMultipleTypesMatchesBaseAndSubtype() {\n    TypeAdapterFactory factory = TypeAdapters.newFactoryForMultipleTypes(\n        Number.class, Integer.class, TypeAdapters.NUMBER);\n    Gson gson = new Gson();\n\n    assertNotNull(factory.create(gson, TypeToken.get(Number.class)));\n    assertNotNull(factory.create(gson, TypeToken.get(Integer.class)));\n    assertNull(factory.create(gson, TypeToken.get(String.class)));\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 7900,
+      "output_tokens": 1991,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.03571,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.03571,
+        "upstream_inference_prompt_cost": 0.0158,
+        "upstream_inference_completions_cost": 0.01991
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 63331,
+      "daily_remaining_tokens": 136669
+    }
+  },
+  "headers": {
+    "x-request-id": "wxay0avwnw43ubb8ev5thciq",
+    "date": "Sun, 04 Oct 2026 05:49:08 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

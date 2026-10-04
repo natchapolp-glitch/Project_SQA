@@ -1,0 +1,98 @@
+package org.apache.commons.jxpath.ri.compiler;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Iterator;
+
+import org.apache.commons.jxpath.ri.EvalContext;
+import org.junit.Test;
+
+public class ExpressionTest {
+
+    private static class DummyExpression extends Expression {
+        private final boolean dependent;
+        private final Object value;
+
+        public DummyExpression(boolean dependent, Object value) {
+            this.dependent = dependent;
+            this.value = value;
+        }
+
+        @Override
+        public boolean computeContextDependent() {
+            return dependent;
+        }
+
+        @Override
+        public Object computeValue(EvalContext context) {
+            return value;
+        }
+
+        @Override
+        public Object compute(EvalContext context) {
+            return value;
+        }
+    }
+
+    @Test
+    public void testIsContextDependentTrue() {
+        Expression expr = new DummyExpression(true, "test");
+        assertTrue(expr.isContextDependent());
+        assertTrue(expr.isContextDependent());
+    }
+
+    @Test
+    public void testIsContextDependentFalse() {
+        Expression expr = new DummyExpression(false, "test");
+        assertFalse(expr.isContextDependent());
+        assertFalse(expr.isContextDependent());
+    }
+
+    @Test
+    public void testComputeValue() {
+        Expression expr = new DummyExpression(false, Integer.valueOf(42));
+        Object result = expr.computeValue(null);
+        assertEquals(Integer.valueOf(42), result);
+    }
+
+    @Test
+    public void testCompute() {
+        Expression expr = new DummyExpression(false, "hello");
+        Object result = expr.compute(null);
+        assertEquals("hello", result);
+    }
+
+    @Test
+    public void testIterate() {
+        Expression expr = new DummyExpression(false, new String[] { "a", "b" });
+        Iterator it = expr.iterate(null);
+        assertNotNull(it);
+        assertTrue(it.hasNext());
+        assertEquals("a", it.next());
+        assertTrue(it.hasNext());
+        assertEquals("b", it.next());
+        assertFalse(it.hasNext());
+    }
+
+    @Test
+    public void testValueIterator() {
+        java.util.List<String> list = new java.util.ArrayList<String>();
+        list.add("item1");
+        Iterator baseIt = list.iterator();
+        Expression.ValueIterator valueIterator = new Expression.ValueIterator(baseIt);
+        assertTrue(valueIterator.hasNext());
+        assertEquals("item1", valueIterator.next());
+        assertFalse(valueIterator.hasNext());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testValueIteratorRemove() {
+        java.util.List<String> list = new java.util.ArrayList<String>();
+        list.add("item1");
+        Expression.ValueIterator valueIterator = new Expression.ValueIterator(list.iterator());
+        valueIterator.remove();
+    }
+}

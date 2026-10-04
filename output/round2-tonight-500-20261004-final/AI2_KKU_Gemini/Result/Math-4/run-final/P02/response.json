@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:23:24.348685+00:00",
+  "ended_at_utc": "2026-10-04T09:23:29.251563+00:00",
+  "raw_body_sha256": "fd0af2045b9c7ccf91042027d0843d043578e87951e56d4f0454c300c47c9685",
+  "body": {
+    "id": "genai-01a10639-c68e-7309-9431-6c599f145a4b",
+    "object": "chat.completion",
+    "created": 1791105812,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.math3.geometry.euclidean.threed;\n\nimport org.apache.commons.math3.exception.MathIllegalArgumentException;\nimport org.junit.Test;\n\nimport java.util.List;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\n\npublic class SubLine3DTest {\n\n    @Test\n    public void testCreationAndSegments() {\n        Vector3D p1 = new Vector3D(0.0, 0.0, 0.0);\n        Vector3D p2 = new Vector3D(1.0, 0.0, 0.0);\n        SubLine subLine = new SubLine(p1, p2);\n\n        List<Segment> segments = subLine.getSegments();\n        assertEquals(1, segments.size());\n        assertEquals(p1, segments.get(0).getStart());\n        assertEquals(p2, segments.get(0).getEnd());\n    }\n\n    @Test(expected = MathIllegalArgumentException.class)\n    public void testCoincidentPointsThrowsException() {\n        Vector3D p = new Vector3D(1.0, 2.0, 3.0);\n        new SubLine(p, p);\n    }\n\n    @Test\n    public void testIntersectionValid() {\n        SubLine subLine1 = new SubLine(new Vector3D(0.0, 0.0, 0.0), new Vector3D(2.0, 0.0, 0.0));\n        SubLine subLine2 = new SubLine(new Vector3D(1.0, -1.0, 0.0), new Vector3D(1.0, 1.0, 0.0));\n\n        Vector3D intersection = subLine1.intersection(subLine2, true);\n        assertNotNull(intersection);\n        assertEquals(1.0, intersection.getX(), 1e-10);\n        assertEquals(0.0, intersection.getY(), 1e-10);\n        assertEquals(0.0, intersection.getZ(), 1e-10);\n    }\n\n    @Test\n    public void testIntersectionNoIntersection() {\n        SubLine subLine1 = new SubLine(new Vector3D(0.0, 0.0, 0.0), new Vector3D(1.0, 0.0, 0.0));\n        SubLine subLine2 = new SubLine(new Vector3D(0.0, 1.0, 0.0), new Vector3D(1.0, 1.0, 0.0));\n\n        Vector3D intersection = subLine1.intersection(subLine2, true);\n        assertNull(intersection);\n    }\n\n    @Test\n    public void testIntersectionEndpointsHandling() {\n        SubLine subLine1 = new SubLine(new Vector3D(0.0, 0.0, 0.0), new Vector3D(1.0, 0.0, 0.0));\n        SubLine subLine2 = new SubLine(new Vector3D(1.0, -1.0, 0.0), new Vector3D(1.0, 1.0, 0.0));\n\n        Vector3D intersectionClosed = subLine1.intersection(subLine2, true);\n        assertNotNull(intersectionClosed);\n\n        Vector3D intersectionOpen = subLine1.intersection(subLine2, false);\n        assertNull(intersectionOpen);\n    }\n\n    @Test\n    public void testSegmentConstructor() {\n        Segment segment = new Segment(new Vector3D(1.0, 2.0, 3.0), new Vector3D(4.0, 5.0, 6.0), new Line(new Vector3D(1.0, 2.0, 3.0), new Vector3D(4.0, 5.0, 6.0)));\n        SubLine subLine = new SubLine(segment);\n        List<Segment> segments = subLine.getSegments();\n        assertEquals(1, segments.size());\n    }\n}\n```\n\n```java\npackage org.apache.commons.math3.geometry.euclidean.twod;\n\nimport org.junit.Test;\n\nimport java.util.List;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\n\npublic class SubLine2DTest {\n\n    @Test\n    public void testCreationAndSegments() {\n        Vector2D p1 = new Vector2D(0.0, 0.0);\n        Vector2D p2 = new Vector2D(2.0, 0.0);\n        SubLine subLine = new SubLine(p1, p2);\n\n        List<Segment> segments = subLine.getSegments();\n        assertEquals(1, segments.size());\n        assertEquals(p1, segments.get(0).getStart());\n        assertEquals(p2, segments.get(0).getEnd());\n    }\n\n    @Test\n    public void testIntersectionValid() {\n        SubLine subLine1 = new SubLine(new Vector2D(0.0, 0.0), new Vector2D(2.0, 0.0));\n        SubLine subLine2 = new SubLine(new Vector2D(1.0, -1.0), new Vector2D(1.0, 1.0));\n\n        Vector2D intersection = subLine1.intersection(subLine2, true);\n        assertNotNull(intersection);\n        assertEquals(1.0, intersection.getX(), 1e-10);\n        assertEquals(0.0, intersection.getY(), 1e-10);\n    }\n\n    @Test\n    public void testIntersectionNoIntersection() {\n        SubLine subLine1 = new SubLine(new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0));\n        SubLine subLine2 = new SubLine(new Vector2D(0.0, 1.0), new Vector2D(1.0, 1.0));\n\n        Vector2D intersection = subLine1.intersection(subLine2, true);\n        assertNull(intersection);\n    }\n\n    @Test\n    public void testIntersectionEndpointsHandling() {\n        SubLine subLine1 = new SubLine(new Vector2D(0.0, 0.0), new Vector2D(1.0, 0.0));\n        SubLine subLine2 = new SubLine(new Vector2D(1.0, -1.0), new Vector2D(1.0, 1.0));\n\n        Vector2D intersectionClosed = subLine1.intersection(subLine2, true);\n        assertNotNull(intersectionClosed);\n\n        Vector2D intersectionOpen = subLine1.intersection(subLine2, false);\n        assertNull(intersectionOpen);\n    }\n\n    @Test\n    public void testSegmentConstructor() {\n        Segment segment = new Segment(new Vector2D(0.0, 0.0), new Vector2D(1.0, 1.0), new Line(new Vector2D(0.0, 0.0), new Vector2D(1.0, 1.0)));\n        SubLine subLine = new SubLine(segment);\n        List<Segment> segments = subLine.getSegments();\n        assertEquals(1, segments.size());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4664,
+      "completion_tokens": 1742,
+      "total_tokens": 6406
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 130852,
+      "daily_remaining_tokens": 219148
+    }
+  },
+  "headers": {
+    "x-request-id": "mzaupgd0dzb9syqkdgqhnp43",
+    "date": "Sun, 04 Oct 2026 09:23:32 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

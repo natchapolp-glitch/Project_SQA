@@ -1,0 +1,151 @@
+```java
+package org.joda.time;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+public class PartialTest {
+
+    @Test
+    public void testWithFieldAddWrapped_wrapsWithinField() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 11);
+        Partial result = p.withFieldAddWrapped(DurationFieldType.months(), 3);
+        assertEquals(2, result.getValue(0));
+        assertEquals(11, p.getValue(0));
+    }
+
+    @Test
+    public void testWithFieldAddWrapped_doesNotAffectOtherFields() {
+        Partial p = new Partial(new DateTimeFieldType[] {
+                DateTimeFieldType.year(), DateTimeFieldType.monthOfYear(), DateTimeFieldType.dayOfMonth() },
+                new int[] { 2004, 5, 15 });
+        Partial result = p.withFieldAddWrapped(DurationFieldType.months(), 20);
+        assertEquals(2004, result.getValue(0));
+        assertEquals(15, result.getValue(2));
+    }
+
+    @Test
+    public void testWithFieldAddWrapped_zeroAmountUnchangedValues() {
+        Partial p = new Partial(DateTimeFieldType.dayOfMonth(), 10);
+        Partial result = p.withFieldAddWrapped(DurationFieldType.days(), 0);
+        assertEquals(10, result.getValue(0));
+    }
+
+    @Test
+    public void testWithFieldAddWrapped_unsupportedFieldThrows() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 5);
+        try {
+            p.withFieldAddWrapped(DurationFieldType.hours(), 1);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testWithFieldAdded_zeroAmountReturnsSameInstance() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2000);
+        Partial result = p.withFieldAdded(DurationFieldType.years(), 0);
+        assertSame(p, result);
+    }
+
+    @Test
+    public void testWithFieldAdded_overflowThrows() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 11);
+        try {
+            p.withFieldAdded(DurationFieldType.months(), 5);
+            fail("Expected IllegalArgumentException on overflow");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+    @Test
+    public void testWithFieldAdded_normalAddition() {
+        Partial p = new Partial(DateTimeFieldType.monthOfYear(), 5);
+        Partial result = p.withFieldAdded(DurationFieldType.months(), 2);
+        assertEquals(7, result.getValue(0));
+        assertNotSame(p, result);
+    }
+}
+```
+
+```java
+package org.joda.time.field;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.joda.time.DurationFieldType;
+import org.junit.Test;
+
+public class UnsupportedDurationFieldTest {
+
+    @Test
+    public void testGetInstance_cachesSameInstance() {
+        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());
+        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.centuries());
+        assertSame(f1, f2);
+    }
+
+    @Test
+    public void testIsSupportedAndIsPrecise() {
+        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.eras());
+        assertFalse(f.isSupported());
+        assertTrue(f.isPrecise());
+    }
+
+    @Test
+    public void testGetTypeAndName() {
+        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.weekyears());
+        assertEquals(DurationFieldType.weekyears(), f.getType());
+        assertEquals(DurationFieldType.weekyears().getName(), f.getName());
+    }
+
+    @Test
+    public void testArithmeticMethodsThrowUnsupported() {
+        UnsupportedDurationField f = UnsupportedDurationField.getInstance(DurationFieldType.months());
+        try {
+            f.getValue(100L);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+        try {
+            f.add(100L, 5);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+        try {
+            f.getDifference(100L, 50L);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+        try {
+            f.getMillis(5);
+            fail("Expected UnsupportedOperationException");
+        } catch (UnsupportedOperationException expected) {
+        }
+    }
+
+    @Test
+    public void testGetUnitMillisAndCompareTo() {
+        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.days());
+        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.hours());
+        assertEquals(0L, f1.getUnitMillis());
+        assertEquals(0, f1.compareTo(f2));
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        UnsupportedDurationField f1 = UnsupportedDurationField.getInstance(DurationFieldType.minutes());
+        UnsupportedDurationField f2 = UnsupportedDurationField.getInstance(DurationFieldType.minutes());
+        assertTrue(f1.equals(f2));
+        assertEquals(f1.hashCode(), f2.hashCode());
+    }
+}
+```

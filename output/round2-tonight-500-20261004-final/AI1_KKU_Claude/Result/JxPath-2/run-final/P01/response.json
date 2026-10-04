@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:11:26.985595+00:00",
+  "ended_at_utc": "2026-10-04T06:11:33.746044+00:00",
+  "raw_body_sha256": "fc69aa11416887ee3e8bc55221ff731dfcb36a67fc8d2eb27fbf794c89656fa5",
+  "body": {
+    "id": "gen-1791094288-ebjOXXJhMYGZFbrR0D4x",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Based on the API contract analysis, here are the key testable behaviors:\n\n1. **Caching behavior**: `isContextDependent()` should cache result after first call—verify `computeContextDependent()` is only invoked once across multiple `isContextDependent()` calls (use a subclass that counts invocations).\n2. **Correctness of first computation**: `isContextDependent()` must return exactly the value produced by `computeContextDependent()` on first call, for both `true` and `false` cases.\n3. **Consistency across repeated calls**: Multiple calls to `isContextDependent()` must return the same cached value even if a subclass's `computeContextDependent()` would return a different value on subsequent invocation (proves caching, not recomputation).\n4. **Independent instances**: Two different `Expression` instances must cache independently—one instance's cached result must not affect another instance's result.\n5. **Lazy evaluation**: `computeContextDependent()` must not be called until `isContextDependent()` is invoked (verify zero invocations before first call).\n6. **Static constants**: `ZERO`, `ONE`, `NOT_A_NUMBER` should hold expected Double values (0.0, 1.0, Double.NaN) — verify via reflection since they're protected/static.\n7. **Boundary with exceptions**: If `computeContextDependent()` throws, caching state (`contextDependencyKnown`) should arguably remain unset, so a retry could recompute—test this edge case if accessible via subclass.\n8. **Abstract method delegation**: `compute`/`computeValue`/`iterate`/`iteratePointers` should properly delegate to a minimal stub subclass without interference from the cached boolean field.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 558,
+      "output_tokens": 558,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.006696,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.006696,
+        "upstream_inference_prompt_cost": 0.001116,
+        "upstream_inference_completions_cost": 0.00558
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 78916,
+      "daily_remaining_tokens": 121084
+    }
+  },
+  "headers": {
+    "x-request-id": "cza8j0hcgpifs1r3fs398p59",
+    "date": "Sun, 04 Oct 2026 06:11:35 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

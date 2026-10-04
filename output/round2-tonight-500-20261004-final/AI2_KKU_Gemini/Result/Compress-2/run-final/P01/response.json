@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:40:58.620700+00:00",
+  "ended_at_utc": "2026-10-04T05:41:00.725376+00:00",
+  "raw_body_sha256": "f65f7f37f4eda120f0c4f29b3b8efe126986b24e1e43bc35633a63d4a50b4eeb",
+  "body": {
+    "id": "genai-01a1056e-1556-7c8d-a2ef-40e02d972d30",
+    "object": "chat.completion",
+    "created": 1791092462,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "1. Valid receiver setup: Instantiate `ArArchiveInputStream` wrapping a valid AR format input stream.\n2. Behavior: `getNextArEntry()` should parse and return subsequent `ArArchiveEntry` instances correctly.\n3. Behavior: `getNextEntry()` should return the generic `ArchiveEntry` matching the next AR entry.\n4. Boundary: Reading past the end of an entry or archive should return `-1` or `null` appropriately.\n5. Boundary: `matches()` method should correctly identify valid AR archive headers (e.g., \"!<arch>\\n\") up to length constraints.\n6. Behavior: `close()` must mark the stream as closed and propagate closure to the underlying input stream.\n7. Behavior: Subsequent read or entry-fetching operations after `close()` must throw an `IOException`.\n8. Boundary: `read(byte[], int, int)` must handle zero-length reads safely by returning `0`.\n9. Boundary: `read(byte[], int, int)` must validate offset and length parameters, throwing `IndexOutOfBoundsException` for invalid ranges.\n10. Behavior: Tracking of `offset` must accurately reflect bytes consumed from the underlying stream per entry.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 346,
+      "completion_tokens": 248,
+      "total_tokens": 594
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 32691,
+      "daily_remaining_tokens": 317309
+    }
+  },
+  "headers": {
+    "x-request-id": "iu1nlazghnbgvk5qt3taoji4",
+    "date": "Sun, 04 Oct 2026 05:41:02 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

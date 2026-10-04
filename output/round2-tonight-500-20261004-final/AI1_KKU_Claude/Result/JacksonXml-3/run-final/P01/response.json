@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:34:11.674345+00:00",
+  "ended_at_utc": "2026-10-04T07:34:18.077344+00:00",
+  "raw_body_sha256": "60e96e3aa5131e28a4e7ec160724db9ec0788d82bb5ae747e59a23512dfdd8b2",
+  "body": {
+    "id": "gen-1791099253-LSV8ZMp2j8N7KXpVdHTM",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- getValueAsString() / getValueAsString(default): should return current token's text for VALUE_STRING/FIELD_NAME-like tokens, null or default for null/absence, consistent with JsonParser contract.\n- nextTextValue(): should behave as nextToken()+getText() shortcut for VALUE_STRING, returning null otherwise; verify equivalence with explicit nextToken()/getText() sequence.\n- getText() on empty XML element (self-closing tag or empty text content) should return \"\" not null, per `_isEmpty` handling.\n- Mixed content / CDATA / whitespace-only text nodes: verify correct text extraction and trimming behavior.\n- Boundary: calling getText()/getValueAsString() before any nextToken() call, and after END_DOCUMENT/close().\n- Nested elements with attributes vs text-only elements, ensuring namespace/attribute values don't leak into text value.\n- Virtual wrapping (addVirtualWrapping) interaction with text/array token sequencing.\n- Numeric/boolean coercions via getValueAsString on VALUE_NUMBER_INT, VALUE_TRUE/FALSE tokens mapped from XML text.\n- Receiver setup: construct via XmlFactory.createParser(String/Reader) to get real XMLStreamReader-backed instance rather than mocking FromXmlParser directly.\n- Repeated/idempotent calls to getText()/getValueAsString() on same token should return identical results without advancing stream.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2200,
+      "output_tokens": 499,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.00939,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.00939,
+        "upstream_inference_prompt_cost": 0.0044,
+        "upstream_inference_completions_cost": 0.00499
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 119823,
+      "daily_remaining_tokens": 80177
+    }
+  },
+  "headers": {
+    "x-request-id": "pxam1a7u6jrtxjpgw7p2lab6",
+    "date": "Sun, 04 Oct 2026 07:34:20 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

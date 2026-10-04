@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:36:05.969675+00:00",
+  "ended_at_utc": "2026-10-04T05:36:12.655503+00:00",
+  "raw_body_sha256": "f7e94f99a64c8319fd5bfc276d6c3f8a382a50e0ef86a6f275c2d6e1df41d871",
+  "body": {
+    "id": "gen-1791092167-wyMWPJcMVzGectGuI8BA",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.collections;\n\nimport static org.junit.Assert.*;\n\nimport org.junit.Test;\n\npublic class ExtendedPropertiesExtraTest {\n\n    @Test\n    public void testEscapeHandlesCommaAndBackslashInLoadedValue() throws Exception {\n        String content = \"commas.escaped = Hi\\\\, what'up?\\n\";\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.load(new java.io.ByteArrayInputStream(content.getBytes(\"UTF-8\")));\n        assertEquals(\"Hi, what'up?\", ep.getString(\"commas.escaped\"));\n    }\n\n    @Test\n    public void testCombineOverwritesAndMergesProperties() {\n        ExtendedProperties ep1 = new ExtendedProperties();\n        ep1.setProperty(\"key1\", \"value1\");\n        ep1.setProperty(\"key2\", \"value2\");\n\n        ExtendedProperties ep2 = new ExtendedProperties();\n        ep2.setProperty(\"key2\", \"newvalue2\");\n        ep2.setProperty(\"key3\", \"value3\");\n\n        ep1.combine(ep2);\n\n        assertEquals(\"value1\", ep1.getString(\"key1\"));\n        assertEquals(\"newvalue2\", ep1.getString(\"key2\"));\n        assertEquals(\"value3\", ep1.getString(\"key3\"));\n    }\n\n    @Test\n    public void testConvertPropertiesFromJavaProperties() {\n        java.util.Properties props = new java.util.Properties();\n        props.setProperty(\"alpha\", \"1\");\n        props.setProperty(\"beta\", \"2\");\n\n        ExtendedProperties ep = ExtendedProperties.convertProperties(props);\n\n        assertEquals(\"1\", ep.getString(\"alpha\"));\n        assertEquals(\"2\", ep.getString(\"beta\"));\n    }\n\n    @Test\n    public void testGetKeysWithPrefixReturnsOnlyMatchingSuffixes() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.setProperty(\"db.driver\", \"mysql\");\n        ep.setProperty(\"db.url\", \"jdbc:mysql://localhost\");\n        ep.setProperty(\"other.key\", \"value\");\n\n        java.util.Iterator it = ep.getKeys(\"db\");\n        java.util.List<String> found = new java.util.ArrayList<String>();\n        while (it.hasNext()) {\n            found.add((String) it.next());\n        }\n        assertTrue(found.contains(\"db.driver\"));\n        assertTrue(found.contains(\"db.url\"));\n        assertFalse(found.contains(\"other.key\"));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 8663,
+      "output_tokens": 878,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.026106,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.026106,
+        "upstream_inference_prompt_cost": 0.017326,
+        "upstream_inference_completions_cost": 0.00878
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 47259,
+      "daily_remaining_tokens": 152741
+    }
+  },
+  "headers": {
+    "x-request-id": "sjanfpp5s8cc27cge48gila7",
+    "date": "Sun, 04 Oct 2026 05:36:14 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

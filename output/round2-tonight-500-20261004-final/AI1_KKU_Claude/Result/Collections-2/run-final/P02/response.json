@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:35:25.855974+00:00",
+  "ended_at_utc": "2026-10-04T05:35:39.973611+00:00",
+  "raw_body_sha256": "dcca5a55692c7500ed88c249f521c2e87d9ca3014c2e0ea2feb4451e7d3e4156",
+  "body": {
+    "id": "gen-1791092126-GH86VYaRcu6aVe6HjwjG",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.collections;\n\nimport static org.junit.Assert.*;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.IOException;\nimport java.io.UnsupportedEncodingException;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Vector;\n\nimport org.junit.Test;\n\npublic class ExtendedPropertiesTest {\n\n    @Test\n    public void testAddPropertyAccumulatesMultipleValues() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.addProperty(\"key\", \"value1\");\n        ep.addProperty(\"key\", \"value2\");\n        Object val = ep.getProperty(\"key\");\n        assertTrue(val instanceof Vector);\n        Vector v = (Vector) val;\n        assertEquals(2, v.size());\n        assertEquals(\"value1\", v.get(0));\n        assertEquals(\"value2\", v.get(1));\n    }\n\n    @Test\n    public void testSetPropertyReplacesExistingValue() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.addProperty(\"key\", \"value1\");\n        ep.addProperty(\"key\", \"value2\");\n        ep.setProperty(\"key\", \"newvalue\");\n        Object val = ep.getProperty(\"key\");\n        assertEquals(\"newvalue\", val);\n    }\n\n    @Test\n    public void testGetPropertyMissingKeyReturnsNull() {\n        ExtendedProperties ep = new ExtendedProperties();\n        assertNull(ep.getProperty(\"missing\"));\n    }\n\n    @Test\n    public void testGetStringArrayAndVectorFromCommaSeparatedValue() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.addProperty(\"list\", \"a,b,c\");\n        String[] arr = ep.getStringArray(\"list\");\n        assertEquals(3, arr.length);\n        assertEquals(\"a\", arr[0]);\n        assertEquals(\"b\", arr[1]);\n        assertEquals(\"c\", arr[2]);\n\n        Vector vec = ep.getVector(\"list\");\n        assertEquals(3, vec.size());\n        assertEquals(\"a\", vec.get(0));\n    }\n\n    @Test\n    public void testGetBooleanParsesVariants() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.setProperty(\"flagTrue\", \"true\");\n        ep.setProperty(\"flagYes\", \"yes\");\n        ep.setProperty(\"flagOn\", \"on\");\n        ep.setProperty(\"flagFalse\", \"false\");\n\n        assertTrue(ep.getBoolean(\"flagTrue\"));\n        assertTrue(ep.getBoolean(\"flagYes\"));\n        assertTrue(ep.getBoolean(\"flagOn\"));\n        assertFalse(ep.getBoolean(\"flagFalse\"));\n\n        assertTrue(ep.getBoolean(\"missing\", true));\n        assertFalse(ep.getBoolean(\"missing\", false));\n    }\n\n    @Test\n    public void testGetIntValidAndDefault() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.setProperty(\"num\", \"42\");\n        assertEquals(42, ep.getInt(\"num\"));\n        assertEquals(99, ep.getInt(\"missing\", 99));\n    }\n\n    @Test(expected = NoSuchElementException2.class)\n    public void placeholderNeverUsed() {\n        // placeholder to keep class structure consistent, not executed\n        throw new NoSuchElementException2();\n    }\n\n    static class NoSuchElementException2 extends RuntimeException {\n    }\n\n    @Test\n    public void testClearPropertyRemovesKey() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.setProperty(\"key\", \"value\");\n        assertNotNull(ep.getProperty(\"key\"));\n        ep.clearProperty(\"key\");\n        assertNull(ep.getProperty(\"key\"));\n\n        Iterator it = ep.getKeys();\n        while (it.hasNext()) {\n            assertFalse(\"key\".equals(it.next()));\n        }\n    }\n\n    @Test\n    public void testSubsetReturnsScopedProperties() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.setProperty(\"db.driver\", \"mysql\");\n        ep.setProperty(\"db.url\", \"jdbc:mysql://localhost\");\n        ep.setProperty(\"other.key\", \"value\");\n\n        ExtendedProperties subset = ep.subset(\"db\");\n        assertEquals(\"mysql\", subset.getString(\"driver\"));\n        assertEquals(\"jdbc:mysql://localhost\", subset.getString(\"url\"));\n        assertNull(subset.getString(\"other.key\", null));\n    }\n\n    @Test\n    public void testInterpolateResolvesReferencedProperty() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.setProperty(\"base\", \"/home/user\");\n        ep.setProperty(\"path\", \"${base}/data\");\n        assertEquals(\"/home/user/data\", ep.getString(\"path\"));\n    }\n\n    @Test\n    public void testLoadParsesCommentsAndContinuationLines() throws IOException {\n        String content = \"# comment line\\n\"\n                + \"key1 = value1\\n\"\n                + \"\\n\"\n                + \"longkey = aaa\\\\\\n\"\n                + \"bbb\\n\";\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.load(new ByteArrayInputStream(content.getBytes(\"UTF-8\")));\n\n        assertEquals(\"value1\", ep.getString(\"key1\"));\n        assertEquals(\"aaabbb\", ep.getString(\"longkey\"));\n    }\n\n    @Test\n    public void testGetKeysIterationOrderMatchesInsertion() {\n        ExtendedProperties ep = new ExtendedProperties();\n        ep.setProperty(\"first\", \"1\");\n        ep.setProperty(\"second\", \"2\");\n        ep.setProperty(\"third\", \"3\");\n\n        Iterator it = ep.getKeys();\n        assertEquals(\"first\", it.next());\n        assertEquals(\"second\", it.next());\n        assertEquals(\"third\", it.next());\n        assertFalse(it.hasNext());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6931,
+      "output_tokens": 2092,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.034782,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.034782,
+        "upstream_inference_prompt_cost": 0.013862,
+        "upstream_inference_completions_cost": 0.02092
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 37718,
+      "daily_remaining_tokens": 162282
+    }
+  },
+  "headers": {
+    "x-request-id": "l3p2occzzvlx22jx0wcfrbro",
+    "date": "Sun, 04 Oct 2026 05:35:41 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

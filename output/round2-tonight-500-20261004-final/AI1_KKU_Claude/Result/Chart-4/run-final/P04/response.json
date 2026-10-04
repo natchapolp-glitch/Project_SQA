@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:19:34.413695+00:00",
+  "ended_at_utc": "2026-10-04T08:19:40.508808+00:00",
+  "raw_body_sha256": "658a63daf5462912ed754d0e7064adb5355da049dd307004510ad2ea1ed90459",
+  "body": {
+    "id": "gen-1791101977-o983W8juTR1gQMm6y8tq",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jfree.chart.plot;\n\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertSame;\n\nimport org.jfree.chart.axis.NumberAxis;\nimport org.jfree.chart.axis.ValueAxis;\nimport org.junit.Test;\n\npublic class XYPlotExtraTest {\n\n    @Test\n    public void testSetDomainAxisAtIndexZeroViaArray() {\n        XYPlot plot = new XYPlot();\n        ValueAxis axis0 = new NumberAxis(\"X0\");\n        ValueAxis axis1 = new NumberAxis(\"X1\");\n        plot.setDomainAxes(new ValueAxis[] { axis0, axis1 });\n        assertSame(axis0, plot.getDomainAxis(0));\n        assertSame(axis1, plot.getDomainAxis(1));\n        assertSame(axis0, plot.getDomainAxis());\n    }\n\n    @Test\n    public void testSetRangeAxisAtIndexZeroViaArray() {\n        XYPlot plot = new XYPlot();\n        ValueAxis axis0 = new NumberAxis(\"Y0\");\n        ValueAxis axis1 = new NumberAxis(\"Y1\");\n        plot.setRangeAxes(new ValueAxis[] { axis0, axis1 });\n        assertSame(axis0, plot.getRangeAxis(0));\n        assertSame(axis1, plot.getRangeAxis(1));\n        assertSame(axis0, plot.getRangeAxis());\n    }\n\n    @Test\n    public void testReplaceSecondaryRangeAxis() {\n        XYPlot plot = new XYPlot();\n        ValueAxis original = new NumberAxis(\"OriginalY\");\n        ValueAxis replacement = new NumberAxis(\"ReplacementY\");\n        plot.setRangeAxis(1, original);\n        assertSame(original, plot.getRangeAxis(1));\n        plot.setRangeAxis(1, replacement);\n        assertSame(replacement, plot.getRangeAxis(1));\n    }\n\n    @Test\n    public void testGetRangeAxisForUnsetIndexReturnsNull() {\n        XYPlot plot = new XYPlot();\n        assertNull(plot.getRangeAxis(7));\n        plot.setRangeAxis(0, new NumberAxis(\"Y\"));\n        assertNotNull(plot.getRangeAxis(0));\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 10329,
+      "output_tokens": 850,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.029158,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.029158,
+        "upstream_inference_prompt_cost": 0.020658,
+        "upstream_inference_completions_cost": 0.0085
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 169861,
+      "daily_remaining_tokens": 30139
+    }
+  },
+  "headers": {
+    "x-request-id": "ldekm31dvz2nt8yxjhh6ij5a",
+    "date": "Sun, 04 Oct 2026 08:19:43 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

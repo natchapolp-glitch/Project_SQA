@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:36:41.743330+00:00",
+  "ended_at_utc": "2026-10-04T05:36:45.321586+00:00",
+  "raw_body_sha256": "a25b795d8cfd7f7a7bf6994c5120f0e4083a682c29fed14fe93e4a170bcb8409",
+  "body": {
+    "id": "genai-01a1056a-2a68-7a8b-aa8d-7727a4edb4a9",
+    "object": "chat.completion",
+    "created": 1791092206,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.collections;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.nio.charset.StandardCharsets;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Properties;\nimport java.util.Vector;\n\nimport org.junit.Test;\n\npublic class ExtendedPropertiesTest {\n\n    @Test\n    public void testAddAndGetProperty() {\n        ExtendedProperties props = new ExtendedProperties();\n        props.addProperty(\"test.key\", \"value1\");\n        props.addProperty(\"test.key\", \"value2\");\n\n        assertEquals(\"value1,value2\", props.getProperty(\"test.key\"));\n        assertEquals(\"value1,value2\", props.getString(\"test.key\"));\n\n        List list = props.getList(\"test.key\");\n        assertNotNull(list);\n        assertEquals(2, list.size());\n        assertEquals(\"value1\", list.get(0));\n        assertEquals(\"value2\", list.get(1));\n    }\n\n    @Test\n    public void testSetPropertyOverwrites() {\n        ExtendedProperties props = new ExtendedProperties();\n        props.setProperty(\"test.key\", \"initial\");\n        props.setProperty(\"test.key\", \"replaced\");\n\n        assertEquals(\"replaced\", props.getString(\"test.key\"));\n    }\n\n    @Test\n    public void testClearProperty() {\n        ExtendedProperties props = new ExtendedProperties();\n        props.setProperty(\"test.key\", \"value\");\n        assertNotNull(props.getString(\"test.key\"));\n\n        props.clearProperty(\"test.key\");\n        assertNull(props.getString(\"test.key\"));\n        assertFalse(props.getKeys().hasNext());\n    }\n\n    @Test\n    public void testSubset() {\n        ExtendedProperties props = new ExtendedProperties();\n        props.setProperty(\"app.name\", \"TestApp\");\n        props.setProperty(\"app.version\", \"1.0\");\n        props.setProperty(\"other.key\", \"value\");\n\n        ExtendedProperties subset = props.subset(\"app\");\n        assertNotNull(subset);\n        assertEquals(\"TestApp\", subset.getString(\"name\"));\n        assertEquals(\"1.0\", subset.getString(\"version\"));\n        assertNull(subset.getString(\"other.key\"));\n    }\n\n    @Test\n    public void testCombine() {\n        ExtendedProperties props1 = new ExtendedProperties();\n        props1.setProperty(\"key1\", \"val1\");\n\n        ExtendedProperties props2 = new ExtendedProperties();\n        props2.setProperty(\"key2\", \"val2\");\n\n        props1.combine(props2);\n\n        assertEquals(\"val1\", props1.getString(\"key1\"));\n        assertEquals(\"val2\", props1.getString(\"key2\"));\n    }\n\n    @Test\n    public void testTypeGettersAndDefaults() {\n        ExtendedProperties props = new ExtendedProperties();\n        props.setProperty(\"prop.int\", \"42\");\n        props.setProperty(\"prop.bool\", \"true\");\n        props.setProperty(\"prop.double\", \"3.14\");\n\n        assertEquals(42, props.getInt(\"prop.int\"));\n        assertEquals(100, props.getInt(\"non.existent\", 100));\n\n        assertTrue(props.getBoolean(\"prop.bool\"));\n        assertFalse(props.getBoolean(\"non.existent\", false));\n\n        assertEquals(3.14, props.getDouble(\"prop.double\"), 0.001);\n        assertEquals(2.71, props.getDouble(\"non.existent\", 2.71), 0.001);\n    }\n\n    @Test\n    public void testLoadAndSaveStream() throws Exception {\n        String content = \"greeting=Hello\\ntarget=World\\n\";\n        ByteArrayInputStream bais = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));\n\n        ExtendedProperties props = new ExtendedProperties();\n        props.load(bais);\n\n        assertEquals(\"Hello\", props.getString(\"greeting\"));\n        assertEquals(\"World\", props.getString(\"target\"));\n\n        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n        props.save(baos, \"Saved properties\");\n        assertTrue(baos.size() > 0);\n    }\n\n    @Test\n    public void testConvertProperties() {\n        Properties javaProps = new Properties();\n        javaProps.setProperty(\"conversion.key\", \"conversion.value\");\n\n        ExtendedProperties props = ExtendedProperties.convertProperties(javaProps);\n        assertNotNull(props);\n        assertEquals(\"conversion.value\", props.getString(\"conversion.key\"));\n    }\n\n    @Test\n    public void testGetKeysOrder() {\n        ExtendedProperties props = new ExtendedProperties();\n        props.setProperty(\"first\", \"1\");\n        props.setProperty(\"second\", \"2\");\n\n        Iterator it = props.getKeys();\n        assertNotNull(it);\n        assertTrue(it.hasNext());\n        assertEquals(\"first\", it.next());\n        assertTrue(it.hasNext());\n        assertEquals(\"second\", it.next());\n        assertFalse(it.hasNext());\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4822,
+      "completion_tokens": 1202,
+      "total_tokens": 6024
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 24373,
+      "daily_remaining_tokens": 325627
+    }
+  },
+  "headers": {
+    "x-request-id": "y3hxofe1p1tobeqkp6kmvxv9",
+    "date": "Sun, 04 Oct 2026 05:36:46 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

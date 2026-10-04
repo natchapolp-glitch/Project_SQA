@@ -1,0 +1,600 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: Collections-3
+Java 11, JUnit 4
+Modified classes: org.apache.commons.collections.CollectionUtils
+
+BUGGY API signatures (may include private members):
+Compiled from "CollectionUtils.java"
+public class org.apache.commons.collections.CollectionUtils {
+  private static java.lang.Integer INTEGER_ONE;
+  public static final java.util.Collection EMPTY_COLLECTION;
+  public org.apache.commons.collections.CollectionUtils();
+  public static java.util.Collection union(java.util.Collection, java.util.Collection);
+  public static java.util.Collection intersection(java.util.Collection, java.util.Collection);
+  public static java.util.Collection disjunction(java.util.Collection, java.util.Collection);
+  public static java.util.Collection subtract(java.util.Collection, java.util.Collection);
+  public static boolean containsAny(java.util.Collection, java.util.Collection);
+  public static java.util.Map getCardinalityMap(java.util.Collection);
+  public static boolean isSubCollection(java.util.Collection, java.util.Collection);
+  public static boolean isProperSubCollection(java.util.Collection, java.util.Collection);
+  public static boolean isEqualCollection(java.util.Collection, java.util.Collection);
+  public static int cardinality(java.lang.Object, java.util.Collection);
+  public static java.lang.Object find(java.util.Collection, org.apache.commons.collections.Predicate);
+  public static void forAllDo(java.util.Collection, org.apache.commons.collections.Closure);
+  public static void filter(java.util.Collection, org.apache.commons.collections.Predicate);
+  public static void transform(java.util.Collection, org.apache.commons.collections.Transformer);
+  public static int countMatches(java.util.Collection, org.apache.commons.collections.Predicate);
+  public static boolean exists(java.util.Collection, org.apache.commons.collections.Predicate);
+  public static java.util.Collection select(java.util.Collection, org.apache.commons.collections.Predicate);
+  public static void select(java.util.Collection, org.apache.commons.collections.Predicate, java.util.Collection);
+  public static java.util.Collection selectRejected(java.util.Collection, org.apache.commons.collections.Predicate);
+  public static void selectRejected(java.util.Collection, org.apache.commons.collections.Predicate, java.util.Collection);
+  public static java.util.Collection collect(java.util.Collection, org.apache.commons.collections.Transformer);
+  public static java.util.Collection collect(java.util.Iterator, org.apache.commons.collections.Transformer);
+  public static java.util.Collection collect(java.util.Collection, org.apache.commons.collections.Transformer, java.util.Collection);
+  public static java.util.Collection collect(java.util.Iterator, org.apache.commons.collections.Transformer, java.util.Collection);
+  public static boolean addIgnoreNull(java.util.Collection, java.lang.Object);
+  public static void addAll(java.util.Collection, java.util.Iterator);
+  public static void addAll(java.util.Collection, java.util.Enumeration);
+  public static void addAll(java.util.Collection, java.lang.Object[]);
+  public static java.lang.Object index(java.lang.Object, int);
+  public static java.lang.Object index(java.lang.Object, java.lang.Object);
+  private static java.lang.Object index(java.util.Iterator, int);
+  public static java.lang.Object get(java.lang.Object, int);
+  public static int size(java.lang.Object);
+  public static boolean sizeIsEmpty(java.lang.Object);
+  public static boolean isEmpty(java.util.Collection);
+  public static boolean isNotEmpty(java.util.Collection);
+  public static void reverseArray(java.lang.Object[]);
+  private static final int getFreq(java.lang.Object, java.util.Map);
+  public static boolean isFull(java.util.Collection);
+  public static int maxSize(java.util.Collection);
+  public static java.util.Collection retainAll(java.util.Collection, java.util.Collection);
+  public static java.util.Collection removeAll(java.util.Collection, java.util.Collection);
+  public static java.util.Collection synchronizedCollection(java.util.Collection);
+  public static java.util.Collection unmodifiableCollection(java.util.Collection);
+  public static java.util.Collection predicatedCollection(java.util.Collection, org.apache.commons.collections.Predicate);
+  public static java.util.Collection typedCollection(java.util.Collection, java.lang.Class);
+  public static java.util.Collection transformedCollection(java.util.Collection, org.apache.commons.collections.Transformer);
+  static {};
+}
+
+
+BUGGY source excerpt: org.apache.commons.collections.CollectionUtils (truncated=True)
+```java
+/*
+ *  Copyright 2001-2006 The Apache Software Foundation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.apache.commons.collections;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.collections.collection.PredicatedCollection;
+import org.apache.commons.collections.collection.SynchronizedCollection;
+import org.apache.commons.collections.collection.TransformedCollection;
+import org.apache.commons.collections.collection.TypedCollection;
+import org.apache.commons.collections.collection.UnmodifiableBoundedCollection;
+import org.apache.commons.collections.collection.UnmodifiableCollection;
+
+/**
+ * Provides utility methods and decorators for {@link Collection} instances.
+ *
+ * @since Commons Collections 1.0
+ * @version $Revision$ $Date$
+ * 
+ * @author Rodney Waldhoff
+ * @author Paul Jack
+ * @author Stephen Colebourne
+ * @author Steve Downey
+ * @author Herve Quiroz
+ * @author Peter KoBek
+ * @author Matthew Hawthorne
+ * @author Janek Bogucki
+ * @author Phil Steitz
+ * @author Steven Melzer
+ * @author Jon Schewe
+ * @author Neil O'Toole
+ * @author Stephen Smith
+ */
+public class CollectionUtils {
+
+    /** Constant to avoid repeated object creation */
+    private static Integer INTEGER_ONE = new Integer(1);
+
+    /**
+     * An empty unmodifiable collection.
+     * The JDK provides empty Set and List implementations which could be used for
+     * this purpose. However they could be cast to Set or List which might be
+     * undesirable. This implementation only implements Collection.
+     */
+    public static final Collection EMPTY_COLLECTION = UnmodifiableCollection.decorate(new ArrayList());
+
+    /**
+     * <code>CollectionUtils</code> should not normally be instantiated.
+     */
+    public CollectionUtils() {
+    }
+
+    /**
+     * Returns a {@link Collection} containing the union
+     * of the given {@link Collection}s.
+     * <p>
+     * The cardinality of each element in the returned {@link Collection}
+     * will be equal to the maximum of the cardinality of that element
+     * in the two given {@link Collection}s.
+     *
+     * @param a  the first collection, must not be null
+     * @param b  the second collection, must not be null
+     * @return  the union of the two collections
+     * @see Collection#addAll
+     */
+    public static Collection union(final Collection a, final Collection b) {
+        ArrayList list = new ArrayList();
+        Map mapa = getCardinalityMap(a);
+        Map mapb = getCardinalityMap(b);
+        Set elts = new HashSet(a);
+        elts.addAll(b);
+        Iterator it = elts.iterator();
+        while(it.hasNext()) {
+            Object obj = it.next();
+            for(int i=0,m=Math.max(getFreq(obj,mapa),getFreq(obj,mapb));i<m;i++) {
+                list.add(obj);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Returns a {@link Collection} containing the intersection
+     * of the given {@link Collection}s.
+     * <p>
+     * The cardinality of each element in the returned {@link Collection}
+     * will be equal to the minimum of the cardinality of that element
+     * in the two given {@link Collection}s.
+     *
+     * @param a  the first collection, must not be null
+     * @param b  the second collection, must not be null
+     * @return the intersection of the two collections
+     * @see Collection#retainAll
+     * @see #containsAny
+     */
+    public static Collection intersection(final Collection a, final Collection b) {
+        ArrayList list = new ArrayList();
+        Map mapa = getCardinalityMap(a);
+        Map mapb = getCardinalityMap(b);
+        Set elts = new HashSet(a);
+        elts.addAll(b);
+        Iterator it = elts.iterator();
+        while(it.hasNext()) {
+            Object obj = it.next();
+            for(int i=0,m=Math.min(getFreq(obj,mapa),getFreq(obj,mapb));i<m;i++) {
+                list.add(obj);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Returns a {@link Collection} containing the exclusive disjunction
+     * (symmetric difference) of the given {@link Collection}s.
+     * <p>
+     * The cardinality of each element <i>e</i> in the returned {@link Collection}
+     * will be equal to
+     * <tt>max(cardinality(<i>e</i>,<i>a</i>),cardinality(<i>e</i>,<i>b</i>)) - min(cardinality(<i>e</i>,<i>a</i>),cardinality(<i>e</i>,<i>b</i>))</tt>.
+     * <p>
+     * This is equivalent to
+     * <tt>{@link #subtract subtract}({@link #union union(a,b)},{@link #intersection intersection(a,b)})</tt>
+     * or
+     * <tt>{@link #union union}({@link #subtract subtract(a,b)},{@link #subtract subtract(b,a)})</tt>.
+     *
+     * @param a  the first collection, must not be null
+     * @param b  the second collection, must not be null
+     * @return the symmetric difference of the two collections
+     */
+    public static Collection disjunction(final Collection a, final Collection b) {
+        ArrayList list = new ArrayList();
+        Map mapa = getCardinalityMap(a);
+        Map mapb = getCardinalityMap(b);
+        Set elts = new HashSet(a);
+        elts.addAll(b);
+        Iterator it = elts.iterator();
+        while(it.hasNext()) {
+            Object obj = it.next();
+            for(int i=0,m=((Math.max(getFreq(obj,mapa),getFreq(obj,mapb)))-(Math.min(getFreq(obj,mapa),getFreq(obj,mapb))));i<m;i++) {
+                list.add(obj);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Returns a new {@link Collection} containing <tt><i>a</i> - <i>b</i></tt>.
+     * The cardinality of each element <i>e</i> in the returned {@link Collection}
+     * will be the cardinality of <i>e</i> in <i>a</i> minus the cardinality
+     * of <i>e</i> in <i>b</i>, or zero, whichever is greater.
+     *
+     * @param a  the collection to subtract from, must not be null
+     * @param b  the collection to subtract, must not be null
+     * @return a new collection with the results
+     * @see Collection#removeAll
+     */
+    public static Collection subtract(final Collection a, final Collection b) {
+        ArrayList list = new ArrayList( a );
+        for (Iterator it = b.iterator(); it.hasNext();) {
+            list.remove(it.next());
+        }
+        return list;
+    }
+
+    /**
+     * Returns <code>true</code> iff at least one element is in both collections.
+     * <p>
+     * In other words, this method returns <code>true</code> iff the
+     * {@link #intersection} of <i>coll1</i> and <i>coll2</i> is not empty.
+     * 
+     * @param coll1  the first collection, must not be null
+     * @param coll2  the first collection, must not be null
+     * @return <code>true</code> iff the intersection of the collections is non-empty
+     * @since 2.1
+     * @see #intersection
+     */
+    public static boolean containsAny(final Collection coll1, final Collection coll2) {
+        if (coll1.size() < coll2.size()) {
+            for (Iterator it = coll1.iterator(); it.hasNext();) {
+                if (coll2.contains(it.next())) {
+                    return true;
+                }
+            }
+        } else {
+            for (Iterator it = coll2.iterator(); it.hasNext();) {
+                if (coll1.contains(it.next())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a {@link Map} mapping each unique element in the given
+     * {@link Collection} to an {@link Integer} representing the number
+     * of occurrences of that element in the {@link Collection}.
+     * <p>
+     * Only those elements present in the collection will appear as
+     * keys in the map.
+     * 
+     * @param coll  the collection to get the cardinality map for, must not be null
+     * @return the populated cardinality map
+     */
+    public static Map getCardinalityMap(final Collection coll) {
+        Map count = new HashMap();
+        for (Iterator it = coll.iterator(); it.hasNext();) {
+            Object obj = it.next();
+            Integer c = (Integer) (count.get(obj));
+            if (c == null) {
+                count.put(obj,INTEGER_ONE);
+            } else {
+                count.put(obj,new Integer(c.intValue() + 1));
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns <tt>true</tt> iff <i>a</i> is a sub-collection of <i>b</i>,
+     * that is, iff the cardinality of <i>e</i> in <i>a</i> is less
+     * than or equal to the cardinality of <i>e</i> in <i>b</i>,
+     * for each element <i>e</i> in <i>a</i>.
+     *
+     * @param a  the first (sub?) collection, must not be null
+     * @param b  the second (super?) collection, must not be null
+     * @return <code>true</code> iff <i>a</i> is a sub-collection of <i>b</i>
+     * @see #isProperSubCollection
+     * @see Collection#containsAll
+     */
+    public static boolean isSubCollection(final Collection a, final Collection b) {
+        Map mapa = getCardinalityMap(a);
+        Map mapb = getCardinalityMap(b);
+        Iterator it = a.iterator();
+        while (it.hasNext()) {
+            Object obj = it.next();
+            if (getFreq(obj, mapa) > getFreq(obj, mapb)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns <tt>true</tt> iff <i>a</i> is a <i>proper</i> sub-collection of <i>b</i>,
+     * that is, iff the cardinality of <i>e</i> in <i>a</i> is less
+     * than or equal to the cardinality of <i>e</i> in <i>b</i>,
+     * for each element <i>e</i> in <i>a</i>, and there is at least one
+     * element <i>f</i> such that the cardinality of <i>f</i> in <i>b</i>
+     * is strictly greater than the cardinality of <i>f</i> in <i>a</i>.
+     * <p>
+     * The implementation assumes
+     * <ul>
+     *    <li><code>a.size()</code> and <code>b.size()</code> represent the 
+     *    total cardinality of <i>a</i> and <i>b</i>, resp. </li>
+     *    <li><code>a.size() < Integer.MAXVALUE</code></li>
+     * </ul>
+     *
+     * @param a  the first (sub?) collection, must not be null
+     * @param b  the second (super?) collection, must not be null
+     * @return <code>true</code> iff <i>a</i> is a <i>proper</i> sub-collection of <i>b</i>
+     * @see #isSubCollection
+     * @see Collection#containsAll
+     */
+    public static boolean isProperSubCollection(final Collection a, final Collection b) {
+        return (a.size() < b.size()) && CollectionUtils.isSubCollection(a,b);
+    }
+
+    /**
+     * Returns <tt>true</tt> iff the given {@link Collection}s contain
+     * exactly the same elements with exactly the same cardinalities.
+     * <p>
+     * That is, iff the cardinality of <i>e</i> in <i>a</i> is
+     * equal to the cardinality of <i>e</i> in <i>b</i>,
+     * for each element <i>e</i> in <i>a</i> or <i>b</i>.
+     *
+     * @param a  the first collection, must not be null
+     * @param b  the second collection, must not be null
+     * @return <code>true</code> iff the collections contain the same elements with the same cardinalities.
+     */
+    public static boolean isEqualCollection(final Collection a, final Collection b) {
+        if(a.size() != b.size()) {
+            return false;
+        } else {
+            Map mapa = getCardinalityMap(a);
+            Map mapb = getCardinalityMap(b);
+            if(mapa.size() != mapb.size()) {
+                return false;
+            } else {
+
+```
+
+
+Original generated source:
+```java
+package org.apache.commons.collections;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
+
+import org.junit.Test;
+
+public class CollectionUtilsTest {
+
+    @Test
+    public void testUnionAndIntersection() {
+        List<String> list1 = Arrays.asList("a", "b", "c", "c");
+        List<String> list2 = Arrays.asList("b", "c", "c", "d");
+
+        Collection<String> unionResult = CollectionUtils.union(list1, list2);
+        assertEquals(6, unionResult.size());
+
+        Collection<String> intersectionResult = CollectionUtils.intersection(list1, list2);
+        assertEquals(3, intersectionResult.size());
+        assertEquals(3, CollectionUtils.cardinality("c", intersectionResult));
+    }
+
+    @Test
+    public void testDisjunctionAndSubtract() {
+        List<String> list1 = Arrays.asList("a", "b", "c", "c");
+        List<String> list2 = Arrays.asList("b", "c", "d");
+
+        Collection<String> disjunctionResult = CollectionUtils.disjunction(list1, list2);
+        assertEquals(3, disjunctionResult.size());
+
+        Collection<String> subtractResult = CollectionUtils.subtract(list1, list2);
+        assertEquals(2, subtractResult.size());
+        assertEquals(1, CollectionUtils.cardinality("c", subtractResult));
+    }
+
+    @Test
+    public void testCardinalityAndGetCardinalityMap() {
+        List<String> list = Arrays.asList("apple", "banana", "apple", "cherry", "apple");
+        assertEquals(3, CollectionUtils.cardinality("apple", list));
+        assertEquals(0, CollectionUtils.cardinality("grape", list));
+
+        Map<Object, Integer> map = CollectionUtils.getCardinalityMap(list);
+        assertEquals(Integer.valueOf(3), map.get("apple"));
+        assertEquals(Integer.valueOf(1), map.get("banana"));
+        assertNull(map.get("grape"));
+    }
+
+    @Test
+    public void testSubCollectionAndEqualCollection() {
+        List<String> sub = Arrays.asList("a", "b");
+        List<String> superColl = Arrays.asList("a", "b", "c", "d");
+        List<String> equalColl = Arrays.asList("b", "a");
+
+        assertTrue(CollectionUtils.isSubCollection(sub, superColl));
+        assertTrue(CollectionUtils.isProperSubCollection(sub, superColl));
+        assertFalse(CollectionUtils.isProperSubCollection(superColl, superColl));
+        assertTrue(CollectionUtils.isEqualCollection(sub, equalColl));
+        assertFalse(CollectionUtils.isEqualCollection(sub, superColl));
+    }
+
+    @Test
+    public void testContainsAnyAndIsEmptySize() {
+        List<String> list1 = Arrays.asList("a", "b");
+        List<String> list2 = Arrays.asList("b", "c");
+        List<String> list3 = Arrays.asList("x", "y");
+
+        assertTrue(CollectionUtils.containsAny(list1, list2));
+        assertFalse(CollectionUtils.containsAny(list1, list3));
+
+        assertFalse(CollectionUtils.isEmpty(list1));
+        assertTrue(CollectionUtils.isEmpty(CollectionUtils.EMPTY_COLLECTION));
+        assertTrue(CollectionUtils.isNotEmpty(list1));
+
+        assertEquals(2, CollectionUtils.size(list1));
+        assertEquals(0, CollectionUtils.size(null));
+        assertTrue(CollectionUtils.sizeIsEmpty(Collections.EMPTY_LIST));
+        assertTrue(CollectionUtils.sizeIsEmpty(null));
+    }
+
+    @Test
+    public void testSelectAndRejectAndCollect() {
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
+        Predicate evenPredicate = new Predicate() {
+            public boolean evaluate(Object object) {
+                return ((Integer) object).intValue() % 2 == 0;
+            }
+        };
+
+        Collection<Integer> evens = CollectionUtils.select(list, evenPredicate);
+        assertEquals(2, evens.size());
+
+        Collection<Integer> odds = CollectionUtils.selectRejected(list, evenPredicate);
+        assertEquals(3, odds.size());
+
+        Transformer toStringTransformer = new Transformer() {
+            public Object transform(Object input) {
+                return String.valueOf(input);
+            }
+        };
+
+        Collection<String> strings = CollectionUtils.collect(list, toStringTransformer);
+        assertEquals(5, strings.size());
+        assertTrue(strings.contains("3"));
+    }
+
+    @Test
+    public void testAddAllAndAddIgnoreNull() {
+        List<String> list = new ArrayList<String>();
+        assertTrue(CollectionUtils.addIgnoreNull(list, "item"));
+        assertFalse(CollectionUtils.addIgnoreNull(list, null));
+        assertEquals(1, list.size());
+
+        String[] array = {"a", "b"};
+        CollectionUtils.addAll(list, array);
+        assertEquals(3, list.size());
+
+        Vector<String> vector = new Vector<String>();
+        vector.add("c");
+        vector.add("d");
+        CollectionUtils.addAll(list, vector.elements());
+        assertEquals(5, list.size());
+
+        CollectionUtils.addAll(list, vector.iterator());
+        assertEquals(7, list.size());
+    }
+
+    @Test
+    public void testIndexAndGet() {
+        List<String> list = Arrays.asList("zero", "one", "two");
+        assertEquals("one", CollectionUtils.get(list, 1));
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("key1", "val1");
+        assertEquals("val1", CollectionUtils.get(map, "key1"));
+
+        assertEquals("one", CollectionUtils.index(list, 1));
+        assertNull(CollectionUtils.get(null, 0));
+        assertNull(CollectionUtils.get(list, 5));
+    }
+
+    @Test
+    public void testDecorators() {
+        List<String> list = new ArrayList<String>();
+        Collection<String> syncColl = CollectionUtils.synchronizedCollection(list);
+        assertNotNull(syncColl);
+
+        Collection<String> unmodColl = CollectionUtils.unmodifiableCollection(list);
+        assertNotNull(unmodColl);
+
+        Predicate notNullPred = new Predicate() {
+            public boolean evaluate(Object object) {
+                return object != null;
+            }
+        };
+        Collection<String> predColl = CollectionUtils.predicatedCollection(list, notNullPred);
+        assertNotNull(predColl);
+
+        Collection<String> typedColl = CollectionUtils.typedCollection(list, String.class);
+        assertNotNull(typedColl);
+
+        Transformer identity = new Transformer() {
+            public Object transform(Object input) {
+                return input;
+            }
+        };
+        Collection<String> transColl = CollectionUtils.transformedCollection(list, identity);
+        assertNotNull(transColl);
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+amework/projects/defects4j.build.xml
+
+init:
+     [echo] -------- commons-collections 3.3-SNAPSHOT --------
+
+prepare:
+
+compile:
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Collections-3/f/build.xml:127: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+
+compile.gen.tests:
+     [echo] classes.dir: build/classes
+     [echo] build.home: build
+   [delete] Deleting directory /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Collections-3/f/.classes_testgen
+    [mkdir] Created dir: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Collections-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: warning: 'includeantruntime' was not set, defaulting to build.sysclasspath=last; set to false for repeatable builds
+    [javac] Compiling 1 source file to /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Collections-3/f/.classes_testgen
+    [javac] /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Collections-3/f/.test_suite/org/apache/commons/collections/CollectionUtilsTest.java:145: error: incompatible types: String cannot be converted to int
+    [javac]         assertEquals("val1", CollectionUtils.get(map, "key1"));
+    [javac]                                                       ^
+    [javac] Note: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Collections-3/f/.test_suite/org/apache/commons/collections/CollectionUtilsTest.java uses or overrides a deprecated API.
+    [javac] Note: Recompile with -Xlint:deprecation for details.
+    [javac] Note: /home/team/sqa-round2/worktrees/round2-solo-pilot-20261004/Collections-3/f/.test_suite/org/apache/commons/collections/CollectionUtilsTest.java uses unchecked or unsafe operations.
+    [javac] Note: Recompile with -Xlint:unchecked for details.
+    [javac] Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+    [javac] 1 error
+
+BUILD FAILED
+/home/team/sqa-round2/defects4j/framework/projects/defects4j.build.xml:268: Compile failed; see the compiler error output for details.
+
+Total time: 1 second
+Cannot compile extracted test suite! at /home/team/sqa-round2/defects4j/framework/bin/d4j/d4j-test line 126.
+Compilation failed in require at /home/team/sqa-round2/defects4j/framework/bin/defects4j line 195.
+

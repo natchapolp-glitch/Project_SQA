@@ -1,0 +1,524 @@
+Extend a valid base suite using ONLY new test classes; do not repeat, modify, replace or redefine any base file. Return new COMPLETE Java test files in java fences with at most 4 additional @Test methods total, or exactly NO_CHANGE. Use Java 7-compatible JUnit 4 and meaningful assertions based on documented contracts. Fixed coverage counters/uncovered line numbers are hints; line numbers may differ in buggy source. Use only the supplied buggy context and APIs. No added dependencies, production/build changes, random/time/network/process/file access, assumptions or ignored tests.
+
+Case: Chart-3
+Java 11, JUnit 4
+Modified classes: org.jfree.data.time.TimeSeries
+
+BUGGY API signatures (may include private members):
+Compiled from "TimeSeries.java"
+public class org.jfree.data.time.TimeSeries extends org.jfree.data.general.Series implements java.lang.Cloneable,java.io.Serializable {
+  private static final long serialVersionUID;
+  protected static final java.lang.String DEFAULT_DOMAIN_DESCRIPTION;
+  protected static final java.lang.String DEFAULT_RANGE_DESCRIPTION;
+  private java.lang.String domain;
+  private java.lang.String range;
+  protected java.lang.Class timePeriodClass;
+  protected java.util.List data;
+  private int maximumItemCount;
+  private long maximumItemAge;
+  private double minY;
+  private double maxY;
+  public org.jfree.data.time.TimeSeries(java.lang.Comparable);
+  public org.jfree.data.time.TimeSeries(java.lang.Comparable, java.lang.String, java.lang.String);
+  public java.lang.String getDomainDescription();
+  public void setDomainDescription(java.lang.String);
+  public java.lang.String getRangeDescription();
+  public void setRangeDescription(java.lang.String);
+  public int getItemCount();
+  public java.util.List getItems();
+  public int getMaximumItemCount();
+  public void setMaximumItemCount(int);
+  public long getMaximumItemAge();
+  public void setMaximumItemAge(long);
+  public double getMinY();
+  public double getMaxY();
+  public java.lang.Class getTimePeriodClass();
+  public org.jfree.data.time.TimeSeriesDataItem getDataItem(int);
+  public org.jfree.data.time.TimeSeriesDataItem getDataItem(org.jfree.data.time.RegularTimePeriod);
+  org.jfree.data.time.TimeSeriesDataItem getRawDataItem(int);
+  org.jfree.data.time.TimeSeriesDataItem getRawDataItem(org.jfree.data.time.RegularTimePeriod);
+  public org.jfree.data.time.RegularTimePeriod getTimePeriod(int);
+  public org.jfree.data.time.RegularTimePeriod getNextTimePeriod();
+  public java.util.Collection getTimePeriods();
+  public java.util.Collection getTimePeriodsUniqueToOtherSeries(org.jfree.data.time.TimeSeries);
+  public int getIndex(org.jfree.data.time.RegularTimePeriod);
+  public java.lang.Number getValue(int);
+  public java.lang.Number getValue(org.jfree.data.time.RegularTimePeriod);
+  public void add(org.jfree.data.time.TimeSeriesDataItem);
+  public void add(org.jfree.data.time.TimeSeriesDataItem, boolean);
+  public void add(org.jfree.data.time.RegularTimePeriod, double);
+  public void add(org.jfree.data.time.RegularTimePeriod, double, boolean);
+  public void add(org.jfree.data.time.RegularTimePeriod, java.lang.Number);
+  public void add(org.jfree.data.time.RegularTimePeriod, java.lang.Number, boolean);
+  public void update(org.jfree.data.time.RegularTimePeriod, java.lang.Number);
+  public void update(int, java.lang.Number);
+  public org.jfree.data.time.TimeSeries addAndOrUpdate(org.jfree.data.time.TimeSeries);
+  public org.jfree.data.time.TimeSeriesDataItem addOrUpdate(org.jfree.data.time.RegularTimePeriod, double);
+  public org.jfree.data.time.TimeSeriesDataItem addOrUpdate(org.jfree.data.time.RegularTimePeriod, java.lang.Number);
+  public org.jfree.data.time.TimeSeriesDataItem addOrUpdate(org.jfree.data.time.TimeSeriesDataItem);
+  public void removeAgedItems(boolean);
+  public void removeAgedItems(long, boolean);
+  public void clear();
+  public void delete(org.jfree.data.time.RegularTimePeriod);
+  public void delete(int, int);
+  public void delete(int, int, boolean);
+  public java.lang.Object clone() throws java.lang.CloneNotSupportedException;
+  public org.jfree.data.time.TimeSeries createCopy(int, int) throws java.lang.CloneNotSupportedException;
+  public org.jfree.data.time.TimeSeries createCopy(org.jfree.data.time.RegularTimePeriod, org.jfree.data.time.RegularTimePeriod) throws java.lang.CloneNotSupportedException;
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  private void updateBoundsForAddedItem(org.jfree.data.time.TimeSeriesDataItem);
+  private void updateBoundsForRemovedItem(org.jfree.data.time.TimeSeriesDataItem);
+  private void findBoundsByIteration();
+  private double minIgnoreNaN(double, double);
+  private double maxIgnoreNaN(double, double);
+}
+
+
+BUGGY source excerpt: org.jfree.data.time.TimeSeries (truncated=True)
+```java
+/* ===========================================================
+ * JFreeChart : a free chart library for the Java(tm) platform
+ * ===========================================================
+ *
+ * (C) Copyright 2000-2009, by Object Refinery Limited and Contributors.
+ *
+ * Project Info:  http://www.jfree.org/jfreechart/index.html
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+ * USA.
+ *
+ * [Java is a trademark or registered trademark of Sun Microsystems, Inc.
+ * in the United States and other countries.]
+ *
+ * ---------------
+ * TimeSeries.java
+ * ---------------
+ * (C) Copyright 2001-2009, by Object Refinery Limited.
+ *
+ * Original Author:  David Gilbert (for Object Refinery Limited);
+ * Contributor(s):   Bryan Scott;
+ *                   Nick Guenther;
+ *
+ * Changes
+ * -------
+ * 11-Oct-2001 : Version 1 (DG);
+ * 14-Nov-2001 : Added listener mechanism (DG);
+ * 15-Nov-2001 : Updated argument checking and exceptions in add() method (DG);
+ * 29-Nov-2001 : Added properties to describe the domain and range (DG);
+ * 07-Dec-2001 : Renamed TimeSeries --> BasicTimeSeries (DG);
+ * 01-Mar-2002 : Updated import statements (DG);
+ * 28-Mar-2002 : Added a method add(TimePeriod, double) (DG);
+ * 27-Aug-2002 : Changed return type of delete method to void (DG);
+ * 04-Oct-2002 : Added itemCount and historyCount attributes, fixed errors
+ *               reported by Checkstyle (DG);
+ * 29-Oct-2002 : Added series change notification to addOrUpdate() method (DG);
+ * 28-Jan-2003 : Changed name back to TimeSeries (DG);
+ * 13-Mar-2003 : Moved to com.jrefinery.data.time package and implemented
+ *               Serializable (DG);
+ * 01-May-2003 : Updated equals() method (see bug report 727575) (DG);
+ * 14-Aug-2003 : Added ageHistoryCountItems method (copied existing code for
+ *               contents) made a method and added to addOrUpdate.  Made a
+ *               public method to enable ageing against a specified time
+ *               (eg now) as opposed to lastest time in series (BS);
+ * 15-Oct-2003 : Added fix for setItemCount method - see bug report 804425.
+ *               Modified exception message in add() method to be more
+ *               informative (DG);
+ * 13-Apr-2004 : Added clear() method (DG);
+ * 21-May-2004 : Added an extra addOrUpdate() method (DG);
+ * 15-Jun-2004 : Fixed NullPointerException in equals() method (DG);
+ * 29-Nov-2004 : Fixed bug 1075255 (DG);
+ * 17-Nov-2005 : Renamed historyCount --> maximumItemAge (DG);
+ * 28-Nov-2005 : Changed maximumItemAge from int to long (DG);
+ * 01-Dec-2005 : New add methods accept notify flag (DG);
+ * ------------- JFREECHART 1.0.x ---------------------------------------------
+ * 24-May-2006 : Improved error handling in createCopy() methods (DG);
+ * 01-Sep-2006 : Fixed bugs in removeAgedItems() methods - see bug report
+ *               1550045 (DG);
+ * 22-Mar-2007 : Simplified getDataItem(RegularTimePeriod) - see patch 1685500
+ *               by Nick Guenther (DG);
+ * 21-Jun-2007 : Removed JCommon dependencies (DG);
+ * 29-Jun-2007 : Changed first parameter in constructors from String to
+ *               Comparable (DG);
+ * 31-Oct-2007 : Implemented faster hashCode() (DG);
+ * 21-Nov-2007 : Fixed clone() method (bug 1832432) (DG);
+ * 10-Jan-2008 : Fixed createCopy(RegularTimePeriod, RegularTimePeriod) (bug
+ *               1864222) (DG);
+ * 13-Jan-2009 : Fixed constructors so that timePeriodClass doesn't need to
+ *               be specified in advance (DG);
+ * 26-May-2009 : Added cache for minY and maxY values (DG);
+ * 09-Jun-2009 : Ensure that TimeSeriesDataItem objects used in underlying
+ *               storage are cloned to keep series isolated from external
+ *               changes (DG);
+ * 10-Jun-2009 : Added addOrUpdate(TimeSeriesDataItem) method (DG);
+ * 31-Aug-2009 : Clear minY and maxY cache values in createCopy (DG);
+ *
+ */
+
+package org.jfree.data.time;
+
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TimeZone;
+
+import org.jfree.chart.util.ObjectUtilities;
+import org.jfree.data.general.Series;
+import org.jfree.data.event.SeriesChangeEvent;
+import org.jfree.data.general.SeriesException;
+
+/**
+ * Represents a sequence of zero or more data items in the form (period, value)
+ * where 'period' is some instance of a subclass of {@link RegularTimePeriod}.
+ * The time series will ensure that (a) all data items have the same type of
+ * period (for example, {@link Day}) and (b) that each period appears at
+ * most one time in the series.
+ */
+public class TimeSeries extends Series implements Cloneable, Serializable {
+
+    /** For serialization. */
+    private static final long serialVersionUID = -5032960206869675528L;
+
+    /** Default value for the domain description. */
+    protected static final String DEFAULT_DOMAIN_DESCRIPTION = "Time";
+
+    /** Default value for the range description. */
+    protected static final String DEFAULT_RANGE_DESCRIPTION = "Value";
+
+    /** A description of the domain. */
+    private String domain;
+
+    /** A description of the range. */
+    private String range;
+
+    /** The type of period for the data. */
+    protected Class timePeriodClass;
+
+    /** The list of data items in the series. */
+    protected List data;
+
+    /** The maximum number of items for the series. */
+    private int maximumItemCount;
+
+    /**
+     * The maximum age of items for the series, specified as a number of
+     * time periods.
+     */
+    private long maximumItemAge;
+
+    /**
+     * The minimum y-value in the series.
+     *
+     * @since 1.0.14
+     */
+    private double minY;
+
+    /**
+     * The maximum y-value in the series.
+     *
+     * @since 1.0.14
+     */
+    private double maxY;
+
+    /**
+     * Creates a new (empty) time series.  By default, a daily time series is
+     * created.  Use one of the other constructors if you require a different
+     * time period.
+     *
+     * @param name  the series name (<code>null</code> not permitted).
+     */
+    public TimeSeries(Comparable name) {
+        this(name, DEFAULT_DOMAIN_DESCRIPTION, DEFAULT_RANGE_DESCRIPTION);
+    }
+
+    /**
+     * Creates a new time series that contains no data.
+     * <P>
+     * Descriptions can be specified for the domain and range.  One situation
+     * where this is helpful is when generating a chart for the time series -
+     * axis labels can be taken from the domain and range description.
+     *
+     * @param name  the name of the series (<code>null</code> not permitted).
+     * @param domain  the domain description (<code>null</code> permitted).
+     * @param range  the range description (<code>null</code> permitted).
+     *
+     * @since 1.0.13
+     */
+    public TimeSeries(Comparable name, String domain, String range) {
+        super(name);
+        this.domain = domain;
+        this.range = range;
+        this.timePeriodClass = null;
+        this.data = new java.util.ArrayList();
+        this.maximumItemCount = Integer.MAX_VALUE;
+        this.maximumItemAge = Long.MAX_VALUE;
+        this.minY = Double.NaN;
+        this.maxY = Double.NaN;
+    }
+
+    /**
+     * Returns the domain description.
+     *
+     * @return The domain description (possibly <code>null</code>).
+     *
+     * @see #setDomainDescription(String)
+     */
+    public String getDomainDescription() {
+        return this.domain;
+    }
+
+    /**
+     * Sets the domain description and sends a <code>PropertyChangeEvent</code>
+     * (with the property name <code>Domain</code>) to all registered
+     * property change listeners.
+     *
+     * @param description  the description (<code>null</code> permitted).
+     *
+     * @see #getDomainDescription()
+     */
+    public void setDomainDescription(String description) {
+        String old = this.domain;
+        this.domain = description;
+        firePropertyChange("Domain", old, description);
+    }
+
+    /**
+     * Returns the range description.
+     *
+     * @return The range description (possibly <code>null</code>).
+     *
+     * @see #setRangeDescription(String)
+     */
+    public String getRangeDescription() {
+        return this.range;
+    }
+
+    /**
+     * Sets the range description and sends a <code>PropertyChangeEvent</code>
+     * (with the property name <code>Range</code>) to all registered listeners.
+     *
+     * @param description  the description (<code>null</code> permitted).
+     *
+     * @see #getRangeDescription()
+     */
+    public void setRangeDescription(String description) {
+        String old = this.range;
+        this.range = description;
+        firePropertyChange("Range", old, description);
+    }
+
+    /**
+     * Returns the number of items in the series.
+     *
+     * @return The item count.
+     */
+    public int getItemCount() {
+        return this.data.size();
+    }
+
+    /**
+     * Returns the list of data items for the series (the list contains
+     * {@link TimeSeriesDataItem} objects and is unmodifiable).
+     *
+     * @return The list of data items.
+     */
+    public List getItems() {
+        // FIXME: perhaps we should clone the data list
+        return Collections.unmodifiableList(this.data);
+    }
+
+    /**
+     * Returns the maximum number of items that will be retained in the series.
+     * The default value is <code>Integer.MAX_VALUE</code>.
+     *
+     * @return The maximum item count.
+     *
+     * @see #setMaximumItemCount(int)
+     */
+    public int getMaximumItemCount() {
+        return this.maximumItemCount;
+    }
+
+    /**
+     * Sets the maximum number of items that will be retained in the series.
+     * If you add a new item to the series such that the number of items will
+     * exceed the maximum item count, then the FIRST element in the series is
+     * automatically removed, ensuring that the maximum item count is not
+     * exceeded.
+     *
+     * @param maximum  the maximum (requires >= 0).
+     *
+     * @see #getMaximumItemCount()
+     */
+    public void setMaximumItemCount(int maximum) {
+        if (maximum < 0) {
+            throw new IllegalArgumentException("Negative 'maximum' argument.");
+        }
+        this.maximumItemCount = maximum;
+        int count = this.data.size();
+        if (count > maximum) {
+            delete(0, count - maximum - 1);
+        }
+    }
+
+    /**
+     * Returns the maximum item age (in time periods) for the series.
+     *
+     * @return The maximum item age.
+     *
+     * @see #setMaximumItemAge(long)
+     */
+    public long getMaximumItemAge() {
+        return this.maximumItemAge;
+    }
+
+    /**
+     * Sets the number of time units in the 'history' for the series.  This
+     * provides one mechanism for automatically dropping old data from the
+     * time series. For example, if a series contains daily data, you might set
+     * the history count to 30.  Then, when you add a new data item, all data
+     * items more than 30 days older than the latest value are automatically
+     * dropped from the series.
+     *
+     * @param periods  the number of time periods.
+     *
+     * @see #getMaximumItemAge()
+     */
+    public void setMaximumItemAge(long periods) {
+        if (periods < 0) {
+            throw new IllegalArgumentException("Negative 'periods' argument.");
+        }
+  
+```
+
+
+Unchanged base files:
+FILE org/jfree/data/time/TimeSeriesTest.java
+```java
+package org.jfree.data.time;
+
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+public class TimeSeriesTest {
+
+    @Test
+    public void addOrUpdate_updatesExistingPeriod_returnsOldItem_countUnchanged() {
+        TimeSeries series = new TimeSeries("Test");
+        Day day1 = new Day(1, 1, 2010);
+        Day day2 = new Day(2, 1, 2010);
+        series.add(day1, 10.0);
+        series.add(day2, 20.0);
+
+        TimeSeriesDataItem old = series.addOrUpdate(day1, 100.0);
+
+        assertNotNull(old);
+        assertEquals(10.0, old.getValue().doubleValue(), 0.0001);
+        assertEquals(2, series.getItemCount());
+        assertEquals(100.0, series.getValue(day1).doubleValue(), 0.0001);
+    }
+
+    @Test
+    public void addOrUpdate_newPeriod_increasesCount_returnsNull() {
+        TimeSeries series = new TimeSeries("Test");
+        Day day1 = new Day(1, 1, 2010);
+        series.add(day1, 10.0);
+
+        Day day2 = new Day(2, 1, 2010);
+        TimeSeriesDataItem old = series.addOrUpdate(day2, 20.0);
+
+        assertNull(old);
+        assertEquals(2, series.getItemCount());
+        assertEquals(20.0, series.getValue(day2).doubleValue(), 0.0001);
+    }
+
+    @Test
+    public void addOrUpdate_respectsMaximumItemCount() {
+        TimeSeries series = new TimeSeries("Test");
+        series.setMaximumItemCount(2);
+        Day day1 = new Day(1, 1, 2010);
+        Day day2 = new Day(2, 1, 2010);
+        Day day3 = new Day(3, 1, 2010);
+
+        series.addOrUpdate(day1, 10.0);
+        series.addOrUpdate(day2, 20.0);
+        series.addOrUpdate(day3, 30.0);
+
+        assertEquals(2, series.getItemCount());
+        assertNull(series.getDataItem(day1));
+        assertEquals(20.0, series.getValue(day2).doubleValue(), 0.0001);
+        assertEquals(30.0, series.getValue(day3).doubleValue(), 0.0001);
+    }
+
+    @Test
+    public void addOrUpdate_zeroMaximumItemCount_doesNotAdd() {
+        TimeSeries series = new TimeSeries("Test");
+        series.setMaximumItemCount(0);
+        Day day1 = new Day(1, 1, 2010);
+
+        series.addOrUpdate(day1, 10.0);
+
+        assertEquals(0, series.getItemCount());
+    }
+
+    @Test
+    public void minYmaxY_updatedCorrectlyAfterAddOrUpdate() {
+        TimeSeries series = new TimeSeries("Test");
+        Day day1 = new Day(1, 1, 2010);
+        Day day2 = new Day(2, 1, 2010);
+        Day day3 = new Day(3, 1, 2010);
+        series.add(day1, 5.0);
+        series.add(day2, 10.0);
+        series.add(day3, 1.0);
+
+        assertEquals(1.0, series.getMinY(), 0.0001);
+        assertEquals(10.0, series.getMaxY(), 0.0001);
+
+        series.addOrUpdate(day2, -50.0);
+        assertEquals(-50.0, series.getMinY(), 0.0001);
+
+        series.addOrUpdate(day2, 1000.0);
+        assertEquals(1000.0, series.getMaxY(), 0.0001);
+    }
+
+    @Test
+    public void addOrUpdate_itemsRemainSortedWithoutDuplicates() {
+        TimeSeries series = new TimeSeries("Test");
+        Day day1 = new Day(1, 1, 2010);
+        Day day2 = new Day(2, 1, 2010);
+        Day day3 = new Day(3, 1, 2010);
+
+        series.addOrUpdate(day2, 20.0);
+        series.addOrUpdate(day1, 10.0);
+        series.addOrUpdate(day3, 30.0);
+        series.addOrUpdate(day2, 200.0);
+
+        assertEquals(3, series.getItemCount());
+        assertEquals(day1, series.getTimePeriod(0));
+        assertEquals(day2, series.getTimePeriod(1));
+        assertEquals(day3, series.getTimePeriod(2));
+        assertEquals(200.0, series.getValue(day2).doubleValue(), 0.0001);
+    }
+}
+
+```
+
+Fixed coverage:
+{"line_covered": 129, "line_total": 382, "branch_covered": 48, "branch_total": 186, "uncovered_fixed_lines": [205, 218, 219, 220, 221, 231, 243, 244, 245, 246, 265, 277, 293, 298, 310, 326, 327, 329, 330, 331, 374, 389, 390, 408, 446, 447, 448, 451, 473, 474, 483, 484, 485, 487, 499, 500, 501, 502, 503, 504]}

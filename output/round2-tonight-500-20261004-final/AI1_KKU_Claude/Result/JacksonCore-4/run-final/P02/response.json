@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:55:54.170810+00:00",
+  "ended_at_utc": "2026-10-04T08:56:06.776976+00:00",
+  "raw_body_sha256": "74a7e2866762e07edce51f4bdb35c015aa54ca20a74b10d588a6e41e0616b58d",
+  "body": {
+    "id": "gen-1791104156-OZyCPk7NKoG3oldh02wI",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.fasterxml.jackson.core.util;\n\nimport org.junit.Test;\nimport static org.junit.Assert.*;\n\nimport java.math.BigDecimal;\n\npublic class TextBufferTest {\n\n    @Test\n    public void testResetWithEmpty() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        assertEquals(0, tb.size());\n        assertNotNull(tb.getTextBuffer());\n        assertEquals(\"\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testResetWithSharedBuffer() {\n        TextBuffer tb = new TextBuffer(null);\n        char[] src = \"hello world\".toCharArray();\n        tb.resetWithShared(src, 2, 5);\n        assertEquals(5, tb.size());\n        assertEquals(2, tb.getTextOffset());\n        assertTrue(tb.hasTextAsCharacters());\n        assertEquals(\"llo w\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testResetWithCopyIsIndependent() {\n        TextBuffer tb = new TextBuffer(null);\n        char[] src = \"abcdef\".toCharArray();\n        tb.resetWithCopy(src, 1, 4);\n        assertEquals(\"bcde\", tb.contentsAsString());\n        src[1] = 'Z';\n        assertEquals(\"bcde\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testResetWithString() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithString(\"hello\");\n        assertEquals(5, tb.size());\n        assertEquals(\"hello\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testAppendSingleCharsAcrossSegments() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        StringBuilder expected = new StringBuilder();\n        for (int i = 0; i < 5000; i++) {\n            char c = (char) ('a' + (i % 26));\n            tb.append(c);\n            expected.append(c);\n        }\n        assertEquals(expected.length(), tb.size());\n        assertEquals(expected.toString(), tb.contentsAsString());\n    }\n\n    @Test\n    public void testAppendCharArrayAndStringRanges() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        char[] data = \"0123456789\".toCharArray();\n        tb.append(data, 2, 5);\n        assertEquals(\"23456\", tb.contentsAsString());\n\n        TextBuffer tb2 = new TextBuffer(null);\n        tb2.resetWithEmpty();\n        tb2.append(\"abcdefgh\", 3, 4);\n        assertEquals(\"defg\", tb2.contentsAsString());\n    }\n\n    @Test\n    public void testExpandCurrentSegmentAndFinish() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        tb.append('x');\n        tb.append('y');\n        char[] expanded = tb.expandCurrentSegment();\n        assertTrue(expanded.length > 2);\n        assertEquals('x', expanded[0]);\n        assertEquals('y', expanded[1]);\n\n        char[] finished = tb.finishCurrentSegment();\n        assertNotNull(finished);\n    }\n\n    @Test\n    public void testContentsAsDoubleAndDecimal() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithString(\"123.45\");\n        assertEquals(123.45, tb.contentsAsDouble(), 0.0001);\n        assertEquals(new BigDecimal(\"123.45\"), tb.contentsAsDecimal());\n    }\n\n    @Test(expected = NumberFormatException.class)\n    public void testContentsAsDoubleInvalid() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithString(\"not-a-number\");\n        tb.contentsAsDouble();\n    }\n\n    @Test\n    public void testSetCurrentLengthResetsSize() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        tb.append('a');\n        tb.append('b');\n        tb.append('c');\n        tb.setCurrentLength(1);\n        assertEquals(1, tb.size());\n        assertEquals(\"a\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testEmptyAndGetCurrentSegmentResetsSize() {\n        TextBuffer tb = new TextBuffer(null);\n        tb.resetWithEmpty();\n        tb.append('a');\n        tb.append('b');\n        char[] seg = tb.emptyAndGetCurrentSegment();\n        assertNotNull(seg);\n        assertEquals(0, tb.getCurrentSegmentSize());\n    }\n\n    @Test\n    public void testZeroLengthSharedBuffer() {\n        TextBuffer tb = new TextBuffer(null);\n        char[] src = \"abc\".toCharArray();\n        tb.resetWithShared(src, 0, 0);\n        assertEquals(0, tb.size());\n        assertEquals(\"\", tb.contentsAsString());\n    }\n\n    @Test\n    public void testEnsureNotSharedAllowsAppendWithoutCorruptingSource() {\n        TextBuffer tb = new TextBuffer(null);\n        char[] src = \"hello\".toCharArray();\n        tb.resetWithShared(src, 0, 5);\n        tb.ensureNotShared();\n        tb.append('!');\n        assertEquals(\"hello!\", tb.contentsAsString());\n        assertEquals('h', src[0]);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5786,
+      "output_tokens": 1963,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.031202,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.031202,
+        "upstream_inference_prompt_cost": 0.011572,
+        "upstream_inference_completions_cost": 0.01963
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 161581,
+      "daily_remaining_tokens": 38419
+    }
+  },
+  "headers": {
+    "x-request-id": "zwveepeklv4xo79vs0s6lj8y",
+    "date": "Sun, 04 Oct 2026 08:56:09 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

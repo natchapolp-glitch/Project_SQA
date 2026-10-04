@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:11:33.948882+00:00",
+  "ended_at_utc": "2026-10-04T06:11:47.247717+00:00",
+  "raw_body_sha256": "0ac5aeff466856d8079cc8d5f83062adfbdb6a8edb6213a8f96659a04e887d77",
+  "body": {
+    "id": "gen-1791094295-W6WkYbThqHKT6oC9yKdp",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.jxpath.ri.compiler;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.Modifier;\nimport java.util.Iterator;\n\nimport org.apache.commons.jxpath.ri.EvalContext;\nimport org.junit.Test;\n\npublic class ExpressionTest {\n\n    private static class CountingExpression extends Expression {\n        int computeCount = 0;\n        boolean[] results;\n        int resultIndex = 0;\n        boolean throwOnCompute = false;\n\n        CountingExpression(boolean... results) {\n            this.results = results;\n        }\n\n        public boolean computeContextDependent() {\n            computeCount++;\n            if (throwOnCompute) {\n                throw new RuntimeException(\"boom\");\n            }\n            boolean r = results[resultIndex];\n            if (resultIndex < results.length - 1) {\n                resultIndex++;\n            }\n            return r;\n        }\n\n        public Object computeValue(EvalContext context) {\n            return \"value\";\n        }\n\n        public Object compute(EvalContext context) {\n            return \"computed\";\n        }\n    }\n\n    @Test\n    public void testIsContextDependentCachesResultTrue() {\n        CountingExpression expr = new CountingExpression(true, false);\n        boolean first = expr.isContextDependent();\n        boolean second = expr.isContextDependent();\n        assertTrue(first);\n        assertTrue(second);\n        assertEquals(1, expr.computeCount);\n    }\n\n    @Test\n    public void testIsContextDependentCachesResultFalse() {\n        CountingExpression expr = new CountingExpression(false, true);\n        boolean first = expr.isContextDependent();\n        boolean second = expr.isContextDependent();\n        boolean third = expr.isContextDependent();\n        assertFalse(first);\n        assertFalse(second);\n        assertFalse(third);\n        assertEquals(1, expr.computeCount);\n    }\n\n    @Test\n    public void testLazyEvaluationBeforeFirstCall() {\n        CountingExpression expr = new CountingExpression(true);\n        assertEquals(0, expr.computeCount);\n        expr.isContextDependent();\n        assertEquals(1, expr.computeCount);\n    }\n\n    @Test\n    public void testIndependentInstancesCacheSeparately() {\n        CountingExpression expr1 = new CountingExpression(true);\n        CountingExpression expr2 = new CountingExpression(false);\n\n        boolean r1 = expr1.isContextDependent();\n        boolean r2 = expr2.isContextDependent();\n\n        assertTrue(r1);\n        assertFalse(r2);\n        assertEquals(1, expr1.computeCount);\n        assertEquals(1, expr2.computeCount);\n    }\n\n    @Test\n    public void testComputeAndComputeValueDelegation() {\n        CountingExpression expr = new CountingExpression(true);\n        assertEquals(\"computed\", expr.compute(null));\n        assertEquals(\"value\", expr.computeValue(null));\n    }\n\n    @Test\n    public void testStaticConstantsHaveExpectedValues() throws Exception {\n        Field zeroField = Expression.class.getDeclaredField(\"ZERO\");\n        zeroField.setAccessible(true);\n        Double zero = (Double) zeroField.get(null);\n        assertEquals(0.0, zero.doubleValue(), 0.0);\n        assertTrue(Modifier.isStatic(zeroField.getModifiers()));\n\n        Field oneField = Expression.class.getDeclaredField(\"ONE\");\n        oneField.setAccessible(true);\n        Double one = (Double) oneField.get(null);\n        assertEquals(1.0, one.doubleValue(), 0.0);\n\n        Field nanField = Expression.class.getDeclaredField(\"NOT_A_NUMBER\");\n        nanField.setAccessible(true);\n        Double nan = (Double) nanField.get(null);\n        assertTrue(Double.isNaN(nan.doubleValue()));\n    }\n\n    @Test\n    public void testValueIteratorUnwrapsPointerAndRemoveThrows() {\n        java.util.List<Object> list = new java.util.ArrayList<Object>();\n        list.add(\"plain\");\n        Iterator it = list.iterator();\n        Expression.ValueIterator valueIterator = new Expression.ValueIterator(it);\n        assertTrue(valueIterator.hasNext());\n        assertEquals(\"plain\", valueIterator.next());\n        try {\n            valueIterator.remove();\n            org.junit.Assert.fail(\"Expected UnsupportedOperationException\");\n        } catch (UnsupportedOperationException e) {\n            // expected\n        }\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2953,
+      "output_tokens": 1630,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.022206,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.022206,
+        "upstream_inference_prompt_cost": 0.005906,
+        "upstream_inference_completions_cost": 0.0163
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 83499,
+      "daily_remaining_tokens": 116501
+    }
+  },
+  "headers": {
+    "x-request-id": "es87b1skzwa6am572fuh5g1c",
+    "date": "Sun, 04 Oct 2026 06:11:47 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

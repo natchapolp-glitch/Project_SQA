@@ -1,0 +1,32 @@
+Compiled from "ZipArchiveInputStream.java"
+public class org.apache.commons.compress.archivers.zip.ZipArchiveInputStream extends org.apache.commons.compress.archivers.ArchiveInputStream {
+  private static final int SHORT;
+  private static final int WORD;
+  private final org.apache.commons.compress.archivers.zip.ZipEncoding zipEncoding;
+  private final boolean useUnicodeExtraFields;
+  private final java.io.InputStream in;
+  private final java.util.zip.Inflater inf;
+  private final java.util.zip.CRC32 crc;
+  private final byte[] buf;
+  private org.apache.commons.compress.archivers.zip.ZipArchiveEntry current;
+  private boolean closed;
+  private boolean hitCentralDirectory;
+  private int readBytesOfEntry;
+  private int offsetInBuffer;
+  private int bytesReadFromStream;
+  private int lengthOfLastRead;
+  private boolean hasDataDescriptor;
+  private static final int LFH_LEN;
+  public org.apache.commons.compress.archivers.zip.ZipArchiveInputStream(java.io.InputStream);
+  public org.apache.commons.compress.archivers.zip.ZipArchiveInputStream(java.io.InputStream, java.lang.String, boolean);
+  public org.apache.commons.compress.archivers.zip.ZipArchiveEntry getNextZipEntry() throws java.io.IOException;
+  public org.apache.commons.compress.archivers.ArchiveEntry getNextEntry() throws java.io.IOException;
+  public int read(byte[], int, int) throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public long skip(long) throws java.io.IOException;
+  public static boolean matches(byte[], int);
+  private static boolean checksig(byte[], byte[]);
+  private void closeEntry() throws java.io.IOException;
+  private void fill() throws java.io.IOException;
+  private void readFully(byte[]) throws java.io.IOException;
+}

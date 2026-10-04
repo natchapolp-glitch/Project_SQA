@@ -1,0 +1,23 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Cli-4
+Java 11, JUnit 4
+Modified classes: org.apache.commons.cli.Parser
+BUGGY API signatures:
+Compiled from "Parser.java"
+public abstract class org.apache.commons.cli.Parser implements org.apache.commons.cli.CommandLineParser {
+  private org.apache.commons.cli.CommandLine cmd;
+  private org.apache.commons.cli.Options options;
+  private java.util.List requiredOptions;
+  public org.apache.commons.cli.Parser();
+  protected abstract java.lang.String[] flatten(org.apache.commons.cli.Options, java.lang.String[], boolean);
+  public org.apache.commons.cli.CommandLine parse(org.apache.commons.cli.Options, java.lang.String[]) throws org.apache.commons.cli.ParseException;
+  public org.apache.commons.cli.CommandLine parse(org.apache.commons.cli.Options, java.lang.String[], java.util.Properties) throws org.apache.commons.cli.ParseException;
+  public org.apache.commons.cli.CommandLine parse(org.apache.commons.cli.Options, java.lang.String[], boolean) throws org.apache.commons.cli.ParseException;
+  public org.apache.commons.cli.CommandLine parse(org.apache.commons.cli.Options, java.lang.String[], java.util.Properties, boolean) throws org.apache.commons.cli.ParseException;
+  private void processProperties(java.util.Properties);
+  private void checkRequiredOptions() throws org.apache.commons.cli.MissingOptionException;
+  public void processArgs(org.apache.commons.cli.Option, java.util.ListIterator) throws org.apache.commons.cli.ParseException;
+  private void processOption(java.lang.String, java.util.ListIterator) throws org.apache.commons.cli.ParseException;
+}
+

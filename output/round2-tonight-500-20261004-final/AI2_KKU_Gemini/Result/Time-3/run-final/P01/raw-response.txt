@@ -1,0 +1,6 @@
+Valid receiver setup: Instantiate `MutableDateTime` via constructors (e.g., default, epoch millis, or specific year/month/day/zone).
+Field mutation behavior: Verify that adding periods (like years or months) across Daylight Saving Time (DST) transitions correctly preserves or shifts time fields according to `DateTimeZone`.
+Rounding behavior: Test `setRounding` with various rounding fields and modes (`ROUND_FLOOR`, `ROUND_CEILING`, etc.) to ensure instant adjustment conforms to the specified mode.
+Zone retention: Verify that `setZoneRetainFields` changes the time zone while keeping local calendar fields (hour, minute, etc.) constant where possible.
+Date/Time setters: Check boundary inputs for `setDate`, `setTime`, and `setDateTime` (e.g., end of month, leap years, maximum/minimum millis).
+Property operations: Mutate instant values via property accessors (e.g., `mutableDateTime.property(DateTimeFieldType.year()).add(1)`) and verify state update.

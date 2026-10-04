@@ -1,0 +1,29 @@
+Compiled from "TarArchiveOutputStream.java"
+public class org.apache.commons.compress.archivers.tar.TarArchiveOutputStream extends org.apache.commons.compress.archivers.ArchiveOutputStream {
+  public static final int LONGFILE_ERROR;
+  public static final int LONGFILE_TRUNCATE;
+  public static final int LONGFILE_GNU;
+  private long currSize;
+  private java.lang.String currName;
+  private long currBytes;
+  private final byte[] recordBuf;
+  private int assemLen;
+  private final byte[] assemBuf;
+  protected final org.apache.commons.compress.archivers.tar.TarBuffer buffer;
+  private int longFileMode;
+  private boolean closed;
+  private final java.io.OutputStream out;
+  public org.apache.commons.compress.archivers.tar.TarArchiveOutputStream(java.io.OutputStream);
+  public org.apache.commons.compress.archivers.tar.TarArchiveOutputStream(java.io.OutputStream, int);
+  public org.apache.commons.compress.archivers.tar.TarArchiveOutputStream(java.io.OutputStream, int, int);
+  public void setLongFileMode(int);
+  public void finish() throws java.io.IOException;
+  public void close() throws java.io.IOException;
+  public int getRecordSize();
+  public void putArchiveEntry(org.apache.commons.compress.archivers.ArchiveEntry) throws java.io.IOException;
+  public void closeArchiveEntry() throws java.io.IOException;
+  public void write(byte[], int, int) throws java.io.IOException;
+  private void writeEOFRecord() throws java.io.IOException;
+  public void flush() throws java.io.IOException;
+  public org.apache.commons.compress.archivers.ArchiveEntry createArchiveEntry(java.io.File, java.lang.String) throws java.io.IOException;
+}

@@ -1,0 +1,10 @@
+1. Valid receiver setup: Instantiate `ArArchiveInputStream` wrapping a valid AR format input stream.
+2. Behavior: `getNextArEntry()` should parse and return subsequent `ArArchiveEntry` instances correctly.
+3. Behavior: `getNextEntry()` should return the generic `ArchiveEntry` matching the next AR entry.
+4. Boundary: Reading past the end of an entry or archive should return `-1` or `null` appropriately.
+5. Boundary: `matches()` method should correctly identify valid AR archive headers (e.g., "!<arch>\n") up to length constraints.
+6. Behavior: `close()` must mark the stream as closed and propagate closure to the underlying input stream.
+7. Behavior: Subsequent read or entry-fetching operations after `close()` must throw an `IOException`.
+8. Boundary: `read(byte[], int, int)` must handle zero-length reads safely by returning `0`.
+9. Boundary: `read(byte[], int, int)` must validate offset and length parameters, throwing `IndexOutOfBoundsException` for invalid ranges.
+10. Behavior: Tracking of `offset` must accurately reflect bytes consumed from the underlying stream per entry.

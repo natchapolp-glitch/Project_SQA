@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:44:29.043942+00:00",
+  "ended_at_utc": "2026-10-04T05:44:43.914908+00:00",
+  "raw_body_sha256": "14f9d2974a389e5b09d0890bb9341dbdc1af2afded9ab02528753a772add47a5",
+  "body": {
+    "id": "gen-1791092671-UilTkcHG7OlTvzgOlwDd",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.util.Arrays;\nimport java.util.HashMap;\nimport java.util.Iterator;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVRecordTest {\n\n    private Map<String, Integer> createMapping(String... names) {\n        Map<String, Integer> mapping = new HashMap<String, Integer>();\n        for (int i = 0; i < names.length; i++) {\n            mapping.put(names[i], i);\n        }\n        return mapping;\n    }\n\n    @Test\n    public void testGetByIndexAndOutOfBounds() {\n        String[] values = {\"one\", \"two\", \"three\"};\n        CSVRecord record = new CSVRecord(values, null, null, 1L);\n        assertEquals(\"one\", record.get(0));\n        assertEquals(\"three\", record.get(2));\n        try {\n            record.get(3);\n            fail(\"Expected ArrayIndexOutOfBoundsException\");\n        } catch (ArrayIndexOutOfBoundsException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testGetByNameNoMappingThrows() {\n        String[] values = {\"a\", \"b\"};\n        CSVRecord record = new CSVRecord(values, null, null, 1L);\n        try {\n            record.get(\"name\");\n            fail(\"Expected IllegalStateException\");\n        } catch (IllegalStateException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testGetByNameMappedValue() {\n        String[] values = {\"a\", \"b\"};\n        Map<String, Integer> mapping = createMapping(\"col1\", \"col2\");\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        assertEquals(\"a\", record.get(\"col1\"));\n        assertEquals(\"b\", record.get(\"col2\"));\n        assertNull(record.get(\"missing\"));\n    }\n\n    @Test\n    public void testIsMapped() {\n        String[] values = {\"a\"};\n        Map<String, Integer> mapping = createMapping(\"col1\");\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        assertTrue(record.isMapped(\"col1\"));\n        assertFalse(record.isMapped(\"col2\"));\n\n        CSVRecord noMapping = new CSVRecord(values, null, null, 1L);\n        assertFalse(noMapping.isMapped(\"col1\"));\n    }\n\n    @Test\n    public void testIsSet() {\n        String[] values = {\"a\"};\n        Map<String, Integer> mapping = createMapping(\"col1\", \"col2\");\n        CSVRecord record = new CSVRecord(values, mapping, null, 1L);\n        assertTrue(record.isSet(\"col1\"));\n        assertFalse(record.isSet(\"col2\"));\n        assertFalse(record.isSet(\"missing\"));\n    }\n\n    @Test\n    public void testIsConsistent() {\n        String[] values = {\"a\", \"b\"};\n        Map<String, Integer> consistentMapping = createMapping(\"col1\", \"col2\");\n        CSVRecord consistent = new CSVRecord(values, consistentMapping, null, 1L);\n        assertTrue(consistent.isConsistent());\n\n        Map<String, Integer> inconsistentMapping = createMapping(\"col1\", \"col2\", \"col3\");\n        CSVRecord inconsistent = new CSVRecord(values, inconsistentMapping, null, 1L);\n        assertFalse(inconsistent.isConsistent());\n\n        CSVRecord noMapping = new CSVRecord(values, null, null, 1L);\n        assertTrue(noMapping.isConsistent());\n    }\n\n    @Test\n    public void testIteratorAndValuesAndSize() {\n        String[] values = {\"x\", \"y\", \"z\"};\n        CSVRecord record = new CSVRecord(values, null, null, 1L);\n        Iterator<String> it = record.iterator();\n        assertTrue(it.hasNext());\n        assertEquals(\"x\", it.next());\n        assertEquals(\"y\", it.next());\n        assertEquals(\"z\", it.next());\n        assertFalse(it.hasNext());\n\n        assertEquals(3, record.size());\n        assertTrue(Arrays.equals(values, record.values()));\n\n        CSVRecord empty = new CSVRecord(new String[0], null, null, 1L);\n        assertFalse(empty.iterator().hasNext());\n        assertEquals(0, empty.size());\n    }\n\n    @Test\n    public void testGetCommentAndRecordNumberAndToString() {\n        String[] values = {\"a\", \"b\"};\n        CSVRecord record = new CSVRecord(values, null, \"a comment\", 42L);\n        assertEquals(\"a comment\", record.getComment());\n        assertEquals(42L, record.getRecordNumber());\n        assertEquals(Arrays.toString(values), record.toString());\n\n        CSVRecord noComment = new CSVRecord(values, null, null, 0L);\n        assertNull(noComment.getComment());\n        assertEquals(0L, noComment.getRecordNumber());\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2875,
+      "output_tokens": 1774,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02349,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02349,
+        "upstream_inference_prompt_cost": 0.00575,
+        "upstream_inference_completions_cost": 0.01774
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 53673,
+      "daily_remaining_tokens": 146327
+    }
+  },
+  "headers": {
+    "x-request-id": "xd7rlg5u4ggewdhkn9p2u8f4",
+    "date": "Sun, 04 Oct 2026 05:44:44 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

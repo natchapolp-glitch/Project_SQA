@@ -1,0 +1,371 @@
+Case: Mockito-4
+Java 11, JUnit 4
+Modified classes: org.mockito.exceptions.Reporter
+
+BUGGY API signatures (may include private members):
+Compiled from "Reporter.java"
+public class org.mockito.exceptions.Reporter {
+  public org.mockito.exceptions.Reporter();
+  public void checkedExceptionInvalid(java.lang.Throwable);
+  public void cannotStubWithNullThrowable();
+  public void unfinishedStubbing(org.mockito.invocation.Location);
+  public void incorrectUseOfApi();
+  public void missingMethodInvocation();
+  public void unfinishedVerificationException(org.mockito.invocation.Location);
+  public void notAMockPassedToVerify(java.lang.Class);
+  public void nullPassedToVerify();
+  public void notAMockPassedToWhenMethod();
+  public void nullPassedToWhenMethod();
+  public void mocksHaveToBePassedToVerifyNoMoreInteractions();
+  public void notAMockPassedToVerifyNoMoreInteractions();
+  public void nullPassedToVerifyNoMoreInteractions();
+  public void notAMockPassedWhenCreatingInOrder();
+  public void nullPassedWhenCreatingInOrder();
+  public void mocksHaveToBePassedWhenCreatingInOrder();
+  public void inOrderRequiresFamiliarMock();
+  public void invalidUseOfMatchers(int, java.util.List<org.mockito.internal.matchers.LocalizedMatcher>);
+  public void incorrectUseOfAdditionalMatchers(java.lang.String, int, java.util.Collection<org.mockito.internal.matchers.LocalizedMatcher>);
+  public void stubPassedToVerify();
+  public void reportNoSubMatchersFound(java.lang.String);
+  private java.lang.Object locationsOf(java.util.Collection<org.mockito.internal.matchers.LocalizedMatcher>);
+  public void argumentsAreDifferent(java.lang.String, java.lang.String, org.mockito.invocation.Location);
+  public void wantedButNotInvoked(org.mockito.invocation.DescribedInvocation);
+  public void wantedButNotInvoked(org.mockito.invocation.DescribedInvocation, java.util.List<? extends org.mockito.invocation.DescribedInvocation>);
+  private java.lang.String createWantedButNotInvokedMessage(org.mockito.invocation.DescribedInvocation);
+  public void wantedButNotInvokedInOrder(org.mockito.invocation.DescribedInvocation, org.mockito.invocation.DescribedInvocation);
+  public void tooManyActualInvocations(int, int, org.mockito.invocation.DescribedInvocation, org.mockito.invocation.Location);
+  private java.lang.String createTooManyInvocationsMessage(int, int, org.mockito.invocation.DescribedInvocation, org.mockito.invocation.Location);
+  public void neverWantedButInvoked(org.mockito.invocation.DescribedInvocation, org.mockito.invocation.Location);
+  public void tooManyActualInvocationsInOrder(int, int, org.mockito.invocation.DescribedInvocation, org.mockito.invocation.Location);
+  private java.lang.String createTooLittleInvocationsMessage(org.mockito.internal.reporting.Discrepancy, org.mockito.invocation.DescribedInvocation, org.mockito.invocation.Location);
+  public void tooLittleActualInvocations(org.mockito.internal.reporting.Discrepancy, org.mockito.invocation.DescribedInvocation, org.mockito.invocation.Location);
+  public void tooLittleActualInvocationsInOrder(org.mockito.internal.reporting.Discrepancy, org.mockito.invocation.DescribedInvocation, org.mockito.invocation.Location);
+  public void noMoreInteractionsWanted(org.mockito.invocation.Invocation, java.util.List<org.mockito.internal.exceptions.VerificationAwareInvocation>);
+  public void noMoreInteractionsWantedInOrder(org.mockito.invocation.Invocation);
+  public void cannotMockFinalClass(java.lang.Class<?>);
+  public void cannotStubVoidMethodWithAReturnValue(java.lang.String);
+  public void onlyVoidMethodsCanBeSetToDoNothing();
+  public void wrongTypeOfReturnValue(java.lang.String, java.lang.String, java.lang.String);
+  public void wantedAtMostX(int, int);
+  public void misplacedArgumentMatcher(java.util.List<org.mockito.internal.matchers.LocalizedMatcher>);
+  public void smartNullPointerException(java.lang.String, org.mockito.invocation.Location);
+  public void noArgumentValueWasCaptured();
+  public void extraInterfacesDoesNotAcceptNullParameters();
+  public void extraInterfacesAcceptsOnlyInterfaces(java.lang.Class<?>);
+  public void extraInterfacesCannotContainMockedType(java.lang.Class<?>);
+  public void extraInterfacesRequiresAtLeastOneInterface();
+  public void mockedTypeIsInconsistentWithSpiedInstanceType(java.lang.Class<?>, java.lang.Object);
+  public void cannotCallAbstractRealMethod();
+  public void cannotVerifyToString();
+  public void moreThanOneAnnotationNotAllowed(java.lang.String);
+  public void unsupportedCombinationOfAnnotations(java.lang.String, java.lang.String);
+  public void cannotInitializeForSpyAnnotation(java.lang.String, java.lang.Exception);
+  public void cannotInitializeForInjectMocksAnnotation(java.lang.String, java.lang.Exception);
+  public void atMostAndNeverShouldNotBeUsedWithTimeout();
+  public void fieldInitialisationThrewException(java.lang.reflect.Field, java.lang.Throwable);
+  public void invocationListenerDoesNotAcceptNullParameters();
+  public void invocationListenersRequiresAtLeastOneListener();
+  public void invocationListenerThrewException(org.mockito.listeners.InvocationListener, java.lang.Throwable);
+  public void cannotInjectDependency(java.lang.reflect.Field, java.lang.Object, java.lang.Exception);
+  private java.lang.String exceptionCauseMessageIfAvailable(java.lang.Exception);
+  public void mockedTypeIsInconsistentWithDelegatedInstanceType(java.lang.Class, java.lang.Object);
+  public void spyAndDelegateAreMutuallyExclusive();
+  public void invalidArgumentRangeAtIdentityAnswerCreationTime();
+  public int invalidArgumentPositionRangeAtInvocationTime(org.mockito.invocation.InvocationOnMock, boolean, int);
+  private java.lang.StringBuilder possibleArgumentTypesOf(org.mockito.invocation.InvocationOnMock);
+  public void wrongTypeOfArgumentToReturn(org.mockito.invocation.InvocationOnMock, java.lang.String, java.lang.Class, int);
+  public void defaultAnswerDoesNotAcceptNullParameter();
+  public void serializableWontWorkForObjectsThatDontImplementSerializable(java.lang.Class);
+  public void delegatedMethodHasWrongReturnType(java.lang.reflect.Method, java.lang.reflect.Method, 
+
+BUGGY source excerpt: org.mockito.exceptions.Reporter (truncated=True)
+```java
+/*
+ * Copyright (c) 2007 Mockito contributors
+ * This program is made available under the terms of the MIT License.
+ */
+
+package org.mockito.exceptions;
+
+import org.mockito.exceptions.base.MockitoAssertionError;
+import org.mockito.exceptions.base.MockitoException;
+import org.mockito.exceptions.misusing.*;
+import org.mockito.exceptions.verification.*;
+import org.mockito.internal.debugging.LocationImpl;
+import org.mockito.internal.exceptions.MockitoLimitations;
+import org.mockito.internal.exceptions.VerificationAwareInvocation;
+import org.mockito.internal.exceptions.util.ScenarioPrinter;
+import org.mockito.internal.junit.JUnitTool;
+import org.mockito.internal.matchers.LocalizedMatcher;
+import org.mockito.internal.util.MockUtil;
+import org.mockito.internal.util.StringJoiner;
+import org.mockito.invocation.DescribedInvocation;
+import org.mockito.invocation.Invocation;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.invocation.Location;
+import org.mockito.listeners.InvocationListener;
+import org.mockito.mock.MockName;
+import org.mockito.mock.SerializableMode;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.mockito.internal.reporting.Pluralizer.pluralize;
+import static org.mockito.internal.util.StringJoiner.join;
+
+/**
+ * Reports verification and misusing errors.
+ * <p>
+ * One of the key points of mocking library is proper verification/exception
+ * messages. All messages in one place makes it easier to tune and amend them.
+ * <p>
+ * Reporter can be injected and therefore is easily testable.
+ * <p>
+ * Generally, exception messages are full of line breaks to make them easy to
+ * read (xunit plugins take only fraction of screen on modern IDEs).
+ */
+public class Reporter {
+
+    public void checkedExceptionInvalid(Throwable t) {
+        throw new MockitoException(join(
+                "Checked exception is invalid for this method!",
+                "Invalid: " + t
+        ));
+    }
+
+    public void cannotStubWithNullThrowable() {
+        throw new MockitoException(join(
+                "Cannot stub with null throwable!"
+        ));
+
+    }
+
+    public void unfinishedStubbing(Location location) {
+        throw new UnfinishedStubbingException(join(
+                "Unfinished stubbing detected here:",
+                location,
+                "",
+                "E.g. thenReturn() may be missing.",
+                "Examples of correct stubbing:",
+                "    when(mock.isOk()).thenReturn(true);",
+                "    when(mock.isOk()).thenThrow(exception);",
+                "    doThrow(exception).when(mock).someVoidMethod();",
+                "Hints:",
+                " 1. missing thenReturn()",
+                " 2. you are trying to stub a final method, you naughty developer!",
+                " 3: you are stubbing the behaviour of another mock inside before 'thenReturn' instruction if completed",
+                ""
+        ));
+    }
+
+    public void incorrectUseOfApi() {
+        throw new MockitoException(join(
+                "Incorrect use of API detected here:",
+                new LocationImpl(),
+                "",
+                "You probably stored a reference to OngoingStubbing returned by when() and called stubbing methods like thenReturn() on this reference more than once.",
+                "Examples of correct usage:",
+                "    when(mock.isOk()).thenReturn(true).thenReturn(false).thenThrow(exception);",
+                "    when(mock.isOk()).thenReturn(true, false).thenThrow(exception);",
+                ""
+        ));
+    }
+
+    public void missingMethodInvocation() {
+        throw new MissingMethodInvocationException(join(
+                "when() requires an argument which has to be 'a method call on a mock'.",
+                "For example:",
+                "    when(mock.getArticles()).thenReturn(articles);",
+                "",
+                "Also, this error might show up because:",
+                "1. you stub either of: final/private/equals()/hashCode() methods.",
+                "   Those methods *cannot* be stubbed/verified.",
+                "   " + MockitoLimitations.NON_PUBLIC_PARENT,
+                "2. inside when() you don't call method on mock but on some other object.",
+                ""
+        ));
+    }
+
+    public void unfinishedVerificationException(Location location) {
+        UnfinishedVerificationException exception = new UnfinishedVerificationException(join(
+                "Missing method call for verify(mock) here:",
+                location,
+                "",
+                "Example of correct verification:",
+                "    verify(mock).doSomething()",
+                "",
+                "Also, this error might show up because you verify either of: final/private/equals()/hashCode() methods.",
+                "Those methods *cannot* be stubbed/verified.",
+                MockitoLimitations.NON_PUBLIC_PARENT,
+                ""
+        ));
+
+        throw exception;
+    }
+
+    public void notAMockPassedToVerify(Class type) {
+        throw new NotAMockException(join(
+                "Argument passed to verify() is of type " + type.getSimpleName() + " and is not a mock!",
+                "Make sure you place the parenthesis correctly!",
+                "See the examples of correct verifications:",
+                "    verify(mock).someMethod();",
+                "    verify(mock, times(10)).someMethod();",
+                "    verify(mock, atLeastOnce()).someMethod();"
+        ));
+    }
+
+    public void nullPassedToVerify() {
+        throw new NullInsteadOfMockException(join(
+                "Argument passed to verify() should be a mock but is null!",
+                "Examples of correct verifications:",
+                "    verify(mock).someMethod();",
+                "    verify(mock, times(10)).someMethod();",
+                "    verify(mock, atLeastOnce()).someMethod();",
+                "    not: verify(mock.someMethod());",
+                "Also, if you use @Mock annotation don't miss initMocks()"
+        ));
+    }
+
+    public void notAMockPassedToWhenMethod() {
+        throw new NotAMockException(join(
+                "Argument passed to when() is not a mock!",
+                "Example of correct stubbing:",
+                "    doThrow(new RuntimeException()).when(mock).someMethod();"
+        ));
+    }
+
+    public void nullPassedToWhenMethod() {
+        throw new NullInsteadOfMockException(join(
+                "Argument passed to when() is null!",
+                "Example of correct stubbing:",
+                "    doThrow(new RuntimeException()).when(mock).someMethod();",
+                "Also, if you use @Mock annotation don't miss initMocks()"
+        ));
+    }
+
+    public void mocksHaveToBePassedToVerifyNoMoreInteractions() {
+        throw new MockitoException(join(
+                "Method requires argument(s)!",
+                "Pass mocks that should be verified, e.g:",
+                "    verifyNoMoreInteractions(mockOne, mockTwo);",
+                "    verifyZeroInteractions(mockOne, mockTwo);",
+                ""
+        ));
+    }
+
+    public void notAMockPassedToVerifyNoMoreInteractions() {
+        throw new NotAMockException(join(
+                "Argument(s) passed is not a mock!",
+                "Examples of correct verifications:",
+                "    verifyNoMoreInteractions(mockOne, mockTwo);",
+                "    verifyZeroInteractions(mockOne, mockTwo);",
+                ""
+        ));
+    }
+
+    public void nullPassedToVerifyNoMoreInteractions() {
+        throw new NullInsteadOfMockException(join(
+                "Argument(s) passed is null!",
+                "Examples of correct verifications:",
+                "    verifyNoMoreInteractions(mockOne, mockTwo);",
+                "    verifyZeroInteractions(mockOne, mockTwo);"
+        ));
+    }
+
+    public void notAMockPassedWhenCreatingInOrder() {
+        throw new NotAMockException(join(
+                "Argument(s) passed is not a mock!",
+                "Pass mocks that require verification in order.",
+                "For example:",
+                "    InOrder inOrder = inOrder(mockOne, mockTwo);"
+        ));
+    }
+
+    public void nullPassedWhenCreatingInOrder() {
+        throw new NullInsteadOfMockException(join(
+                "Argument(s) passed is null!",
+                "Pass mocks that require verification in order.",
+                "For example:",
+                "    InOrder inOrder = inOrder(mockOne, mockTwo);"
+        ));
+    }
+
+    public void mocksHaveToBePassedWhenCreatingInOrder() {
+        throw new MockitoException(join(
+                "Method requires argument(s)!",
+                "Pass mocks that require verification in order.",
+                "For example:",
+                "    InOrder inOrder = inOrder(mockOne, mockTwo);"
+        ));
+    }
+
+    public void inOrderRequiresFamiliarMock() {
+        throw new MockitoException(join(
+                "InOrder can only verify mocks that were passed in during creation of InOrder.",
+                "For example:",
+                "    InOrder inOrder = inOrder(mockOne);",
+                "    inOrder.verify(mockOne).doStuff();"
+        ));
+    }
+
+    public void invalidUseOfMatchers(int expectedMatchersCount, List<LocalizedMatcher> recordedMatchers) {
+        throw new InvalidUseOfMatchersException(join(
+                "Invalid use of argument matchers!",
+                expectedMatchersCount + " matchers expected, " + recordedMatchers.size()+ " recorded:" +
+                        locationsOf(recordedMatchers),
+                "",
+                "This exception may occur if matchers are combined with raw values:",
+                "    //incorrect:",
+                "    someMethod(anyObject(), \"raw String\");",
+                "When using matchers, all arguments have to be provided by matchers.",
+                "For example:",
+                "    //correct:",
+                "    someMethod(anyObject(), eq(\"String by matcher\"));",
+                "",
+                "For more info see javadoc for Matchers class.",
+                ""
+        ));
+    }
+
+    public void incorrectUseOfAdditionalMatchers(String additionalMatcherName, int expectedSubMatchersCount, Collection<LocalizedMatcher> matcherStack) {
+        throw new InvalidUseOfMatchersException(join(
+                "Invalid use of argument matchers inside additional matcher " + additionalMatcherName + " !",
+                new LocationImpl(),
+                "",
+                expectedSubMatchersCount + " sub matchers expected, " + matcherStack.size() + " recorded:",
+                locationsOf(matcherStack),
+                "",
+                "This exception may occur if matchers are combined with raw values:",
+                "    //incorrect:",
+                "    someMethod(AdditionalMatchers.and(isNotNull(), \"raw String\");",
+                "When using matchers, all arguments have to be provided by matchers.",
+                "For example:",
+                "    //correct:",
+                "    someMethod(AdditionalMatchers.and(isNotNull(), eq(\"raw String\"));",
+                "",
+                "For more info see javadoc for Matchers and AdditionalMatchers classes.",
+                ""
+        ));
+    }
+
+    public void stubPassedToVerify() {
+        throw new CannotVerifyStubOnlyMock(join(
+                "Argument passed to verify() is a stubOnly() mock, not a full blown mock!",
+                "If you intend to verify invocations on a mock, don't use stubOnly() in its MockSettings."
+        ));
+    }
+
+    public void reportNoSubMatchersFound(String additionalMatcherName) {
+        throw new InvalidUseOfMatchersException(join(
+                "No matchers found for additional matcher " + additionalMatcherName,
+                new LocationImpl(),
+                ""
+        ));
+    }
+
+
+    private Object locationsOf(Collection<LocalizedMatcher> match
+```

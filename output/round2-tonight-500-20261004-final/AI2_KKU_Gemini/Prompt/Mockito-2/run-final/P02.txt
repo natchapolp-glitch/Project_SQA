@@ -1,0 +1,63 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Mockito-2
+Java 11, JUnit 4
+Modified classes: org.mockito.internal.util.Timer
+
+BUGGY API signatures (may include private members):
+Compiled from "Timer.java"
+public class org.mockito.internal.util.Timer {
+  private final long durationMillis;
+  private long startTime;
+  static final boolean $assertionsDisabled;
+  public org.mockito.internal.util.Timer(long);
+  public boolean isCounting();
+  public void start();
+  static {};
+}
+
+
+BUGGY source excerpt: org.mockito.internal.util.Timer (truncated=False)
+```java
+package org.mockito.internal.util;
+
+
+public class Timer {
+
+    private final long durationMillis;
+    private long startTime = -1;
+
+    public Timer(long durationMillis) {
+        this.durationMillis = durationMillis;
+    }
+
+    /**
+     * Informs whether the timer is still counting down.
+     */
+    public boolean isCounting() {
+        assert startTime != -1;
+        return System.currentTimeMillis() - startTime <= durationMillis;
+    }
+
+    /**
+     * Starts the timer count down.
+     */
+    public void start() {
+        startTime = System.currentTimeMillis();
+    }
+
+}
+
+```
+
+
+Planning response:
+- `Timer` setup: instantiate with a valid duration (e.g., positive `long`, zero, or negative).
+- Boundary setup: duration of `0L` milliseconds for instant expiration.
+- Boundary setup: negative duration values to test edge-case behavior.
+- State check before `start()`: `isCounting()` should return `false` initially.
+- State check after `start()`: `isCounting()` should return `true` right away.
+- Time expiration boundary: `isCounting()` transitions to `false` once elapsed time reaches or exceeds `durationMillis`.
+- Re-entrancy: calling `start()` multiple times correctly resets `startTime`.
+- Monotonicity: ensure behavior relies on elapsed time rather than system clock adjustments (if applicable via contract).
+- Null or invalid state: constructor accepts any `long` without throwing immediate exceptions.

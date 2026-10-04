@@ -1,0 +1,8 @@
+1. Default Base64 constructor initializes standard encoding without chunking/line length.
+2. Parameterized constructors accept `lineLength`, `lineSeparator`, and `urlSafe` boolean flags.
+3. `encode(byte[])` and `decode(byte[])` must correctly handle empty arrays and null inputs safely.
+4. Static methods like `encodeBase64(byte[], boolean, boolean)` validate chunking and URL-safe options.
+5. `isBase64(byte)` and `isArrayByteBase64(byte[])` correctly identify valid Base64 alphabet characters.
+6. Integer conversion methods (`encodeInteger`, `decodeInteger`) handle BigInteger boundary values.
+7. Receiver setup requires instantiating `Base64` with valid parameters or calling static utility methods.
+8. Streaming/buffer internal methods (`avail`, `hasData`, `readResults`) must track state accurately across operations.

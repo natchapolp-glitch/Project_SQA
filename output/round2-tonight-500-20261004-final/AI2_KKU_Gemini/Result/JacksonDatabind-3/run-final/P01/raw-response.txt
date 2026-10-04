@@ -1,0 +1,8 @@
+- Receiver setup: Initialize `ObjectMapper` and obtain `StringArrayDeserializer.instance` or configure contextual instances via `createContextual`.
+- Behavior: `deserialize` parses a valid JSON array of strings into a Java `String[]` array correctly.
+- Boundary: Handling of empty JSON arrays `[]` should yield an empty `String[]` (length 0).
+- Behavior: `createContextual` should properly configure custom element deserializers (e.g., via `@JsonDeserialize(contentUsing = ...)`).
+- Boundary: Non-array inputs should trigger `handleNonArray`, respecting feature flags like `ACCEPT_SINGLE_VALUE_AS_ARRAY`.
+- Behavior: `_deserializeCustom` handles custom element deserialization logic when `_elementDeserializer` is present.
+- Boundary: JSON arrays containing `null` elements should deserialize to `null` entries in the resulting `String[]`.
+- Behavior: `deserializeWithType` correctly unwraps type-info wrappers around the string array.

@@ -1,0 +1,14 @@
+**Target area & likely bug surface:** number/name parsing or leading-zero/float handling in UTF8 byte stream parser (`_verifyNoLeadingZeroes`, `_parseNumber`, `_parseFloat`, `parseName` variants) — verify correctness oracle via JSON spec, not implementation.
+
+Useful behaviors/boundaries to test via `JsonFactory.createParser(InputStream/byte[])`:
+
+1. Valid integers: `0`, `-0`, single-digit `0` followed by `}`/`,`/EOF — must parse as zero, not throw.
+2. Leading zero rejection: `01`, `-01`, `00` must throw `JsonParseException` (unless `ALLOW_NUMERIC_LEADING_ZEROS` enabled, which should permit it).
+3. Negative numbers: `-1`, `-123`, `-0.5` correctness; bare `-` alone is invalid.
+4. Floating point: `0.0`, `0.123`, `1.0e10`, `1E-5`, exponent-only forms like `1e5` valid; malformed `1.` or `.1` invalid.
+5. Large integers crossing buffer boundaries (feed via small buffer sizes) to exercise `_loadToHaveAtLeast`/segment boundaries — value correctness preserved across reads.
+6. Field name parsing boundary cases: short/medium/long names spanning buffer refill boundaries, with/without escapes, verifying symbol table correctness (`getCurrentName()`).
+5. Text extraction (`getText()`, `getTextCharacters()`, `getTextLength()`) consistency after number/string parsing, including multi-byte UTF-8 characters.
+8. End-of-input/incomplete token handling: truncated number/string at EOF should throw, not silently return wrong token.
+9. Binary values (`getBinaryValue`) with base64 variants — correctness and no `_tokenIncomplete` corruption affecting next token.
+10. Repeated calls (`nextToken()` after `nextFieldName()`) ensure internal state (`_tokenIncomplete`, `_quad1`/`_quadBuffer`) doesn't leak stale data into subsequent tokens.

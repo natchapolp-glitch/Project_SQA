@@ -1,0 +1,118 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Jsoup-3
+Java 11, JUnit 4
+Modified classes: org.jsoup.nodes.Element, org.jsoup.parser.Parser, org.jsoup.parser.Tag
+BUGGY API signatures:
+Compiled from "Element.java"
+public class org.jsoup.nodes.Element extends org.jsoup.nodes.Node {
+  private final org.jsoup.parser.Tag tag;
+  private java.util.Set<java.lang.String> classNames;
+  public org.jsoup.nodes.Element(org.jsoup.parser.Tag, java.lang.String, org.jsoup.nodes.Attributes);
+  public org.jsoup.nodes.Element(org.jsoup.parser.Tag, java.lang.String);
+  public java.lang.String nodeName();
+  public java.lang.String tagName();
+  public org.jsoup.parser.Tag tag();
+  public boolean isBlock();
+  public java.lang.String id();
+  public org.jsoup.nodes.Element attr(java.lang.String, java.lang.String);
+  public org.jsoup.nodes.Element parent();
+  public org.jsoup.select.Elements parents();
+  private static void accumulateParents(org.jsoup.nodes.Element, org.jsoup.select.Elements);
+  public org.jsoup.nodes.Element child(int);
+  public org.jsoup.select.Elements children();
+  public org.jsoup.select.Elements select(java.lang.String);
+  public org.jsoup.nodes.Element appendChild(org.jsoup.nodes.Node);
+  public org.jsoup.nodes.Element prependChild(org.jsoup.nodes.Node);
+  public org.jsoup.nodes.Element appendElement(java.lang.String);
+  public org.jsoup.nodes.Element prependElement(java.lang.String);
+  public org.jsoup.nodes.Element appendText(java.lang.String);
+  public org.jsoup.nodes.Element prependText(java.lang.String);
+  public org.jsoup.nodes.Element append(java.lang.String);
+  public org.jsoup.nodes.Element prepend(java.lang.String);
+  public org.jsoup.nodes.Element empty();
+  public org.jsoup.nodes.Element wrap(java.lang.String);
+  private org.jsoup.nodes.Element getDeepChild(org.jsoup.nodes.Element);
+  public org.jsoup.select.Elements siblingElements();
+  public org.jsoup.nodes.Element nextElementSibling();
+  public org.jsoup.nodes.Element previousElementSibling();
+  public org.jsoup.nodes.Element firstElementSibling();
+  public java.lang.Integer elementSiblingIndex();
+  public org.jsoup.nodes.Element lastElementSibling();
+  public org.jsoup.select.Elements getElementsByTag(java.lang.String);
+  public org.jsoup.nodes.Element getElementById(java.lang.String);
+  public org.jsoup.select.Elements getElementsByClass(java.lang.String);
+  public org.jsoup.select.Elements getElementsByAttribute(java.lang.String);
+  public org.jsoup.select.Elements getElementsByAttributeValue(java.lang.String, java.lang.String);
+  public org.jsoup.select.Elements getElementsByAttributeValueNot(java.lang.String, java.lang.String);
+  public org.jsoup.select.Elements getElementsByAttributeValueStarting(java.lang.String, java.lang.String);
+  public org.jsoup.select.Elements getElementsByAttributeValueEnding(java.lang.String, java.lang.String);
+  public org.jsoup.select.Elements getElementsByAttributeValueContaining(java.lang.String, java.lang.String);
+  public org.jsoup.select.Elements getElementsByIndexLessThan(int);
+  public org.jsoup.select.Elements getElementsByIndexGreaterThan(int);
+  public org.jsoup.select.Elements getElementsByIndexEquals(int);
+  public org.jsoup.select.Elements getAllElements();
+  public java.lang.String text();
+  private void text(java.lang.StringBuilder);
+  boolean preserveWhitespace();
+  public org.jsoup.nodes.Element text(java.lang.String);
+  public boolean hasText();
+  public java.lang.String data();
+  public java.lang.String className();
+  public java.util.Set<java.lang.String> classNames();
+  public org.jsoup.nodes.Element classNames(java.util.Set<java.lang.String>);
+  public boolean hasClass(java.lang.String);
+  public org.jsoup.nodes.Element addClass(java.lang.String);
+  public org.jsoup.nodes.Element removeClass(java.lang.String);
+  public org.jsoup.nodes.Element toggleClass(java.lang.String);
+  public java.lang.String val();
+  public org.jsoup.nodes.Element val(java.lang.String);
+  void outerHtml(java.lang.StringBuilder);
+  public java.lang.String html();
+  private void html(java.lang.StringBuilder);
+  public org.jsoup.nodes.Element html(java.lang.String);
+  public java.lang.String toString();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public org.jsoup.nodes.Node parent();
+  public org.jsoup.nodes.Node attr(java.lang.String, java.lang.String);
+}
+Compiled from "Parser.java"
+public class org.jsoup.parser.Parser {
+  private static final java.lang.String SQ;
+  private static final java.lang.String DQ;
+  private static final org.jsoup.parser.Tag htmlTag;
+  private static final org.jsoup.parser.Tag headTag;
+  private static final org.jsoup.parser.Tag bodyTag;
+  private static final org.jsoup.parser.Tag titleTag;
+  private static final org.jsoup.parser.Tag textareaTag;
+  private final java.util.LinkedList<org.jsoup.nodes.Element> stack;
+  private final org.jsoup.parser.TokenQueue tq;
+  private final org.jsoup.nodes.Document doc;
+  private java.lang.String baseUri;
+  private org.jsoup.parser.Parser(java.lang.String, java.lang.String, boolean);
+  public static org.jsoup.nodes.Document parse(java.lang.String, java.lang.String);
+  public static org.jsoup.nodes.Document parseBodyFragment(java.lang.String, java.lang.String);
+  private org.jsoup.nodes.Document parse();
+  private void parseComment();
+  private void parseXmlDecl();
+  private void parseEndTag();
+  private void parseStartTag();
+  private org.jsoup.nodes.Attribute parseAttribute();
+  private void parseTextNode();
+  private void parseCdata();
+  private org.jsoup.nodes.Element addChildToParent(org.jsoup.nodes.Element, boolean);
+  private boolean stackHasValidParent(org.jsoup.parser.Tag);
+  private org.jsoup.nodes.Element popStackToSuitableContainer(org.jsoup.parser.Tag);
+  private org.jsoup.nodes.Element popStackToClose(org.jsoup.parser.Tag);
+  private org.jsoup.nodes.Element last();
+  static {};
+}
+Compiled from "Tag.java"
+public class org.jsoup.parser.Tag {
+  private static final java.util.Map<java.lang.String, org.jsoup.parser.Tag> tags;
+  private static final org.jsoup.parser.Tag defaultAncestor;
+  private java.lang.String tagName;
+  private boolean isBlock;
+  private boolean canContainBlock;
+ 

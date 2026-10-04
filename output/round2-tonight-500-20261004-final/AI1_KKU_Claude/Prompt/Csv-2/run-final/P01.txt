@@ -1,0 +1,29 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Csv-2
+Java 11, JUnit 4
+Modified classes: org.apache.commons.csv.CSVRecord
+BUGGY API signatures:
+Compiled from "CSVRecord.java"
+public class org.apache.commons.csv.CSVRecord implements java.io.Serializable, java.lang.Iterable<java.lang.String> {
+  private static final long serialVersionUID;
+  private static final java.lang.String[] EMPTY_STRING_ARRAY;
+  private final java.lang.String[] values;
+  private final java.util.Map<java.lang.String, java.lang.Integer> mapping;
+  private final java.lang.String comment;
+  private final long recordNumber;
+  org.apache.commons.csv.CSVRecord(java.lang.String[], java.util.Map<java.lang.String, java.lang.Integer>, java.lang.String, long);
+  public java.lang.String get(int);
+  public java.lang.String get(java.lang.String);
+  public boolean isConsistent();
+  public boolean isMapped(java.lang.String);
+  public boolean isSet(java.lang.String);
+  public java.util.Iterator<java.lang.String> iterator();
+  java.lang.String[] values();
+  public java.lang.String getComment();
+  public long getRecordNumber();
+  public int size();
+  public java.lang.String toString();
+  static {};
+}
+

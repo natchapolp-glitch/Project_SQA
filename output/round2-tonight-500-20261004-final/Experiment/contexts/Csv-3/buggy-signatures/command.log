@@ -1,0 +1,26 @@
+Compiled from "Lexer.java"
+abstract class org.apache.commons.csv.Lexer {
+  private static final char DISABLED;
+  private final char delimiter;
+  private final char escape;
+  private final char quoteChar;
+  private final char commmentStart;
+  final boolean ignoreSurroundingSpaces;
+  final boolean ignoreEmptyLines;
+  final org.apache.commons.csv.CSVFormat format;
+  final org.apache.commons.csv.ExtendedBufferedReader in;
+  org.apache.commons.csv.Lexer(org.apache.commons.csv.CSVFormat, org.apache.commons.csv.ExtendedBufferedReader);
+  private final char mapNullToDisabled(java.lang.Character);
+  long getLineNumber();
+  int readEscape() throws java.io.IOException;
+  void trimTrailingSpaces(java.lang.StringBuilder);
+  boolean readEndOfLine(int) throws java.io.IOException;
+  abstract org.apache.commons.csv.Token nextToken(org.apache.commons.csv.Token) throws java.io.IOException;
+  boolean isWhitespace(int);
+  boolean isStartOfLine(int);
+  boolean isEndOfFile(int);
+  boolean isDelimiter(int);
+  boolean isEscape(int);
+  boolean isQuoteChar(int);
+  boolean isCommentStart(int);
+}

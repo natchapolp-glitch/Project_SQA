@@ -1,0 +1,22 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: JacksonDatabind-3
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer
+BUGGY API signatures:
+Compiled from "StringArrayDeserializer.java"
+public final class com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer extends com.fasterxml.jackson.databind.deser.std.StdDeserializer<java.lang.String[]> implements com.fasterxml.jackson.databind.deser.ContextualDeserializer {
+  private static final long serialVersionUID;
+  public static final com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer instance;
+  protected com.fasterxml.jackson.databind.JsonDeserializer<java.lang.String> _elementDeserializer;
+  public com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer();
+  protected com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer(com.fasterxml.jackson.databind.JsonDeserializer<?>);
+  public java.lang.String[] deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  protected final java.lang.String[] _deserializeCustom(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  public java.lang.Object deserializeWithType(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext, com.fasterxml.jackson.databind.jsontype.TypeDeserializer) throws java.io.IOException;
+  private final java.lang.String[] handleNonArray(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  public com.fasterxml.jackson.databind.JsonDeserializer<?> createContextual(com.fasterxml.jackson.databind.DeserializationContext, com.fasterxml.jackson.databind.BeanProperty) throws com.fasterxml.jackson.databind.JsonMappingException;
+  public java.lang.Object deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException, com.fasterxml.jackson.core.JsonProcessingException;
+  static {};
+}
+

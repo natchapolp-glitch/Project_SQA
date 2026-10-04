@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:14:26.528032+00:00",
+  "ended_at_utc": "2026-10-04T07:14:28.527991+00:00",
+  "raw_body_sha256": "5e28ef883e66aca7f31fbad236b8db3657208d873a7d3b25842ebe974048c084",
+  "body": {
+    "id": "genai-01a105c3-a211-7c42-9ef3-438b55229c8e",
+    "object": "chat.completion",
+    "created": 1791098069,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport org.junit.Test;\n\npublic class LexerAdditionalTest {\n\n    private static final class ConcreteLexer extends Lexer {\n        ConcreteLexer(CSVFormat format, ExtendedBufferedReader in) {\n            super(format, in);\n        }\n\n        @Override\n        Token nextToken(Token reusableToken) throws IOException {\n            return reusableToken;\n        }\n    }\n\n    private Lexer createLexer(CSVFormat format, String input) {\n        return new ConcreteLexer(format, new ExtendedBufferedReader(new StringReader(input)));\n    }\n\n    @Test\n    public void testReadEscapeAdditionalCases() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer1 = createLexer(format, \"r\");\n        assertEquals(Constants.CR, lexer1.readEscape());\n\n        Lexer lexer2 = createLexer(format, \"t\");\n        assertEquals(Constants.TAB, lexer2.readEscape());\n\n        Lexer lexer3 = createLexer(format, \"b\");\n        assertEquals(Constants.BACKSPACE, lexer3.readEscape());\n\n        Lexer lexer4 = createLexer(format, \"f\");\n        assertEquals(Constants.FF, lexer4.readEscape());\n    }\n\n    @Test\n    public void testReadEscapeControlChars() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        // Testing escaping of characters like CR, LF, FF, TAB, BACKSPACE directly or other default cases\n        Lexer lexer = createLexer(format, \"\\n\");\n        assertEquals(Constants.LF, lexer.readEscape());\n    }\n\n    @Test\n    public void testReadEndOfLineCrLf() throws IOException {\n        CSVFormat format = CSVFormat.DEFAULT;\n        Lexer lexer = createLexer(format, \"\\n\");\n        assertTrue(lexer.readEndOfLine(Constants.CR));\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2976,
+      "completion_tokens": 485,
+      "total_tokens": 3461
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 89295,
+      "daily_remaining_tokens": 260705
+    }
+  },
+  "headers": {
+    "x-request-id": "zwrijwf441iso2apep31hdrx",
+    "date": "Sun, 04 Oct 2026 07:14:29 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:22:53.307475+00:00",
+  "ended_at_utc": "2026-10-04T09:22:59.251053+00:00",
+  "raw_body_sha256": "900dae5bab45bdb9e5c7119eebd3f51e4398e755155a8ef52793b5530b8c5736",
+  "body": {
+    "id": "gen-1791105776-UUqWcHFLU1DRIvuY9oQC",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- `intersection(subline, includeEndPoints)` should return the point where both finite segments cross, when it lies within both segments' bounds (test with simple perpendicular/crossing segments at known coordinates).\n- With `includeEndPoints=true`, intersection exactly at an endpoint of either segment should be returned (boundary inclusion case).\n- With `includeEndPoints=false`, an intersection lying exactly on an endpoint should return null (strict interior containment).\n- If the computed intersection point of the underlying infinite lines lies outside one sub-segment's interval, `intersection` must return null even though the lines themselves cross.\n- Parallel, non-intersecting sub-lines should return null.\n- Collinear overlapping sub-lines (segments on same line) should return null (no unique point) — check both 2D and 3D.\n- For 3D: two lines that are skew (non-intersecting, non-parallel in 3D) should return null even if their 2D-like projections would seem to cross.\n- `getSegments()` on a sub-line built from two endpoints should return a single segment with those endpoints (within tolerance), verifying `buildIntervalSet` correctness.\n- Constructing a `SubLine` from two identical points should throw `MathIllegalArgumentException` (degenerate line).\n- Verify symmetric behavior: `a.intersection(b, flag)` equals `b.intersection(a, flag)` for both true/false flags.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 1966,
+      "output_tokens": 471,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.008642,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.008642,
+        "upstream_inference_prompt_cost": 0.003932,
+        "upstream_inference_completions_cost": 0.00471
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 165067,
+      "daily_remaining_tokens": 34933
+    }
+  },
+  "headers": {
+    "x-request-id": "z3i9q78zgs1ok9scyrdfu7c5",
+    "date": "Sun, 04 Oct 2026 09:23:02 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

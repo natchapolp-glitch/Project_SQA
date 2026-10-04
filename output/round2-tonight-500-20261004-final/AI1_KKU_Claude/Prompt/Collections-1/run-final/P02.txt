@@ -1,0 +1,429 @@
+Generate complete Java 7-compatible JUnit 4 test source files for the APIs below (Java 11 runtime; existing project build). Return each file in a fenced java block with package declaration/imports and one public test class ending in Test. Prefer 4 to 6 concise high-value @Test methods (at most 12 in total), each independent with meaningful assertions or expected exceptions. Use documented contracts, not copying buggy behavior. Construct valid receivers; package-local targets can be tested from their own package. Use only listed production APIs and JDK/JUnit 4, no new dependencies. No randomness, sleeps, network, processes, external files, assumptions, ignored tests, production shadow classes or build changes. Keep source concise and omit explanatory comments. Return complete source only, not a diff or partial methods.
+
+Case: Collections-1
+Java 11, JUnit 4
+Modified classes: org.apache.commons.collections.map.Flat3Map
+
+BUGGY API signatures (may include private members):
+Compiled from "Flat3Map.java"
+public class org.apache.commons.collections.map.Flat3Map implements org.apache.commons.collections.IterableMap,java.io.Serializable,java.lang.Cloneable {
+  private static final long serialVersionUID;
+  private transient int size;
+  private transient int hash1;
+  private transient int hash2;
+  private transient int hash3;
+  private transient java.lang.Object key1;
+  private transient java.lang.Object key2;
+  private transient java.lang.Object key3;
+  private transient java.lang.Object value1;
+  private transient java.lang.Object value2;
+  private transient java.lang.Object value3;
+  private transient org.apache.commons.collections.map.AbstractHashedMap delegateMap;
+  public org.apache.commons.collections.map.Flat3Map();
+  public org.apache.commons.collections.map.Flat3Map(java.util.Map);
+  public java.lang.Object get(java.lang.Object);
+  public int size();
+  public boolean isEmpty();
+  public boolean containsKey(java.lang.Object);
+  public boolean containsValue(java.lang.Object);
+  public java.lang.Object put(java.lang.Object, java.lang.Object);
+  public void putAll(java.util.Map);
+  private void convertToMap();
+  protected org.apache.commons.collections.map.AbstractHashedMap createDelegateMap();
+  public java.lang.Object remove(java.lang.Object);
+  public void clear();
+  public org.apache.commons.collections.MapIterator mapIterator();
+  public java.util.Set entrySet();
+  public java.util.Set keySet();
+  public java.util.Collection values();
+  private void writeObject(java.io.ObjectOutputStream) throws java.io.IOException;
+  private void readObject(java.io.ObjectInputStream) throws java.io.IOException, java.lang.ClassNotFoundException;
+  public java.lang.Object clone();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+  static int access$000(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$100(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$200(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$300(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$400(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$500(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$600(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$402(org.apache.commons.collections.map.Flat3Map, java.lang.Object);
+  static java.lang.Object access$502(org.apache.commons.collections.map.Flat3Map, java.lang.Object);
+  static java.lang.Object access$602(org.apache.commons.collections.map.Flat3Map, java.lang.Object);
+  static org.apache.commons.collections.map.AbstractHashedMap access$700(org.apache.commons.collections.map.Flat3Map);
+}
+
+
+BUGGY source excerpt: org.apache.commons.collections.map.Flat3Map (truncated=True)
+```java
+/*
+ *  Copyright 2003-2004 The Apache Software Foundation
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.apache.commons.collections.map;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.AbstractCollection;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import org.apache.commons.collections.IterableMap;
+import org.apache.commons.collections.MapIterator;
+import org.apache.commons.collections.ResettableIterator;
+import org.apache.commons.collections.iterators.EmptyIterator;
+import org.apache.commons.collections.iterators.EmptyMapIterator;
+
+/**
+ * A <code>Map</code> implementation that stores data in simple fields until
+ * the size is greater than 3.
+ * <p>
+ * This map is designed for performance and can outstrip HashMap.
+ * It also has good garbage collection characteristics.
+ * <ul>
+ * <li>Optimised for operation at size 3 or less.
+ * <li>Still works well once size 3 exceeded.
+ * <li>Gets at size 3 or less are about 0-10% faster than HashMap,
+ * <li>Puts at size 3 or less are over 4 times faster than HashMap.
+ * <li>Performance 5% slower than HashMap once size 3 exceeded once.
+ * </ul>
+ * The design uses two distinct modes of operation - flat and delegate.
+ * While the map is size 3 or less, operations map straight onto fields using
+ * switch statements. Once size 4 is reached, the map switches to delegate mode
+ * and only switches back when cleared. In delegate mode, all operations are
+ * forwarded straight to a HashMap resulting in the 5% performance loss.
+ * <p>
+ * The performance gains on puts are due to not needing to create a Map Entry
+ * object. This is a large saving not only in performance but in garbage collection.
+ * <p>
+ * Whilst in flat mode this map is also easy for the garbage collector to dispatch.
+ * This is because it contains no complex objects or arrays which slow the progress.
+ * <p>
+ * Do not use <code>Flat3Map</code> if the size is likely to grow beyond 3.
+ * <p>
+ * <strong>Note that Flat3Map is not synchronized and is not thread-safe.</strong>
+ * If you wish to use this map from multiple threads concurrently, you must use
+ * appropriate synchronization. The simplest approach is to wrap this map
+ * using {@link java.util.Collections#synchronizedMap(Map)}. This class may throw 
+ * exceptions when accessed by concurrent threads without synchronization.
+ *
+ * @since Commons Collections 3.0
+ * @version $Revision$ $Date$
+ *
+ * @author Stephen Colebourne
+ */
+public class Flat3Map implements IterableMap, Serializable, Cloneable {
+
+    /** Serialization version */
+    private static final long serialVersionUID = -6701087419741928296L;
+
+    /** The size of the map, used while in flat mode */
+    private transient int size;
+    /** Hash, used while in flat mode */
+    private transient int hash1;
+    /** Hash, used while in flat mode */
+    private transient int hash2;
+    /** Hash, used while in flat mode */
+    private transient int hash3;
+    /** Key, used while in flat mode */
+    private transient Object key1;
+    /** Key, used while in flat mode */
+    private transient Object key2;
+    /** Key, used while in flat mode */
+    private transient Object key3;
+    /** Value, used while in flat mode */
+    private transient Object value1;
+    /** Value, used while in flat mode */
+    private transient Object value2;
+    /** Value, used while in flat mode */
+    private transient Object value3;
+    /** Map, used while in delegate mode */
+    private transient AbstractHashedMap delegateMap;
+
+    /**
+     * Constructor.
+     */
+    public Flat3Map() {
+        super();
+    }
+
+    /**
+     * Constructor copying elements from another map.
+     *
+     * @param map  the map to copy
+     * @throws NullPointerException if the map is null
+     */
+    public Flat3Map(Map map) {
+        super();
+        putAll(map);
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Gets the value mapped to the key specified.
+     * 
+     * @param key  the key
+     * @return the mapped value, null if no match
+     */
+    public Object get(Object key) {
+        if (delegateMap != null) {
+            return delegateMap.get(key);
+        }
+        if (key == null) {
+            switch (size) {
+                // drop through
+                case 3:
+                    if (key3 == null) return value3;
+                case 2:
+                    if (key2 == null) return value2;
+                case 1:
+                    if (key1 == null) return value1;
+            }
+        } else {
+            if (size > 0) {
+                int hashCode = key.hashCode();
+                switch (size) {
+                    // drop through
+                    case 3:
+                        if (hash3 == hashCode && key.equals(key3)) return value3;
+                    case 2:
+                        if (hash2 == hashCode && key.equals(key2)) return value2;
+                    case 1:
+                        if (hash1 == hashCode && key.equals(key1)) return value1;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the size of the map.
+     * 
+     * @return the size
+     */
+    public int size() {
+        if (delegateMap != null) {
+            return delegateMap.size();
+        }
+        return size;
+    }
+
+    /**
+     * Checks whether the map is currently empty.
+     * 
+     * @return true if the map is currently size zero
+     */
+    public boolean isEmpty() {
+        return (size() == 0);
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Checks whether the map contains the specified key.
+     * 
+     * @param key  the key to search for
+     * @return true if the map contains the key
+     */
+    public boolean containsKey(Object key) {
+        if (delegateMap != null) {
+            return delegateMap.containsKey(key);
+        }
+        if (key == null) {
+            switch (size) {  // drop through
+                case 3:
+                    if (key3 == null) return true;
+                case 2:
+                    if (key2 == null) return true;
+                case 1:
+                    if (key1 == null) return true;
+            }
+        } else {
+            if (size > 0) {
+                int hashCode = key.hashCode();
+                switch (size) {  // drop through
+                    case 3:
+                        if (hash3 == hashCode && key.equals(key3)) return true;
+                    case 2:
+                        if (hash2 == hashCode && key.equals(key2)) return true;
+                    case 1:
+                        if (hash1 == hashCode && key.equals(key1)) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether the map contains the specified value.
+     * 
+     * @param value  the value to search for
+     * @return true if the map contains the key
+     */
+    public boolean containsValue(Object value) {
+        if (delegateMap != null) {
+            return delegateMap.containsValue(value);
+        }
+        if (value == null) {  // drop through
+            switch (size) {
+                case 3:
+                    if (value3 == null) return true;
+                case 2:
+                    if (value2 == null) return true;
+                case 1:
+                    if (value1 == null) return true;
+            }
+        } else {
+            switch (size) {  // drop through
+                case 3:
+                    if (value.equals(value3)) return true;
+                case 2:
+                    if (value.equals(value2)) return true;
+                case 1:
+                    if (value.equals(value1)) return true;
+            }
+        }
+        return false;
+    }
+
+    //-----------------------------------------------------------------------
+    /**
+     * Puts a key-value mapping into this map.
+     * 
+     * @param key  the key to add
+     * @param value  the value to add
+     * @return the value previously mapped to this key, null if none
+     */
+    public Object put(Object key, Object value) {
+        if (delegateMap != null) {
+            return delegateMap.put(key, value);
+        }
+        // change existing mapping
+        if (key == null) {
+            switch (size) {  // drop through
+                case 3:
+                    if (key3 == null) {
+                        Object old = value3;
+                        value3 = value;
+                        return old;
+                    }
+                case 2:
+                    if (key2 == null) {
+                        Object old = value2;
+                        value2 = value;
+                        return old;
+                    }
+                case 1:
+                    if (key1 == null) {
+                        Object old = value1;
+                        value1 = value;
+                        return old;
+                    }
+            }
+        } else {
+            if (size > 0) {
+                int hashCode = key.hashCode();
+                switch (size) {  // drop through
+                    case 3:
+                        if (hash3 == hashCode && key.equals(key3)) {
+                            Object old = value3;
+                            value3 = value;
+                            return old;
+                        }
+                    case 2:
+                        if (hash2 == hashCode && key.equals(key2)) {
+                            Object old = value2;
+                            value2 = value;
+                            return old;
+                        }
+                    case 1:
+                        if (hash1 == hashCode && key.equals(key1)) {
+                            Object old = value1;
+                            value1 = value;
+                            return old;
+                        }
+                }
+            }
+        }
+        
+        // add new mapping
+        switch (size) {
+            default:
+                convertToMap();
+                delegateMap.put(key, value);
+                return null;
+            case 2:
+                hash3 = (key == null ? 0 : key.hashCode());
+                key3 = key;
+                value3 = value;
+                break;
+            case 1:
+                hash2 = (key == null ? 0 : key.hashCode());
+                key2 = key;
+                value2 = value;
+                break;
+            case 0:
+                hash1 = (key == null ? 0 : key.hashCode());
+                key1 = key;
+                value1 = value;
+                break;
+        }
+        size++;
+        return null;
+    }
+
+    /**
+     * Puts all the values from the specified map into this map.
+     * 
+     * @param map  the map to add
+     * @throws NullPointerException if the map is null
+     */
+    public void putAll(Map map) {
+        int size = map.size();
+        if (size == 0) {
+            return;
+        }
+        if (delegateMap != null) {
+            delegateMap.putAll(map);
+            return;
+        }
+        if (size < 4) {
+            for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
+                Map.Entry entry = (Map.Entry) it.next();
+                put(entry.getKey(), entry.getValue());
+            }
+        } else {
+            convertToMap();
+            delegateMap.put
+```
+
+
+Planning response:
+- Setup: new Flat3Map(), put 3 entries (fills internal slots), then call entrySet().iterator() or mapIterator() and use setValue()/remove() to test in-place (non-delegate) mode mutation correctness.
+- setValue on iterator for key1/key2/key3 slots must update corresponding get(key) result without converting to delegate map.
+- Iterator.remove() on each of the 3 slots must correctly shift remaining entries (test removing slot1, slot2, slot3 individually, verifying remaining keys/values and size).
+- containsKey/containsValue/get with null key and null value as valid entries (Flat3Map allows nulls).
+- Duplicate put with existing key should update value, not increase size, and not disturb other slots.
+- Transition boundary: put 4th entry triggers convertToMap(); verify behavior (get/put/remove/iterator) still correct after delegate conversion.
+- equals()/hashCode() consistency with java.util.Map contract, including comparing two Flat3Maps with same entries in different insertion order.
+- clone() must produce independent copy (mutating clone shouldn't affect original) in both small (<=3) and delegate (>3) modes.
+- Serialization round-trip (writeObject/readObject) preserving entries and size in both modes.
+- remove() on nonexistent key returns null and leaves map unchanged; clear() resets size to 0 and nulls out slots.

@@ -1,0 +1,475 @@
+Case: Cli-8
+Java 11, JUnit 4
+Modified classes: org.apache.commons.cli.HelpFormatter
+
+BUGGY API signatures (may include private members):
+Compiled from "HelpFormatter.java"
+public class org.apache.commons.cli.HelpFormatter {
+  public static final int DEFAULT_WIDTH;
+  public static final int DEFAULT_LEFT_PAD;
+  public static final int DEFAULT_DESC_PAD;
+  public static final java.lang.String DEFAULT_SYNTAX_PREFIX;
+  public static final java.lang.String DEFAULT_OPT_PREFIX;
+  public static final java.lang.String DEFAULT_LONG_OPT_PREFIX;
+  public static final java.lang.String DEFAULT_ARG_NAME;
+  public int defaultWidth;
+  public int defaultLeftPad;
+  public int defaultDescPad;
+  public java.lang.String defaultSyntaxPrefix;
+  public java.lang.String defaultNewLine;
+  public java.lang.String defaultOptPrefix;
+  public java.lang.String defaultLongOptPrefix;
+  public java.lang.String defaultArgName;
+  public org.apache.commons.cli.HelpFormatter();
+  public void setWidth(int);
+  public int getWidth();
+  public void setLeftPadding(int);
+  public int getLeftPadding();
+  public void setDescPadding(int);
+  public int getDescPadding();
+  public void setSyntaxPrefix(java.lang.String);
+  public java.lang.String getSyntaxPrefix();
+  public void setNewLine(java.lang.String);
+  public java.lang.String getNewLine();
+  public void setOptPrefix(java.lang.String);
+  public java.lang.String getOptPrefix();
+  public void setLongOptPrefix(java.lang.String);
+  public java.lang.String getLongOptPrefix();
+  public void setArgName(java.lang.String);
+  public java.lang.String getArgName();
+  public void printHelp(java.lang.String, org.apache.commons.cli.Options);
+  public void printHelp(java.lang.String, org.apache.commons.cli.Options, boolean);
+  public void printHelp(java.lang.String, java.lang.String, org.apache.commons.cli.Options, java.lang.String);
+  public void printHelp(java.lang.String, java.lang.String, org.apache.commons.cli.Options, java.lang.String, boolean);
+  public void printHelp(int, java.lang.String, java.lang.String, org.apache.commons.cli.Options, java.lang.String);
+  public void printHelp(int, java.lang.String, java.lang.String, org.apache.commons.cli.Options, java.lang.String, boolean);
+  public void printHelp(java.io.PrintWriter, int, java.lang.String, java.lang.String, org.apache.commons.cli.Options, int, int, java.lang.String);
+  public void printHelp(java.io.PrintWriter, int, java.lang.String, java.lang.String, org.apache.commons.cli.Options, int, int, java.lang.String, boolean);
+  public void printUsage(java.io.PrintWriter, int, java.lang.String, org.apache.commons.cli.Options);
+  private static void appendOptionGroup(java.lang.StringBuffer, org.apache.commons.cli.OptionGroup);
+  private static void appendOption(java.lang.StringBuffer, org.apache.commons.cli.Option, boolean);
+  public void printUsage(java.io.PrintWriter, int, java.lang.String);
+  public void printOptions(java.io.PrintWriter, int, org.apache.commons.cli.Options, int, int);
+  public void printWrapped(java.io.PrintWriter, int, java.lang.String);
+  public void printWrapped(java.io.PrintWriter, int, int, java.lang.String);
+  protected java.lang.StringBuffer renderOptions(java.lang.StringBuffer, int, org.apache.commons.cli.Options, int, int);
+  protected java.lang.StringBuffer renderWrappedText(java.lang.StringBuffer, int, int, java.lang.String);
+  protected int findWrapPos(java.lang.String, int, int);
+  protected java.lang.String createPadding(int);
+  protected java.lang.String rtrim(java.lang.String);
+}
+
+
+BUGGY source excerpt: org.apache.commons.cli.HelpFormatter (truncated=True)
+```java
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.cli;
+
+import java.io.PrintWriter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
+/** 
+ * A formatter of help messages for the current command line options
+ *
+ * @author Slawek Zachcial
+ * @author John Keyes (john at integralsource.com)
+ **/
+public class HelpFormatter {
+    // --------------------------------------------------------------- Constants
+
+    /** default number of characters per line */
+    public static final int DEFAULT_WIDTH = 74;
+
+    /** default padding to the left of each line */
+    public static final int DEFAULT_LEFT_PAD = 1;
+
+    /**
+     * the number of characters of padding to be prefixed
+     * to each description line
+     */
+    public static final int DEFAULT_DESC_PAD = 3;
+
+    /** the string to display at the begining of the usage statement */
+    public static final String DEFAULT_SYNTAX_PREFIX = "usage: ";
+
+    /** default prefix for shortOpts */
+    public static final String DEFAULT_OPT_PREFIX = "-";
+
+    /** default prefix for long Option */
+    public static final String DEFAULT_LONG_OPT_PREFIX = "--";
+
+    /** default name for an argument */
+    public static final String DEFAULT_ARG_NAME = "arg";
+
+    // -------------------------------------------------------------- Attributes
+
+    /**
+     * number of characters per line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setWidth methods instead.
+     */
+    public int defaultWidth = DEFAULT_WIDTH;
+
+    /**
+     * amount of padding to the left of each line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setLeftPadding methods instead.
+     */
+    public int defaultLeftPad = DEFAULT_LEFT_PAD;
+
+    /**
+     * the number of characters of padding to be prefixed
+     * to each description line
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setDescPadding methods instead.
+     */
+    public int defaultDescPad = DEFAULT_DESC_PAD;
+
+    /**
+     * the string to display at the begining of the usage statement
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setSyntaxPrefix methods instead.
+     */
+    public String defaultSyntaxPrefix = DEFAULT_SYNTAX_PREFIX;
+
+    /**
+     * the new line string
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setNewLine methods instead.
+     */
+    public String defaultNewLine = System.getProperty("line.separator");
+
+    /**
+     * the shortOpt prefix
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setOptPrefix methods instead.
+     */
+    public String defaultOptPrefix = DEFAULT_OPT_PREFIX;
+
+    /**
+     * the long Opt prefix
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setLongOptPrefix methods instead.
+     */
+    public String defaultLongOptPrefix = DEFAULT_LONG_OPT_PREFIX;
+
+    /**
+     * the name of the argument
+     *
+     * @deprecated Scope will be made private for next major version
+     * - use get/setArgName methods instead.
+     */
+    public String defaultArgName = DEFAULT_ARG_NAME;
+
+    /**
+     * Sets the 'width'.
+     *
+     * @param width the new value of 'width'
+     */
+    public void setWidth(int width)
+    {
+        this.defaultWidth = width;
+    }
+
+    /**
+     * Returns the 'width'.
+     *
+     * @return the 'width'
+     */
+    public int getWidth()
+    {
+        return this.defaultWidth;
+    }
+
+    /**
+     * Sets the 'leftPadding'.
+     *
+     * @param padding the new value of 'leftPadding'
+     */
+    public void setLeftPadding(int padding)
+    {
+        this.defaultLeftPad = padding;
+    }
+
+    /**
+     * Returns the 'leftPadding'.
+     *
+     * @return the 'leftPadding'
+     */
+    public int getLeftPadding()
+    {
+        return this.defaultLeftPad;
+    }
+
+    /**
+     * Sets the 'descPadding'.
+     *
+     * @param padding the new value of 'descPadding'
+     */
+    public void setDescPadding(int padding)
+    {
+        this.defaultDescPad = padding;
+    }
+
+    /**
+     * Returns the 'descPadding'.
+     *
+     * @return the 'descPadding'
+     */
+    public int getDescPadding()
+    {
+        return this.defaultDescPad;
+    }
+
+    /**
+     * Sets the 'syntaxPrefix'.
+     *
+     * @param prefix the new value of 'syntaxPrefix'
+     */
+    public void setSyntaxPrefix(String prefix)
+    {
+        this.defaultSyntaxPrefix = prefix;
+    }
+
+    /**
+     * Returns the 'syntaxPrefix'.
+     *
+     * @return the 'syntaxPrefix'
+     */
+    public String getSyntaxPrefix()
+    {
+        return this.defaultSyntaxPrefix;
+    }
+
+    /**
+     * Sets the 'newLine'.
+     *
+     * @param newline the new value of 'newLine'
+     */
+    public void setNewLine(String newline)
+    {
+        this.defaultNewLine = newline;
+    }
+
+    /**
+     * Returns the 'newLine'.
+     *
+     * @return the 'newLine'
+     */
+    public String getNewLine()
+    {
+        return this.defaultNewLine;
+    }
+
+    /**
+     * Sets the 'optPrefix'.
+     *
+     * @param prefix the new value of 'optPrefix'
+     */
+    public void setOptPrefix(String prefix)
+    {
+        this.defaultOptPrefix = prefix;
+    }
+
+    /**
+     * Returns the 'optPrefix'.
+     *
+     * @return the 'optPrefix'
+     */
+    public String getOptPrefix()
+    {
+        return this.defaultOptPrefix;
+    }
+
+    /**
+     * Sets the 'longOptPrefix'.
+     *
+     * @param prefix the new value of 'longOptPrefix'
+     */
+    public void setLongOptPrefix(String prefix)
+    {
+        this.defaultLongOptPrefix = prefix;
+    }
+
+    /**
+     * Returns the 'longOptPrefix'.
+     *
+     * @return the 'longOptPrefix'
+     */
+    public String getLongOptPrefix()
+    {
+        return this.defaultLongOptPrefix;
+    }
+
+    /**
+     * Sets the 'argName'.
+     *
+     * @param name the new value of 'argName'
+     */
+    public void setArgName(String name)
+    {
+        this.defaultArgName = name;
+    }
+
+    /**
+     * Returns the 'argName'.
+     *
+     * @return the 'argName'
+     */
+    public String getArgName()
+    {
+        return this.defaultArgName;
+    }
+
+
+    // ------------------------------------------------------------------ Public
+
+    /**
+     * <p>Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.</p>
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param options the Options instance
+     */
+    public void printHelp(String cmdLineSyntax, Options options)
+    {
+        printHelp(defaultWidth, cmdLineSyntax, null, options, null, false);
+    }
+
+    /**
+     * <p>Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to 
+     * System.out.</p>
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param options the Options instance
+     * @param autoUsage whether to print an automatically generated 
+     * usage statement
+     */
+    public void printHelp(String cmdLineSyntax, Options options, 
+                          boolean autoUsage)
+    {
+        printHelp(defaultWidth, cmdLineSyntax, null, options, null, autoUsage);
+    }
+
+    /**
+     * <p>Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.</p>
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     */
+    public void printHelp(String cmdLineSyntax, String header, Options options, 
+                          String footer)
+    {
+        printHelp(cmdLineSyntax, header, options, footer, false);
+    }
+
+    /**
+     * <p>Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to 
+     * System.out.</p>
+     *
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated 
+     * usage statement
+     */
+    public void printHelp(String cmdLineSyntax, String header, Options options, 
+                          String footer, boolean autoUsage)
+    {
+        printHelp(defaultWidth, cmdLineSyntax, header, options, footer, 
+                  autoUsage);
+    }
+
+    /**
+     * <p>Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.</p>
+     *
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     */
+    public void printHelp(int width, String cmdLineSyntax, String header, 
+                          Options options, String footer)
+    {
+        printHelp(width, cmdLineSyntax, header, options, footer, false);
+    }
+
+    /**
+     * <p>Print the help for <code>options</code> with the specified
+     * command line syntax.  This method prints help information to
+     * System.out.</p>
+     *
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param footer the banner to display at the end of the help
+     * @param autoUsage whether to print an automatically generated 
+     * usage statement
+     */
+    public void printHelp(int width, String cmdLineSyntax, String header, 
+                          Options options, String footer, boolean autoUsage)
+    {
+        PrintWriter pw = new PrintWriter(System.out);
+
+        printHelp(pw, width, cmdLineSyntax, header, options, defaultLeftPad, 
+                  defaultDescPad, footer, autoUsage);
+        pw.flush();
+    }
+
+    /**
+     * <p>Print the help for <code>options</code> with the specified
+     * command line syntax.</p>
+     *
+     * @param pw the writer to which the help will be written
+     * @param width the number of characters to be displayed on each line
+     * @param cmdLineSyntax the syntax for this application
+     * @param header the banner to display at the begining of the help
+     * @param options the Options instance
+     * @param leftPad the number of characters of padding to be prefixed
+     * to each line
+     * @param descPad the number of characters of padding to be prefixed
+     * to each description line
+     * @param footer the banner to display at the end of the help
+     */
+    public void printHelp(PrintWriter pw, int width, Strin
+```

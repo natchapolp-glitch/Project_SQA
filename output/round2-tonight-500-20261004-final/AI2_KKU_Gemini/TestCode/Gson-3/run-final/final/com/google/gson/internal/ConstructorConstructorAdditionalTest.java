@@ -1,0 +1,63 @@
+package com.google.gson.internal;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.lang.reflect.Type;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.junit.Test;
+
+import com.google.gson.InstanceCreator;
+import com.google.gson.reflect.TypeToken;
+
+public class ConstructorConstructorAdditionalTest {
+
+  private enum SampleEnum {
+    A, B
+  }
+
+  @Test
+  public void testGetWithSortedSet() {
+    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());
+    ObjectConstructor<SortedSet> creator = constructorConstructor.get(TypeToken.get(SortedSet.class));
+    assertNotNull(creator);
+    SortedSet<?> instance = creator.construct();
+    assertNotNull(instance);
+    assertTrue(instance instanceof TreeSet);
+  }
+
+  @Test
+  public void testGetWithQueue() {
+    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());
+    ObjectConstructor<Queue> creator = constructorConstructor.get(TypeToken.get(Queue.class));
+    assertNotNull(creator);
+    Queue<?> instance = creator.construct();
+    assertNotNull(instance);
+  }
+
+  @Test
+  public void testGetWithEnumSet() {
+    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());
+    TypeToken<EnumSet<SampleEnum>> token = new TypeToken<EnumSet<SampleEnum>>() {};
+    ObjectConstructor<EnumSet<SampleEnum>> creator = constructorConstructor.get(token);
+    assertNotNull(creator);
+    EnumSet<SampleEnum> instance = creator.construct();
+    assertNotNull(instance);
+  }
+
+  @Test
+  public void testGetWithParameterizedMap() {
+    ConstructorConstructor constructorConstructor = new ConstructorConstructor(new HashMap<Type, InstanceCreator<?>>());
+    TypeToken<Map<Integer, String>> token = new TypeToken<Map<Integer, String>>() {};
+    ObjectConstructor<Map<Integer, String>> creator = constructorConstructor.get(token);
+    assertNotNull(creator);
+    Map<Integer, String> instance = creator.construct();
+    assertNotNull(instance);
+  }
+}

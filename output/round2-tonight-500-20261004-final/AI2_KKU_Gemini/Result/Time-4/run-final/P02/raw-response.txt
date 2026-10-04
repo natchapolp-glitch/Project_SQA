@@ -1,0 +1,133 @@
+```java
+package org.joda.time;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+public class PartialTest {
+
+    @Test
+    public void testEmptyConstructor() {
+        Partial p = new Partial();
+        assertEquals(0, p.size());
+        assertNotNull(p.getChronology());
+    }
+
+    @Test
+    public void testFieldAndValueConstructor() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2023);
+        assertEquals(1, p.size());
+        assertEquals(DateTimeFieldType.year(), p.getFieldType(0));
+        assertEquals(2023, p.getValue(0));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testFieldAndValueConstructorNullType() {
+        new Partial(null, 2023);
+    }
+
+    @Test
+    public void testArrayConstructorValidOrdering() {
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(),
+            DateTimeFieldType.monthOfYear(),
+            DateTimeFieldType.dayOfMonth()
+        };
+        int[] values = new int[] { 2023, 6, 15 };
+        Partial p = new Partial(types, values);
+        assertEquals(3, p.size());
+        assertEquals(2023, p.getValue(0));
+        assertEquals(6, p.getValue(1));
+        assertEquals(15, p.getValue(2));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testArrayConstructorInvalidOrdering() {
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.monthOfYear(),
+            DateTimeFieldType.year()
+        };
+        int[] values = new int[] { 6, 2023 };
+        new Partial(types, values);
+    }
+
+    @Test
+    public void testWithNewField() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2023);
+        Partial updated = p.with(DateTimeFieldType.monthOfYear(), 5);
+        assertEquals(1, p.size());
+        assertEquals(2, updated.size());
+        assertEquals(DateTimeFieldType.year(), updated.getFieldType(0));
+        assertEquals(DateTimeFieldType.monthOfYear(), updated.getFieldType(1));
+        assertEquals(2023, updated.getValue(0));
+        assertEquals(5, updated.getValue(1));
+    }
+
+    @Test
+    public void testWithExistingFieldUpdatesValue() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2023);
+        Partial updated = p.with(DateTimeFieldType.year(), 2024);
+        assertEquals(2023, p.getValue(0));
+        assertEquals(2024, updated.getValue(0));
+    }
+
+    @Test
+    public void testWithoutField() {
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(),
+            DateTimeFieldType.monthOfYear()
+        };
+        int[] values = new int[] { 2023, 6 };
+        Partial p = new Partial(types, values);
+        Partial updated = p.without(DateTimeFieldType.monthOfYear());
+        assertEquals(2, p.size());
+        assertEquals(1, updated.size());
+        assertEquals(DateTimeFieldType.year(), updated.getFieldType(0));
+        assertEquals(2023, updated.getValue(0));
+    }
+
+    @Test
+    public void testWithoutNonExistentField() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2023);
+        Partial updated = p.without(DateTimeFieldType.monthOfYear());
+        assertEquals(1, updated.size());
+        assertEquals(2023, updated.getValue(0));
+    }
+
+    @Test
+    public void testWithFieldAdd() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2023);
+        Partial updated = p.withFieldAdded(DurationFieldType.years(), 5);
+        assertEquals(2023, p.getValue(0));
+        assertEquals(2028, updated.getValue(0));
+    }
+
+    @Test
+    public void testIsMatchReadablePartial() {
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.monthOfYear(),
+            DateTimeFieldType.dayOfMonth()
+        };
+        int[] values = new int[] { 6, 15 };
+        Partial p = new Partial(types, values);
+
+        LocalDate dateMatch = new LocalDate(2023, 6, 15);
+        LocalDate dateNoMatch = new LocalDate(2023, 6, 16);
+
+        assertTrue(p.isMatch(dateMatch));
+        assertFalse(p.isMatch(dateNoMatch));
+    }
+
+    @Test
+    public void testToStringFormats() {
+        Partial p = new Partial(DateTimeFieldType.year(), 2023);
+        assertNotNull(p.toString());
+        assertNotNull(p.toStringList());
+    }
+}
+```

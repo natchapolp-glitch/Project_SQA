@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:22:58.398623+00:00",
+  "ended_at_utc": "2026-10-04T05:23:01.320729+00:00",
+  "raw_body_sha256": "6ead216f3466153eb5f3de65718c2aa120e2a4d46a34c501c033f696120d2568",
+  "body": {
+    "id": "genai-01a1055d-9c3f-75b1-a2da-915b4525963f",
+    "object": "chat.completion",
+    "created": 1791091383,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage org.apache.commons.cli;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport org.junit.Test;\n\npublic class PosixParserTest {\n\n    @Test\n    public void testFlattenLongOptionWithEquals() {\n        PosixParser parser = new PosixParser();\n        Options options = new Options();\n        options.addOption(\"b\", \"block\", false, \"block size\");\n\n        String[] args = new String[] { \"--block=1024\" };\n        String[] flattened = parser.flatten(options, args, false);\n\n        assertArrayEquals(new String[] { \"--block\", \"1024\" }, flattened);\n    }\n\n    @Test\n    public void testFlattenSingleHyphen() {\n        PosixParser parser = new PosixParser();\n        Options options = new Options();\n\n        String[] args = new String[] { \"-\" };\n        String[] flattened = parser.flatten(options, args, false);\n\n        assertArrayEquals(new String[] { \"-\" }, flattened);\n    }\n\n    @Test\n    public void testFlattenDoubleHyphenStop() {\n        PosixParser parser = new PosixParser();\n        Options options = new Options();\n\n        String[] args = new String[] { \"--\", \"-f\", \"file.txt\" };\n        String[] flattened = parser.flatten(options, args, false);\n\n        assertArrayEquals(new String[] { \"--\", \"-f\", \"file.txt\" }, flattened);\n    }\n\n    @Test\n    public void testBurstTokenSimple() {\n        PosixParser parser = new PosixParser();\n        Options options = new Options();\n        options.addOption(\"a\", false, \"option a\");\n        options.addOption(\"b\", false, \"option b\");\n\n        String[] args = new String[] { \"-ab\" };\n        String[] flattened = parser.flatten(options, args, false);\n\n        assertArrayEquals(new String[] { \"-a\", \"-b\" }, flattened);\n    }\n\n    @Test\n    public void testStopAtNonOption() {\n        PosixParser parser = new PosixParser();\n        Options options = new Options();\n        options.addOption(\"a\", false, \"option a\");\n\n        String[] args = new String[] { \"-a\", \"nonoption\", \"-a\" };\n        String[] flattened = parser.flatten(options, args, true);\n\n        assertArrayEquals(new String[] { \"-a\", \"--\", \"nonoption\", \"-a\" }, flattened);\n    }\n\n    @Test\n    public void testBurstTokenWithOptionsWithArg() {\n        PosixParser parser = new PosixParser();\n        Options options = new Options();\n        options.addOption(\"a\", false, \"option a\");\n        Option optB = new Option(\"b\", true, \"option b\");\n        options.addOption(optB);\n\n        String[] args = new String[] { \"-abvalue\" };\n        String[] flattened = parser.flatten(options, args, false);\n\n        assertArrayEquals(new String[] { \"-a\", \"-b\", \"value\" }, flattened);\n    }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3252,
+      "completion_tokens": 703,
+      "total_tokens": 3955
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 17033,
+      "daily_remaining_tokens": 332967
+    }
+  },
+  "headers": {
+    "x-request-id": "xbm8ps7zuh6gdbot5krnfrfs",
+    "date": "Sun, 04 Oct 2026 05:23:03 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

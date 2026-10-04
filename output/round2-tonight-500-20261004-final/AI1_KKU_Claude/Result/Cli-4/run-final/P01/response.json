@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:23:45.915351+00:00",
+  "ended_at_utc": "2026-10-04T08:23:51.730265+00:00",
+  "raw_body_sha256": "fbc9cd5d225c4d44a7bf3de3d7977d717568fb2222a931c5dd2c3dd30cb3370a",
+  "body": {
+    "id": "gen-1791102228-rF5nEzaRQ8D3eamapKgR",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "- Setup: use a concrete Parser subclass (e.g. GnuParser/PosixParser/BasicParser) with Options containing a required option (setRequired(true)); verify parse() throws MissingOptionException when that option is absent from args.\n- Verify parse() succeeds and does NOT throw MissingOptionException when the required option IS present in args.\n- Verify that calling parse() twice on the same Parser instance (reusing the Parser object with different Options/args) correctly resets internal state (requiredOptions list) each time, rather than carrying stale required-options from a prior invocation.\n- Test with multiple required options: ensure MissingOptionException lists/contains all missing required options, not just one.\n- Test with Properties overload: required option satisfied via default Properties value should not trigger MissingOptionException.\n- Test with no required options defined: parse() with arbitrary args should succeed without exception.\n- Boundary: required option present as part of an option group—verify required-group semantics still correctly detected as satisfied or missing.\n- Confirm CommandLine returned contains correct values/presence for options when required options are satisfied, ensuring no side-effects from the required-check logic corrupt parsed results.\n- Test sequential parse() calls with first invocation missing required option (expect exception) followed by second invocation with all required options present (expect success) to confirm state is not polluted across calls.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 792,
+      "output_tokens": 449,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.006074,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.006074,
+        "upstream_inference_prompt_cost": 0.001584,
+        "upstream_inference_completions_cost": 0.00449
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 134094,
+      "daily_remaining_tokens": 65906
+    }
+  },
+  "headers": {
+    "x-request-id": "o14wrfrfwz2gmwy4ghscfen6",
+    "date": "Sun, 04 Oct 2026 08:23:54 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

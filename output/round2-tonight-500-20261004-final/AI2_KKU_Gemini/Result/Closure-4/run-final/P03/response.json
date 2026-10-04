@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:29:15.619186+00:00",
+  "ended_at_utc": "2026-10-04T08:29:21.766347+00:00",
+  "raw_body_sha256": "707f4e42eae85d5d58bb3fa0cc50bec34b3ab0531cbebc3a2c6bf445f3f117bf",
+  "body": {
+    "id": "genai-01a10608-2e07-7871-adf6-e112452eeba2",
+    "object": "chat.completion",
+    "created": 1791102561,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "```java\npackage com.google.javascript.rhino.jstype;\n\nimport com.google.common.base.Predicate;\nimport com.google.javascript.rhino.ErrorReporter;\nimport com.google.javascript.rhino.Node;\nimport com.google.javascript.rhino.SimpleErrorReporter;\nimport org.junit.Before;\nimport org.junit.Test;\n\nimport static org.junit.Assert.*;\n\npublic class NamedTypeTest {\n\n  private JSTypeRegistry registry;\n  private ErrorReporter errorReporter;\n\n  @Before\n  public void setUp() {\n    errorReporter = new SimpleErrorReporter();\n    registry = new JSTypeRegistry(errorReporter);\n  }\n\n  @Test\n  public void testBasicProperties() {\n    NamedType namedType = new NamedType(registry, \"my.TestType\", \"testSource.js\", 10, 5);\n\n    assertTrue(namedType.hasReferenceName());\n    assertEquals(\"my.TestType\", namedType.getReferenceName());\n    assertTrue(namedType.isNominalType());\n    assertTrue(namedType.isNamedType());\n    assertEquals(\"my.TestType\", namedType.toStringHelper(false));\n    assertNotNull(namedType.hashCode());\n  }\n\n  @Test\n  public void testResolveViaRegistry() {\n    NamedType namedType = new NamedType(registry, \"RegisteredType\", \"source.js\", 1, 0);\n    assertNotNull(namedType);\n  }\n\n  @Test\n  public void testDefinePropertyBeforeResolution() {\n    NamedType namedType = new NamedType(registry, \"Unresolved\", \"source.js\", 2, 0);\n    assertFalse(namedType.isResolved());\n\n    Node propNode = new Node(0);\n    boolean defined = namedType.defineProperty(\"p\", registry.getNativeType(JSTypeNative.NUMBER_TYPE), false, propNode);\n    assertTrue(defined);\n  }\n\n  @Test\n  public void testSetValidator() {\n    NamedType namedType = new NamedType(registry, \"ValidatedType\", \"source.js\", 3, 0);\n    \n    final boolean[] applied = {false};\n    Predicate<JSType> validator = new Predicate<JSType>() {\n      @Override\n      public boolean apply(JSType input) {\n        applied[0] = true;\n        return true;\n      }\n    };\n\n    boolean result = namedType.setValidator(validator);\n    assertTrue(result);\n  }\n\n  @Test\n  public void testGetTypedefType() {\n    NamedType namedType = new NamedType(registry, \"TypedefTarget\", \"source.js\", 4, 0);\n    StaticSlot<JSType> slot = new StaticSlot<JSType>() {\n      @Override public String getName() { return \"slot\"; }\n      @Override public JSType getType() { return registry.getNativeType(JSTypeNative.NUMBER_TYPE); }\n      @Override public JSType getPropertyType(String name) { return null; }\n      @Override public boolean isTypeInferred() { return false; }\n      @Override public Node getDeclarationNode() { return null; }\n    };\n\n    JSType typedef = namedType.getTypedefType(errorReporter, slot, \"slot\");\n    assertNotNull(typedef);\n  }\n}\n```",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5784,
+      "completion_tokens": 766,
+      "total_tokens": 6550
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 96110,
+      "daily_remaining_tokens": 253890
+    }
+  },
+  "headers": {
+    "x-request-id": "bn05tceocxoq8dwxy9vq8wo3",
+    "date": "Sun, 04 Oct 2026 08:29:21 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

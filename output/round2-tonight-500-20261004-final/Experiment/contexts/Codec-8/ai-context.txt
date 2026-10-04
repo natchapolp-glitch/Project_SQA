@@ -1,0 +1,385 @@
+Case: Codec-8
+Java 11, JUnit 4
+Modified classes: org.apache.commons.codec.binary.Base64, org.apache.commons.codec.binary.Base64InputStream
+
+BUGGY API signatures (may include private members):
+Compiled from "Base64.java"
+public class org.apache.commons.codec.binary.Base64 implements org.apache.commons.codec.BinaryEncoder,org.apache.commons.codec.BinaryDecoder {
+  private static final int DEFAULT_BUFFER_RESIZE_FACTOR;
+  private static final int DEFAULT_BUFFER_SIZE;
+  public static final int MIME_CHUNK_SIZE;
+  public static final int PEM_CHUNK_SIZE;
+  static final byte[] CHUNK_SEPARATOR;
+  private static final byte[] STANDARD_ENCODE_TABLE;
+  private static final byte[] URL_SAFE_ENCODE_TABLE;
+  private static final byte PAD;
+  private static final byte[] DECODE_TABLE;
+  private static final int MASK_6BITS;
+  private static final int MASK_8BITS;
+  private final byte[] encodeTable;
+  private final int lineLength;
+  private final byte[] lineSeparator;
+  private final int decodeSize;
+  private final int encodeSize;
+  private byte[] buffer;
+  private int pos;
+  private int readPos;
+  private int currentLinePos;
+  private int modulus;
+  private boolean eof;
+  private int x;
+  public org.apache.commons.codec.binary.Base64();
+  public org.apache.commons.codec.binary.Base64(boolean);
+  public org.apache.commons.codec.binary.Base64(int);
+  public org.apache.commons.codec.binary.Base64(int, byte[]);
+  public org.apache.commons.codec.binary.Base64(int, byte[], boolean);
+  public boolean isUrlSafe();
+  boolean hasData();
+  int avail();
+  private void resizeBuffer();
+  int readResults(byte[], int, int);
+  void setInitialBuffer(byte[], int, int);
+  void encode(byte[], int, int);
+  void decode(byte[], int, int);
+  public static boolean isBase64(byte);
+  public static boolean isArrayByteBase64(byte[]);
+  private static boolean containsBase64Byte(byte[]);
+  public static byte[] encodeBase64(byte[]);
+  public static java.lang.String encodeBase64String(byte[]);
+  public static byte[] encodeBase64URLSafe(byte[]);
+  public static java.lang.String encodeBase64URLSafeString(byte[]);
+  public static byte[] encodeBase64Chunked(byte[]);
+  public java.lang.Object decode(java.lang.Object) throws org.apache.commons.codec.DecoderException;
+  public byte[] decode(java.lang.String);
+  public byte[] decode(byte[]);
+  public static byte[] encodeBase64(byte[], boolean);
+  public static byte[] encodeBase64(byte[], boolean, boolean);
+  public static byte[] encodeBase64(byte[], boolean, boolean, int);
+  public static byte[] decodeBase64(java.lang.String);
+  public static byte[] decodeBase64(byte[]);
+  static byte[] discardWhitespace(byte[]);
+  private static boolean isWhiteSpace(byte);
+  public java.lang.Object encode(java.lang.Object) throws org.apache.commons.codec.EncoderException;
+  public java.lang.String encodeToString(byte[]);
+  public byte[] encode(byte[]);
+  private static long getEncodeLength(byte[], int, byte[]);
+  public static java.math.BigInteger decodeInteger(byte[]);
+  public static byte[] encodeInteger(java.math.BigInteger);
+  static byte[] toIntegerBytes(java.math.BigInteger);
+  private void reset();
+  static {};
+}
+Compiled from "Base64InputStream.java"
+public class org.apache.commons.codec.binary.Base64InputStream extends java.io.FilterInputStream {
+  private final boolean doEncode;
+  private final org.apache.commons.codec.binary.Base64 base64;
+  private final byte[] singleByte;
+  public org.apache.commons.codec.binary.Base64InputStream(java.io.InputStream);
+  public org.apache.commons.codec.binary.Base64InputStream(java.io.InputStream, boolean);
+  public org.apache.commons.codec.binary.Base64InputStream(java.io.InputStream, boolean, int, byte[]);
+  public int read() throws java.io.IOException;
+  public int read(byte[], int, int) throws java.io.IOException;
+  public boolean markSupported();
+}
+
+
+BUGGY source excerpt: org.apache.commons.codec.binary.Base64 (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.codec.binary;
+
+import java.math.BigInteger;
+
+import org.apache.commons.codec.BinaryDecoder;
+import org.apache.commons.codec.BinaryEncoder;
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.EncoderException;
+
+/**
+ * Provides Base64 encoding and decoding as defined by RFC 2045.
+ * 
+ * <p>
+ * This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite> from RFC 2045 <cite>Multipurpose
+ * Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</cite> by Freed and Borenstein.
+ * </p>
+ * <p>
+ * The class can be parameterized in the following manner with various constructors:
+ * <ul>
+ * <li>URL-safe mode: Default off.</li>
+ * <li>Line length: Default 76. Line length that aren't multiples of 4 will still essentially end up being multiples of
+ * 4 in the encoded data.
+ * <li>Line separator: Default is CRLF ("\r\n")</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Since this class operates directly on byte streams, and not character streams, it is hard-coded to only encode/decode
+ * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
+ * </p>
+ * 
+ * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
+ * @author Apache Software Foundation
+ * @since 1.0
+ * @version $Id$
+ */
+public class Base64 implements BinaryEncoder, BinaryDecoder {
+    private static final int DEFAULT_BUFFER_RESIZE_FACTOR = 2;
+
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
+
+    /**
+     *  MIME chunk size per RFC 2045 section 6.8.
+     * 
+     * <p>
+     * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
+     * equal signs.
+     * </p>
+     * 
+     * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045 section 6.8</a>
+     */
+    public static final int MIME_CHUNK_SIZE = 76;
+
+    /**
+     * PEM chunk size per RFC 1421 section 4.3.2.4.
+     * 
+     * <p>
+     * The {@value} character limit does not count the trailing CRLF, but counts all other characters, including any
+     * equal signs.
+     * </p>
+     * 
+     * @see <a href="http://tools.ietf.org/html/rfc1421">RFC 1421 section 4.3.2.4</a>
+     */
+    public static final int PEM_CHUNK_SIZE = 64;
+
+    /**
+     * Chunk separator per RFC 2045 section 2.1.
+     *
+     * <p>
+     * N.B. The next major release may break compatibility and make this field private.
+     * </p>
+     * 
+     * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045 section 2.1</a>
+     */
+    static final byte[] CHUNK_SEPARATOR = {'\r', '\n'};
+
+    /**
+     * This array is a lookup table that translates 6-bit positive integer index values into their "Base64 Alphabet"
+     * equivalents as specified in Table 1 of RFC 2045.
+     * 
+     * Thanks to "commons" project in ws.apache.org for this code.
+     * http://svn.apache.org/repos/asf/webservices/commons/trunk/modules/util/
+     */
+    private static final byte[] STANDARD_ENCODE_TABLE = {
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+    };
+
+    /**
+     * This is a copy of the STANDARD_ENCODE_TABLE above, but with + and /
+     * changed to - and _ to make the encoded Base64 results more URL-SAFE.
+     * This table is only used when the Base64's mode is set to URL-SAFE.
+     */    
+    private static final byte[] URL_SAFE_ENCODE_TABLE = {
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
+            'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+            'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '_'
+    };
+
+    /**
+     * Byte used to pad output.
+     */
+    private static final byte PAD = '=';
+
+    /**
+     * This array is a lookup table that translates Unicode characters drawn from the "Base64 Alphabet" (as specified in
+     * Table 1 of RFC 2045) into their 6-bit positive integer equivalents. Characters that are not in the Base64
+     * alphabet but fall within the bounds of the array are translated to -1.
+     * 
+     * Note: '+' and '-' both decode to 62. '/' and '_' both decode to 63. This means decoder seamlessly handles both
+     * URL_SAFE and STANDARD base64. (The encoder, on the other hand, needs to know ahead of time what to emit).
+     * 
+     * Thanks to "commons" project in ws.apache.org for this code.
+     * http://svn.apache.org/repos/asf/webservices/commons/trunk/modules/util/
+     */
+    private static final byte[] DECODE_TABLE = {
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63, 52, 53, 54,
+           
+```
+
+BUGGY source excerpt: org.apache.commons.codec.binary.Base64InputStream (truncated=True)
+```java
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.codec.binary;
+
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Provides Base64 encoding and decoding in a streaming fashion (unlimited size). When encoding the default lineLength
+ * is 76 characters and the default lineEnding is CRLF, but these can be overridden by using the appropriate
+ * constructor.
+ * <p>
+ * The default behaviour of the Base64InputStream is to DECODE, whereas the default behaviour of the Base64OutputStream
+ * is to ENCODE, but this behaviour can be overridden by using a different constructor.
+ * </p>
+ * <p>
+ * This class implements section <cite>6.8. Base64 Content-Transfer-Encoding</cite> from RFC 2045 <cite>Multipurpose
+ * Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</cite> by Freed and Borenstein.
+ * </p>
+ * <p>
+ * Since this class operates directly on byte streams, and not character streams, it is hard-coded to only encode/decode
+ * character encodings which are compatible with the lower 127 ASCII chart (ISO-8859-1, Windows-1252, UTF-8, etc).
+ * </p>
+ * 
+ * @author Apache Software Foundation 
+ * @version $Id$
+ * @see <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
+ * @since 1.4
+ */
+public class Base64InputStream extends FilterInputStream {
+
+    private final boolean doEncode;
+
+    private final Base64 base64;
+
+    private final byte[] singleByte = new byte[1];
+
+    /**
+     * Creates a Base64InputStream such that all data read is Base64-decoded from the original provided InputStream.
+     * 
+     * @param in
+     *            InputStream to wrap.
+     */
+    public Base64InputStream(InputStream in) {
+        this(in, false);
+    }
+
+    /**
+     * Creates a Base64InputStream such that all data read is either Base64-encoded or Base64-decoded from the original
+     * provided InputStream.
+     * 
+     * @param in
+     *            InputStream to wrap.
+     * @param doEncode
+     *            true if we should encode all data read from us, false if we should decode.
+     */
+    public Base64InputStream(InputStream in, boolean doEncode) {
+        super(in);
+        this.doEncode = doEncode;
+        this.base64 = new Base64(false);
+    }
+
+    /**
+     * Creates a Base64InputStream such that all data read is either Base64-encoded or Base64-decoded from the original
+     * provided InputStream.
+     * 
+     * @param in
+     *            InputStream to wrap.
+     * @param doEncode
+     *            true if we should encode all data read from us, false if we should decode.
+     * @param lineLength
+     *            If doEncode is true, each line of encoded data will contain lineLength characters (rounded down to
+     *            nearest multiple of 4). If lineLength <=0, the encoded data is not divided into lines. If doEncode is
+     *            false, lineLength is ignored.
+     * @param lineSeparator
+     *            If doEncode is true, each line of encoded data will be terminated with this byte sequence (e.g. \r\n).
+     *            If lineLength <= 0, the lineSeparator is not used. If doEncode is false lineSeparator is ignored.
+     */
+    public Base64InputStream(InputStream in, boolean doEncode, int lineLength, byte[] lineSeparator) {
+        super(in);
+        this.doEncode = doEncode;
+        this.base64 = new Base64(lineLength, lineSeparator);
+    }
+
+    /**
+     * Reads one <code>byte</code> from this input stream.
+     * 
+     * @return the byte as an integer in the range 0 to 255. Returns -1 if EOF has been reached.
+     * @throws IOException
+     *             if an I/O error occurs.
+     */
+    public int read() throws IOException {
+        int r = read(singleByte, 0, 1);
+        while (r == 0) {
+            r = read(singleByte, 0, 1);
+        }
+        if (r > 0) {
+            return singleByte[0] < 0 ? 256 + singleByte[0] : singleByte[0];
+        }
+        return -1;
+    }
+
+    /**
+     * Attempts to read <code>len</code> bytes into the specified <code>b</code> array starting at <code>offset</code>
+     * from this InputStream.
+     * 
+     * @param b
+     *            destination byte array
+     * @param offset
+     *            where to start writing the bytes
+     * @param len
+     *            maximum number of bytes to read
+     * 
+     * @return number of bytes read
+     * @throws IOException
+     *             if an I/O error occurs.
+     * @throws NullPointerException
+     *             if the byte array parameter is null
+     * @throws IndexOutOfBoundsException
+     *             if offset, len or buffer size are invalid
+     */
+    public int read(byte b[], int offset, int len) throws IOException {
+        if (b == null) {
+            throw new NullPointerException();
+        } else if (offset < 0 || len < 0) {
+            throw new IndexOutOfBoundsException();
+        } else if (offset > b.length || offset + len > b.length) {
+            throw new IndexOutOfBoundsException();
+        } else if (len == 0) {
+            return 0;
+        } else {
+            int readLen = 0;
+            /*
+             Rationale for while-loop on (readLen == 0):
+             -----
+             Base64.readResults() usually returns > 0 or EOF (-1).  In th
+```

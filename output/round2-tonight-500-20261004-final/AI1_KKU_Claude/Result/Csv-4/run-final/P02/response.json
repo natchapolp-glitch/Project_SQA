@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:46:24.749637+00:00",
+  "ended_at_utc": "2026-10-04T08:46:42.798879+00:00",
+  "raw_body_sha256": "e11545698eb76206a39a4ff57c2132eb8b750dc665f1ba8979e6f52fff6c69ba",
+  "body": {
+    "id": "gen-1791103587-a4aunX03zUmSiDJCgScC",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.*;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.util.Iterator;\nimport java.util.List;\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVParserTest {\n\n    @Test\n    public void testGetRecordsSimple() throws IOException {\n        String csv = \"a,b,c\\n1,2,3\\n\";\n        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(2, records.size());\n        assertEquals(\"a\", records.get(0).get(0));\n        assertEquals(\"b\", records.get(0).get(1));\n        assertEquals(\"c\", records.get(0).get(2));\n        assertEquals(\"1\", records.get(1).get(0));\n        assertEquals(\"2\", records.get(1).get(1));\n        assertEquals(\"3\", records.get(1).get(2));\n        parser.close();\n    }\n\n    @Test\n    public void testHeaderMapAutoDetected() throws IOException {\n        String csv = \"name,age\\nJohn,30\\nJane,25\\n\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader();\n        CSVParser parser = new CSVParser(new StringReader(csv), format);\n        Map<String, Integer> headerMap = parser.getHeaderMap();\n        assertEquals(Integer.valueOf(0), headerMap.get(\"name\"));\n        assertEquals(Integer.valueOf(1), headerMap.get(\"age\"));\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(2, records.size());\n        assertEquals(\"John\", records.get(0).get(\"name\"));\n        assertEquals(\"30\", records.get(0).get(\"age\"));\n        parser.close();\n    }\n\n    @Test\n    public void testExplicitHeaderSkipsRecord() throws IOException {\n        String csv = \"name,age\\nJohn,30\\n\";\n        CSVFormat format = CSVFormat.DEFAULT.withHeader(\"name\", \"age\").withSkipHeaderRecord(true);\n        CSVParser parser = new CSVParser(new StringReader(csv), format);\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(1, records.size());\n        assertEquals(\"John\", records.get(0).get(\"name\"));\n        parser.close();\n    }\n\n    @Test\n    public void testIgnoreEmptyLines() throws IOException {\n        String csv = \"a,b\\n\\n1,2\\n\\n3,4\\n\";\n        CSVFormat format = CSVFormat.DEFAULT.withIgnoreEmptyLines(true);\n        CSVParser parser = new CSVParser(new StringReader(csv), format);\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(3, records.size());\n        parser.close();\n    }\n\n    @Test\n    public void testQuotedMultilineField() throws IOException {\n        String csv = \"a,\\\"b\\nc\\\",d\\n\";\n        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(1, records.size());\n        assertEquals(\"b\\nc\", records.get(0).get(1));\n        parser.close();\n    }\n\n    @Test\n    public void testCommentLinesSkipped() throws IOException {\n        String csv = \"# comment\\na,b\\n# another comment\\n1,2\\n\";\n        CSVFormat format = CSVFormat.DEFAULT.withCommentMarker('#');\n        CSVParser parser = new CSVParser(new StringReader(csv), format);\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(2, records.size());\n        assertEquals(\"a\", records.get(0).get(0));\n        assertEquals(\"1\", records.get(1).get(0));\n        parser.close();\n    }\n\n    @Test\n    public void testCloseIdempotentAndIsClosed() throws IOException {\n        CSVParser parser = new CSVParser(new StringReader(\"a,b\\n\"), CSVFormat.DEFAULT);\n        assertFalse(parser.isClosed());\n        parser.close();\n        assertTrue(parser.isClosed());\n        parser.close();\n        assertTrue(parser.isClosed());\n    }\n\n    @Test\n    public void testEmptyInputYieldsNoRecords() throws IOException {\n        CSVParser parser = new CSVParser(new StringReader(\"\"), CSVFormat.DEFAULT);\n        List<CSVRecord> records = parser.getRecords();\n        assertTrue(records.isEmpty());\n        parser.close();\n    }\n\n    @Test\n    public void testIteratorMatchesGetRecords() throws IOException {\n        String csv = \"1,2\\n3,4\\n\";\n        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);\n        Iterator<CSVRecord> it = parser.iterator();\n        assertTrue(it.hasNext());\n        CSVRecord first = it.next();\n        assertEquals(\"1\", first.get(0));\n        assertTrue(it.hasNext());\n        CSVRecord second = it.next();\n        assertEquals(\"3\", second.get(0));\n        assertFalse(it.hasNext());\n        parser.close();\n    }\n\n    @Test\n    public void testRecordNumberIncrements() throws IOException {\n        String csv = \"a\\nb\\nc\\n\";\n        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);\n        assertEquals(0, parser.getRecordNumber());\n        CSVRecord r1 = parser.nextRecord();\n        assertEquals(1, r1.getRecordNumber());\n        assertEquals(1, parser.getRecordNumber());\n        CSVRecord r2 = parser.nextRecord();\n        assertEquals(2, r2.getRecordNumber());\n        parser.close();\n    }\n\n    @Test\n    public void testConstructorNullReaderThrows() throws IOException {\n        try {\n            new CSVParser(null, CSVFormat.DEFAULT);\n            fail(\"Expected IllegalArgumentException\");\n        } catch (IllegalArgumentException e) {\n            // expected\n        }\n    }\n\n    @Test\n    public void testNoTrailingEmptyRecordWithoutFinalNewline() throws IOException {\n        String csv = \"1,2\\n3,4\";\n        CSVParser parser = new CSVParser(new StringReader(csv), CSVFormat.DEFAULT);\n        List<CSVRecord> records = parser.getRecords();\n        assertEquals(2, records.size());\n        parser.close();\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 6044,
+      "output_tokens": 2311,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.035198,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.035198,
+        "upstream_inference_prompt_cost": 0.012088,
+        "upstream_inference_completions_cost": 0.02311
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 156293,
+      "daily_remaining_tokens": 43707
+    }
+  },
+  "headers": {
+    "x-request-id": "zuq0h7u1c4zxeg9jm0jzdpa4",
+    "date": "Sun, 04 Oct 2026 08:46:43 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

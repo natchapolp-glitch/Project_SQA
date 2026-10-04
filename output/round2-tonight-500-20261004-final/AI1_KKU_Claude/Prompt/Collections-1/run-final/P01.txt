@@ -1,0 +1,56 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Collections-1
+Java 11, JUnit 4
+Modified classes: org.apache.commons.collections.map.Flat3Map
+BUGGY API signatures:
+Compiled from "Flat3Map.java"
+public class org.apache.commons.collections.map.Flat3Map implements org.apache.commons.collections.IterableMap,java.io.Serializable,java.lang.Cloneable {
+  private static final long serialVersionUID;
+  private transient int size;
+  private transient int hash1;
+  private transient int hash2;
+  private transient int hash3;
+  private transient java.lang.Object key1;
+  private transient java.lang.Object key2;
+  private transient java.lang.Object key3;
+  private transient java.lang.Object value1;
+  private transient java.lang.Object value2;
+  private transient java.lang.Object value3;
+  private transient org.apache.commons.collections.map.AbstractHashedMap delegateMap;
+  public org.apache.commons.collections.map.Flat3Map();
+  public org.apache.commons.collections.map.Flat3Map(java.util.Map);
+  public java.lang.Object get(java.lang.Object);
+  public int size();
+  public boolean isEmpty();
+  public boolean containsKey(java.lang.Object);
+  public boolean containsValue(java.lang.Object);
+  public java.lang.Object put(java.lang.Object, java.lang.Object);
+  public void putAll(java.util.Map);
+  private void convertToMap();
+  protected org.apache.commons.collections.map.AbstractHashedMap createDelegateMap();
+  public java.lang.Object remove(java.lang.Object);
+  public void clear();
+  public org.apache.commons.collections.MapIterator mapIterator();
+  public java.util.Set entrySet();
+  public java.util.Set keySet();
+  public java.util.Collection values();
+  private void writeObject(java.io.ObjectOutputStream) throws java.io.IOException;
+  private void readObject(java.io.ObjectInputStream) throws java.io.IOException, java.lang.ClassNotFoundException;
+  public java.lang.Object clone();
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+  static int access$000(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$100(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$200(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$300(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$400(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$500(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$600(org.apache.commons.collections.map.Flat3Map);
+  static java.lang.Object access$402(org.apache.commons.collections.map.Flat3Map, java.lang.Object);
+  static java.lang.Object access$502(org.apache.commons.collections.map.Flat3Map, java.lang.Object);
+  static java.lang.Object access$602(org.apache.commons.collections.map.Flat3Map, java.lang.Object);
+  static org.apache.commons.collections.map.AbstractHashedMap access$700(org.apache.commons.collections.map.Flat3Map);
+}
+

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T05:18:42.586418+00:00",
+  "ended_at_utc": "2026-10-04T05:18:49.904863+00:00",
+  "raw_body_sha256": "bc7dc08d76ab406dcad72dc88338e9f3014155a50ec2f1c2c2aec8f13d191e21",
+  "body": {
+    "id": "gen-1791091123-hc2I1WgDIVf6o0XbBtMY",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.jfree.data.general;\n\nimport static org.junit.Assert.assertEquals;\n\nimport org.jfree.data.category.CategoryDataset;\nimport org.jfree.data.category.DefaultCategoryDataset;\nimport org.jfree.data.pie.PieDataset;\nimport org.junit.Test;\n\npublic class DatasetUtilitiesExtraTest {\n\n    @Test\n    public void testCreatePieDatasetForRowByKey() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(1.0, \"R1\", \"C1\");\n        dataset.addValue(2.0, \"R1\", \"C2\");\n        dataset.addValue(3.0, \"R2\", \"C1\");\n        dataset.addValue(4.0, \"R2\", \"C2\");\n\n        PieDataset pie = DatasetUtilities.createPieDatasetForRow(\n                (CategoryDataset) dataset, \"R1\");\n        assertEquals(1.0, pie.getValue(\"C1\").doubleValue(), 0.0000001);\n        assertEquals(2.0, pie.getValue(\"C2\").doubleValue(), 0.0000001);\n    }\n\n    @Test\n    public void testCreatePieDatasetForRowByIndex() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(10.0, \"R1\", \"C1\");\n        dataset.addValue(20.0, \"R1\", \"C2\");\n\n        PieDataset pie = DatasetUtilities.createPieDatasetForRow(\n                (CategoryDataset) dataset, 0);\n        assertEquals(10.0, pie.getValue(\"C1\").doubleValue(), 0.0000001);\n        assertEquals(20.0, pie.getValue(\"C2\").doubleValue(), 0.0000001);\n    }\n\n    @Test\n    public void testCreatePieDatasetForColumnByKey() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(5.0, \"R1\", \"C1\");\n        dataset.addValue(6.0, \"R2\", \"C1\");\n\n        PieDataset pie = DatasetUtilities.createPieDatasetForColumn(\n                (CategoryDataset) dataset, \"C1\");\n        assertEquals(5.0, pie.getValue(\"R1\").doubleValue(), 0.0000001);\n        assertEquals(6.0, pie.getValue(\"R2\").doubleValue(), 0.0000001);\n    }\n\n    @Test\n    public void testCreatePieDatasetForColumnByIndex() {\n        DefaultCategoryDataset dataset = new DefaultCategoryDataset();\n        dataset.addValue(7.0, \"R1\", \"C1\");\n        dataset.addValue(8.0, \"R2\", \"C1\");\n\n        PieDataset pie = DatasetUtilities.createPieDatasetForColumn(\n                (CategoryDataset) dataset, 0);\n        assertEquals(7.0, pie.getValue(\"R1\").doubleValue(), 0.0000001);\n        assertEquals(8.0, pie.getValue(\"R2\").doubleValue(), 0.0000001);\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 9494,
+      "output_tokens": 1078,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.029768,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.029768,
+        "upstream_inference_prompt_cost": 0.018988,
+        "upstream_inference_completions_cost": 0.01078
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 54221,
+      "daily_remaining_tokens": 145779
+    }
+  },
+  "headers": {
+    "x-request-id": "hk66iw0ungup0nha85inuw7u",
+    "date": "Sun, 04 Oct 2026 05:18:50 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

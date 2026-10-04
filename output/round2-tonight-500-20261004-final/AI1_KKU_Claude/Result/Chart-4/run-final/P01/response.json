@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T08:18:30.411898+00:00",
+  "ended_at_utc": "2026-10-04T08:18:41.515192+00:00",
+  "raw_body_sha256": "022227df3b190e1aeaaafb1e945bee1f84bf2341f4e8c2edd68f7b4f3fb7eaf5",
+  "body": {
+    "id": "gen-1791101914-VhNrWVm5HO4tKjLqpbDF",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Key behaviors/boundaries to test for XYPlot (likely focus: getDomainAxisIndex/dataset-renderer mapping or axis retrieval, given Chart-4 historically concerns `getDomainAxisIndex`):\n\n- `getDomainAxis(0)` on a plot constructed via the 4-arg constructor should return the originally supplied domain axis instance.\n- `setDomainAxis(int, ValueAxis)` with index >0 should extend `domainAxes` list; `getDomainAxis(index)` should return exactly that axis, and lower indices unaffected.\n- Index lookup: given an axis instance previously set via `setDomainAxis(i, axis)`, searching for its index (e.g., `getDomainAxisIndex(axis)`) should return `i`; for an axis never added, should return -1 (NOT found), not throw.\n- `getDomainAxis(index)` for unset/non-existent index should return `null` rather than throwing, per ObjectList semantics.\n- Axes equal by reference identity matter—two distinct ValueAxis instances with identical field values should NOT both match the same index unless they are `.equals()`-equal; verify whether lookup uses `==` or `.equals()`.\n- `setDomainAxis(0, axis)` replacing the primary axis should update what `getDomainAxis()` (no-arg) returns.\n- Construct plot with no dataset/axes (no-arg constructor), then call `setDomainAxis(0, axis)` — should not NPE, and retrieval should work.\n- `clearDomainAxes()` should reset axis count/list so subsequent `getDomainAxis(0)` returns null.\n- Verify `getDomainAxisCount()` reflects highest set index + 1 after sparse `setDomainAxis(i, axis)` calls.\n- Test symmetric range-axis equivalents if the bug also covers `getRangeAxisIndex`/`getRangeAxis`.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 2996,
+      "output_tokens": 646,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.012452,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.012452,
+        "upstream_inference_prompt_cost": 0.005992,
+        "upstream_inference_completions_cost": 0.00646
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 134806,
+      "daily_remaining_tokens": 65194
+    }
+  },
+  "headers": {
+    "x-request-id": "kx18zyvi69slckju4w4dz67j",
+    "date": "Sun, 04 Oct 2026 08:18:42 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,80 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Time-2
+Java 11, JUnit 4
+Modified classes: org.joda.time.Partial, org.joda.time.field.UnsupportedDurationField
+BUGGY API signatures:
+Compiled from "Partial.java"
+public final class org.joda.time.Partial extends org.joda.time.base.AbstractPartial implements org.joda.time.ReadablePartial,java.io.Serializable {
+  private static final long serialVersionUID;
+  private final org.joda.time.Chronology iChronology;
+  private final org.joda.time.DateTimeFieldType[] iTypes;
+  private final int[] iValues;
+  private transient org.joda.time.format.DateTimeFormatter[] iFormatter;
+  public org.joda.time.Partial();
+  public org.joda.time.Partial(org.joda.time.Chronology);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType, int);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType, int, org.joda.time.Chronology);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType[], int[]);
+  public org.joda.time.Partial(org.joda.time.DateTimeFieldType[], int[], org.joda.time.Chronology);
+  public org.joda.time.Partial(org.joda.time.ReadablePartial);
+  org.joda.time.Partial(org.joda.time.Partial, int[]);
+  org.joda.time.Partial(org.joda.time.Chronology, org.joda.time.DateTimeFieldType[], int[]);
+  public int size();
+  public org.joda.time.Chronology getChronology();
+  protected org.joda.time.DateTimeField getField(int, org.joda.time.Chronology);
+  public org.joda.time.DateTimeFieldType getFieldType(int);
+  public org.joda.time.DateTimeFieldType[] getFieldTypes();
+  public int getValue(int);
+  public int[] getValues();
+  public org.joda.time.Partial withChronologyRetainFields(org.joda.time.Chronology);
+  public org.joda.time.Partial with(org.joda.time.DateTimeFieldType, int);
+  public org.joda.time.Partial without(org.joda.time.DateTimeFieldType);
+  public org.joda.time.Partial withField(org.joda.time.DateTimeFieldType, int);
+  public org.joda.time.Partial withFieldAdded(org.joda.time.DurationFieldType, int);
+  public org.joda.time.Partial withFieldAddWrapped(org.joda.time.DurationFieldType, int);
+  public org.joda.time.Partial withPeriodAdded(org.joda.time.ReadablePeriod, int);
+  public org.joda.time.Partial plus(org.joda.time.ReadablePeriod);
+  public org.joda.time.Partial minus(org.joda.time.ReadablePeriod);
+  public org.joda.time.Partial$Property property(org.joda.time.DateTimeFieldType);
+  public boolean isMatch(org.joda.time.ReadableInstant);
+  public boolean isMatch(org.joda.time.ReadablePartial);
+  public org.joda.time.format.DateTimeFormatter getFormatter();
+  public java.lang.String toString();
+  public java.lang.String toStringList();
+  public java.lang.String toString(java.lang.String);
+  public java.lang.String toString(java.lang.String, java.util.Locale);
+}
+Compiled from "UnsupportedDurationField.java"
+public final class org.joda.time.field.UnsupportedDurationField extends org.joda.time.DurationField implements java.io.Serializable {
+  private static final long serialVersionUID;
+  private static java.util.HashMap<org.joda.time.DurationFieldType, org.joda.time.field.UnsupportedDurationField> cCache;
+  private final org.joda.time.DurationFieldType iType;
+  public static synchronized org.joda.time.field.UnsupportedDurationField getInstance(org.joda.time.DurationFieldType);
+  private org.joda.time.field.UnsupportedDurationField(org.joda.time.DurationFieldType);
+  public final org.joda.time.DurationFieldType getType();
+  public java.lang.String getName();
+  public boolean isSupported();
+  public boolean isPrecise();
+  public int getValue(long);
+  public long getValueAsLong(long);
+  public int getValue(long, long);
+  public long getValueAsLong(long, long);
+  public long getMillis(int);
+  public long getMillis(long);
+  public long getMillis(int, long);
+  public long getMillis(long, long);
+  public long add(long, int);
+  public long add(long, long);
+  public int getDifference(long, long);
+  public long getDifferenceAsLong(long, long);
+  public long getUnitMillis();
+  public int compareTo(org.joda.time.DurationField);
+  public boolean equals(java.lang.Object);
+  public int hashCode();
+  public java.lang.String toString();
+  private java.lang.Object readResolve();
+  private java.lang.UnsupportedOperationException unsupported();
+  public int compareTo(java.lang.Object);
+}
+

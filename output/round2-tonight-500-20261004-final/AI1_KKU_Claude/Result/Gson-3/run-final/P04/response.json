@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T07:19:36.974826+00:00",
+  "ended_at_utc": "2026-10-04T07:19:47.363796+00:00",
+  "raw_body_sha256": "e0353955f1fa5f9f70a4f70f5f8cbce97facf59e2d655ad0aba4f6eceac0846d",
+  "body": {
+    "id": "gen-1791098380-mpn36fWDmbhXK7TLXhhD",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.google.gson.internal;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\n\nimport java.lang.reflect.Type;\nimport java.util.Collections;\nimport java.util.EnumSet;\nimport java.util.List;\nimport java.util.Map;\nimport java.util.Queue;\nimport java.util.Set;\n\nimport org.junit.Test;\n\nimport com.google.gson.InstanceCreator;\nimport com.google.gson.reflect.TypeToken;\n\npublic class ConstructorConstructorExtraTest {\n\n  private enum Color { RED, GREEN, BLUE }\n\n  private static ConstructorConstructor newCC() {\n    return new ConstructorConstructor(Collections.<Type, InstanceCreator<?>>emptyMap());\n  }\n\n  @Test\n  public void setInterfaceUsesLinkedHashSet() {\n    ConstructorConstructor cc = newCC();\n    ObjectConstructor<Set> ctor = cc.get(TypeToken.get(Set.class));\n    Object result = ctor.construct();\n    assertNotNull(result);\n    assertTrue(result instanceof java.util.LinkedHashSet);\n  }\n\n  @Test\n  public void queueInterfaceUsesLinkedList() {\n    ConstructorConstructor cc = newCC();\n    ObjectConstructor<Queue> ctor = cc.get(TypeToken.get(Queue.class));\n    Object result = ctor.construct();\n    assertNotNull(result);\n    assertTrue(result instanceof java.util.LinkedList);\n  }\n\n  @Test\n  public void parameterizedMapWithStringKeyUsesLinkedTreeMap() {\n    ConstructorConstructor cc = newCC();\n    Type mapOfStringString = new TypeToken<Map<String, String>>() {}.getType();\n    ObjectConstructor<Map<String, String>> ctor =\n        cc.get((TypeToken<Map<String, String>>) TypeToken.get(mapOfStringString));\n    Object result = ctor.construct();\n    assertNotNull(result);\n    assertTrue(result instanceof LinkedTreeMap);\n  }\n\n  @Test\n  public void enumSetConstructsCorrectly() {\n    ConstructorConstructor cc = newCC();\n    Type enumSetOfColor = new TypeToken<EnumSet<Color>>() {}.getType();\n    ObjectConstructor<EnumSet<Color>> ctor =\n        cc.get((TypeToken<EnumSet<Color>>) TypeToken.get(enumSetOfColor));\n    EnumSet<Color> result = ctor.construct();\n    assertNotNull(result);\n    assertTrue(result.isEmpty());\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5683,
+      "output_tokens": 954,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.020906,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.020906,
+        "upstream_inference_prompt_cost": 0.011366,
+        "upstream_inference_completions_cost": 0.00954
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 132853,
+      "daily_remaining_tokens": 67147
+    }
+  },
+  "headers": {
+    "x-request-id": "bmla892ousr2k9wipocdgr2m",
+    "date": "Sun, 04 Oct 2026 07:19:48 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

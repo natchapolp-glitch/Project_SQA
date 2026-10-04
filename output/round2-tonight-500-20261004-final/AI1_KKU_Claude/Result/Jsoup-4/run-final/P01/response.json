@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:08:27.257428+00:00",
+  "ended_at_utc": "2026-10-04T09:08:34.400052+00:00",
+  "raw_body_sha256": "cef4ac59088bb7c15ed8e615ee1d5889779bb98d906fd5e10cc890e15ebf9889",
+  "body": {
+    "id": "gen-1791104909-lvJFGJHSEWeLamhcJ6MB",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "## Analysis of Testable Behaviors\n\n**`unescape(String)` — likely bug target:**\n- Basic named entity: `\"&amp;\"` → `\"&\"`, `\"&lt;\"` → `\"<\"`, `\"&gt;\"` → `\">\"`, `\"&quot;\"` → `\"\\\"\"`\n- Numeric decimal entity: `\"&#65;\"` → `\"A\"`\n- Numeric hex entity: `\"&#x41;\"` or `\"&#X41;\"` → `\"A\"`\n- Entity without trailing semicolon (legacy HTML laxity): e.g. `\"&amp\"` → `\"&\"` depending on base-entity table support\n- Unknown/invalid entity left unchanged: `\"&foo;\"` → `\"&foo;\"`\n- Plain text with no entities returned unchanged (identity)\n- Null/empty string handling — empty string → empty string; verify no exception\n- Multiple entities in one string: `\"&lt;p&gt;\"` → `\"<p>\"`\n- Entity embedded mid-string with adjacent text: `\"a&amp;b\"` → `\"a&b\"`\n- Case sensitivity: entities are case-sensitive (`&AMP;` vs `&amp;` may differ)\n- Malformed numeric entity (e.g., `\"&#;\"`, `\"&#xZZ;\"`) should not crash, stays literal or partially processed\n\n**`escape(String, OutputSettings)` — receiver setup:**\n- Requires a valid `Document.OutputSettings` instance (default constructor) to drive charset/escape mode\n- Basic special chars escaped: `<`, `>`, `&`, `\"` in XML/HTML mode\n- Non-ASCII chars escaped per charset encoder capability (base vs extended mode)\n- Empty string input → empty string output\n\n**Setup note:** Since methods are package-private (`static`, no modifier), tests must reside in `org.jsoup.nodes` package to access them without reflection.",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 532,
+      "output_tokens": 644,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.007504,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.007504,
+        "upstream_inference_prompt_cost": 0.001064,
+        "upstream_inference_completions_cost": 0.00644
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 159611,
+      "daily_remaining_tokens": 40389
+    }
+  },
+  "headers": {
+    "x-request-id": "zb6fbdaxoi42o5ow1gdlj60f",
+    "date": "Sun, 04 Oct 2026 09:08:37 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T09:18:46.135292+00:00",
+  "ended_at_utc": "2026-10-04T09:18:48.205926+00:00",
+  "raw_body_sha256": "79d27a1ad434b1d638725f0395ecea77d403de103554795c74d882b0b97620e5",
+  "body": {
+    "id": "genai-01a10635-7f29-7a25-bd25-cf435a47e360",
+    "object": "chat.completion",
+    "created": 1791105531,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Gemini",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "- `toLocale(String)` must correctly parse valid language, country, and variant strings (e.g., \"en\", \"en_US\", \"en_US_WIN\").\n- `toLocale(String)` should handle lower/upper case correctly or follow standard locale parsing rules.\n- `toLocale(String)` must throw `IllegalArgumentException` or `NullPointerException` for malformed inputs (e.g., empty string, incorrect length/format).\n- `localeLookupList(Locale)` should generate a hierarchical fallback list (variant -> country -> language -> default).\n- `localeLookupList(Locale, Locale)` should generate the fallback list ending with the specified default locale.\n- `localeLookupList` methods must handle null inputs safely (returning empty list or throwing appropriately per contract).\n- `isAvailableLocale(Locale)` should return true if the locale is present in `availableLocaleList()`, false otherwise.\n- `languagesByCountry(String)` and `countriesByLanguage(String)` should return unmodifiable or valid lists of matching locales.\n- Valid receiver setup: All methods are `public static`, so no instance creation of `LocaleUtils` is required for testing.",
+          "reasoning": ""
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 419,
+      "completion_tokens": 245,
+      "total_tokens": 664
+    },
+    "model_quota": {
+      "daily_quota_tokens": 350000,
+      "daily_usage_tokens": 101256,
+      "daily_remaining_tokens": 248744
+    }
+  },
+  "headers": {
+    "x-request-id": "i0szmnqdp8yusz6sxnvaimid",
+    "date": "Sun, 04 Oct 2026 09:18:51 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

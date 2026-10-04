@@ -1,0 +1,104 @@
+You are planning deterministic Java regression tests. Analyze only the supplied bug metadata and buggy API signatures. Use documented API contracts and Java semantics as oracles, not merely the buggy implementation. In at most 10 short lines list useful behaviors, boundaries and valid receiver setup. Do not write tests yet. No external search, fixed source, patch, existing dataset tests, or hidden evaluation results are available.
+
+Case: Time-3
+Java 11, JUnit 4
+Modified classes: org.joda.time.MutableDateTime
+BUGGY API signatures:
+Compiled from "MutableDateTime.java"
+public class org.joda.time.MutableDateTime extends org.joda.time.base.BaseDateTime implements org.joda.time.ReadWritableDateTime,java.lang.Cloneable,java.io.Serializable {
+  private static final long serialVersionUID;
+  public static final int ROUND_NONE;
+  public static final int ROUND_FLOOR;
+  public static final int ROUND_CEILING;
+  public static final int ROUND_HALF_FLOOR;
+  public static final int ROUND_HALF_CEILING;
+  public static final int ROUND_HALF_EVEN;
+  private org.joda.time.DateTimeField iRoundingField;
+  private int iRoundingMode;
+  public static org.joda.time.MutableDateTime now();
+  public static org.joda.time.MutableDateTime now(org.joda.time.DateTimeZone);
+  public static org.joda.time.MutableDateTime now(org.joda.time.Chronology);
+  public static org.joda.time.MutableDateTime parse(java.lang.String);
+  public static org.joda.time.MutableDateTime parse(java.lang.String, org.joda.time.format.DateTimeFormatter);
+  public org.joda.time.MutableDateTime();
+  public org.joda.time.MutableDateTime(org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(org.joda.time.Chronology);
+  public org.joda.time.MutableDateTime(long);
+  public org.joda.time.MutableDateTime(long, org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(long, org.joda.time.Chronology);
+  public org.joda.time.MutableDateTime(java.lang.Object);
+  public org.joda.time.MutableDateTime(java.lang.Object, org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(java.lang.Object, org.joda.time.Chronology);
+  public org.joda.time.MutableDateTime(int, int, int, int, int, int, int);
+  public org.joda.time.MutableDateTime(int, int, int, int, int, int, int, org.joda.time.DateTimeZone);
+  public org.joda.time.MutableDateTime(int, int, int, int, int, int, int, org.joda.time.Chronology);
+  public org.joda.time.DateTimeField getRoundingField();
+  public int getRoundingMode();
+  public void setRounding(org.joda.time.DateTimeField);
+  public void setRounding(org.joda.time.DateTimeField, int);
+  public void setMillis(long);
+  public void setMillis(org.joda.time.ReadableInstant);
+  public void add(long);
+  public void add(org.joda.time.ReadableDuration);
+  public void add(org.joda.time.ReadableDuration, int);
+  public void add(org.joda.time.ReadablePeriod);
+  public void add(org.joda.time.ReadablePeriod, int);
+  public void setChronology(org.joda.time.Chronology);
+  public void setZone(org.joda.time.DateTimeZone);
+  public void setZoneRetainFields(org.joda.time.DateTimeZone);
+  public void set(org.joda.time.DateTimeFieldType, int);
+  public void add(org.joda.time.DurationFieldType, int);
+  public void setYear(int);
+  public void addYears(int);
+  public void setWeekyear(int);
+  public void addWeekyears(int);
+  public void setMonthOfYear(int);
+  public void addMonths(int);
+  public void setWeekOfWeekyear(int);
+  public void addWeeks(int);
+  public void setDayOfYear(int);
+  public void setDayOfMonth(int);
+  public void setDayOfWeek(int);
+  public void addDays(int);
+  public void setHourOfDay(int);
+  public void addHours(int);
+  public void setMinuteOfDay(int);
+  public void setMinuteOfHour(int);
+  public void addMinutes(int);
+  public void setSecondOfDay(int);
+  public void setSecondOfMinute(int);
+  public void addSeconds(int);
+  public void setMillisOfDay(int);
+  public void setMillisOfSecond(int);
+  public void addMillis(int);
+  public void setDate(long);
+  public void setDate(org.joda.time.ReadableInstant);
+  public void setDate(int, int, int);
+  public void setTime(long);
+  public void setTime(org.joda.time.ReadableInstant);
+  public void setTime(int, int, int, int);
+  public void setDateTime(int, int, int, int, int, int, int);
+  public org.joda.time.MutableDateTime$Property property(org.joda.time.DateTimeFieldType);
+  public org.joda.time.MutableDateTime$Property era();
+  public org.joda.time.MutableDateTime$Property centuryOfEra();
+  public org.joda.time.MutableDateTime$Property yearOfCentury();
+  public org.joda.time.MutableDateTime$Property yearOfEra();
+  public org.joda.time.MutableDateTime$Property year();
+  public org.joda.time.MutableDateTime$Property weekyear();
+  public org.joda.time.MutableDateTime$Property monthOfYear();
+  public org.joda.time.MutableDateTime$Property weekOfWeekyear();
+  public org.joda.time.MutableDateTime$Property dayOfYear();
+  public org.joda.time.MutableDateTime$Property dayOfMonth();
+  public org.joda.time.MutableDateTime$Property dayOfWeek();
+  public org.joda.time.MutableDateTime$Property hourOfDay();
+  public org.joda.time.MutableDateTime$Property minuteOfDay();
+  public org.joda.time.MutableDateTime$Property minuteOfHour();
+  public org.joda.time.MutableDateTime$Property secondOfDay();
+  public org.joda.time.MutableDateTime$Property secondOfMinute();
+  public org.joda.time.MutableDateTime$Property millisOfDay();
+  public org.joda.time.MutableDateTime$Property millisOfSecond();
+  public org.joda.time.MutableDateTime copy();
+  public java.lang.Object clone();
+  public java.lang.String toString();
+}
+

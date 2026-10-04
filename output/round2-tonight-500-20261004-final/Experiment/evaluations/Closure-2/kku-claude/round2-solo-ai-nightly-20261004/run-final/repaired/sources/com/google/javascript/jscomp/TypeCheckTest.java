@@ -1,0 +1,86 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.type.SemanticReverseAbstractInterpreter;
+import org.junit.Test;
+
+public class TypeCheckTest extends CompilerTestCase {
+
+  public TypeCheckTest() {
+    super();
+    this.parseTypeInfo = true;
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return createTypeCheck(compiler);
+  }
+
+  private TypeCheck createTypeCheck(Compiler compiler) {
+    return new TypeCheck(
+        compiler,
+        new SemanticReverseAbstractInterpreter(
+            compiler.getCodingConvention(), compiler.getTypeRegistry()),
+        compiler.getTypeRegistry(),
+        CheckLevel.WARNING,
+        CheckLevel.OFF);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  @Test
+  public void testInterfaceExtendsWithIncompatiblePropertyType() {
+    testTypes(
+        "/** @interface */ function I1() {}\n" +
+        "/** @type {string} */ I1.prototype.prop;\n" +
+        "/** @interface\n @extends {I1} */ function I2() {}\n" +
+        "/** @type {number} */ I2.prototype.prop;",
+        TypeCheck.INCOMPATIBLE_EXTENDED_PROPERTY_TYPE.key);
+  }
+
+  @Test
+  public void testInterfaceExtendsWithCompatiblePropertyType() {
+    testTypes(
+        "/** @interface */ function I1() {}\n" +
+        "/** @type {string} */ I1.prototype.prop;\n" +
+        "/** @interface\n @extends {I1} */ function I2() {}\n" +
+        "/** @type {string} */ I2.prototype.prop;");
+  }
+
+  @Test
+  public void testInterfaceExtendsWithUniquePropertyNoWarning() {
+    testTypes(
+        "/** @interface */ function I1() {}\n" +
+        "/** @type {string} */ I1.prototype.prop1;\n" +
+        "/** @interface\n @extends {I1} */ function I2() {}\n" +
+        "/** @type {number} */ I2.prototype.prop2;");
+  }
+
+  @Test
+  public void testInterfaceMethodEmptyBodyAllowed() {
+    testTypes(
+        "/** @interface */ function I() {}\n" +
+        "I.prototype.method = function() {};");
+  }
+
+  @Test
+  public void testInterfaceMethodNonEmptyBodyWarns() {
+    testTypes(
+        "/** @interface */ function I() {}\n" +
+        "I.prototype.method = function() { return 1; };",
+        TypeCheck.INTERFACE_FUNCTION_NOT_EMPTY.key);
+  }
+
+  @Test
+  public void testClassHidesSuperclassPropertyWithMismatchedType() {
+    testTypes(
+        "/** @constructor */ function Super() {}\n" +
+        "/** @type {string} */ Super.prototype.prop = 'x';\n" +
+        "/** @constructor\n @extends {Super} */ function Sub() {}\n" +
+        "Sub.prototype = new Super();\n" +
+        "/** @type {number} */ Sub.prototype.prop = 1;",
+        TypeCheck.HIDDEN_SUPERCLASS_PROPERTY_MISMATCH.key);
+  }
+}

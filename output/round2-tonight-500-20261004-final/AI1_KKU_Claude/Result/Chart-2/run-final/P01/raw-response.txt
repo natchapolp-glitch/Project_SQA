@@ -1,0 +1,13 @@
+Known Chart-2 bug area: `iterateToFindDomainBounds` / `findDomainBounds` for `XYDataset`, specifically handling of NaN values and item ordering (x may not be sorted) when computing min/max domain bounds.
+
+Useful behaviors/boundaries to test:
+- `findDomainBounds(XYDataset)` on a dataset with a single series/item returns Range(x,x), not null.
+- NaN x-values in some items must be skipped, not propagate as NaN into the returned Range.
+- Domain bounds must be correct even when x-values are unsorted within a series (min/max, not first/last).
+- Empty dataset (zero series or zero items) should return null, not throw.
+- Null dataset argument should throw IllegalArgumentException (per documented contract).
+- Multiple series: bounds must aggregate across all series, not just the first.
+- `includeInterval` variant (`findDomainBounds(dataset, true)`) should widen bounds using start/end x-values when dataset implements `IntervalXYDataset`; `false` should use only x value.
+- Negative, zero, and positive x-values mixed together verify correct min/max selection (not absolute-value or arithmetic mistake).
+- Receiver setup: use `DefaultXYDataset` or `XYSeriesCollection` populated via `XYSeries.add(x, y)`, including an explicit `Double.NaN` entry.
+- Verify returned `Range` object's `getLowerBound()`/`getUpperBound()` exactly, using `assertEquals(expected, actual, 0.0000001)`.

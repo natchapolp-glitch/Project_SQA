@@ -1,0 +1,303 @@
+This is the single allowed repair of the generated Java suite. Correct compile/fixed-validation issues using only the supplied buggy context and fixed-validation excerpt. Return COMPLETE replacement Java files in java fences, at most 12 @Test methods, Java 7-compatible JUnit 4 with meaningful independent assertions. Preserve intended documented contracts; do not weaken or delete assertions solely to make tests pass. No production/build changes, added dependencies, assumptions, ignored tests or external access. No buggy evaluation feedback is supplied.
+
+Case: JacksonDatabind-3
+Java 11, JUnit 4
+Modified classes: com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer
+
+BUGGY API signatures (may include private members):
+Compiled from "StringArrayDeserializer.java"
+public final class com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer extends com.fasterxml.jackson.databind.deser.std.StdDeserializer<java.lang.String[]> implements com.fasterxml.jackson.databind.deser.ContextualDeserializer {
+  private static final long serialVersionUID;
+  public static final com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer instance;
+  protected com.fasterxml.jackson.databind.JsonDeserializer<java.lang.String> _elementDeserializer;
+  public com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer();
+  protected com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer(com.fasterxml.jackson.databind.JsonDeserializer<?>);
+  public java.lang.String[] deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  protected final java.lang.String[] _deserializeCustom(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  public java.lang.Object deserializeWithType(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext, com.fasterxml.jackson.databind.jsontype.TypeDeserializer) throws java.io.IOException;
+  private final java.lang.String[] handleNonArray(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException;
+  public com.fasterxml.jackson.databind.JsonDeserializer<?> createContextual(com.fasterxml.jackson.databind.DeserializationContext, com.fasterxml.jackson.databind.BeanProperty) throws com.fasterxml.jackson.databind.JsonMappingException;
+  public java.lang.Object deserialize(com.fasterxml.jackson.core.JsonParser, com.fasterxml.jackson.databind.DeserializationContext) throws java.io.IOException, com.fasterxml.jackson.core.JsonProcessingException;
+  static {};
+}
+
+
+BUGGY source excerpt: com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer (truncated=False)
+```java
+package com.fasterxml.jackson.databind.deser.std;
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.*;
+
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
+import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
+import com.fasterxml.jackson.databind.util.ObjectBuffer;
+
+/**
+ * Separate implementation for serializing String arrays (instead of
+ * using {@link ObjectArrayDeserializer}.
+ * Used if (and only if) no custom value deserializers are used.
+ */
+@JacksonStdImpl
+public final class StringArrayDeserializer
+    extends StdDeserializer<String[]>
+    implements ContextualDeserializer
+{
+    private static final long serialVersionUID = -7589512013334920693L;
+
+    public final static StringArrayDeserializer instance = new StringArrayDeserializer();
+    
+    /**
+     * Value serializer to use, if not the standard one (which is inlined)
+     */
+    protected JsonDeserializer<String> _elementDeserializer;
+
+    public StringArrayDeserializer() {
+        super(String[].class);
+        _elementDeserializer = null;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected StringArrayDeserializer(JsonDeserializer<?> deser) {
+        super(String[].class);
+        _elementDeserializer = (JsonDeserializer<String>) deser;
+    }
+   
+    @Override
+    public String[] deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException
+    {
+        // Ok: must point to START_ARRAY (or equivalent)
+        if (!jp.isExpectedStartArrayToken()) {
+            return handleNonArray(jp, ctxt);
+        }
+        if (_elementDeserializer != null) {
+            return _deserializeCustom(jp, ctxt);
+        }
+
+        final ObjectBuffer buffer = ctxt.leaseObjectBuffer();
+        Object[] chunk = buffer.resetAndStart();
+        
+        int ix = 0;
+        JsonToken t;
+        
+        while ((t = jp.nextToken()) != JsonToken.END_ARRAY) {
+            // Ok: no need to convert Strings, but must recognize nulls
+            String value;
+            if (t == JsonToken.VALUE_STRING) {
+                value = jp.getText();
+            } else if (t == JsonToken.VALUE_NULL) {
+                value = _elementDeserializer.getNullValue();
+            } else {
+                value = _parseString(jp, ctxt);
+            }
+            if (ix >= chunk.length) {
+                chunk = buffer.appendCompletedChunk(chunk);
+                ix = 0;
+            }
+            chunk[ix++] = value;
+        }
+        String[] result = buffer.completeAndClearBuffer(chunk, ix, String.class);
+        ctxt.returnObjectBuffer(buffer);
+        return result;
+    }
+
+    /**
+     * Offlined version used when we do not use the default deserialization method.
+     */
+    protected final String[] _deserializeCustom(JsonParser jp, DeserializationContext ctxt) throws IOException
+    {
+        final ObjectBuffer buffer = ctxt.leaseObjectBuffer();
+        Object[] chunk = buffer.resetAndStart();
+        final JsonDeserializer<String> deser = _elementDeserializer;
+        
+        int ix = 0;
+        JsonToken t;
+        
+        while ((t = jp.nextToken()) != JsonToken.END_ARRAY) {
+            // Ok: no need to convert Strings, but must recognize nulls
+            String value = (t == JsonToken.VALUE_NULL) ? null : deser.deserialize(jp, ctxt);
+            if (ix >= chunk.length) {
+                chunk = buffer.appendCompletedChunk(chunk);
+                ix = 0;
+            }
+            chunk[ix++] = value;
+        }
+        String[] result = buffer.completeAndClearBuffer(chunk, ix, String.class);
+        ctxt.returnObjectBuffer(buffer);
+        return result;
+    }
+    
+    @Override
+    public Object deserializeWithType(JsonParser jp, DeserializationContext ctxt, TypeDeserializer typeDeserializer) throws IOException {
+        return typeDeserializer.deserializeTypedFromArray(jp, ctxt);
+    }
+
+    private final String[] handleNonArray(JsonParser jp, DeserializationContext ctxt) throws IOException
+    {
+        // [JACKSON-526]: implicit arrays from single values?
+        if (!ctxt.isEnabled(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)) {
+            // [JACKSON-620] Empty String can become null...
+            if ((jp.getCurrentToken() == JsonToken.VALUE_STRING)
+                    && ctxt.isEnabled(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)) {
+                String str = jp.getText();
+                if (str.length() == 0) {
+                    return null;
+                }
+            }
+            throw ctxt.mappingException(_valueClass);
+        }
+        return new String[] { (jp.getCurrentToken() == JsonToken.VALUE_NULL) ? null : _parseString(jp, ctxt) };
+    }
+
+    /**
+     * Contextualization is needed to see whether we can "inline" deserialization
+     * of String values, or if we have to use separate value deserializer.
+     */
+    @Override
+    public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) throws JsonMappingException
+    {
+        JsonDeserializer<?> deser = _elementDeserializer;
+        // #125: May have a content converter
+        deser = findConvertingContentDeserializer(ctxt, property, deser);
+        if (deser == null) {
+            deser = ctxt.findContextualValueDeserializer(ctxt.constructType(String.class), property);
+        } else { // if directly assigned, probably not yet contextual, so:
+            deser = ctxt.handleSecondaryContextualization(deser, property);
+        }
+        // Ok ok: if all we got is the default String deserializer, can just forget about it
+        if (deser != null && this.isDefaultDeserializer(deser)) {
+            deser = null;
+        }
+        if (_elementDeserializer != deser) {
+            return new StringArrayDeserializer(deser);
+        }
+        return this;
+    }
+}
+
+```
+
+
+Original generated source:
+```java
+package com.fasterxml.jackson.databind.deser.std;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+public class StringArrayDeserializerTest {
+
+    @Test
+    public void testInstanceNotNull() {
+        assertNotNull(StringArrayDeserializer.instance);
+    }
+
+    @Test
+    public void testDeserializeEmptyArray() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonParser jp = mapper.getFactory().createParser("[]");
+        jp.nextToken();
+        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());
+        assertNotNull(result);
+        assertEquals(0, result.length);
+    }
+
+    @Test
+    public void testDeserializeStringArray() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonParser jp = mapper.getFactory().createParser("[\"a\", \"b\", null, \"c\"]");
+        jp.nextToken();
+        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());
+        assertArrayEquals(new String[] { "a", "b", null, "c" }, result);
+    }
+
+    @Test
+    public void testDeserializeNonArrayAsSingleValue() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        JsonParser jp = mapper.getFactory().createParser("\"singleValue\"");
+        jp.nextToken();
+        String[] result = StringArrayDeserializer.instance.deserialize(jp, mapper.getDeserializationContext());
+        assertArrayEquals(new String[] { "singleValue" }, result);
+    }
+
+    @Test
+    public void testCreateContextualWithDefaultStringDeserializer() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonDeserializer<?> contextual = StringArrayDeserializer.instance.createContextual(
+                mapper.getDeserializationContext(), null);
+        assertSame(StringArrayDeserializer.instance, contextual);
+    }
+
+    @Test
+    public void testCustomDeserializerExecution() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        StringArrayDeserializer customDeser = new StringArrayDeserializer(
+            new JsonDeserializer<String>() {
+                @Override
+                public String deserialize(JsonParser p, com.fasterxml.jackson.databind.DeserializationContext ctxt) throws java.io.IOException {
+                    return p.getText() + "-custom";
+                }
+            }
+        );
+        JsonParser jp = mapper.getFactory().createParser("[\"x\", \"y\"]");
+        jp.nextToken();
+        String[] result = customDeser.deserialize(jp, mapper.getDeserializationContext());
+        assertArrayEquals(new String[] { "x-custom", "y-custom" }, result);
+    }
+}
+```
+
+Compile/fixed-validation excerpt:
+fixed-1/command.log:
+Extract test suite......................................................... OK
+Running ant (compile.gen.tests)............................................ OK
+Running ant (run.gen.tests)................................................ OK
+Failing tests: 2
+  - com.fasterxml.jackson.databind.deser.std.StringArrayDeserializerTest::testCreateContextualWithDefaultStringDeserializer
+  - com.fasterxml.jackson.databind.deser.std.StringArrayDeserializerTest::testDeserializeNonArrayAsSingleValue
+
+fixed-1/failing_tests:
+defs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:911)
+--- com.fasterxml.jackson.databind.deser.std.StringArrayDeserializerTest::testDeserializeNonArrayAsSingleValue
+java.lang.NullPointerException
+	at com.fasterxml.jackson.databind.DeserializationContext.mappingException(DeserializationContext.java:745)
+	at com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer.handleNonArray(StringArrayDeserializer.java:124)
+	at com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer.deserialize(StringArrayDeserializer.java:48)
+	at com.fasterxml.jackson.databind.deser.std.StringArrayDeserializerTest.testDeserializeNonArrayAsSingleValue(StringArrayDeserializerTest.java:49)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:38)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:520)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1060)
+	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:911)
+

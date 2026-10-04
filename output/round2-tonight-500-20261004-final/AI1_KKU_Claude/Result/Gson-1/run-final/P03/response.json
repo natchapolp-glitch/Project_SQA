@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T03:53:13.287063+00:00",
+  "ended_at_utc": "2026-10-04T03:53:21.682979+00:00",
+  "raw_body_sha256": "1981d7bb2cc1293b6f3f39010dec9099f5cc25f14f12e8641ca159bdef47c826",
+  "body": {
+    "id": "gen-1791085994-6ceOYhgFsVr35mAxxgSF",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage com.google.gson;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.lang.reflect.Field;\nimport java.lang.reflect.ParameterizedType;\nimport java.lang.reflect.Type;\nimport java.util.List;\n\nimport org.junit.Test;\n\npublic class TypeInfoFactoryTest {\n\n  static class Holder<T> {\n    T value;\n    List<T> listValue;\n  }\n\n  static class StringHolder extends Holder<String> {\n  }\n\n  static class Container {\n    int[] intArray;\n    String[] stringArray;\n    List<String>[] genericArray;\n  }\n\n  private Type parameterizedType(final Type rawType, final Type... args) {\n    return new ParameterizedType() {\n      @Override\n      public Type[] getActualTypeArguments() {\n        return args;\n      }\n\n      @Override\n      public Type getRawType() {\n        return rawType;\n      }\n\n      @Override\n      public Type getOwnerType() {\n        return null;\n      }\n    };\n  }\n\n  @Test\n  public void testGetTypeInfoForArray_simpleArray() {\n    TypeInfoArray info = TypeInfoFactory.getTypeInfoForArray(int[].class);\n    assertEquals(int.class, info.getComponentRawType());\n  }\n\n  @Test\n  public void testGetTypeInfoForArray_objectArray() {\n    TypeInfoArray info = TypeInfoFactory.getTypeInfoForArray(String[].class);\n    assertEquals(String.class, info.getComponentRawType());\n  }\n\n  @Test(expected = IllegalArgumentException.class)\n  public void testGetTypeInfoForArray_nonArrayThrows() {\n    TypeInfoFactory.getTypeInfoForArray(String.class);\n  }\n\n  @Test\n  public void testGetTypeInfoForField_plainType() throws Exception {\n    Field field = Container.class.getDeclaredField(\"stringArray\");\n    TypeInfo info = TypeInfoFactory.getTypeInfoForField(field, Container.class);\n    assertEquals(String[].class, info.getRawClass());\n  }\n\n  @Test\n  public void testGetTypeInfoForField_typeVariableResolved() throws Exception {\n    Field field = Holder.class.getDeclaredField(\"value\");\n    Type parameterizedHolder = parameterizedType(Holder.class, String.class);\n    TypeInfo info = TypeInfoFactory.getTypeInfoForField(field, parameterizedHolder);\n    assertEquals(String.class, info.getRawClass());\n  }\n\n  @Test\n  public void testGetTypeInfoForField_parameterizedListResolved() throws Exception {\n    Field field = Holder.class.getDeclaredField(\"listValue\");\n    Type parameterizedHolder = parameterizedType(Holder.class, String.class);\n    TypeInfo info = TypeInfoFactory.getTypeInfoForField(field, parameterizedHolder);\n    assertEquals(List.class, info.getRawClass());\n    assertTrue(info.getActualType() instanceof ParameterizedType);\n    ParameterizedType pt = (ParameterizedType) info.getActualType();\n    assertEquals(String.class, pt.getActualTypeArguments()[0]);\n  }\n\n  @Test\n  public void testGetTypeInfoForField_typeVariableWithoutParameterizedTypeThrows() throws Exception {\n    Field field = Holder.class.getDeclaredField(\"value\");\n    try {\n      TypeInfoFactory.getTypeInfoForField(field, Holder.class);\n      fail(\"Expected UnsupportedOperationException\");\n    } catch (UnsupportedOperationException expected) {\n    }\n  }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 5230,
+      "output_tokens": 1286,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.02332,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.02332,
+        "upstream_inference_prompt_cost": 0.01046,
+        "upstream_inference_completions_cost": 0.01286
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 12512,
+      "daily_remaining_tokens": 187488
+    }
+  },
+  "headers": {
+    "x-request-id": "omrma13a50kv8ttreglfq1vw",
+    "date": "Sun, 04 Oct 2026 03:53:23 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "http_status": 200,
+  "started_at_utc": "2026-10-04T06:51:15.616321+00:00",
+  "ended_at_utc": "2026-10-04T06:51:23.892105+00:00",
+  "raw_body_sha256": "6b6f05d104c46cd4542da65c3ea78cfba30ffc4500b195b9139923b7380d7d73",
+  "body": {
+    "id": "gen-1791096676-xtddFnPcugCJqHkMvtv2",
+    "type": "message",
+    "role": "assistant",
+    "container": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "```java\npackage org.apache.commons.cli;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit.Assert.assertTrue;\nimport static org.junit.Assert.fail;\n\nimport java.io.File;\nimport java.net.URL;\nimport java.util.Date;\n\nimport org.junit.Test;\n\npublic class TypeHandlerTest {\n\n    @Test\n    public void testCreateNumberLong() throws Exception {\n        Number n = TypeHandler.createNumber(\"42\");\n        assertTrue(n instanceof Long);\n        assertEquals(42L, n.longValue());\n    }\n\n    @Test\n    public void testCreateNumberDouble() throws Exception {\n        Number n = TypeHandler.createNumber(\"3.14\");\n        assertTrue(n instanceof Double);\n        assertEquals(3.14, n.doubleValue(), 0.0001);\n    }\n\n    @Test(expected = ParseException.class)\n    public void testCreateNumberInvalid() throws Exception {\n        TypeHandler.createNumber(\"not a number\");\n    }\n\n    @Test\n    public void testCreateClassValid() throws Exception {\n        Class<?> c = TypeHandler.createClass(\"java.lang.String\");\n        assertEquals(String.class, c);\n    }\n\n    @Test(expected = ParseException.class)\n    public void testCreateClassInvalid() throws Exception {\n        TypeHandler.createClass(\"no.such.Class\");\n    }\n\n    @Test\n    public void testCreateURLValid() throws Exception {\n        URL url = TypeHandler.createURL(\"http://commons.apache.org\");\n        assertNotNull(url);\n        assertEquals(\"http://commons.apache.org\", url.toString());\n    }\n\n    @Test(expected = ParseException.class)\n    public void testCreateURLInvalid() throws Exception {\n        TypeHandler.createURL(\"not a url\");\n    }\n\n    @Test\n    public void testCreateObjectValid() throws Exception {\n        Object obj = TypeHandler.createObject(\"java.lang.Object\");\n        assertNotNull(obj);\n        assertTrue(obj instanceof Object);\n    }\n\n    @Test(expected = ParseException.class)\n    public void testCreateObjectInvalid() throws Exception {\n        TypeHandler.createObject(\"no.such.Class\");\n    }\n\n    @Test\n    public void testCreateFile() throws Exception {\n        File file = TypeHandler.createFile(\"/tmp/somefile.txt\");\n        assertNotNull(file);\n        assertEquals(\"/tmp/somefile.txt\", file.getPath());\n    }\n\n    @Test\n    public void testCreateValueWithClassDispatch() throws Exception {\n        Object strVal = TypeHandler.createValue(\"hello\", PatternOptionBuilder.STRING_VALUE);\n        assertEquals(\"hello\", strVal);\n\n        Object numVal = TypeHandler.createValue(\"10\", PatternOptionBuilder.NUMBER_VALUE);\n        assertTrue(numVal instanceof Long);\n        assertEquals(10L, ((Number) numVal).longValue());\n\n        Object classVal = TypeHandler.createValue(\"java.lang.String\", PatternOptionBuilder.CLASS_VALUE);\n        assertEquals(String.class, classVal);\n    }\n\n    @Test(expected = ParseException.class)\n    public void testCreateValueWithObjectNonClassThrowsParseException() throws Exception {\n        TypeHandler.createValue(\"hello\", (Object) \"not a class instance\");\n    }\n}\n```",
+        "citations": []
+      }
+    ],
+    "model": "anthropic/claude-sonnet-5",
+    "stop_reason": "end_turn",
+    "stop_details": null,
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 3559,
+      "output_tokens": 1198,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "server_tool_use": null,
+      "service_tier": "standard",
+      "speed": "standard",
+      "cost": 0.019098,
+      "is_byok": false,
+      "cost_details": {
+        "upstream_inference_cost": 0.019098,
+        "upstream_inference_prompt_cost": 0.007118,
+        "upstream_inference_completions_cost": 0.01198
+      }
+    },
+    "context_management": null,
+    "provider": "Claude Platform on AWS",
+    "model_quota": {
+      "daily_quota_tokens": 200000,
+      "daily_usage_tokens": 108456,
+      "daily_remaining_tokens": 91544
+    }
+  },
+  "headers": {
+    "x-request-id": "avca87onkzw0esy7bp74bykp",
+    "date": "Sun, 04 Oct 2026 06:51:25 GMT",
+    "content-type": "application/json; charset=utf-8"
+  }
+}

@@ -1,0 +1,8 @@
+- Initialize `FlowSensitiveInlineVariables` with a valid `AbstractCompiler` receiver setup.
+- Verify `process(externsRoot, root)` correctly traverses and executes flow-sensitive variable inlining passes.
+- Test `enterScope` and `exitScope` callbacks for proper management of scoped variable dependencies (`inlinedNewDependencies`).
+- Check variable inlining behavior across control flow graph boundaries (e.g., conditional branches, loops).
+- Test boundary conditions where variables have multiple reaching definitions or complex use-def chains.
+- Verify side-effect checks via predicates using `checkRightOf` and `checkLeftOf` around candidate nodes.
+- Ensure safety constraints prevent inlining variables when assignments or usages cross invalid side-effect boundaries.
+- Validate `visit` node processing correctly identifies and acts upon valid candidate variables for inlining.
