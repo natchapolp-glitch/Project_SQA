@@ -1,0 +1,8 @@
+# Sonnet 5 - Csv-1
+
+ชุดทดสอบและผลจริงของบั๊กเดียว Csv-1.
+
+- Tests: 21; fixed failures0; buggy failures1.
+- Target class lines 36/37; branches 22/26.
+- ใช้คำสั่งซ้อมรันใน [คู่มือ demo](../Presentation/demo-guide.md).
+- Runtime และ inputs ที่ตรงรุ่นอยู่ใน [Shared](../Shared/README.md).

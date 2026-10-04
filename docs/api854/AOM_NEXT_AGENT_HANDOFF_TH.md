@@ -1,4 +1,17 @@
-# Current user plan: close a submission package in the friend's format
+# Current submission: one bug, Csv-1, four methods
+
+คำสั่งล่าสุดของผู้ใช้: ส่งหนึ่งบั๊กตามรูปแบบเพื่อน ทำสิ่งส่งมอบครบทุกส่วน
+อ่าน [AOM_SINGLE_BUG_SUBMISSION_TH.md](AOM_SINGLE_BUG_SUBMISSION_TH.md) ก่อน
+ใช้ `output/round2-single-bug-20261004` และ ZIP `SQA_Round2_Csv1_4Methods_20261004.zip`
+มี PDF 9 หน้า, PPTX 12 หน้า, code/tests/prompts/configs/results และ demo ที่ซ้อมครบสี่วิธีแล้ว
+ไม่มี 17-project appendix ในชุดนี้ พัก candidate/854/AI ใหม่; ไม่รวมผลรุ่นเก่าเข้าตาราง
+หลักฐานเดิมและ Gate A/primary/queue คงสถานะเดิม อ่าน README ปัจจุบันสำหรับการส่งงาน
+ผู้ใช้ส่ง Classroom เอง ขอบเขตหนึ่งบั๊กไม่ใช่การทำครบทุก project ตามเอกสารวิชา
+แผนด้านล่างเป็นประวัติก่อนผู้ใช้ลดขอบเขต ไม่ใช่งานค้างที่ต้องทำเพื่อชุดส่งนี้
+
+---
+
+# Historical user plan: close a submission package in the friend's format
 
 อ่าน [AOM_SUBMISSION_FIRST_PLAN_TH.md](AOM_SUBMISSION_FIRST_PLAN_TH.md) ก่อนทำงานต่อ.
 ผู้ใช้ขอปรับแผนให้มีสิ่งส่งมอบทุกส่วนแบบ repo เพื่อน: ใช้ Csv-1 Messages ที่มีผลครบ4วิธี

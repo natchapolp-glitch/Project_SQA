@@ -1,4 +1,14 @@
-# แผนล่าสุดจากผู้ใช้: ปิดชุดส่งก่อนขยายการทดลอง
+# ชุดส่งล่าสุด: Csv-1 บั๊กเดียว / 4 วิธี
+
+เริ่มจาก [README ปัจจุบัน](../../README.md) และ [บันทึกชุดส่ง](AOM_SINGLE_BUG_SUBMISSION_TH.md)
+มี PDF/PPTX/demo/code/tests/prompts/configs/results ใน `output/round2-single-bug-20261004`
+และ ZIP `SQA_Round2_Csv1_4Methods_20261004.zip` ซ้อม Defects4J ครบสี่วิธีแล้ว
+ผู้ใช้เลือกหนึ่งบั๊ก ไม่มี 17-project appendix หรือการขยาย 854 ในชุดส่งนี้
+หลักฐานเก่าเก็บครบ แผนและสถานะด้านล่างเป็นประวัติ
+
+---
+
+# Historical plan: ปิดชุดส่งก่อนขยายการทดลอง
 
 อ่าน [AOM_SUBMISSION_FIRST_PLAN_TH.md](AOM_SUBMISSION_FIRST_PLAN_TH.md) ก่อน.
 ใช้ Csv-1 Messages ครบ4วิธีทำPDF/สไลด์/demo/ชุดโค้ด-tests-prompts-configs-resultsตามรูปแบบrepoเพื่อน;
